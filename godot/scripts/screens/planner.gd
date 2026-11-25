@@ -930,6 +930,7 @@ func _on_preview() -> void:
 			color = "yellow"
 	msgs.append("[color=%s][b]%s[/b][/color] – %s" % [color, _status_text(res.status), res.reason])
 	msgs.append("Beute: %s" % _loot_text(res.loot_taken))
+	msgs.append_array(_duration_lines(res))
 	# Lautstärke: lauteste Aktion gegen die Grenze des Gebäudes (Original: Lärm löst den Alarm aus)
 	var peak: float = float(res.get("peak_loud", 0.0))
 	var lim: float = float(res.get("max_volume", 0.0))
@@ -957,6 +958,27 @@ func _on_preview() -> void:
 	_preview.text = "\n".join(msgs)
 
 
+## Werkzeugdauer je Person: Dauer und Fähigkeit, die sie dafür mitbringt.
+func _duration_lines(res: Dictionary) -> Array:
+	var out: Array = []
+	var segs: Dictionary = res.get("segments", {})
+	for c in Game.team:
+		var parts: Array = []
+		for seg in segs.get(c.id, []):
+			if str(seg.t) != "TOOL" or str(seg.fail) != "" or float(seg.dur) <= 0.0:
+				continue
+			var a: Dictionary = plans[c.id][int(seg.i)]
+			var tool: Dictionary = GameData.TOOLS[a.tool]
+			var skill_name := Texte.t(GameData.TOOL_SKILL_KEY.get(tool.type, "skill.technik"))
+			parts.append("%s: %s s (%s %d)" % [_describe(a), ("%.1f" % float(seg.dur)).replace(".", ","), skill_name, int(seg.skill)])
+		if not parts.is_empty():
+			out.append("[color=gray]%s:[/color] %s" % [c.name.split(" ")[0], " · ".join(parts)])
+	if out.is_empty():
+		return out
+	out.insert(0, "[b]Dauer je Person[/b] (je besser die Fähigkeit, desto kürzer):")
+	return out
+
+
 func _refresh_timeline(res: Dictionary) -> void:
 	var crew_info: Array = []
 	for i in range(Game.team.size()):
@@ -969,7 +991,7 @@ func _refresh_timeline(res: Dictionary) -> void:
 		for a in plans[c.id]:
 			labs.append(_describe(a))
 		_labels[c.id] = labs
-	var mx := maxf(float(res.time), 120.0)
+	var mx := maxf(float(res.time), 10.0)   # Zeitleiste endet beim Plan, nicht bei einer festen Mindestlänge
 	_gantt.set_data(res.get("segments", {}), _labels, crew_info, mx, float(res.get("alarm_time", -1.0)))
 	_slider.max_value = mx
 	_slider.set_value_no_signal(clampf(_playhead, 0.0, mx))

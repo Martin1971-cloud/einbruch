@@ -711,7 +711,7 @@ func _next(c: Dictionary) -> void:
 	_unlock_all(c)
 	if c.idx < c.plan.size():
 		# "fail": Grund, falls die Aktion nicht ausgeführt werden konnte
-		c.segments.append({"i": c.idx, "t": c.plan[c.idx].t, "start": c.act_start, "end": time, "fail": str(c.get("fail", "")), "msg": str(c.get("msg", "")), "loud": float(c.get("loud", LOUD_STD))})
+		c.segments.append({"i": c.idx, "t": c.plan[c.idx].t, "start": c.act_start, "end": time, "fail": str(c.get("fail", "")), "msg": str(c.get("msg", "")), "loud": float(c.get("loud", LOUD_STD)), "dur": float(c.get("dur", 0.0)) if c.plan[c.idx].t == "TOOL" else 0.0, "skill": float(c.skills.get(GameData.TOOLS[c.plan[c.idx].tool].type, 0)) if c.plan[c.idx].t == "TOOL" else 0.0})
 		c["msg"] = ""
 	c["fail"] = ""
 	c.act_start = time
@@ -902,6 +902,7 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		c.noise = noise * float(c.gear.noise)
 		c.ev = float(tool.evidence) * float(c.gear.ev)
 		c.timer = maxf(dur, 0.5)
+		c["dur"] = c.timer   # Werkzeugdauer dieser Person (für die Vorschau)
 		c["loud"] = c.noise
 		c.started = true
 		_lock(c, key)
