@@ -434,7 +434,7 @@ const TABELLE := {
 		"shop.knopf_kaufen": "Kaufen",
 		"shop.knopf_zurueck": "Zurückgeben",
 		"shop.t_status": "Status",
-		"opt.musik_quelle": "Musik: „Emotional Cello“ von renrebello und „Chamber Violins and Cello“ von moonpub, beide auf Pixabay (Pixabay-Inhaltslizenz).",
+		"opt.musik_quelle": "Musik: „Emotional Cello“ von renrebello, „Chamber Violins and Cello“ von moonpub und „Dramatic Violins“ von music_for_videos, alle auf Pixabay (Pixabay-Inhaltslizenz).",
 	},
 	"en": {
 		"stadt.hint_umsehen": "A look at the building: one more step of investigation, one hour passes.",
@@ -1148,7 +1148,7 @@ const TABELLE := {
 		"shop.knopf_kaufen": "Buy",
 		"shop.knopf_zurueck": "Return",
 		"shop.t_status": "Status",
-		"opt.musik_quelle": "Music: “Emotional Cello” by renrebello and “Chamber Violins and Cello” by moonpub, both on Pixabay (Pixabay content license).",
+		"opt.musik_quelle": "Music: “Emotional Cello” by renrebello, “Chamber Violins and Cello” by moonpub and “Dramatic Violins” by music_for_videos, all on Pixabay (Pixabay content license).",
 	},
 }
 

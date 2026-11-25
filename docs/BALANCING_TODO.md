@@ -235,3 +235,4 @@ Fazit: Die Auszahlung ist unabhängig von der Teamgröße (gleiche Beute). Ein g
 ## Musik aus Pixabay (Quellenhinweis)
 - Stadt: Schleife aus „Emotional Cello“ von renrebello (Pixabay). Planung: Schleife aus „Chamber Violins and Cello“ von moonpub (Pixabay). Pixabay-Inhaltslizenz (Zusammenfassung): kostenlos, Namensnennung nicht nötig, Bearbeitung erlaubt, nicht als eigenständiges Produkt verkaufen. Die vollständige Lizenz ist nicht geprüft.
 - Quellenhinweis steht in den Optionen (deutsch und englisch). Vor dem Verkauf des Spiels die vollständige Lizenz prüfen.
+- Ausführung: Schleife aus „Dramatic Violins“ von music_for_videos (Pixabay), ersetzt die synthetische Ausführungsmusik. Quellenhinweis in den Optionen ergänzt. Gleiche Pixabay-Inhaltslizenz wie oben (vollständige Lizenz nicht geprüft).
