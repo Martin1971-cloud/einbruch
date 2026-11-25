@@ -370,6 +370,12 @@ const TABELLE := {
 		"plan.hilfe_3": "3. Gegenstand anklicken (Tür, Vitrine, Kasse, Wache, Alarmpanel): Menü mit Möglichkeiten.",
 		"plan.hilfe_4": "Beute: erst Vitrine öffnen oder aufbrechen, dann Beute nehmen.",
 		"hint.verstanden": "Verstanden",
+		"plan.endet_nicht": "%s endet nicht am Fluchtwagen.",
+		"plan.beute_zeile": "Beute: %s",
+		"plan.auszahlung_zeile": "Auszahlung: %s € · Fahndung +%d %%",
+		"plan.team_zeile": "[b]Team: %d Personen[/b] · Kosten %s € (Honorar %s €, Wagen %s €) · Gewinn %s%s € · Dauer ca. %s",
+		"plan.beutewert": "Beutewert: %s",
+		"res.werkzeug_an": "%s an %s",
 	},
 	"en": {
 		"stadt.hint_umsehen": "A look at the building: one more step of investigation, one hour passes.",
@@ -733,6 +739,12 @@ const TABELLE := {
 		"plan.hilfe_3": "3. Click an object (door, display case, till, guard, alarm panel): menu with options.",
 		"plan.hilfe_4": "Loot: first open the display case or break it open, then take the loot.",
 		"hint.verstanden": "Got it",
+		"plan.endet_nicht": "%s does not end at the getaway car.",
+		"plan.beute_zeile": "Loot: %s",
+		"plan.auszahlung_zeile": "Payout: %s € · Manhunt +%d %%",
+		"plan.team_zeile": "[b]Team: %d people[/b] · Cost %s € (fees %s €, car %s €) · Profit %s%s € · Duration approx. %s",
+		"plan.beutewert": "Loot value: %s",
+		"res.werkzeug_an": "%s on %s",
 	},
 }
 

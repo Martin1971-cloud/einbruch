@@ -116,14 +116,14 @@ func _header() -> PanelContainer:
 	row.add_theme_constant_override("separation", 12)
 	var title := _l(Texte.t("app.titel"), 24, Color(0.97, 0.82, 0.42))
 	row.add_child(title)
-	row.add_child(_l("Planung", 15, Color(0.62, 0.7, 0.8)))
+	row.add_child(_l(Texte.t("plan.titel"), 15, Color(0.62, 0.7, 0.8)))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(sp)
 	# Reihenfolge wie der Ablauf: Vorbereitung (Stadt, Organisation), Planung, Vorschau, Ausführung
-	row.add_child(UI.button("Stadt", func(): main.go("town"), 100))
+	row.add_child(UI.button(Texte.t("nav.stadt"), func(): main.go("town"), 100))
 	row.add_child(UI.button(Texte.t("nav.organisation"), func(): main.go("organisation"), 130))
-	var tab := UI.primary("Planung", func(): pass, 100)
+	var tab := UI.primary(Texte.t("plan.titel"), func(): pass, 100)
 	tab.disabled = true
 	row.add_child(tab)
 	row.add_child(UI.button(Texte.t("plan.beispiel"), _on_example, 170))
@@ -163,7 +163,7 @@ func _left_column() -> Control:
 	info.add_child(art)
 	info.add_child(_l(Texte.t("plan.vorhaben"), 11, Color(0.6, 0.66, 0.74)))
 	info.add_child(_l(Texte.d(target.name), 17, Color(0.97, 0.85, 0.55)))
-	info.add_child(_l("Beutewert: %s" % GameData.loot_text(target, int(Game.intel.get(target.id, 0))), 13, Color(0.85, 0.88, 0.94)))
+	info.add_child(_l(Texte.t("plan.beutewert") % GameData.loot_text(target, int(Game.intel.get(target.id, 0))), 13, Color(0.85, 0.88, 0.94)))
 	col.add_child(_card(info))
 	_checklist = VBoxContainer.new()
 	_checklist.add_theme_constant_override("separation", 4)
@@ -544,7 +544,7 @@ func _refresh_all() -> void:
 func _refresh_grid() -> void:
 	var lvl: int = int(Game.intel.get(target.id, 0))
 	_grid.set_state(target, lvl, plans, Game.team)
-	_intel_label.text = ["Ermittlung: keine – Wachrouten unbekannt", "Ermittlung: Wachrouten bekannt", "Ermittlung: vollständig"][lvl]
+	_intel_label.text = Texte.t("stadt.ermittlung") % Texte.t("stadt.ermittlung_%d" % lvl)
 
 
 func _refresh_team() -> void:
@@ -920,7 +920,7 @@ func _on_preview() -> void:
 		var pl: Array = plans[c.id]
 		var ends_at_car: bool = not pl.is_empty() and pl[-1].t == "MOVE" and pl[-1].get("to", "") == "Fluchtwagen"
 		if not ends_at_car:
-			msgs.append("[color=orange]%s endet nicht am Fluchtwagen.[/color]" % c.name.split(" ")[0])
+			msgs.append("[color=orange]%s[/color]" % (Texte.t("plan.endet_nicht") % c.name.split(" ")[0]))
 	# Warnung: zwei Personen wollen gleichzeitig an einem Objekt arbeiten. Die Simulation lässt eine warten.
 	# Alarm durch Sensor oder Lärm: der auslösende Melder wird genannt
 	if str(res.get("alarm_source", "")) != "":
@@ -935,7 +935,7 @@ func _on_preview() -> void:
 		"ENTKOMMEN_HEISS":
 			color = "yellow"
 	msgs.append("[color=%s][b]%s[/b][/color] – %s" % [color, _status_text(res.status), res.reason])
-	msgs.append("Beute: %s" % _loot_text(res.loot_taken))
+	msgs.append(Texte.t("plan.beute_zeile") % _loot_text(res.loot_taken))
 	msgs.append_array(_duration_lines(res))
 	# Lautstärke: lauteste Aktion gegen die Grenze des Gebäudes (Original: Lärm löst den Alarm aus)
 	var peak: float = float(res.get("peak_loud", 0.0))
@@ -946,7 +946,7 @@ func _on_preview() -> void:
 	# Farbe UND Wort: die Bedeutung hängt nicht allein an der Farbe (Barrierefreiheit)
 	var lwort := Texte.t("laerm.leise") if peak <= lim * 0.7 else (Texte.t("laerm.hoerbar") if peak <= lim else Texte.t("laerm.alarm"))
 	msgs.insert(1, Texte.t("plan.lautstaerke") % [lcol, int(peak), lwort, int(lim)])
-	msgs.append("Auszahlung: %s € · Fahndung +%d %%" % [_fmt(int(res.payout)), int(res.heat)])
+	msgs.append(Texte.t("plan.auszahlung_zeile") % [_fmt(int(res.payout)), int(res.heat)])
 	# Teamgröße mit Kosten und Dauer: der Spieler wägt Gewinn gegen Zeit ab
 	var team_n: int = Game.team.size()
 	var fee_sum: int = Game.team_fee_total()
@@ -960,7 +960,7 @@ func _on_preview() -> void:
 	var rent: int = int(GameData.car_now(Game.car_id, 85.0).get("rent", 0))
 	var cost: int = fee_sum + drv_fee + rent
 	var net: int = int(res.payout) - cost
-	msgs.insert(0, "[b]Team: %d Personen[/b] · Kosten %s € (Honorar %s €, Wagen %s €) · Gewinn %s%s € · Dauer ca. %s" % [team_n, _fmt(cost), _fmt(fee_sum + drv_fee), _fmt(rent), "+" if net >= 0 else "", _fmt(net), Sim.clock(float(res.time))])
+	msgs.insert(0, Texte.t("plan.team_zeile") % [team_n, _fmt(cost), _fmt(fee_sum + drv_fee), _fmt(rent), "+" if net >= 0 else "", _fmt(net), Sim.clock(float(res.time))])
 	_preview.text = "\n".join(msgs)
 
 

@@ -287,4 +287,5 @@ const EN := {
 	"keines": "none",
 	"keine": "none",
 	"immer": "always",
+	"Feld": "cell",
 }

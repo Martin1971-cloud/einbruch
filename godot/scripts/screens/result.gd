@@ -158,7 +158,7 @@ func _ev_text(ev: Dictionary) -> String:
 		"MOVE":
 			txt = Texte.t("res.geh_nach") % Texte.d(str(ev.obj))
 		"TOOL":
-			txt = "%s an %s" % [Texte.d(str(ev.tool)), Texte.d(str(ev.obj))]
+			txt = Texte.t("res.werkzeug_an") % [Texte.d(str(ev.tool)), Texte.d(str(ev.obj))]
 		"OPEN":
 			txt = Texte.t("res.oeffnet") % Texte.d(str(ev.obj))
 		"TAKE":

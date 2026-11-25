@@ -425,7 +425,7 @@ func _draw_car(ex: Vector2i) -> void:
 	var front := center - out * along * 0.5
 	draw_circle(front + Vector2(-out.y, out.x) * across * 0.3, _cell * 0.1, Color(1, 1, 0.8))
 	draw_circle(front - Vector2(-out.y, out.x) * across * 0.3, _cell * 0.1, Color(1, 1, 0.8))
-	_text_center(center + Vector2(0, -across * 0.5 - _cell * 0.3), "Fluchtwagen", Color(0.97, 0.85, 0.5), maxf(9.0, _cell * 0.36))
+	_text_center(center + Vector2(0, -across * 0.5 - _cell * 0.3), Texte.d("Fluchtwagen"), Color(0.97, 0.85, 0.5), maxf(9.0, _cell * 0.36))
 
 
 func _draw_fine(spec: Dictionary) -> void:
