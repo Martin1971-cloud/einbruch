@@ -10,6 +10,8 @@ var _laufzeit := 60.0
 var _next_log := 1.0
 var _fps: Array = []
 var _zeit: Array = []
+var _obj_vor := 0
+var _mem_vor := 0.0
 
 func _initialize() -> void:
 	var args := OS.get_cmdline_user_args()
@@ -61,6 +63,13 @@ func _process(d: float) -> bool:
 		return false
 	# Echtzeit: keine Vorspulung, nur Messung
 	_t += d
+	# Ruckler: langsame Bilder mit Verarbeitungs-, Physik- und Renderzeit sowie neuen Objekten und Speicher
+	var obj := Performance.get_monitor(Performance.OBJECT_NODE_COUNT)
+	var mem := Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0
+	if d > 0.02 and _t > 1.5:
+		print("RUCKLER t=%5.1f s  bild=%5.1f ms  verarbeitung=%5.1f ms  physik=%4.1f ms  knoten=%d (%+d)  speicher=%.1f MB (%+.2f)  draws=%d" % [_t, d * 1000.0, Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0, Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0, obj, obj - _obj_vor, mem, mem - _mem_vor, Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)])
+	_obj_vor = obj
+	_mem_vor = mem
 	if _t >= _next_log:
 		_fps.append(Engine.get_frames_per_second())
 		_zeit.append(_t)
