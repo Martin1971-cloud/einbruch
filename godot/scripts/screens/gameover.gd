@@ -7,7 +7,24 @@ var args: Dictionary = {}
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(UI.backdrop())
+	# Hintergrund wie bei der Festnahme: unscharfes Gefängnisbild füllt die Fläche, dunkle Schicht darüber
+	var fill := UI.backdrop("res://assets/art/result_fehl_blur.webp") if Game.game_over_reason == "fahndung" else UI.backdrop()
+	fill.modulate = Color(1, 1, 1, 0.6)
+	add_child(fill)
+	if Game.game_over_reason == "fahndung" and ResourceLoader.exists("res://assets/art/result_fehl.webp"):
+		var sharp := TextureRect.new()   # scharfes Bild ganz sichtbar in der Mitte
+		sharp.texture = load("res://assets/art/result_fehl.webp")
+		sharp.set_anchors_preset(Control.PRESET_FULL_RECT)
+		sharp.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		sharp.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		sharp.modulate = Color(1, 1, 1, 0.85)
+		sharp.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(sharp)
+	var shade := ColorRect.new()
+	shade.color = Color(0.05, 0.06, 0.09, 0.5)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(shade)
 	var root := VBoxContainer.new()
 	root.add_theme_constant_override("separation", 14)
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
