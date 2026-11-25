@@ -217,7 +217,7 @@ func _center_column() -> Control:
 	inner.add_child(legend)
 	head.add_child(UI.button(Texte.t("plan.legende"), func(): legend.visible = not legend.visible, 120))
 	var help_btn := UI.button("?", func(): pass, 36)
-	help_btn.tooltip_text = "So steuerst du:\n1. Auf eine Person klicken (oder Zahl 1 bis 9 drücken).\n2. Feld im Grundriss anklicken: die Person geht dorthin.\n3. Gegenstand anklicken (Tür, Vitrine, Kasse, Wache, Alarmpanel): Menü mit Möglichkeiten.\nBeute: erst Vitrine öffnen oder aufbrechen, dann Beute nehmen."
+	help_btn.tooltip_text = Texte.t("plan.hilfe_gesamt")
 	head.add_child(help_btn)
 	var mid_card := _card(inner)
 	mid_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -368,7 +368,7 @@ func _set_text_size(v: int) -> void:
 func _palette_card() -> Control:
 	var info := VBoxContainer.new()
 	info.add_theme_constant_override("separation", 6)
-	for line in ["1. Auf eine Person klicken (oder Zahl 1 bis 9 drücken).", "2. Feld im Grundriss anklicken: die Person geht dorthin.", "3. Gegenstand anklicken (Tür, Vitrine, Kasse, Wache, Alarmpanel): Menü mit Möglichkeiten.", "Beute: erst Vitrine öffnen oder aufbrechen, dann Beute nehmen."]:
+	for line in [Texte.t("plan.hilfe_1"), Texte.t("plan.hilfe_2"), Texte.t("plan.hilfe_3"), Texte.t("plan.hilfe_4")]:
 		info.add_child(_w(line, 12, Color(0.82, 0.86, 0.92)))
 	var card := UI.fold(Texte.t("plan.hilfe_titel"), info, false)  # standardmäßig zu, Platz für den Zeitplan
 	card.custom_minimum_size = Vector2(LEFT_W, 0)

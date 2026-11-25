@@ -67,9 +67,20 @@ const STATE_COL := {
 	"INVESTIGATE": Color(1.0, 0.6, 0.25),
 	"ALARMED": Color(1.0, 0.28, 0.28),
 }
-const STATE_TXT := {
-	"PATROL": "Rundgang", "RESPOND": "Anfahrt", "ALERT": "aufmerksam", "INVESTIGATE": "prüft", "ALARMED": "ALARM",
-}
+## Anzeige eines Zustands der Wache (Texte aus der Texttabelle)
+static func _state_label(st: String) -> String:
+	match st:
+		"PATROL":
+			return Texte.t("gridv.z_patrol")
+		"RESPOND":
+			return Texte.t("gridv.z_respond")
+		"ALERT":
+			return Texte.t("gridv.z_alert")
+		"INVESTIGATE":
+			return Texte.t("gridv.z_investigate")
+		"ALARMED":
+			return Texte.t("gridv.z_alarmed")
+	return st
 
 
 func _init() -> void:
@@ -1036,7 +1047,7 @@ func _draw_dynamic() -> void:
 		draw_circle(gp, _cell * 0.4, Color(0.12, 0.12, 0.16))
 		draw_arc(gp, _cell * 0.4, 0, TAU, 24, col, 2.0)
 		draw_circle(gp, _cell * 0.2, col)
-		var label: String = STATE_TXT.get(st, st)
+		var label: String = _state_label(st)
 		var fs := maxi(9, int(_cell * 0.36))
 		var sz := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 		draw_rect(Rect2(gp + Vector2(-sz.x * 0.5 - 3, _cell * 0.5), Vector2(sz.x + 6, fs + 4)), Color(0.05, 0.05, 0.08, 0.8))
@@ -1127,16 +1138,16 @@ func _get_tooltip(at_position: Vector2) -> String:
 			return "%s – verschlossen (Dietrich, Brecheisen oder Bypass)" % d.name
 	match row.substr(cx, 1):
 		"F":
-			return "Fenster – blockiert Bewegung und Sicht"
+			return Texte.t("gridv.fenster")
 		"W":
-			return "Wand – blockiert Bewegung und Sicht"
+			return Texte.t("gridv.wand")
 		"o":
-			return "Außen"
+			return Texte.t("gridv.aussen")
 		_:
 			for room in target.get("rooms", []):
 				if Sim._v2i(room.pos) == cell:
 					return room.name.capitalize()
-			return "Raum"
+			return Texte.t("gridv.raum")
 
 
 func _blocks(c: Vector2i) -> bool:
