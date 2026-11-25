@@ -265,7 +265,7 @@ var _shop_open := {}  # Titel -> zuletzt gewählter Zustand, bleibt beim Neuaufb
 
 
 func _shop_fold(title: String, content: Control) -> PanelContainer:
-	var is_open: bool = _shop_open.get(title, false)
+	var is_open: bool = _shop_open.get(title, true)   # Besitz ist standardmäßig ausgeklappt
 	var f := UI.fold(title, content, is_open)
 	var head: Button = f.get_child(0).get_child(0)
 	head.toggled.connect(func(on: bool): _shop_open[title] = on)
