@@ -13,7 +13,9 @@ func _init() -> void:
 	_check(Texte.t("spielende.titel") == "Das Spiel ist vorbei", "Deutsch ist die Standardsprache")
 	Texte.sprache = "en"
 	_check(Texte.t("spielende.titel") == "Game over", "Englisch wird gewählt")
+	Texte.sprache = "fr"   # ohne Tabelle: Rückfall auf Deutsch
 	_check(Texte.t("fehler.allgemein").begins_with("Etwas"), "Fehlt eine Übersetzung, kommt der deutsche Text")
+	Texte.sprache = "en"
 	_check(Texte.t("gibt.es.nicht") == "gibt.es.nicht", "Unbekannter Schlüssel bleibt sichtbar")
 	Texte.sprache = "de"
 	print("Ergebnis: %d Fehler" % _fails)

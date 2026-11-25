@@ -25,6 +25,13 @@ for f in tests/test_*.gd; do
     echo "ok      $t" >> "$SUMMARY"
   fi
 done
+# Texttabelle: fehlende englische Fassungen sind ein Fehler, feste deutsche Texte nur eine Warnung
+if python3 tools/texte_pruefen.py > "$OUT/texte.txt" 2>&1; then
+  echo "ok      texte_pruefen" >> "$SUMMARY"
+else
+  fail=$((fail+1))
+  echo "FEHLER  texte_pruefen (fehlende englische Texte, siehe $OUT/texte.txt)" | tee -a "$SUMMARY"
+fi
 echo "" | tee -a "$SUMMARY"
 echo "Tests: $total · Fehler: $fail · Ausgabe: $OUT" | tee -a "$SUMMARY"
 [ "$fail" -eq 0 ]

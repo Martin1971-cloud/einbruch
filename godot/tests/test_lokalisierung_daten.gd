@@ -15,15 +15,15 @@ func _init() -> void:
 	for id in GameData.TARGETS:
 		var t: Dictionary = GameData.TARGETS[id]
 		for feld in ["name", "info", "desc", "dialog"]:
-			if t.has(feld) and not TexteDaten.EN.has(str(t[feld])):
+			if t.has(feld) and not Texte.TABELLE["en"].has(str(t[feld])):
 				fehlend.append("%s.%s" % [id, feld])
 		for f in t.get("facts", []):
 			for x in f:
-				if typeof(x) == TYPE_STRING and not TexteDaten.EN.has(x) and x.length() > 2 and not x.begins_with("res://"):
+				if typeof(x) == TYPE_STRING and not Texte.TABELLE["en"].has(x) and x.length() > 2 and not x.begins_with("res://"):
 					fehlend.append("%s fakt %s" % [id, x])
 		for skill in t.get("bedarf", {}):
 			var g := str(t.bedarf[skill].get("grund", ""))
-			if g != "" and not TexteDaten.EN.has(g):
+			if g != "" and not Texte.TABELLE["en"].has(g):
 				fehlend.append("%s bedarf %s" % [id, g])
 	_check(fehlend.is_empty(), "Alle Gebäudetexte haben eine englische Fassung %s" % str(fehlend))
 	Texte.sprache = "en"
