@@ -186,3 +186,4 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Werkzeugladen: Werkzeug und Kleidung nebeneinander in zwei Spalten (Werkzeug breiter), damit die Kleidung nicht unter der Liste verschwindet.
 - Werkzeuge: Anzeige nennt die Fähigkeit, die die Crew wirklich hat (Technik, Kampf, Elektronik) statt „Safes“ oder „Sprengstoff“. Schneidbrenner ab Technik 55, Kernbohrer ab 65 (Fachmann). Dauer sinkt mit der Fähigkeit (ab 100 % etwa ein Drittel der Basiszeit), das steht jetzt im Tooltip und im Lexikon.
 - Offen: Die Vorschau in der Planung zeigt die Dauer noch nicht pro Person. Eine Anzeige „Dauer mit diesem Teammitglied“ wäre der nächste Schritt.
+- Kasse statt Vitrine: Menü, Meldungen, Fehlschläge und Planer-Hilfe nennen bei der Kasse „Kasse“ (Begriff je Behälter über `obj.kasse`/`obj.vitrine`). Lexikon-Eintrag „Kasse“ ergänzt. Pipeline: 56 Tests, 0 Fehler.

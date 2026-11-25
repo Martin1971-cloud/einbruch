@@ -485,6 +485,11 @@ func blockers_between(a: Vector2, b: Vector2) -> float:
 	return float(n)
 
 
+## Bezeichnung eines Behälters mit Beute: Kasse oder Vitrine.
+func _case_word(l: Dictionary) -> String:
+	return Texte.t("obj.kasse") if str(l.get("id", "")) == "kasse" else Texte.t("obj.vitrine")
+
+
 ## Zustand aller Türen und Vitrinen, Schlüssel "x,y" (für Grafik und Planung).
 func _obj_states() -> Dictionary:
 	var out := {}
@@ -493,7 +498,7 @@ func _obj_states() -> Dictionary:
 		out["%d,%d" % [p.x, p.y]] = {"kind": "door", "name": d.name, "locked": d.locked, "open": open_cells.has(p), "glas": str(d.get("kind", "")) == "glas", "needs": door_tool(d)}
 	for lid in loot_order:
 		var l: Dictionary = loot[lid]
-		out["%d,%d" % [l.pos.x, l.pos.y]] = {"kind": "case", "name": l.name, "locked": l.locked, "open": l.opened}
+		out["%d,%d" % [l.pos.x, l.pos.y]] = {"kind": "case", "name": l.name, "word": _case_word(l), "locked": l.locked, "open": l.opened}
 	return out
 
 
@@ -916,11 +921,11 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		loot[case_id].locked = false
 		if tool.destroys:
 			loot[case_id].opened = true
-			c["msg"] = "Vitrine aufgebrochen – jetzt offen"
-			_log(Texte.t("sim.vitrine_aufgebrochen") % [c.name, loot[case_id].name])
+			c["msg"] = Texte.t("sim.msg_aufgebrochen") % _case_word(loot[case_id])
+			_log(Texte.t("sim.vitrine_aufgebrochen") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
 		else:
-			c["msg"] = "Vitrine entriegelt – noch zu"
-			_log(Texte.t("sim.vitrine_entriegelt") % [c.name, loot[case_id].name])
+			c["msg"] = Texte.t("sim.msg_entriegelt") % _case_word(loot[case_id])
+			_log(Texte.t("sim.vitrine_entriegelt") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
 	elif door != null:
 		door.locked = false
 		if tool.destroys:
@@ -1070,8 +1075,8 @@ func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:
 		_log(Texte.t("sim.oeffnet") % [c.name, a.on])
 	else:
 		loot[case_id].opened = true
-		c["msg"] = "Vitrine offen"
-		_log(Texte.t("sim.oeffnet_vitrine") % [c.name, loot[case_id].name])
+		c["msg"] = Texte.t("sim.msg_offen") % _case_word(loot[case_id])
+		_log(Texte.t("sim.oeffnet_vitrine") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
 	_next(c)
 
 
@@ -1156,7 +1161,7 @@ func _do_take(c: Dictionary, a: Dictionary, dt: float) -> void:
 			_fail(c, Texte.t("fail.schon_weg") % l.name)
 			return
 		if not l.opened:
-			_fail(c, Texte.t("fail.vitrine_zu") % l.name)
+			_fail(c, Texte.t("fail.vitrine_zu") % [_case_word(l), l.name])
 			return
 		var carried := 0.0
 		for lid in c.carried:

@@ -63,6 +63,7 @@ const LEXIKON := [
 	{"term": "Freischaltung", "text": "Jedes erfolgreiche Gebäude schaltet neue Werkzeuge und Autos frei. Gesperrte Artikel stehen im Laden mit dem Hinweis, ab welchem Gebäude sie zu haben sind."},
 	{"term": "Tür", "text": "Türen sind verschlossen oder offen. Verschlossene Türen entriegelst du leise mit dem Dietrich oder brichst sie laut mit dem Brecheisen auf."},
 	{"term": "Vitrine", "text": "Ein Schaukasten mit Beute, meist aus Glas. Erst öffnen, dann die Beute nehmen."},
+	{"term": "Kasse", "text": "Die Ladenkasse: eine Schublade mit Bargeld. Sie ist wie eine Vitrine erst zu öffnen, dann nimmt man das Geld."},
 	{"term": "Schaufenster", "text": "Ein Fenster aus Glas. Dafür braucht man den Glasschneider."},
 	{"term": "Treppe", "text": "Verbindet zwei Etagen. Das Hinaufsteigen dauert 8 Sekunden."},
 	{"term": "Etage", "text": "Manche Gebäude haben mehrere Etagen. Die Ansicht zeigt die Etage der Person, die gerade läuft, mit Schaltern für EG, OG und Alle."},
