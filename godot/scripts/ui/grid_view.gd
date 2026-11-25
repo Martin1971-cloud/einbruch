@@ -1084,7 +1084,7 @@ func _draw_dynamic() -> void:
 		draw_rect(frame, Color(1.0, 0.25, 0.25, 0.7), false, 3.0)
 		var cd: float = _frame.get("cd", -1.0)
 		if cd >= 0.0:
-			var txt := "Polizei in %d s" % int(ceil(cd))
+			var txt := Texte.t("grid.polizei_in") % int(ceil(cd))
 			draw_rect(Rect2(frame.position + Vector2(6, 6), Vector2(150, 22)), Color(0.35, 0.05, 0.05, 0.9))
 			draw_string(font, frame.position + Vector2(12, 22), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(1, 0.85, 0.8))
 

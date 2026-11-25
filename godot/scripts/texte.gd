@@ -395,6 +395,9 @@ const TABELLE := {
 		"plan.kein_passendes_werkzeug": "%s: kein passendes Werkzeug (Kauf in der Organisation)",
 		"plan.steigt_ein": "[color=lightgreen]%s steigt ein.[/color]",
 		"slots.stand_unlesbar": "Platz %d: Stand nicht lesbar",
+		"plan.feld_pos": "Feld [%d, %d]",
+		"plan.punkt_pos": "Punkt (%.1f, %.1f)",
+		"grid.polizei_in": "Polizei in %d s",
 	},
 	"en": {
 		"stadt.hint_umsehen": "A look at the building: one more step of investigation, one hour passes.",
@@ -1069,6 +1072,9 @@ const TABELLE := {
 		"plan.kein_passendes_werkzeug": "%s: no suitable tool (buy in the organisation)",
 		"plan.steigt_ein": "[color=lightgreen]%s gets in.[/color]",
 		"slots.stand_unlesbar": "Slot %d: save not readable",
+		"plan.feld_pos": "Cell [%d, %d]",
+		"plan.punkt_pos": "Point (%.1f, %.1f)",
+		"grid.polizei_in": "Police in %d s",
 	},
 }
 

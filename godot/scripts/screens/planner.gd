@@ -816,10 +816,10 @@ func _describe(a: Dictionary) -> String:
 	match a.t:
 		"MOVE":
 			if a.has("fine"):
-				return "Gehen nach %s" % _point_label(Vector2i(int(a.fine[0]), int(a.fine[1])))
+				return Texte.t("res.geh_nach") % Texte.d(_point_label(Vector2i(int(a.fine[0]), int(a.fine[1]))))
 			if a.has("cell"):
-				return "Gehen nach %s" % _name_at(a.cell)
-			return "Gehen nach %s" % a.get("to", "?")
+				return Texte.t("res.geh_nach") % Texte.d(_name_at(a.cell))
+			return Texte.t("res.geh_nach") % Texte.d(str(a.get("to", "?")))
 		"TOOL":
 			return "%s an %s" % [Texte.d(GameData.TOOLS[a.tool].name), Texte.d(a.on)]
 		"OPEN":
@@ -1269,7 +1269,7 @@ func _name_at(cell) -> String:
 	for k in target.points:
 		if Sim._v2i(target.points[k]) == v:
 			return k
-	return "Feld [%d, %d]" % [v.x, v.y]
+	return Texte.t("plan.feld_pos") % [v.x, v.y]
 
 
 ## Testhilfe: Beispielplan mit Lockpick an der Eingangstür, Gemälde, Fluchtwagen.
@@ -1350,7 +1350,7 @@ func _point_label(f: Vector2i) -> String:
 	for k in target.points:
 		if Vector2(Sim.center(Sim._v2i(target.points[k]))).distance_to(Vector2(f)) <= sb:
 			return k
-	return "Punkt (%.1f, %.1f)" % [f.x / sb, f.y / sb]
+	return Texte.t("plan.punkt_pos") % [f.x / sb, f.y / sb]
 
 
 ## Einmaliger Hinweis (nach dem Klick, damit er das Menü nicht stört).
