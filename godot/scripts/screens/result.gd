@@ -14,6 +14,7 @@ func _ready() -> void:
 	if bg_path != "" and ResourceLoader.exists(bg_path):
 		var pic_bg := UI.backdrop(bg_path)
 		pic_bg.modulate = Color(1, 1, 1, 0.45)
+		pic_bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED   # ganzes Bild sichtbar, Ränder bleiben dunkel
 		add_child(pic_bg)
 		var shade := ColorRect.new()
 		shade.color = Color(0.05, 0.06, 0.09, 0.6)
