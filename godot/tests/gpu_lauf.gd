@@ -1,7 +1,7 @@
 extends SceneTree
 ## Echter Spielablauf mit echten Bildern (kein Vorspulen): Kiosk-Einbruch, Ausführung läuft in Echtzeit.
 ## Protokolliert je Sekunde Bildrate und Bildzeit. Für die GPU-Messung auf dem PC parallel nvidia-smi laufen lassen.
-## Aufruf: godot --path . --script res://tests/gpu_lauf.gd -- <Sekunden, Standard 60> [ohne_vsync]
+## Aufruf: godot --path . --script res://tests/gpu_lauf.gd -- <Sekunden, Standard 60> [ohne_vsync] [ohne_ton]
 var _f := 0
 var _step := 0
 var _main: Node
@@ -18,7 +18,7 @@ func _initialize() -> void:
 	if args.size() > 0:
 		_laufzeit = float(args[0])
 	# Zweites Argument "ohne_vsync": Bildwiederholung abschalten, um die echte Obergrenze zu sehen
-	if args.size() > 1 and args[1] == "ohne_vsync":
+	if args.has("ohne_vsync"):
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 		print("GPU-LAUF Vsync aus")
 
@@ -28,6 +28,11 @@ func _process(d: float) -> bool:
 		var G = root.get_node("/root/Game")
 		G.reset()
 		G.intel["kiosk"] = 2
+		# Zusatz "ohne_ton": Musik aus, um zu prüfen, ob der Ton die Ruckler auslöst
+		if OS.get_cmdline_user_args().has("ohne_ton"):
+			G.settings.music = 0
+			G.apply_settings()
+			print("GPU-LAUF Ton aus")
 		_main = load("res://scenes/main.tscn").instantiate()
 		root.add_child(_main)
 		_main.go("organisation")
