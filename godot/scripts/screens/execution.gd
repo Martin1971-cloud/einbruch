@@ -491,7 +491,8 @@ func _build_fine(spec: Dictionary) -> void:
 					dsz.z = 1.0
 				# Türblatt ohne Umriss und etwas dünner als die Öffnung: sonst flimmert es gestrichelt (Z-Fighting mit der Wand)
 				var leaf_t := minf(dsz.x, dsz.z) if minf(dsz.x, dsz.z) < 0.5 else 0.12
-				var leaf_size := Vector3(dsz.x * 0.98, 2.1, dsz.z * 0.98)
+				# 90 % der Öffnung: zu jeder Seite bleibt ein kleiner Spalt, damit die Kanten nicht fast in der Ebene der Wand liegen (Flimmern)
+				var leaf_size := Vector3(dsz.x * 0.9, 2.1, dsz.z * 0.9)
 				if dsz.x > dsz.z:
 					leaf_size.z = leaf_t
 				else:
