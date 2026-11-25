@@ -73,19 +73,33 @@ func _verteilt(plan: Array, ids: Array) -> Dictionary:
 			if not cur.is_empty():
 				blocks.append(cur)
 			cur = []
-			if not pending_move.is_empty():
-				cur.append(pending_move)
-				pending_move = {}
+		# Gehbewegung und Aktion (Werkzeug, Beute, Treppe) bleiben im selben Block
+		if cur.is_empty() and not pending_move.is_empty():
+			cur.append(pending_move)
+			pending_move = {}
 		cur.append(a)
 	if not cur.is_empty():
 		blocks.append(cur)
 	var out := {}
 	for id in ids:
 		out[id] = []
-	# erster Block (Eingang) gehört Teodor, die übrigen reihum
+	# erster Block (Eingang) gehört Teodor, die übrigen reihum an alle, die das Werkzeug können (Fähigkeit mindestens erreicht)
+	var zaehler := 0
+	var letzter := "teo"
+	var oben := false   # Zwischen Treppe hinauf und Treppe hinunter bleibt eine Person zusammen
 	for i in range(blocks.size()):
-		var who: String = "teo" if i == 0 else ids[(i - 1) % ids.size()]
+		var who: String = "teo"
+		if i > 0:
+			if oben or not _hat_werkzeug(blocks[i]):
+				who = letzter
+			else:
+				var kandidaten := _kann(blocks[i], ids)
+				who = kandidaten[zaehler % kandidaten.size()]
+				zaehler += 1
 		out[who].append_array(blocks[i])
+		letzter = who
+		if _hat_treppe(blocks[i]):
+			oben = not oben
 	for id in ids:
 		if id != "teo":
 			# Warten vor der Tür, bis Teodor den Eingang geöffnet hat (sonst scheitern die Wege sofort)
@@ -93,6 +107,37 @@ func _verteilt(plan: Array, ids: Array) -> Dictionary:
 			out[id].append({"t": "MOVE", "to": "Fluchtwagen"})
 	out["teo"].append_array(ende)
 	return out
+
+
+func _hat_treppe(block: Array) -> bool:
+	for a in block:
+		if a.t == "TREPPE":
+			return true
+	return false
+
+
+func _hat_werkzeug(block: Array) -> bool:
+	for a in block:
+		if a.t == "TOOL":
+			return true
+	return false
+
+
+## Wer kann einen Block ausführen? Alle Teammitglieder, deren Fähigkeit für das Werkzeug mindestens den Mindestwert hat.
+func _kann(block: Array, ids: Array) -> Array:
+	var werkzeug := ""
+	for a in block:
+		if a.t == "TOOL":
+			werkzeug = str(a.tool)
+	if werkzeug == "":
+		return ids
+	var t: Dictionary = GameData.TOOLS[werkzeug]
+	var ok: Array = []
+	for id in ids:
+		var c := _crew(id)
+		if float(c.skills.get(t.type, 0)) >= float(t.get("min", 0)):
+			ok.append(id)
+	return ok if not ok.is_empty() else ["teo"]
 
 
 func _plans() -> Dictionary:

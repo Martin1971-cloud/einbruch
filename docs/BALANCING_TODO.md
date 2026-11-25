@@ -224,3 +224,10 @@ Das Museum (Gebäude 4) bleibt bis zur Fertigstellung der ersten drei unberührt
    - Arbeit verteilt (Eingang bei Teodor, Werkzeug-Blöcke reihum, andere warten vor der Tür): Teams sind schneller (Kiosk 61 s, Kuriositätenladen 63 s, Juwelier 64 bis 68 s). Die Auszahlung bei größeren Teams fällt aber deutlich (Kiosk Team 3: 2.400 € statt 12.000 €). Vermutlich Konflikte durch die Rotation, nicht die Spielregeln. Offen: Protokoll der Teams 3 prüfen.
    - Ergebnis nur mit Teodor: Kiosk +4.300 € allein, mit 2 Personen -1.700 €. Kuriositätenladen und Juwelier bleiben mit allen Teamgrößen positiv.
 3. Planer: Teambox zeigt Teamgröße und Kosten sofort, die Zeit nach der ersten Vorschau.
+
+## Balance: verteilte Arbeit geprüft (bereinigt)
+Zuordnung im Test: Eingang bei Teodor, Werkzeug-Blöcke an Teammitglieder mit ausreichender Fähigkeit, Treppen-Strecke bleibt bei einer Person, andere warten vor der Tür.
+- Kiosk: Teams 2 und 3 je 12.000 €, Zeit 61 s (Einzelbetrieb 71 s). Mit Kosten: 2 Personen -1.700 €, 3 Personen -5.200 €.
+- Kuriositätenladen: Teams 2 und 3 je 37.200 €, Zeit 99 s (Einzelbetrieb 121 s). Ergebnis +23.500 bzw. +20.000 €.
+- Juwelier: Teams 2 und 3 je 108.000 €, Zeit 112 s (Einzelbetrieb 134 s). Ergebnis +94.300 bzw. +90.800 €.
+Fazit: Die Auszahlung ist unabhängig von der Teamgröße (gleiche Beute). Ein größeres Team spart Zeit, kostet aber Honorar. Beim Kiosk lohnt sich ein zweites Teammitglied wegen der kleinen Beute nicht.
