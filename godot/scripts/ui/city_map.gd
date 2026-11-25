@@ -85,9 +85,13 @@ func _px(v: Vector2) -> Vector2:
 
 func _texture() -> Texture2D:
 	if _tex == null:
-		var img := Image.load_from_file(MAP_PATH)
-		if img != null:
-			_tex = ImageTexture.create_from_image(img)
+		# Über den Import laden (funktioniert auch im Export); Datei-Laden nur als Rückfall
+		if ResourceLoader.exists(MAP_PATH):
+			_tex = load(MAP_PATH)
+		else:
+			var img := Image.load_from_file(MAP_PATH)
+			if img != null:
+				_tex = ImageTexture.create_from_image(img)
 	return _tex
 
 
