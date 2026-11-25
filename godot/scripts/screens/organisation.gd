@@ -50,7 +50,7 @@ func _ready() -> void:
 	add_child(UI.margin(root, 14))
 
 	root.add_child(_l(Texte.t("org.titel"), 24, Color(0.95, 0.8, 0.4)))
-	root.add_child(_l("Ziel: %s · Sicherungsstufe %d · Geld: %s" % [GameData.TARGETS[Game.target_id].name, Game.stufe_of(Game.target_id), _fmt(Game.money)], 14, Color(0.8, 0.85, 0.92)))
+	root.add_child(_l(Texte.t("org.ziel_zeile") % [GameData.TARGETS[Game.target_id].name, Game.stufe_of(Game.target_id), _fmt(Game.money)], 14, Color(0.8, 0.85, 0.92)))
 	_summary = _l("", 14, Color(0.85, 0.9, 0.95))
 	root.add_child(_summary)
 
@@ -289,7 +289,7 @@ func _build_shop() -> void:
 			gnames.append(GameData.GEAR[gid].name)
 	owned.add_child(_w(Texte.t("org.kleidung_liste") % (", ".join(gnames) if not gnames.is_empty() else Texte.t("journal.beute_keine")), 12))
 	var car := GameData.car_now(Game.car_id, 85.0)
-	var how := "gemietet, %s € je Einbruch" % _fmt(int(car.rent)) if Game.car_id == "limo" else "gekauft"
+	var how := Texte.t("org.gemietet") % _fmt(int(car.rent)) if Game.car_id == "limo" else Texte.t("org.gekauft")
 	owned.add_child(_w("Fluchtwagen: %s (%s)" % [car.name, how], 12))
 	_shop_box.add_child(_shop_fold(Texte.t("org.besitz"), owned))
 

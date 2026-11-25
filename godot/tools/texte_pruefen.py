@@ -20,8 +20,8 @@ UI_SCHLUESSEL = re.compile(r"^[a-z][a-z0-9_]*\.[a-z0-9_.]+$")
 STRING = re.compile(r'"((?:[^"\\]|\\.)*)"')
 ENTRY = re.compile(r'^\t\t("(?:[^"\\]|\\.)*"):\s*("(?:[^"\\]|\\.)*"),?\s*$', re.M)
 # Ortsnamen, die die Simulation und die Planung als Schlüssel nutzen (keine Anzeigetexte)
-ORTSSCHLUESSEL = {"Außen vor dem Eingang", "Eingangstür", "Gemälde „Hafen bei Nacht“"}
-GERMAN_HINT = re.compile(r"[äöüÄÖÜß]|\b(und|der|die|das|ist|nicht|mit|für|von|oder|ein|eine|wird|sind|bei)\b")
+ORTSSCHLUESSEL = {"Außen vor dem Eingang", "Eingangstür", "Gemälde „Hafen bei Nacht“", "leer", "defekt"}  # letztere: Schlüssel in Datenwörterbüchern
+GERMAN_HINT = re.compile(r"[äöüÄÖÜß]|\b(und|der|die|das|ist|nicht|mit|für|von|oder|ein|eine|wird|sind|bei|an|aus|leer|Platz|Geld|Tag|gesperrt|ab|Laden|Hinweise|Vollbild|Alle|wieder|zeigen|Telemetrie|Darstellung|Sichtkegel|Musik|Textgröße|Zurück|Löschen|gekauft|gewählt|Fahrer|Fahren|Beute|Tür|Stand|Spiel)\b")
 
 
 def lade_tabelle():

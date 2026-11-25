@@ -131,7 +131,7 @@ func _header() -> PanelContainer:
 	vor_btn.tooltip_text = Texte.t("plan.vorschau_tip")
 	row.add_child(vor_btn)
 	row.add_child(UI.primary(Texte.t("plan.ausfuehrung_btn"), _on_execute, 150))
-	row.add_child(_l("Tag %d  ·  %s" % [Game.day, Game.clock_text()], 15, Color(0.85, 0.88, 0.94)))
+	row.add_child(_l(Texte.t("plan.tag_zeit") % [Game.day, Game.clock_text()], 15, Color(0.85, 0.88, 0.94)))
 	var wrap := PanelContainer.new()
 	wrap.add_theme_stylebox_override("panel", UI.card_style(Color(0.05, 0.07, 0.12, 0.7)))
 	wrap.add_child(row)

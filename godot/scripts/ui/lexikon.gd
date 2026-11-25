@@ -20,7 +20,7 @@ func _reset_hints() -> void:
 
 func _refresh_hint_button() -> void:
 	if _hint_btn != null:
-		_hint_btn.text = "Hinweise: %s" % ("an" if Game.hints_enabled else "aus")
+		_hint_btn.text = Texte.t("opt.hinweise_zeile") % (Texte.t("opt.an") if Game.hints_enabled else Texte.t("opt.aus"))
 
 
 func _init() -> void:
@@ -56,7 +56,7 @@ func _ready() -> void:
 	hint_row.add_theme_constant_override("separation", 10)
 	_hint_btn = UI.button("", _toggle_hints, 260)
 	hint_row.add_child(_hint_btn)
-	hint_row.add_child(UI.button("Alle Hinweise wieder zeigen", _reset_hints, 260))
+	hint_row.add_child(UI.button(Texte.t("lexikon.alle_hinweise"), _reset_hints, 260))
 	box.add_child(hint_row)
 	_refresh_hint_button()
 	_search = LineEdit.new()

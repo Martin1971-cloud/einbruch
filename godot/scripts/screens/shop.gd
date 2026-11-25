@@ -54,7 +54,7 @@ func _ready() -> void:
 func _build() -> void:
 	for c in _body.get_children():
 		c.queue_free()
-	_money.text = "Geld: %s €" % _fmt(Game.money)
+	_money.text = Texte.t("shop.geld") % _fmt(Game.money)
 	if kind == "laden":
 		_build_laden()
 	else:
@@ -85,7 +85,7 @@ func _build_laden() -> void:
 		var t: Dictionary = GameData.TOOLS[tid]
 		var owned: bool = Game.tools_owned.has(tid)
 		var locked: bool = (not owned) and int(t.get("stufe", 0)) > Game.stage()
-		var lock_txt := "  ·  gesperrt, %s" % GameData.stufe_hint(int(t.get("stufe", 0))) if locked else ""
+		var lock_txt := Texte.t("shop.gesperrt_zeile") % GameData.stufe_hint(int(t.get("stufe", 0))) if locked else ""
 		var b := UI.button(Texte.t("shop.tool_btn") % [Texte.t("shop.haken_an") if owned else Texte.t("shop.haken_aus"), Texte.d(t.name), _fmt(int(t.price)), _use_text(t), lock_txt], func() -> void: buy_tool(tid), 0)
 		b.add_theme_font_size_override("font_size", 13)
 		b.disabled = locked or ((not owned) and Game.money < int(t.price))
@@ -117,7 +117,7 @@ func _build_autohaus() -> void:
 		var status := Texte.t("shop.gewaehlt_status") if chosen else ""
 		var car_locked: bool = (not owned) and int(c.get("stufe", 0)) > Game.stage()
 		if car_locked:
-			status = "  ·  gesperrt, %s" % GameData.stufe_hint(int(c.get("stufe", 0)))
+			status = Texte.t("shop.gesperrt_zeile") % GameData.stufe_hint(int(c.get("stufe", 0)))
 		_body.add_child(UI.label("%s  ·  %s%s" % [Texte.d(c.name), price_txt, status], 14, Color(0.92, 0.9, 0.85)))
 		_body.add_child(UI.label(str(c.info), 12, Color(0.75, 0.8, 0.88), true))
 		if owned:

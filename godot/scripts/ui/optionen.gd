@@ -127,11 +127,11 @@ func _toggle_full() -> void:
 func _refresh() -> void:
 	_music_lbl.text = "%d %%" % Game.settings.music
 	_text_lbl.text = "%d" % Game.settings.text_size
-	_hint_btn.text = "Hinweise: %s" % ("an" if Game.hints_enabled else "aus")
-	_full_btn.text = "Vollbild: %s" % ("an" if Game.settings.fullscreen else "aus")
+	_hint_btn.text = Texte.t("opt.hinweise_zeile") % (Texte.t("opt.an") if Game.hints_enabled else Texte.t("opt.aus"))
+	_full_btn.text = Texte.t("opt.vollbild_zeile") % (Texte.t("opt.an") if Game.settings.fullscreen else Texte.t("opt.aus"))
 	if _tele_btn != null:
-		_tele_btn.text = "Telemetrie (nur lokal): %s" % ("an" if Telemetrie.enabled() else "aus")
-	_einfach_btn.text = "Einfache Darstellung (ohne Sichtkegel): %s" % ("an" if bool(Game.settings.get("einfach", false)) else "aus")
+		_tele_btn.text = Texte.t("opt.telemetrie_zeile") % (Texte.t("opt.an") if Telemetrie.enabled() else Texte.t("opt.aus"))
+	_einfach_btn.text = Texte.t("opt.einfach_zeile") % (Texte.t("opt.an") if bool(Game.settings.get("einfach", false)) else Texte.t("opt.aus"))
 
 
 func _unhandled_input(event: InputEvent) -> void:

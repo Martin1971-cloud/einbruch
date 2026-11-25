@@ -46,17 +46,17 @@ func _row(n: int) -> Control:
 	txt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	h.add_child(txt)
 	if info.get("leer", true):
-		txt.add_child(UI.label("Platz %d: leer" % n, 16, Color(0.7, 0.72, 0.78)))
+		txt.add_child(UI.label(Texte.t("slots.leer") % n, 16, Color(0.7, 0.72, 0.78)))
 	elif info.get("defekt", false):
 		txt.add_child(UI.label(Texte.t("slots.stand_unlesbar") % n, 16, Color(1, 0.6, 0.5)))
 	else:
 		var pl: String = " · " + {"fahndung": "Fahndung zu hoch", "pleite": "Pleite"}.get(str(info.pleite), "") if str(info.pleite) != "" else ""
-		txt.add_child(UI.label("Platz %d · Tag %d · Geld %s €%s" % [n, int(info.tag), _fmt(int(info.geld)), pl], 16, Color(0.92, 0.9, 0.85)))
+		txt.add_child(UI.label(Texte.t("slots.info") % [n, int(info.tag), _fmt(int(info.geld)), pl], 16, Color(0.92, 0.9, 0.85)))
 		txt.add_child(UI.label(Texte.t("slots.einbrueche") % int(info.einbrueche), 13, Color(0.75, 0.8, 0.88)))
 	if str(args.get("mode", "alle")) == "neu":
-		h.add_child(UI.button("Neues Spiel hier", func(): _new(n), 200))
+		h.add_child(UI.button(Texte.t("slots.neu_hier"), func(): _new(n), 200))
 	if not info.get("leer", true) and not info.get("defekt", false):
-		h.add_child(UI.button("Laden", func(): _load(n), 130))
+		h.add_child(UI.button(Texte.t("slots.laden"), func(): _load(n), 130))
 		h.add_child(UI.button(Texte.t("slots.loeschen"), func(): _ask_delete(n), 120))
 	return card
 
