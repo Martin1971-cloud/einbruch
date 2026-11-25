@@ -1129,15 +1129,15 @@ func _build_ui() -> void:
 	top.add_child(sp)
 	# Etagen-Schalter (nur bei Zielen mit Etagen)
 	if not cfg.target.get("floors", []).is_empty():
-		top.add_child(UI.button("Folgen", _on_floor_pick.bind("folgen"), 80))
+		top.add_child(UI.button(Texte.t("ausf.folgen"), _on_floor_pick.bind("folgen"), 80))
 	for fl in cfg.target.get("floors", []):
 		top.add_child(UI.button(str(fl.name), _on_floor_pick.bind(str(fl.id)), 70))
 	if not cfg.target.get("floors", []).is_empty():
-		top.add_child(UI.button("Alle", _on_floor_pick.bind("alle"), 70))
-	var abort_btn := UI.button("Funk: alle zurück", _on_abort, 250)
-	abort_btn.tooltip_text = "Alle Einbrecherinnen gehen sofort zurück zum Wagen."
+		top.add_child(UI.button(Texte.t("ausf.alle"), _on_floor_pick.bind("alle"), 70))
+	var abort_btn := UI.button(Texte.t("ausf.funk"), _on_abort, 250)
+	abort_btn.tooltip_text = Texte.t("ausf.funk_tip")
 	top.add_child(abort_btn)
-	_pause_btn = UI.button("Pause", _on_pause, 110)
+	_pause_btn = UI.button(Texte.t("ausf.pause"), _on_pause, 110)
 	top.add_child(_pause_btn)
 	top.add_child(UI.dropdown(["1x", "4x", "16x"], 0, func(i: int): speed = [1.0, 4.0, 16.0][i]))
 
@@ -1155,7 +1155,7 @@ func _build_ui() -> void:
 	_log.scroll_following = true
 	_log.add_theme_color_override("default_color", Color(0.9, 0.9, 0.85))
 	bottom.add_child(_log)
-	_result_btn = UI.button("Auswertung", _on_result, 200)
+	_result_btn = UI.button(Texte.t("ausf.auswertung"), _on_result, 200)
 	_result_btn.visible = false
 	bottom.add_child(_result_btn)
 
@@ -1165,13 +1165,13 @@ func _refresh_ui() -> void:
 	var parts: Array = []
 	match sim.status:
 		"RUNNING":
-			parts.append("Ausführung läuft")
+			parts.append(Texte.t("ausf.laeuft"))
 		_:
 			parts.append(sim.status)
 	if sim.countdown >= 0.0:
-		parts.append("Polizei in %.0f s" % sim.countdown)
+		parts.append(Texte.t("ausf.polizei_in") % sim.countdown)
 	if sim.car.called and not sim.car.present:
-		parts.append("Wagen unterwegs")
+		parts.append(Texte.t("ausf.wagen_unterwegs"))
 	_status.text = " · ".join(parts)
 	var lines: Array = sim.log_lines.slice(max(0, sim.log_lines.size() - 40))
 	_log.text = "\n".join(lines)
@@ -1184,7 +1184,7 @@ func _on_abort() -> void:
 
 func _on_pause() -> void:
 	paused = not paused
-	_pause_btn.text = "Weiter" if paused else "Pause"
+	_pause_btn.text = Texte.t("ausf.weiter") if paused else Texte.t("ausf.pause")
 
 
 func _on_speed(s: float) -> void:
