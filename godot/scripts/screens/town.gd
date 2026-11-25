@@ -1,0 +1,345 @@
+extends Control
+## Stadtphase im Stil des Referenz-Layouts: Titelleiste, Statusleiste,
+## Stadtplan, Ortsbild, Ortskarte, Dialogkarte und Aktionsleiste unten.
+
+var main: Node
+var args: Dictionary = {}
+
+var _selected := "kiosk"
+var _stats: Label
+var _clock: Label
+var _map: CityMap
+var _heat_bar: ProgressBar
+var _loc_box: VBoxContainer
+var _image_box: PanelContainer
+var _dialog: Label
+var _msg: Label
+var _event_log: Array = []
+
+
+func _ready() -> void:
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(UI.backdrop())
+	var root := VBoxContainer.new()
+	root.add_theme_constant_override("separation", 8)
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(UI.margin(root, 12))
+
+	root.add_child(_title_bar())
+	root.add_child(_status_bar())
+
+	var body := HBoxContainer.new()
+	body.add_theme_constant_override("separation", 10)
+	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	root.add_child(body)
+	# Breiten: Stadtplan größer, Ortsbild schmaler (Verhältnis 1,7 : 0,8 : 1)
+	var map_card := _map_card()
+	map_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	map_card.size_flags_stretch_ratio = 1.7
+	body.add_child(map_card)
+	var image_card := _image_card()
+	image_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	image_card.size_flags_stretch_ratio = 0.8
+	body.add_child(image_card)
+	var info_card := _info_card()
+	info_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info_card.size_flags_stretch_ratio = 1.0
+	body.add_child(info_card)
+
+	_msg = UI.label("", 14, Color(0.85, 0.95, 0.75))
+	_msg.autowrap_mode = TextServer.AUTOWRAP_OFF
+	root.add_child(_msg)
+	root.add_child(_action_bar())
+	_refresh()
+
+
+# ---------------------------------------------------------------- Oberfläche
+
+func _title_bar() -> PanelContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	var brand := VBoxContainer.new()
+	var t := UI.label("DER EINBRUCH", 24, Color(0.97, 0.82, 0.42))
+	t.autowrap_mode = TextServer.AUTOWRAP_OFF
+	brand.add_child(t)
+	var s := UI.label("EINE HEIST-SIMULATION", 10, Color(0.75, 0.75, 0.8))
+	s.autowrap_mode = TextServer.AUTOWRAP_OFF
+	brand.add_child(s)
+	row.add_child(brand)
+	var sp := Control.new()
+	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(sp)
+	var _b1 := UI.button("Stadt", func(): pass, 100)
+	_b1.disabled = true
+	row.add_child(_b1)
+	row.add_child(UI.button("Organisation", func(): main.go("organisation"), 130))
+	row.add_child(UI.button("Planung", func(): main.go("planner"), 100))
+	var _b2 := UI.button("Ausführung", func(): pass, 110)
+	_b2.disabled = true
+	row.add_child(_b2)
+	row.add_child(UI.button("Journal (J)", func(): main.open_journal(), 120))
+	row.add_child(UI.button("Optionen (O)", func(): main.open_optionen(), 130))
+	row.add_child(UI.button("Lexikon (L)", func(): main.open_lexikon(), 120))
+	return _panel(row)
+
+
+func _status_bar() -> PanelContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 18)
+	_clock = UI.label("", 15, Color(0.95, 0.85, 0.5))
+	_clock.autowrap_mode = TextServer.AUTOWRAP_OFF
+	row.add_child(_clock)
+	_stats = UI.label("", 15, Color(0.9, 0.92, 0.96))
+	_stats.autowrap_mode = TextServer.AUTOWRAP_OFF
+	row.add_child(_stats)
+	var sp := Control.new()
+	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(sp)
+	row.add_child(UI.label("Fahndung", 13, Color(0.75, 0.75, 0.8)))
+	_heat_bar = ProgressBar.new()
+	_heat_bar.custom_minimum_size = Vector2(200, 16)
+	_heat_bar.max_value = 100.0
+	_heat_bar.show_percentage = false
+	row.add_child(_heat_bar)
+	return _panel(row)
+
+
+func _map_card() -> PanelContainer:
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 6)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	col.add_child(UI.label("STADTPLAN VARENHAFEN", 12, Color(0.89, 0.71, 0.35)))
+	_map = CityMap.new()
+	_map.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_map.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_map.picked.connect(_select)
+	col.add_child(_map)
+	var pins: Array = [
+		{"id": "kiosk", "name": GameData.TARGETS.kiosk.name, "pos": Vector2(0.3, 0.62), "active": true, "info": GameData.TARGETS.kiosk.get("info", "")},
+		{"id": "museum", "name": GameData.TARGETS.museum.name, "pos": Vector2(0.153, 0.379), "active": Game.unlocked.museum, "info": GameData.TARGETS.museum.get("info", "")},
+		{"id": "curiosity", "name": GameData.TARGETS.curiosity.name, "pos": Vector2(0.45, 0.66), "active": Game.unlocked.get("curiosity", false), "info": GameData.TARGETS.curiosity.get("info", "")},
+		{"id": "juwelier", "name": GameData.TARGETS.juwelier.name, "pos": Vector2(0.58, 0.46), "active": Game.unlocked.get("juwelier", false), "info": GameData.TARGETS.juwelier.get("info", "")},
+	]
+	# Einkaufsorte: anklickbar wie ein Ziel, öffnen den Laden oder das Autohaus
+	pins.append({"id": "laden", "name": "Werkzeugladen „Stahlmann“", "pos": Vector2(0.27, 0.70), "active": true, "info": "Werkzeug und Kleidung kaufen."})
+	pins.append({"id": "autohaus", "name": "Autohaus „Kaiser“", "pos": Vector2(0.60, 0.16), "active": true, "info": "Fahrzeuge kaufen oder mieten."})
+	for o in GameData.OTHER_PLACES:
+		pins.append({"id": o.id, "name": o.name, "pos": Vector2(o.pos[0], o.pos[1]), "active": false, "info": o.get("info", "")})
+	_map.set_pins(pins, _selected)
+	var c := _panel(col)
+	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	c.custom_minimum_size = Vector2(340, 0)
+	return c
+
+
+func _image_card() -> PanelContainer:
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 6)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_image_box = PanelContainer.new()
+	_image_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_image_box.add_theme_stylebox_override("panel", UI.card_style(Color(0.08, 0.11, 0.17)))
+	col.add_child(_image_box)
+	var dlg := PanelContainer.new()
+	dlg.add_theme_stylebox_override("panel", UI.card_style(Color(0.1, 0.13, 0.2)))
+	var dv := VBoxContainer.new()
+	dv.add_theme_constant_override("separation", 4)
+	dlg.add_child(dv)
+	dv.add_child(UI.label(GameData.TARGETS[_selected].speaker.to_upper(), 12, Color(0.97, 0.82, 0.42)))
+	# Porträt der Sprecherin (Dialog)
+	var sp_id := "mira" if GameData.TARGETS[_selected].speaker == "Mira Calder" else ""
+	var sp_path := GameData.portrait_path(sp_id)
+	if sp_path != "" and ResourceLoader.exists(sp_path):
+		var pt := TextureRect.new()
+		pt.texture = load(sp_path)
+		pt.custom_minimum_size = Vector2(120, 120)
+		pt.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		pt.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		dv.add_child(pt)
+	_dialog = UI.label("", 14, Color(0.92, 0.92, 0.95), true)
+	dv.add_child(_dialog)
+	col.add_child(dlg)
+	var c := _panel(col)
+	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return c
+
+
+func _info_card() -> PanelContainer:
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 8)
+	col.custom_minimum_size = Vector2(300, 0)
+	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	col.add_child(UI.label("ORT", 12, Color(0.89, 0.71, 0.35)))
+	_loc_box = VBoxContainer.new()
+	_loc_box.add_theme_constant_override("separation", 6)
+	col.add_child(_loc_box)
+	var c := _panel(col)
+	c.custom_minimum_size = Vector2(300, 0)
+	return c
+
+
+func _with_icon(b: Button, icon_name: String) -> Button:
+	var tex := UI.icon(icon_name)
+	if tex != null:
+		b.icon = tex
+		b.expand_icon = false
+		b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+	return b
+
+
+func _action_bar() -> PanelContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	row.add_child(_with_icon(UI.button("Umsehen (1 Std.)", _on_look, 0), "look"))
+	row.add_child(_with_icon(UI.button("Sprechen (Informant, 500 €)", _on_informant, 0), "talk"))
+	row.add_child(_with_icon(UI.button("Nachdenken", _on_think, 0), "think"))
+	row.add_child(_with_icon(UI.button("Gehen … (Planung)", func(): main.go("organisation"), 0), "walk"))
+	row.add_child(UI.button("Warten … (bis morgen früh)", _on_sleep, 0))
+	row.add_child(UI.button("Ereignisse", _on_events, 0))
+	var hints := ["Ein Blick auf das Gebäude: eine Stufe mehr Ermittlung, eine Stunde vergeht.", "Ein Informant verrät Wachzeiten und Pläne. Kostet 500 €.", "Kurz nachdenken: zeigt, was du bisher weißt.", "Zur Organisation und Planung des Einbruchs.", "Bis morgen früh warten. Der Tag endet.", "Die Nachrichten der Stadt und die letzten Ereignisse."]
+	var bi := 0
+	for b in row.get_children():
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.tooltip_text = hints[bi]
+		bi += 1
+	return _panel(row)
+
+
+func _panel(content: Control) -> PanelContainer:
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", UI.card_style())
+	p.add_child(content)
+	return p
+
+
+# ---------------------------------------------------------------- Inhalt
+
+func _refresh() -> void:
+	_clock.text = "Tag %d · %s" % [Game.day, Game.clock_text()]
+	_stats.text = "Varenhafen  ·  Geld: %s €" % _fmt(Game.money)
+	_heat_bar.value = Game.heat
+	var t: Dictionary = GameData.target_now(Game.stufe_of(_selected), _selected)
+	_dialog.text = "„%s“" % t.dialog
+	_map.set_pins(_map.pins, _selected)
+	for c in _loc_box.get_children():
+		c.queue_free()
+	_loc_box.add_child(UI.label(t.name, 19, Color(0.97, 0.85, 0.55)))
+	if t.has("info"):
+		_loc_box.add_child(UI.label(t.info, 13, Color(0.89, 0.71, 0.35), true))
+	_loc_box.add_child(UI.label(t.desc, 13, Color(0.92, 0.92, 0.95), true))
+	var lvl: int = int(Game.intel.get(_selected, 0))
+	var shown_facts: Array = []
+	for f in t.facts:
+		if GameData.STAGE_FACTS.get(lvl, []).has(f[0]):
+			shown_facts.append(f)
+	# Polizeizeit ist immer bekannt (Original: PoliceTime wird immer angezeigt)
+	shown_facts.insert(0, ["Polizeizeit", "etwa 1 Minute nach Alarm"])
+	for f in shown_facts:
+		var h := HBoxContainer.new()
+		var k := UI.label(f[0], 13, Color(0.7, 0.75, 0.82))
+		k.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		h.add_child(k)
+		h.add_child(UI.label(f[1], 13))
+		_loc_box.add_child(h)
+	var req := VBoxContainer.new()
+	for skill in t.bedarf:
+		var nm: String = {"TECH": "Technik", "FORCE": "Kampfsport", "ELECTRONICS": "Elektronik", "FAHREN": "Fahren"}.get(skill, skill)
+		var wert := int(t.bedarf[skill].wert)
+		var txt := ""
+		if lvl == 0:
+			txt = "%s: unbekannt – noch nicht ermittelt" % nm
+		elif lvl == 1:
+			txt = "%s ca. %d %%" % [nm, int(round(wert / 5.0)) * 5]
+		else:
+			txt = "%s ab %d %%: %s" % [nm, wert, t.bedarf[skill].grund]
+		req.add_child(UI.label(txt, 11, Color(0.8, 0.85, 0.9), true))
+	_loc_box.add_child(UI.fold("Was der Einbruch braucht", req, true))
+	_loc_box.add_child(UI.label("Ermittlung: %s" % ["keine – Wachrouten unbekannt", "Wachrouten bekannt", "vollständig"][lvl], 13, Color(0.6, 0.85, 1.0)))
+	_refresh_image()
+
+
+func _refresh_image() -> void:
+	for c in _image_box.get_children():
+		c.queue_free()
+	# Ortsbild: Foto, falls vorhanden. Sonst die gezeichnete Fassade aus dem Grundriss.
+	var photo_path := "res://assets/art/location_%s.png" % _selected
+	if not ResourceLoader.exists(photo_path):
+		photo_path = "res://assets/art/location_%s.jpg" % _selected
+	if ResourceLoader.exists(photo_path):
+		var pic := TextureRect.new()
+		pic.texture = load(photo_path)
+		pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		pic.custom_minimum_size = Vector2(0, 240)
+		pic.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		_image_box.add_child(pic)
+		return
+	var art := BuildingArt.new()
+	art.map = GameData.TARGETS[_selected].map
+	art.custom_minimum_size = Vector2(0, 240)
+	art.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_image_box.add_child(art)
+
+
+func _select(id: String) -> void:
+	# Laden und Autohaus: direkt öffnen, dort wird gekauft
+	if id == "laden" or id == "autohaus":
+		main.go("shop", {"kind": id})
+		return
+	if not GameData.TARGETS.has(id) or not Game.unlocked.get(id, false):
+		return
+	_selected = id
+	Game.target_id = id
+	_refresh()
+
+
+func _on_look() -> void:
+	Game.intel[_selected] = mini(int(Game.intel[_selected]) + 1, 2)
+	Game.advance_hours(1.0)
+	_log("Du beobachtest das Gebäude und den Wachwechsel.")
+
+
+func _on_informant() -> void:
+	var price: int = int(GameData.TARGETS[_selected].price_intel)
+	if Game.money < price:
+		_msg.text = "Zu wenig Geld für den Informanten."
+		return
+	Game.money -= price
+	Game.intel[_selected] = mini(int(Game.intel[_selected]) + 1, 2)
+	Game.advance_hours(0.5)
+	_log("Der Informant liefert Pläne und Wachzeiten.")
+
+
+func _on_think() -> void:
+	var lvl: int = int(Game.intel[_selected])
+	_msg.text = "Du denkst nach: %s." % ["Dir fehlt noch alles", "Die Wachrouten sind bekannt", "Du kennst Routen, Alarm und Sensoren"][lvl]
+
+
+func _on_sleep() -> void:
+	Game.sleep_until_morning()
+	_log("Ein neuer Tag beginnt.")
+
+
+func _on_events() -> void:
+	var text := "\n".join(_event_log) if not _event_log.is_empty() else "Noch nichts passiert."
+	_msg.text = "Ereignisse: " + text.replace("\n", "  ·  ")
+
+
+func _log(text: String) -> void:
+	_event_log.append(text)
+	_msg.text = text
+	_refresh()
+
+
+func _fmt(n: int) -> String:
+	var s := str(absi(n))
+	var out := ""
+	var i := s.length()
+	while i > 3:
+		out = "." + s.substr(i - 3, 3) + out
+		i -= 3
+	out = s.substr(0, i) + out
+	return ("-" if n < 0 else "") + out

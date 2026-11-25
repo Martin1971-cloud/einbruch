@@ -1,0 +1,5 @@
+# Auslieferungs-Zips gehören nicht ins Repository (nur der Quelltext)
+*.zip
+__pycache__/
+.godot/
+godot/.godot/

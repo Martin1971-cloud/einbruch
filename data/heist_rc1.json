@@ -1,0 +1,101 @@
+{
+  "meta": {
+    "version": "RC1",
+    "notes": "Ausgangsdaten aus der Spezifikation. Korrektur: guard_01.pos war ungültiges JSON (\"pos\":,) und wurde auf [4, 2] gesetzt (Annahme, bitte prüfen)."
+  },
+  "game_balancing_config": {
+    "tools": {
+      "tool_lockpick":     { "type": "TECH",        "max_level": 60, "base_time": 15.0, "base_noise": 5,  "destroys": false, "evidence": 2, "weight": 0.2 },
+      "tool_crowbar":      { "type": "FORCE",       "max_level": 75, "base_time": 4.0,  "base_noise": 65, "destroys": true,  "evidence": 20, "weight": 2.5 },
+      "tool_bypass_kit":   { "type": "ELECTRONICS", "max_level": 85, "base_time": 12.0, "base_noise": 2,  "destroys": false, "evidence": 5, "weight": 1.0 },
+      "tool_wirecutters":  { "type": "TECH",        "max_level": 90, "base_time": 3.0,  "base_noise": 10, "destroys": true,  "evidence": 8, "weight": 0.5 }
+    },
+    "passive_gear": {
+      "gear_gloves":     { "evidence_mult": 0.2, "noise_mult": 1.0, "vis_mult": 1.0 },
+      "gear_sneakers":   { "evidence_mult": 0.5, "noise_mult": 0.4, "vis_mult": 1.0 },
+      "gear_dark_suit":  { "evidence_mult": 1.0, "noise_mult": 1.0, "vis_mult": 0.7 }
+    },
+    "ai_rules": {
+      "suspicion_decay_per_sec": 2.0,
+      "destroyed_door_vis_mult": 2.5,
+      "wall_damping_db": 15.0,
+      "distance_damping_per_m": 1.5
+    }
+  },
+  "mission_state": {
+    "district_police_response_sec": 60.0,
+    "police_countdown_sec": null,
+    "total_evidence": 0,
+    "flags": {},
+    "security_network": {
+      "power_active": true,
+      "phone_line_intact": true,
+      "nodes": {
+        "node_phone_box":   { "type": "PHONE_LINE", "resistance": 10, "complexity": 10, "is_destroyed": false },
+        "node_alarm_panel": { "type": "ALARM_PANEL", "resistance": 50, "complexity": 45, "is_bypassed": false, "controls": ["sensor_mic_01"] },
+        "node_backdoor":    { "type": "DOOR", "resistance": 25, "complexity": 35, "is_locked": true, "is_open": false, "is_destroyed": false, "pos": [0, 0] },
+        "node_safe":        { "type": "SAFE", "resistance": 70, "complexity": 55, "is_locked": true, "loot_value": 50000, "pos": [10, 5] }
+      },
+      "sensors": {
+        "sensor_mic_01": { "type": "MICROPHONE", "threshold": 20, "active": true, "silent_alarm": true, "pos": [5, 2] }
+      }
+    },
+    "crew": [
+      {
+        "id": "char_matt",
+        "role": "INFILTRATOR",
+        "pos": [-2, 0],
+        "skills": { "TECH": 65, "FORCE": 40, "ELECTRONICS": 60 },
+        "gear": ["gear_gloves", "gear_sneakers"],
+        "timeline": [
+          { "action": "USE_TOOL", "tool": "tool_wirecutters", "target": "node_phone_box" },
+          { "action": "USE_TOOL", "tool": "tool_lockpick", "target": "node_backdoor" },
+          { "action": "CLOSE_DOOR", "target": "node_backdoor" },
+          { "action": "SET_FLAG", "flag": "door_unlocked" },
+          { "action": "WAIT_FOR_FLAG", "flag": "alarm_disabled" },
+          { "action": "USE_TOOL", "tool": "tool_lockpick", "target": "node_safe" },
+          { "action": "CALL_DRIVER" }
+        ]
+      },
+      {
+        "id": "char_tech",
+        "role": "HACKER",
+        "pos": [-2, 1],
+        "skills": { "TECH": 30, "FORCE": 20, "ELECTRONICS": 80 },
+        "gear": ["gear_gloves"],
+        "timeline": [
+          { "action": "WAIT_FOR_FLAG", "flag": "door_unlocked" },
+          { "action": "USE_TOOL", "tool": "tool_bypass_kit", "target": "node_alarm_panel" },
+          { "action": "SET_FLAG", "flag": "alarm_disabled" }
+        ]
+      }
+    ],
+    "driver": {
+      "status": "CIRCLING",
+      "pickup_eta_sec": 20.0,
+      "skill_driving": 85
+    },
+    "ai_entities": [
+      {
+        "id": "guard_01",
+        "type": "INDOOR_GUARD",
+        "pos": [4, 2],
+        "suspicion": 0.0,
+        "state": "PATROL",
+        "hearing_threshold": 15.0,
+        "reaction_delay_sec": 4.0,
+        "core_vision_m": 8.0
+      },
+      {
+        "id": "patrol_car_01",
+        "type": "STREET_PATROL",
+        "pos": [-15, 0],
+        "suspicion": 0.0,
+        "state": "PATROL",
+        "hearing_threshold": 40.0,
+        "reaction_delay_sec": 1.5,
+        "core_vision_m": 15.0
+      }
+    ]
+  }
+}
