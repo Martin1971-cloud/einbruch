@@ -51,7 +51,7 @@ func _ready() -> void:
 	add_child(bg)
 	# Büro-Bild über die ganze Fläche, nur schwach sichtbar: Menüs stehen davor
 	var pic := UI.backdrop("res://assets/art/bg_schreibtisch.webp")
-	pic.modulate = Color(1, 1, 1, 0.28)
+	pic.modulate = Color(1, 1, 1, 0.5)
 	add_child(pic)
 	target = GameData.target_now(Game.stufe_of(Game.target_id), Game.target_id)
 	for c in Game.team:
@@ -133,7 +133,7 @@ func _header() -> PanelContainer:
 	row.add_child(UI.primary(Texte.t("plan.ausfuehrung_btn"), _on_execute, 150))
 	row.add_child(_l("Tag %d  ·  %s" % [Game.day, Game.clock_text()], 15, Color(0.85, 0.88, 0.94)))
 	var wrap := PanelContainer.new()
-	wrap.add_theme_stylebox_override("panel", UI.card_style(Color(0.05, 0.07, 0.12, 0.85)))
+	wrap.add_theme_stylebox_override("panel", UI.card_style(Color(0.05, 0.07, 0.12, 0.7)))
 	wrap.add_child(row)
 	return wrap
 
