@@ -59,27 +59,27 @@ func _title_bar() -> PanelContainer:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 10)
 	var brand := VBoxContainer.new()
-	var t := UI.label("DER EINBRUCH", 24, Color(0.97, 0.82, 0.42))
+	var t := UI.label(Texte.t("app.titel"), 24, Color(0.97, 0.82, 0.42))
 	t.autowrap_mode = TextServer.AUTOWRAP_OFF
 	brand.add_child(t)
-	var s := UI.label("EINE HEIST-SIMULATION", 10, Color(0.75, 0.75, 0.8))
+	var s := UI.label(Texte.t("app.untertitel"), 10, Color(0.75, 0.75, 0.8))
 	s.autowrap_mode = TextServer.AUTOWRAP_OFF
 	brand.add_child(s)
 	row.add_child(brand)
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(sp)
-	var _b1 := UI.button("Stadt", func(): pass, 100)
+	var _b1 := UI.button(Texte.t("nav.stadt"), func(): pass, 100)
 	_b1.disabled = true
 	row.add_child(_b1)
-	row.add_child(UI.button("Organisation", func(): main.go("organisation"), 130))
-	row.add_child(UI.button("Planung", func(): main.go("planner"), 100))
-	var _b2 := UI.button("Ausführung", func(): pass, 110)
+	row.add_child(UI.button(Texte.t("nav.organisation"), func(): main.go("organisation"), 130))
+	row.add_child(UI.button(Texte.t("nav.planung"), func(): main.go("planner"), 100))
+	var _b2 := UI.button(Texte.t("nav.ausfuehrung"), func(): pass, 110)
 	_b2.disabled = true
 	row.add_child(_b2)
-	row.add_child(UI.button("Journal (J)", func(): main.open_journal(), 120))
-	row.add_child(UI.button("Optionen (O)", func(): main.open_optionen(), 130))
-	row.add_child(UI.button("Lexikon (L)", func(): main.open_lexikon(), 120))
+	row.add_child(UI.button(Texte.t("nav.journal"), func(): main.open_journal(), 120))
+	row.add_child(UI.button(Texte.t("nav.optionen"), func(): main.open_optionen(), 130))
+	row.add_child(UI.button(Texte.t("nav.lexikon"), func(): main.open_lexikon(), 120))
 	return _panel(row)
 
 
@@ -95,7 +95,7 @@ func _status_bar() -> PanelContainer:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(sp)
-	row.add_child(UI.label("Fahndung", 13, Color(0.75, 0.75, 0.8)))
+	row.add_child(UI.label(Texte.t("stadt.fahndung"), 13, Color(0.75, 0.75, 0.8)))
 	_heat_bar = ProgressBar.new()
 	_heat_bar.custom_minimum_size = Vector2(200, 16)
 	_heat_bar.max_value = 100.0
@@ -109,7 +109,7 @@ func _map_card() -> PanelContainer:
 	col.add_theme_constant_override("separation", 6)
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	col.add_child(UI.label("STADTPLAN VARENHAFEN", 12, Color(0.89, 0.71, 0.35)))
+	col.add_child(UI.label(Texte.t("stadt.stadtplan"), 12, Color(0.89, 0.71, 0.35)))
 	_map = CityMap.new()
 	_map.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_map.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -122,8 +122,8 @@ func _map_card() -> PanelContainer:
 		{"id": "juwelier", "name": GameData.TARGETS.juwelier.name, "pos": Vector2(0.58, 0.46), "active": Game.unlocked.get("juwelier", false), "info": GameData.TARGETS.juwelier.get("info", "")},
 	]
 	# Einkaufsorte: anklickbar wie ein Ziel, öffnen den Laden oder das Autohaus
-	pins.append({"id": "laden", "name": "Werkzeugladen „Stahlmann“", "pos": Vector2(0.27, 0.70), "active": true, "info": "Werkzeug und Kleidung kaufen."})
-	pins.append({"id": "autohaus", "name": "Autohaus „Kaiser“", "pos": Vector2(0.60, 0.16), "active": true, "info": "Fahrzeuge kaufen oder mieten."})
+	pins.append({"id": "laden", "name": Texte.t("ort.laden"), "pos": Vector2(0.27, 0.70), "active": true, "info": Texte.t("ort.laden_info")})
+	pins.append({"id": "autohaus", "name": Texte.t("ort.autohaus"), "pos": Vector2(0.60, 0.16), "active": true, "info": Texte.t("ort.autohaus_info")})
 	for o in GameData.OTHER_PLACES:
 		pins.append({"id": o.id, "name": o.name, "pos": Vector2(o.pos[0], o.pos[1]), "active": false, "info": o.get("info", "")})
 	_map.set_pins(pins, _selected)
@@ -171,7 +171,7 @@ func _info_card() -> PanelContainer:
 	col.add_theme_constant_override("separation", 8)
 	col.custom_minimum_size = Vector2(300, 0)
 	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	col.add_child(UI.label("ORT", 12, Color(0.89, 0.71, 0.35)))
+	col.add_child(UI.label(Texte.t("stadt.ort"), 12, Color(0.89, 0.71, 0.35)))
 	_loc_box = VBoxContainer.new()
 	_loc_box.add_theme_constant_override("separation", 6)
 	col.add_child(_loc_box)
@@ -193,12 +193,12 @@ func _with_icon(b: Button, icon_name: String) -> Button:
 func _action_bar() -> PanelContainer:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
-	row.add_child(_with_icon(UI.button("Umsehen (1 Std.)", _on_look, 0), "look"))
-	row.add_child(_with_icon(UI.button("Sprechen (Informant, 500 €)", _on_informant, 0), "talk"))
-	row.add_child(_with_icon(UI.button("Nachdenken", _on_think, 0), "think"))
-	row.add_child(_with_icon(UI.button("Gehen … (Planung)", func(): main.go("organisation"), 0), "walk"))
-	row.add_child(UI.button("Warten … (bis morgen früh)", _on_sleep, 0))
-	row.add_child(UI.button("Ereignisse", _on_events, 0))
+	row.add_child(_with_icon(UI.button(Texte.t("stadt.umsehen"), _on_look, 0), "look"))
+	row.add_child(_with_icon(UI.button(Texte.t("stadt.sprechen"), _on_informant, 0), "talk"))
+	row.add_child(_with_icon(UI.button(Texte.t("stadt.nachdenken"), _on_think, 0), "think"))
+	row.add_child(_with_icon(UI.button(Texte.t("stadt.gehen"), func(): main.go("organisation"), 0), "walk"))
+	row.add_child(UI.button(Texte.t("stadt.warten"), _on_sleep, 0))
+	row.add_child(UI.button(Texte.t("stadt.ereignisse"), _on_events, 0))
 	var hints := ["Ein Blick auf das Gebäude: eine Stufe mehr Ermittlung, eine Stunde vergeht.", "Ein Informant verrät Wachzeiten und Pläne. Kostet 500 €.", "Kurz nachdenken: zeigt, was du bisher weißt.", "Zur Organisation und Planung des Einbruchs.", "Bis morgen früh warten. Der Tag endet.", "Die Nachrichten der Stadt und die letzten Ereignisse."]
 	var bi := 0
 	for b in row.get_children():
@@ -236,7 +236,7 @@ func _refresh() -> void:
 		if GameData.STAGE_FACTS.get(lvl, []).has(f[0]):
 			shown_facts.append(f)
 	# Polizeizeit ist immer bekannt (Original: PoliceTime wird immer angezeigt)
-	shown_facts.insert(0, ["Polizeizeit", "etwa 1 Minute nach Alarm"])
+	shown_facts.insert(0, [Texte.t("stadt.polizeizeit"), Texte.t("stadt.polizeizeit_wert")])
 	for f in shown_facts:
 		var h := HBoxContainer.new()
 		var k := UI.label(f[0], 13, Color(0.7, 0.75, 0.82))
@@ -256,7 +256,7 @@ func _refresh() -> void:
 		else:
 			txt = "%s ab %d %%: %s" % [nm, wert, t.bedarf[skill].grund]
 		req.add_child(UI.label(txt, 11, Color(0.8, 0.85, 0.9), true))
-	_loc_box.add_child(UI.fold("Was der Einbruch braucht", req, true))
+	_loc_box.add_child(UI.fold(Texte.t("stadt.braucht"), req, true))
 	_loc_box.add_child(UI.label("Ermittlung: %s" % ["keine – Wachrouten unbekannt", "Wachrouten bekannt", "vollständig"][lvl], 13, Color(0.6, 0.85, 1.0)))
 	_refresh_image()
 

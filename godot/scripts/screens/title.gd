@@ -38,11 +38,11 @@ func _ready() -> void:
 	box.add_theme_constant_override("separation", 14)
 	add_child(box)
 
-	var title := UI.label("DER EINBRUCH", 74, Color(0.97, 0.82, 0.42))
+	var title := UI.label(Texte.t("app.titel"), 74, Color(0.97, 0.82, 0.42))
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.autowrap_mode = TextServer.AUTOWRAP_OFF
 	box.add_child(title)
-	var sub := UI.label("EINE HEIST-SIMULATION", 22, Color(0.86, 0.82, 0.72))
+	var sub := UI.label(Texte.t("app.untertitel"), 22, Color(0.86, 0.82, 0.72))
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	sub.autowrap_mode = TextServer.AUTOWRAP_OFF
 	box.add_child(sub)
@@ -60,14 +60,14 @@ func _ready() -> void:
 	btns.add_theme_constant_override("separation", 10)
 	btns.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	box.add_child(btns)
-	btns.add_child(UI.primary("Neues Spiel", _on_new, 300))
-	var _b := UI.button("Fortsetzen", _on_continue, 300)
+	btns.add_child(UI.primary(Texte.t("menue.neu"), _on_new, 300))
+	var _b := UI.button(Texte.t("menue.fortsetzen"), _on_continue, 300)
 	_b.disabled = not Game.has_save(Game.last_slot())
 	btns.add_child(_b)
-	btns.add_child(UI.button("Spielstände", func(): main.go("slots", {"mode": "alle"}), 300))
-	btns.add_child(UI.button("Beenden", func(): get_tree().quit(), 300))
+	btns.add_child(UI.button(Texte.t("menue.staende"), func(): main.go("slots", {"mode": "alle"}), 300))
+	btns.add_child(UI.button(Texte.t("menue.beenden"), func(): get_tree().quit(), 300))
 
-	var credit := UI.label("Privates Projekt · Alle Namen, Orte und Figuren sind frei erfunden.", 13, Color(0.7, 0.72, 0.78))
+	var credit := UI.label(Texte.t("app.hinweis_fiktiv"), 13, Color(0.7, 0.72, 0.78))
 	credit.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	credit.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	credit.offset_top = -34

@@ -159,3 +159,7 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Schalter „Einfache Darstellung (ohne Sichtkegel)“ in den Optionen: blendet Sichtkegel, Sichtlinien und Ringe aus. Gespeichert in den Optionen. Geprüft mit `test_einfach`.
 - Profiling mit echter Grafikkarte: nicht möglich in dieser Umgebung (nur Software-Rendering, kein angebundener Rechner). Anleitung: `tests/profil_3d.gd` auf dem eigenen Rechner ausführen (`godot --path . --script res://tests/profil_3d.gd -- <Ordner>`) und die Zeilen „PROFIL“ senden.
 - Lokalisierung der übrigen Texte: nicht abgeschlossen. Im Code stehen noch 539 deutsche Texte in 17 Dateien. Umstellung je Bildschirm, mit einer Prüfung, die deutsche Texte außerhalb der Texttabelle meldet.
+
+## Lokalisierung (laufend)
+- Umgestellt: Titel, Kopfzeile und Knöpfe der Stadt, Ortsbeschriftungen (Schlüssel in `scripts/texte.gd`, Deutsch und Englisch). Geprüft mit `test_lokalisierung_stadt`.
+- Noch offen: Planung, Organisation, Ausführung, Auswertung, Laden, Meldungen und Protokolltexte. Verbleibend etwa 509 deutsche Textstellen im Code.
