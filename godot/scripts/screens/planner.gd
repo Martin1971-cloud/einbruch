@@ -1077,7 +1077,7 @@ func _show_at(t: float) -> void:
 	_grid.show_end = not _playing
 	_grid.set_frame(_interp_frame(frames, t), _res.get("noise", []))
 	_gantt.set_playhead(t)
-	_time_lbl.text = "%s / %s" % [Sim.clock(t), Sim.clock(float(_slider.max_value))]
+	_time_lbl.text = Sim.clock(t)   # keine Gesamtzeit: die Dauer richtet sich nach den Personen, nur die Polizei setzt eine Grenze
 	_update_team_floors()
 
 

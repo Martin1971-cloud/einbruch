@@ -38,11 +38,7 @@ func _ready() -> void:
 	card_box.add_child(UI.label(Texte.t("res.geld") % [_fmt(Game.money), Game.day, Game.clock_text()], 17))
 	root.add_child(UI.card(card_box))
 
-	var log_box := RichTextLabel.new()
-	log_box.custom_minimum_size = Vector2(0, 240)
-	log_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	log_box.text = "\n".join(res.get("log", []))
-	root.add_child(log_box)
+	root.add_child(_ablauf_box(res))
 
 	var bottom := HBoxContainer.new()
 	root.add_child(bottom)
@@ -54,6 +50,122 @@ func _ready() -> void:
 		bottom.add_child(UI.button(Texte.t("res.weiter"), func(): main.go("gameover"), 240))
 	else:
 		bottom.add_child(UI.button(Texte.t("res.zur_stadt"), _on_town, 240))
+
+
+## Ablauf: je Person eine Spalte, Zeit links. Alarm über die ganze Breite. Filter nach Person.
+var _filter := ""
+var _res: Dictionary = {}
+var _ablauf: VBoxContainer
+
+
+func _ablauf_box(res: Dictionary) -> Control:
+	_res = res
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	box.add_child(UI.label(Texte.t("res.ablauf"), 18, Color(0.97, 0.82, 0.42)))
+	var filt := HBoxContainer.new()
+	filt.add_theme_constant_override("separation", 6)
+	box.add_child(filt)
+	filt.add_child(UI.button(Texte.t("res.filter_alle"), _set_filter.bind(""), 110))
+	for c in res.get("crew", []):
+		filt.add_child(UI.button(str(c.name).split(" ")[0], _set_filter.bind(str(c.id)), 110))
+	# Beute je Person steht oberhalb der Zeitleiste, damit sie ohne Scrollen sichtbar ist
+	var beute := {}
+	for ev in res.get("events", []):
+		if str(ev.kind) == "TAKE" and bool(ev.ok):
+			beute[str(ev.crew)] = beute.get(str(ev.crew), []) + [str(ev.obj)]
+	var teile: Array = []
+	for c in res.get("crew", []):
+		var liste: Array = beute.get(str(c.id), [])
+		if not liste.is_empty():
+			teile.append("%s: %s" % [str(c.name).split(" ")[0], ", ".join(liste)])
+	if not teile.is_empty():
+		box.add_child(UI.label(Texte.t("res.beute_person") % " · ".join(teile), 15, Color(0.95, 0.85, 0.5), true))
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(0, 240)
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	box.add_child(scroll)
+	_ablauf = VBoxContainer.new()
+	_ablauf.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_ablauf.add_theme_constant_override("separation", 3)
+	scroll.add_child(_ablauf)
+	_fill()
+	return box
+
+
+func _set_filter(id: String) -> void:
+	_filter = id
+	_fill()
+
+
+func _fill() -> void:
+	for ch in _ablauf.get_children():
+		ch.queue_free()
+	var crew: Array = _res.get("crew", [])
+	var col_of := {}
+	for i in range(crew.size()):
+		col_of[str(crew[i].id)] = i
+	# Kopfzeile mit den Namen
+	var head := HBoxContainer.new()
+	head.add_child(_cell(Texte.t("res.zeit"), 60, Color(0.6, 0.65, 0.72)))
+	for c in crew:
+		if _filter == "" or _filter == str(c.id):
+			head.add_child(_cell(str(c.name).split(" ")[0], 0, Color(0.85, 0.88, 0.95), true))
+	_ablauf.add_child(head)
+	for ev in _res.get("events", []):
+		var is_alarm: bool = bool(ev.get("alarm", false))
+		if _filter != "" and not is_alarm and str(ev.crew) != _filter:
+			continue
+		var row := HBoxContainer.new()
+		row.add_child(_cell(Sim.clock(float(ev.t)), 60, Color(0.6, 0.65, 0.72)))
+		if is_alarm:
+			row.add_child(_cell(Texte.t("res.alarm_zeile") % str(ev.obj), 0, Color(1.0, 0.7, 0.4), true))
+		else:
+			for c in crew:
+				if _filter != "" and str(c.id) != _filter:
+					continue
+				if str(c.id) == str(ev.crew):
+					row.add_child(_cell(_ev_text(ev), 0, Color(0.92, 0.94, 0.97) if ev.ok else Color(1.0, 0.6, 0.5), true))
+				else:
+					row.add_child(_cell("", 0, Color.WHITE, true))
+		_ablauf.add_child(row)
+
+
+## Ein Text je Aktion: Art und Ziel, bei Fehlschlag der Grund, sonst die Meldung der Aktion.
+func _ev_text(ev: Dictionary) -> String:
+	var txt := ""
+	match str(ev.kind):
+		"MOVE":
+			txt = Texte.t("res.geh_nach") % str(ev.obj)
+		"TOOL":
+			txt = "%s an %s" % [str(ev.tool), str(ev.obj)]
+		"OPEN":
+			txt = Texte.t("res.oeffnet") % str(ev.obj)
+		"TAKE":
+			txt = Texte.t("res.nimmt") % str(ev.obj)
+		"CALL_CAR":
+			txt = Texte.t("res.ruft_wagen")
+		_:
+			txt = str(ev.kind)
+	if not bool(ev.ok):
+		return "✗ %s: %s" % [txt, str(ev.fail)]
+	if str(ev.msg) != "":
+		return "%s\n%s" % [txt, str(ev.msg)]
+	return txt
+
+
+func _cell(txt: String, w: float, col: Color, grow := false) -> Label:
+	var l := Label.new()
+	l.text = txt
+	l.add_theme_font_size_override("font_size", 13)
+	l.add_theme_color_override("font_color", col)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if w > 0.0:
+		l.custom_minimum_size = Vector2(w, 0)
+	if grow:
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return l
 
 
 func _list(a: Array) -> String:

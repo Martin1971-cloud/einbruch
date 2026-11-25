@@ -189,3 +189,6 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Kasse statt Vitrine: Menü, Meldungen, Fehlschläge und Planer-Hilfe nennen bei der Kasse „Kasse“ (Begriff je Behälter über `obj.kasse`/`obj.vitrine`). Lexikon-Eintrag „Kasse“ ergänzt. Pipeline: 56 Tests, 0 Fehler.
 - Zeitleiste: Länge richtet sich nach dem Plan (vorher feste Mindestlänge 2 Minuten). Vorschau zeigt die Dauer je Person und Werkzeug, mit Fähigkeit (Segment-Feld `dur`). Pipeline: 56 Tests, 0 Fehler.
 - Offen: Gestrichelte Darstellung der Tür in der 3D-Ausführung (Otto vor der Tür). Auf Standbildern vor dem Öffnen nicht reproduzierbar, vermutlich Flimmern der offenen Türblätter an den Wandflächen.
+- Auswertung: Ablauf als Zeitleiste mit einer Spalte je Person, Filter nach Person, Alarm über die ganze Breite. Beute je Person oberhalb. Grundlage: strukturierte Ereignisse `events` in der Simulation (Zeit, Person, Art, Objekt, Ergebnis).
+- Zeitleiste: nur noch die aktuelle Zeit, keine Gesamtzeit mehr. Einzige zeitliche Grenze ist die Polizei (Alarm). Eine Maximalzeit für einzelne Aktionen gibt es nicht; das wäre eine eigene Designentscheidung.
+- Pipeline: 56 Tests, 0 Fehler.

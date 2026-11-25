@@ -50,6 +50,8 @@ var escape_km := 10.0   # Fluchtstrecke in km
 var alarm_active := false
 var flags := {}
 var log_lines: Array = []
+## Strukturierte Ereignisse für die Auswertung: je Aktion einer Person und Alarm (Zeit, Person, Art, Objekt, Ergebnis).
+var events: Array = []
 var evidence := 0.0
 var seen_sec := 0.0
 var escape_cell := Vector2i.ZERO
@@ -552,6 +554,21 @@ func _case_at(cell: Vector2i) -> String:
 	return ""
 
 
+## Bezeichnung des Ziels einer Aktion (für das Ereignisprotokoll).
+func _ev_obj(a: Dictionary) -> String:
+	match str(a.t):
+		"TOOL", "OPEN":
+			return str(a.get("on", ""))
+		"TAKE":
+			var lid := str(a.get("loot", ""))
+			return str(loot[lid].name) if loot.has(lid) else lid
+		"MOVE":
+			return str(a.get("to", "Feld" if a.has("cell") else "Ziel"))
+		"CALL_CAR":
+			return "Fluchtwagen"
+	return ""
+
+
 func _log(text: String) -> void:
 	log_lines.append("[%s] %s" % [clock(time), text])
 
@@ -567,6 +584,7 @@ func _alarm(source: String, kind: String, delay: float) -> void:
 	alarm_time = time
 	countdown = (PATROL_ALARM_BASE if kind == "PATROL" else police_base) + delay
 	alarm_active = true
+	events.append({"t": time, "end": time, "crew": "", "name": "", "kind": "ALARM", "obj": source, "tool": "", "ok": false, "fail": "", "msg": "", "alarm": true})
 	_log(Texte.t("sim.alarm") % [source, countdown])
 
 
@@ -711,6 +729,8 @@ func _next(c: Dictionary) -> void:
 	_unlock_all(c)
 	if c.idx < c.plan.size():
 		# "fail": Grund, falls die Aktion nicht ausgeführt werden konnte
+		var ev_a: Dictionary = c.plan[c.idx]
+		events.append({"t": c.act_start, "end": time, "crew": c.id, "name": c.name, "kind": ev_a.t, "obj": _ev_obj(ev_a), "tool": GameData.TOOLS[ev_a.tool].name if ev_a.t == "TOOL" else "", "ok": str(c.get("fail", "")) == "", "fail": str(c.get("fail", "")), "msg": str(c.get("msg", "")), "alarm": false})
 		c.segments.append({"i": c.idx, "t": c.plan[c.idx].t, "start": c.act_start, "end": time, "fail": str(c.get("fail", "")), "msg": str(c.get("msg", "")), "loud": float(c.get("loud", LOUD_STD)), "dur": float(c.get("dur", 0.0)) if c.plan[c.idx].t == "TOOL" else 0.0, "skill": float(c.skills.get(GameData.TOOLS[c.plan[c.idx].tool].type, 0)) if c.plan[c.idx].t == "TOOL" else 0.0})
 		c["msg"] = ""
 	c["fail"] = ""
@@ -1441,6 +1461,7 @@ func result() -> Dictionary:
 		"max_volume": max_volume,
 		"alarm": alarm_active,
 		"log": log_lines,
+		"events": events,
 		"loot_taken": _loot_names(true),
 		"loot_missed": _loot_names(false),
 		"segments": _segments(),
