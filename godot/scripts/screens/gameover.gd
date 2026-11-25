@@ -45,7 +45,7 @@ func _bilanz() -> String:
 			caught += 1
 		pay += int(e.auszahlung)
 	if n == 0:
-		return "Noch kein Einbruch abgeschlossen."
+		return Texte.t("gameover.noch_kein")
 	return Texte.t("gameover.bilanz") % [n, ok, caught, pay]
 
 

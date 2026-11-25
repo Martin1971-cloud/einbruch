@@ -158,10 +158,10 @@ func _person_card(c: Dictionary, is_driver: bool) -> PanelContainer:
 	left.add_theme_constant_override("separation", 4)
 	left.custom_minimum_size = Vector2(230, 0)
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var nb := _choice("%s   %s" % [c.name, c.role], _selected[c.id], _on_toggle.bind(c.id), 16)
+	var nb := _choice("%s   %s" % [c.name, Texte.d(c.role)], _selected[c.id], _on_toggle.bind(c.id), 16)
 	nb.tooltip_text = Texte.t("org.auswahl_tip")
 	left.add_child(nb)
-	left.add_child(_l("Honorar %s" % _fmt(int(c.fee)), 12, Color(0.65, 0.7, 0.78)))
+	left.add_child(_l(Texte.t("org.honorar") % _fmt(int(c.fee)), 12, Color(0.65, 0.7, 0.78)))
 	if is_driver:
 		var bb := _choice(Texte.t("org.auch_einbrechen"), _burgle[c.id], _on_burgle_toggle.bind(c.id), 13)
 		bb.disabled = not _selected[c.id]
@@ -353,7 +353,7 @@ func _refresh_summary() -> void:
 		missing = Texte.t("org.fehlt_einbrecher")
 	elif d < 1:
 		missing = Texte.t("org.fehlt_fahrer")
-	_summary.text = "Team: %d Einbrecher, %d Fahrer%s" % [b, d, Texte.t("org.bereit") if missing == "" else "  ·  es fehlt noch: " + missing]
+	_summary.text = Texte.t("org.team_zeile") % [b, d, Texte.t("org.bereit") if missing == "" else Texte.t("org.es_fehlt") % missing]
 	_cost_label.text = Texte.t("org.kosten") % [_fmt(_cost()), _fmt(Game.money)]
 	_refresh_cover()
 	_build_shop()

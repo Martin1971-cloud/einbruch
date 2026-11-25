@@ -554,7 +554,7 @@ func _refresh_team() -> void:
 	_team_box.add_child(_l(Texte.t("plan.person_waehlen"), 12, Color(0.89, 0.71, 0.35)))
 	for i in range(Game.team.size()):
 		var c: Dictionary = Game.team[i]
-		var role: String = ROLE_OF.get(c.id, "")
+		var role: String = Texte.d(ROLE_OF.get(c.id, ""))
 		var b := UI.button("%d   %s%s" % [i + 1, c.name, "  ·  " + role if role != "" else ""], _on_pick.bind(c.id), 0)
 		b.set_meta("base", b.text)
 		b.add_theme_font_size_override("font_size", _text_size)

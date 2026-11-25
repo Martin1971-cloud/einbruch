@@ -120,20 +120,20 @@ func _build_autohaus() -> void:
 		var c: Dictionary = GameData.CARS[cid]
 		var chosen: bool = Game.car_id == cid
 		var owned: bool = cid == "limo" or Game.cars_owned.has(cid)
-		var price_txt := "Miete %s € je Einbruch" % _fmt(int(c.rent)) if cid == "limo" else "Kaufpreis %s €" % _fmt(int(c.price))
+		var price_txt := Texte.t("shop.miete") % _fmt(int(c.rent)) if cid == "limo" else Texte.t("shop.kaufpreis") % _fmt(int(c.price))
 		var status := Texte.t("shop.gewaehlt_status") if chosen else ""
 		var car_locked: bool = (not owned) and int(c.get("stufe", 0)) > Game.stage()
 		if car_locked:
 			status = Texte.t("shop.gesperrt_zeile") % GameData.stufe_hint(int(c.get("stufe", 0)))
 		_body.add_child(UI.label("%s  ·  %s%s" % [Texte.d(c.name), price_txt, status], 14, Color(0.92, 0.9, 0.85)))
-		_body.add_child(UI.label(str(c.info), 12, Color(0.75, 0.8, 0.88), true))
+		_body.add_child(UI.label(Texte.d(str(c.info)), 12, Color(0.75, 0.8, 0.88), true))
 		if owned:
 			var b := UI.button(Texte.t("shop.nehmen") if not chosen else Texte.t("shop.gewaehlt"), func() -> void: choose_car(cid), 0)
 			b.disabled = chosen
 			b.custom_minimum_size = Vector2(0, 34)
 			_body.add_child(b)
 		else:
-			var b2 := UI.button("Kaufen – %s €" % _fmt(int(c.price)), func() -> void: buy_car(cid), 0)
+			var b2 := UI.button(Texte.t("shop.kaufen") % _fmt(int(c.price)), func() -> void: buy_car(cid), 0)
 			b2.disabled = car_locked or Game.money < int(c.price)
 			b2.custom_minimum_size = Vector2(0, 34)
 			_body.add_child(b2)
