@@ -112,15 +112,82 @@ func _outline(parent: Node3D, mesh: Mesh, grow: float, pos: Vector3, size: Vecto
 	parent.add_child(mi)
 
 
-## Außenseite einer Wand: -1 am kleinsten Schlüssel, +1 am größten, sonst 0 (innere Wand).
-func _aussen(key: int, lines: Dictionary) -> int:
-	if lines.size() == 0:
-		return 0
-	var keys := lines.keys()
-	keys.sort()
-	if key == keys[0]:
+## Außenerkennung über den Grundriss: von außen (Rand) durch alle freien Felder füllen.
+## Wände, Türen und Fenster blockieren. Erreichbare Felder gelten als außen.
+func _aussen_gitter(spec: Dictionary) -> PackedByteArray:
+	var w := int(spec.w)
+	var h := int(spec.h)
+	var blockiert := PackedByteArray()
+	blockiert.resize(w * h)
+	for r in spec.paint:
+		var code := String(r[4])
+		if code == "W" or code == "D" or code == "F":
+			for yy in range(clampi(int(r[1]), 0, h), clampi(int(r[3]), 0, h)):
+				for xx in range(clampi(int(r[0]), 0, w), clampi(int(r[2]), 0, w)):
+					blockiert[yy * w + xx] = 1
+	var aussen := PackedByteArray()
+	aussen.resize(w * h)
+	var schlange := PackedInt32Array()
+	for x in range(w):
+		for y: int in [0, h - 1]:
+			var i: int = y * w + x
+			if blockiert[i] == 0 and aussen[i] == 0:
+				aussen[i] = 1
+				schlange.append(i)
+	for y in range(h):
+		for x: int in [0, w - 1]:
+			var i: int = y * w + x
+			if blockiert[i] == 0 and aussen[i] == 0:
+				aussen[i] = 1
+				schlange.append(i)
+	var k := 0
+	while k < schlange.size():
+		var i: int = schlange[k]
+		k += 1
+		var x: int = i % w
+		var y: int = i / w
+		if x > 0 and blockiert[i - 1] == 0 and aussen[i - 1] == 0:
+			aussen[i - 1] = 1
+			schlange.append(i - 1)
+		if x < w - 1 and blockiert[i + 1] == 0 and aussen[i + 1] == 0:
+			aussen[i + 1] = 1
+			schlange.append(i + 1)
+		if y > 0 and blockiert[i - w] == 0 and aussen[i - w] == 0:
+			aussen[i - w] = 1
+			schlange.append(i - w)
+		if y < h - 1 and blockiert[i + w] == 0 and aussen[i + w] == 0:
+			aussen[i + w] = 1
+			schlange.append(i + w)
+	return aussen
+
+
+func _ist_aussen(g: PackedByteArray, spec: Dictionary, x_t: float, y_t: float) -> bool:
+	var sbf := float(Sim.SUB)
+	var ix := clampi(floori(x_t * sbf), 0, int(spec.w) - 1)
+	var iy := clampi(floori(y_t * sbf), 0, int(spec.h) - 1)
+	return g[iy * int(spec.w) + ix] == 1
+
+
+## Waagerechte Wand bei cy: -1 = Außenseite liegt oben (kleiner y), +1 = unten, 0 = innen oder beidseitig.
+func _aussen_h(g: PackedByteArray, spec: Dictionary, iv: Array, cy: float) -> int:
+	var xm: float = (float(iv[0]) + float(iv[1])) * 0.5
+	var oben := _ist_aussen(g, spec, xm, cy - 0.2)
+	var unten := _ist_aussen(g, spec, xm, cy + 0.2)
+	if oben and not unten:
 		return -1
-	if key == keys[keys.size() - 1]:
+	if unten and not oben:
+		return 1
+	return 0
+
+
+## Senkrechte Wand bei cx: -1 = Außenseite links, +1 = rechts.
+func _aussen_v(g: PackedByteArray, spec: Dictionary, iv: Array, cx: float) -> int:
+	var ym: float = (float(iv[0]) + float(iv[1])) * 0.5
+	var links := _ist_aussen(g, spec, cx - 0.2, ym)
+	var rechts := _ist_aussen(g, spec, cx + 0.2, ym)
+	if links and not rechts:
+		return -1
+	if rechts and not links:
 		return 1
 	return 0
 
@@ -690,6 +757,7 @@ func _build_walls(spec: Dictionary) -> void:
 			openings.append([x0, y0, x1, y1])
 	var col := Color(0.2, 0.24, 0.34)
 	var cap := Color(0.42, 0.47, 0.6)
+	var aussen_g := _aussen_gitter(spec)
 	for key in hz:
 		var cy: float = key / 100.0
 		var runs := _merge_runs(hz[key])
@@ -707,7 +775,7 @@ func _build_walls(spec: Dictionary) -> void:
 			var a1: float = iv[1] + (WALL_T * 0.5 if _kein_rand(iv[1], edges_h) else 0.0)
 			var ln: float = a1 - a0
 			var cx: float = (a0 + a1) * 0.5
-			_wand_stueck(Vector3(ln, WALL_H, WALL_T), Vector3(cx, WALL_H * 0.5, cy), 2, _aussen(key, hz))
+			_wand_stueck(Vector3(ln, WALL_H, WALL_T), Vector3(cx, WALL_H * 0.5, cy), 2, _aussen_h(aussen_g, spec, iv, cy))
 			_box(Vector3(ln + 0.02, 0.1, WALL_T + 0.02), Vector3(cx, WALL_H + 0.05, cy), cap, 0.5)
 	for key in vt:
 		var cx2: float = key / 100.0
@@ -725,7 +793,7 @@ func _build_walls(spec: Dictionary) -> void:
 			var b1: float = iv[1] + (WALL_T * 0.5 if _kein_rand(iv[1], edges_v) else 0.0)
 			var ln2: float = b1 - b0
 			var cy2: float = (b0 + b1) * 0.5
-			_wand_stueck(Vector3(WALL_T, WALL_H, ln2), Vector3(cx2, WALL_H * 0.5, cy2), 0, _aussen(key, vt))
+			_wand_stueck(Vector3(WALL_T, WALL_H, ln2), Vector3(cx2, WALL_H * 0.5, cy2), 0, _aussen_v(aussen_g, spec, iv, cx2))
 			_box(Vector3(WALL_T + 0.02, 0.1, ln2 + 0.02), Vector3(cx2, WALL_H + 0.05, cy2), cap, 0.5)
 
 

@@ -58,10 +58,10 @@ func _process(_d: float) -> bool:
 				_sammle(cur, stapel)
 				for m in stapel:
 					var mt = m.material_override
-					if mt == ziegel_mat:
+					if ziegel_mat != null and mt == ziegel_mat:
 						zaehl["ziegel"] += 1
 						print("  Ziegel bei %s Größe %s" % [str(m.global_position), str((m.mesh as BoxMesh).size)])
-					elif mt == stein_mat:
+					elif stein_mat != null and mt == stein_mat:
 						zaehl["stein"] += 1
 					else:
 						zaehl["andere"] += 1
