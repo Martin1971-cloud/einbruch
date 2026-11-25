@@ -821,9 +821,9 @@ func _describe(a: Dictionary) -> String:
 				return "Gehen nach %s" % _name_at(a.cell)
 			return "Gehen nach %s" % a.get("to", "?")
 		"TOOL":
-			return "%s an %s" % [Texte.d(GameData.TOOLS[a.tool].name), a.on]
+			return "%s an %s" % [Texte.d(GameData.TOOLS[a.tool].name), Texte.d(a.on)]
 		"OPEN":
-			return Texte.t("plan.oeffnen_obj") % a.on
+			return Texte.t("plan.oeffnen_obj") % Texte.d(a.on)
 		"TAKE":
 			return Texte.t("plan.beute_nehmen")
 		"WAIT":
@@ -1167,9 +1167,9 @@ func _object_entries(cell: Vector2i) -> Array:
 	var stand := _stand_after(_active)
 	if absi(stand.cell.x - cell.x) + absi(stand.cell.y - cell.y) != 1:
 		var nb := _neighbor_of(cell, stand.cell)
-		out.append(["%s: zu weit weg" % nm, {}, false])
+		out.append(["%s: zu weit weg" % Texte.d(nm), {}, false])
 		if nb != Vector2i(-1, -1):
-			out.append([Texte.t("plan.neben_gehen") % nm, {"t": "MOVE", "cell": [nb.x, nb.y]}, true])
+			out.append([Texte.t("plan.neben_gehen") % Texte.d(nm), {"t": "MOVE", "cell": [nb.x, nb.y]}, true])
 		return out
 	if st.locked:
 		# Alle Werkzeuge für Schlösser, die man besitzt (Original: Werkzeugliste am Objekt)
@@ -1196,7 +1196,7 @@ func _object_entries(cell: Vector2i) -> Array:
 		for l in target.loot:
 			if l.name == nm:
 				kg = int(l.weight)
-		out.append([Texte.t("plan.beute_nehmen_kg") % [nm, kg] if st.open else Texte.t("plan.beute_erst_oeffnen") % nm, {"t": "TAKE", "loot": lid}, bool(st.open)])
+		out.append([Texte.t("plan.beute_nehmen_kg") % [Texte.d(nm), kg] if st.open else Texte.t("plan.beute_erst_oeffnen") % Texte.d(nm), {"t": "TAKE", "loot": lid}, bool(st.open)])
 	return out
 
 

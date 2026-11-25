@@ -639,7 +639,7 @@ func _draw_floors() -> void:
 		var y: float = _origin.y + float(fl.rows[0]) * _ch
 		if i > 0:
 			draw_line(Vector2(_origin.x, y), Vector2(_origin.x + w, y), Color(0.97, 0.85, 0.55, 0.75), 2.0)
-		draw_string(font, Vector2(_origin.x + 6, y + 18), str(fl.name), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.97, 0.85, 0.55, 0.9))
+		draw_string(font, Vector2(_origin.x + 6, y + 18), Texte.d(str(fl.name)), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.97, 0.85, 0.55, 0.9))
 
 
 func _draw() -> void:
@@ -711,7 +711,7 @@ func _draw() -> void:
 	# Raumnamen
 	for room in target.get("rooms", []):
 		var p := _c(room.pos)
-		var txt: String = room.name
+		var txt: String = Texte.d(room.name)
 		var fs := maxi(9, int(_cell * 0.4))
 		var sz := ThemeDB.fallback_font.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 		draw_string(ThemeDB.fallback_font, p + Vector2(-sz.x * 0.5 + 1, fs * 0.35 + 1), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.05, 0.04, 0.03, 0.7))
@@ -1125,7 +1125,7 @@ func _get_tooltip(at_position: Vector2) -> String:
 				parts_txt = " (%s)" % ", ".join(ps)
 			var state := str(_frame.get("loot", {}).get(l.id, "ROOM")) if not _frame.is_empty() else "ROOM"
 			var status := "" if state == "ROOM" else " – genommen"
-			var loot_txt := "Beute: %s – %d €%s, Gewicht %.1f kg%s" % [l.name, int(l.value), parts_txt, float(l.weight), status]
+			var loot_txt := "Beute: %s – %d €%s, Gewicht %.1f kg%s" % [Texte.d(l.name), int(l.value), parts_txt, float(l.weight), status]
 			return loot_txt if wp_txt == "" else loot_txt + "\n" + wp_txt
 	if wp_txt != "":
 		return wp_txt
@@ -1135,7 +1135,7 @@ func _get_tooltip(at_position: Vector2) -> String:
 				return Texte.t("gridv.sicht") % [g.name, int(g.vision), int(g.hearing)]
 	for d in target.doors:
 		if Sim._v2i(d.pos) == cell:
-			return "%s – verschlossen (Dietrich, Brecheisen oder Bypass)" % d.name
+			return "%s – verschlossen (Dietrich, Brecheisen oder Bypass)" % Texte.d(d.name)
 	match row.substr(cx, 1):
 		"F":
 			return Texte.t("gridv.fenster")
@@ -1146,7 +1146,7 @@ func _get_tooltip(at_position: Vector2) -> String:
 		_:
 			for room in target.get("rooms", []):
 				if Sim._v2i(room.pos) == cell:
-					return room.name.capitalize()
+					return Texte.d(room.name).capitalize()
 			return Texte.t("gridv.raum")
 
 

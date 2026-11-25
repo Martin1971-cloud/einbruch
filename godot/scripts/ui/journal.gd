@@ -76,13 +76,20 @@ func _entry(e: Dictionary) -> Control:
 	var zeile := Texte.t("journal.zeile_zahlen") % [_fmt(int(e.auszahlung)), _fmt(int(e.kosten)), "+" if int(e.gewinn) >= 0 else "", _fmt(int(e.gewinn)), int(e.dauer)]
 	v.add_child(UI.label(zeile, 13, Color(0.86, 0.88, 0.93)))
 	var beute: Array = e.beute
-	v.add_child(UI.label(Texte.t("journal.beute") % (", ".join(beute) if not beute.is_empty() else Texte.t("journal.beute_keine")), 13, Color(0.8, 0.84, 0.9), true))
+	v.add_child(UI.label(Texte.t("journal.beute") % (", ".join(_names(beute)) if not beute.is_empty() else Texte.t("journal.beute_keine")), 13, Color(0.8, 0.84, 0.9), true))
 	if str(e.alarm) != "":
 		v.add_child(UI.label(Texte.t("journal.alarm") % str(e.alarm), 13, Color(1.0, 0.7, 0.4), true))
 	if int(e.fehler) > 0:
 		var txt := Texte.t("journal.fehler") % [int(e.fehler), " · ".join(e.fehler_text)]
 		v.add_child(UI.label(txt, 13, Color(1.0, 0.6, 0.5), true))
 	return v
+
+
+func _names(a: Array) -> Array:
+	var out: Array = []
+	for x in a:
+		out.append(Texte.d(str(x)))
+	return out
 
 
 func _fmt(n: int) -> String:
