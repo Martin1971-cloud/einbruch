@@ -178,7 +178,7 @@ func _build_world() -> void:
 	var bg_layer := CanvasLayer.new()
 	bg_layer.layer = -1
 	add_child(bg_layer)
-	bg_layer.add_child(UI.backdrop("res://assets/art/bg_ausfuehrung.jpg"))
+	bg_layer.add_child(UI.backdrop("res://assets/art/bg_juwelier_ausfuehrung.webp"))
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.42, 0.44, 0.52)
 	env.ambient_light_energy = 0.32
