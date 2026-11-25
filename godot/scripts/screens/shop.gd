@@ -68,7 +68,7 @@ func _build_laden() -> void:
 		var owned: bool = Game.tools_owned.has(tid)
 		var locked: bool = (not owned) and int(t.get("stufe", 0)) > Game.stage()
 		var lock_txt := "  ·  gesperrt, %s" % GameData.stufe_hint(int(t.get("stufe", 0))) if locked else ""
-		var b := UI.button(Texte.t("shop.tool_btn") % [t.name, _fmt(int(t.price)), _use_text(t), Texte.t("shop.gekauft") if owned else "", lock_txt], func() -> void: buy_tool(tid), 0)
+		var b := UI.button(Texte.t("shop.tool_btn") % [Texte.t("shop.haken_an") if owned else Texte.t("shop.haken_aus"), t.name, _fmt(int(t.price)), _use_text(t), lock_txt], func() -> void: buy_tool(tid), 0)
 		b.add_theme_font_size_override("font_size", 13)
 		b.disabled = locked or ((not owned) and Game.money < int(t.price))
 		b.custom_minimum_size = Vector2(0, 34)
@@ -80,7 +80,7 @@ func _build_laden() -> void:
 			continue
 		var g: Dictionary = GameData.GEAR[gid]
 		var owned_g: bool = Game.gear_owned.has(gid)
-		var bg := UI.button(Texte.t("shop.gear_btn") % [g.name, _fmt(int(g.price)), Texte.t("shop.gekauft") if owned_g else ""], func() -> void: buy_gear(gid), 0)
+		var bg := UI.button(Texte.t("shop.gear_btn") % [Texte.t("shop.haken_an") if owned_g else Texte.t("shop.haken_aus"), g.name, _fmt(int(g.price))], func() -> void: buy_gear(gid), 0)
 		bg.add_theme_font_size_override("font_size", 13)
 		bg.disabled = (not owned_g) and Game.money < int(g.price)
 		bg.custom_minimum_size = Vector2(0, 34)

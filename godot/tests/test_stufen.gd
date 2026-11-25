@@ -57,6 +57,6 @@ func _init() -> void:
 	_check(int(GameData.CARS.limo.stufe) == 0, "Limousine von Anfang an")
 	_check(int(GameData.CARS.kombi.stufe) == 1, "Kombi ab dem ersten Erfolg")
 	_check(int(GameData.CARS.sport.stufe) == 2, "Sportwagen ab dem zweiten Erfolg")
-	_check(GameData.stufe_hint(1) == "ab „Kiosk „Zum Anker““", "Hinweis nach dem ersten Gebäude")
+	_check(GameData.stufe_hint(1) == "nach erfolgreichem Einbruch bei Kiosk „Zum Anker“", "Hinweis nach dem ersten Gebäude")
 	print("Ergebnis: %d Fehler" % _fails)
 	quit(1 if _fails > 0 else 0)

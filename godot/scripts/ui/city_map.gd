@@ -13,6 +13,11 @@ static var _tex: Texture2D
 var pins: Array = []   # [{id, name, pos: Vector2 (0..1 des Bildes), active}]
 var selected := ""
 var _hover := ""   # id der Ortsmarke unter dem Mauszeiger
+var _zoom := 1.0           # 1.0 = eingepasst, bis MAX_ZOOM
+var _off := Vector2.ZERO   # Verschiebung des Bildes gegenüber dem eingepassten Bereich
+var _drag_from := Vector2.ZERO
+var _dragging := false
+const MAX_ZOOM := 4.0
 
 
 func _init() -> void:
@@ -27,13 +32,50 @@ func set_pins(p: Array, sel: String) -> void:
 
 
 ## Bildbereich im Fenster: Seitenverhältnis bleibt, das Bild wird zentriert eingepasst.
-func _img_rect() -> Rect2:
+func _fit_rect() -> Rect2:
 	var w := size.x
 	var h := size.x / IMG_RATIO
 	if h > size.y:
 		h = size.y
 		w = size.y * IMG_RATIO
 	return Rect2((size.x - w) * 0.5, (size.y - h) * 0.5, w, h)
+
+
+## Bildbereich im Fenster mit Zoom und Verschiebung.
+func _img_rect() -> Rect2:
+	var f := _fit_rect()
+	return Rect2(f.position + _off, f.size * _zoom)
+
+
+## Hält das Bild im Fenster: kleiner als das Fenster wird es zentriert, größer bleibt es am Rand.
+func _clamp_off() -> void:
+	var f := _fit_rect()
+	var w := f.size.x * _zoom
+	var h := f.size.y * _zoom
+	var x: float = (size.x - w) * 0.5 - f.position.x if w <= size.x else clampf(f.position.x + _off.x, size.x - w, 0.0) - f.position.x
+	var y: float = (size.y - h) * 0.5 - f.position.y if h <= size.y else clampf(f.position.y + _off.y, size.y - h, 0.0) - f.position.y
+	_off = Vector2(x, y)
+
+
+## Zoomt um den Punkt „at“, damit der Ort unter dem Mauszeiger stehen bleibt.
+func _zoom_at(at: Vector2, factor: float) -> void:
+	var old := _img_rect()
+	var new_zoom := clampf(_zoom * factor, 1.0, MAX_ZOOM)
+	if is_equal_approx(new_zoom, _zoom):
+		return
+	var u := (at - old.position) / old.size
+	_zoom = new_zoom
+	var f := _fit_rect()
+	var new_size := f.size * _zoom
+	_off = (at - u * new_size) - f.position
+	_clamp_off()
+	queue_redraw()
+
+
+func _reset_view() -> void:
+	_zoom = 1.0
+	_off = Vector2.ZERO
+	queue_redraw()
 
 
 func _px(v: Vector2) -> Vector2:
@@ -111,15 +153,43 @@ func _pin_at(pos: Vector2) -> String:
 
 
 func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
+			_zoom_at(event.position, 1.25)
+			return
+		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
+			_zoom_at(event.position, 0.8)
+			return
+		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+			_reset_view()
+			return
+		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
+			_reset_view()
+			return
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			_drag_from = event.position
+			_dragging = false
+			return
+		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+			if _dragging:
+				_dragging = false
+				return
+			for p in pins:
+				if _px(p.pos).distance_to(event.position) < 18:
+					if p.active:
+						picked.emit(p.id)
+					return
+		return
 	if event is InputEventMouseMotion:
+		if event.button_mask & MOUSE_BUTTON_MASK_LEFT and _zoom > 1.0:
+			if _dragging or event.position.distance_to(_drag_from) > 4.0:
+				_dragging = true
+				_off += event.relative
+				_clamp_off()
+				queue_redraw()
+			return
 		var hid := _pin_at(event.position)
 		if hid != _hover:
 			_hover = hid
 			queue_redraw()
 		return
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		for p in pins:
-			if _px(p.pos).distance_to(event.position) < 18:
-				if p.active:
-					picked.emit(p.id)
-				return

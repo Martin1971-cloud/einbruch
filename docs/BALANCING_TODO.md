@@ -181,3 +181,5 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - GPU-Auslastung (nvidia-smi, Testlauf profil_3d.gd): im Mittel 0,4 %, Spitze 3 %, 9 Messpunkte. Die Testszene belastet die Grafikkarte kaum. Das ist nur eine Momentaufnahme, kein Spielablauf in Echtzeit. Der Prozessor misst die teuersten Teile (Sichtkegel bis etwa 8 ms je Neuberechnung).
 - Noch offen: längere Messung im echten Spielablauf (Ausführung über mindestens 30 s) und die Frame-Zeit der Grafikkarte aus dem Monitor-Reiter des Editors.
 - Lokalisierung Werkzeugladen, Autohaus, Spielstände, Spielende, Journal und Lexikon-Suche umgestellt (Deutsch und Englisch). Geprüft mit `test_lokalisierung_rest`. Pipeline: 55 Tests, 0 Fehler.
+- Stadtkarte: Zoom mit Mausrad zum Mauszeiger, Ziehen zum Verschieben (nur bei Zoom), Rechtsklick oder Doppelklick setzt die Ansicht zurück. Geprüft mit `test_stadtkarte_zoom`.
+- Werkzeugladen: Kaufstatus als Kästchen am Zeilenanfang („[✓]“ / „[  ]“). Sperrhinweis neu formuliert: „nach erfolgreichem Einbruch bei …“ (vorher „ab …“ mit doppeltem Anführungszeichen). Geprüft mit `test_stufen`.
