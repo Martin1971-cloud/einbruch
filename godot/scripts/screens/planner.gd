@@ -130,7 +130,7 @@ func _header() -> PanelContainer:
 	var vor_btn := UI.button(Texte.t("plan.vorschau"), _on_vorschau, 100)
 	vor_btn.tooltip_text = Texte.t("plan.vorschau_tip")
 	row.add_child(vor_btn)
-	row.add_child(UI.primary("▶ Ausführung", _on_execute, 150))
+	row.add_child(UI.primary(Texte.t("plan.ausfuehrung_btn"), _on_execute, 150))
 	row.add_child(_l("Tag %d  ·  %s" % [Game.day, Game.clock_text()], 15, Color(0.85, 0.88, 0.94)))
 	var wrap := PanelContainer.new()
 	wrap.add_theme_stylebox_override("panel", UI.card_style(Color(0.05, 0.07, 0.12, 0.85)))
@@ -381,13 +381,13 @@ func _timeline_card() -> Control:
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var bar := HBoxContainer.new()
 	bar.add_theme_constant_override("separation", 8)
-	_play_btn = UI.button("▶  Abspielen", _on_play, 130)
+	_play_btn = UI.button(Texte.t("plan.abspielen"), _on_play, 130)
 	_play_btn.tooltip_text = Texte.t("plan.play_tip")
 	bar.add_child(_play_btn)
 	_speed_btn = UI.dropdown(["1x", "2x", "4x", "8x"], 1, _on_speed_pick)
 	bar.add_child(_speed_btn)
 	# Letzte Aktion zurücknehmen: dort, wo die Aktionen auch bearbeitet werden (Original: Escape = RemLastAction)
-	var undo_btn := UI.button("↶ Letzte Aktion zurück", _undo, 170)
+	var undo_btn := UI.button(Texte.t("plan.letzte_zurueck"), _undo, 170)
 	undo_btn.tooltip_text = Texte.t("plan.undo_tip")
 	bar.add_child(undo_btn)
 	_slider = HSlider.new()
@@ -551,7 +551,7 @@ func _refresh_team() -> void:
 	for c in _team_box.get_children():
 		c.queue_free()
 	_team_btns = {}
-	_team_box.add_child(_l("1. Person wählen (anklicken)", 12, Color(0.89, 0.71, 0.35)))
+	_team_box.add_child(_l(Texte.t("plan.person_waehlen"), 12, Color(0.89, 0.71, 0.35)))
 	for i in range(Game.team.size()):
 		var c: Dictionary = Game.team[i]
 		var role: String = ROLE_OF.get(c.id, "")
@@ -566,7 +566,7 @@ func _refresh_team() -> void:
 		var parts: Array = []
 		for k in sk:
 			parts.append("%s %d %%" % [{"TECH": Texte.t("skill.technik"), "FORCE": Texte.t("skill.kampf"), "ELECTRONICS": Texte.t("skill.elektronik"), "FAHREN": Texte.t("skill.fahren")}.get(k, k), int(sk[k])])
-		b.tooltip_text = "Fähigkeiten: " + ", ".join(parts) + ". Klicken zum Auswählen."
+		b.tooltip_text = Texte.t("plan.faehig_tip") % ", ".join(parts)
 		var col: Color = CREW_COL.get(c.id, Color.WHITE)
 		b.add_theme_color_override("font_color", col)
 		# Gewählte Person: farbiger Rahmen und Hintergrund in der Personenfarbe
@@ -612,7 +612,7 @@ func _on_pick(id: String) -> void:
 		if c.id == id and c.has("start"):
 			_grid.focus_on(Vector2(Sim._v2i(c.start)), GridView.FOCUS_ZOOM, true)
 	_refresh_team()
-	_preview.text = "%s ausgewählt. Feld anklicken = hingehen · Objekt anklicken = Aktion." % _crew_name(_active)
+	_preview.text = Texte.t("plan.ausgewaehlt_hinweis") % _crew_name(_active)
 
 
 ## Tickbox neben einer Person: an = auswählen, aus = Auswahl aufheben.
@@ -689,7 +689,7 @@ func _save_plan() -> void:
 	Game.saved_plans[target.id] = list
 	Game.save_game()
 	_refresh_saved_list()
-	_preview.text = "[color=lightgreen]Planung „%s“ gespeichert.[/color]" % nm
+	_preview.text = Texte.t("plan.gespeichert") % nm
 
 
 ## Gespeicherte Planung laden. Nur Personen, die im Team sind, bekommen ihren Plan.
@@ -702,7 +702,7 @@ func _load_plan() -> void:
 	for c in Game.team:
 		plans[c.id] = entry.plans.get(c.id, []).duplicate(true) if entry.plans.has(c.id) else []
 	_on_changed()
-	_preview.text = "[color=lightgreen]Planung „%s“ geladen.[/color]" % entry.name
+	_preview.text = Texte.t("plan.geladen") % entry.name
 
 
 func _undo() -> void:
@@ -720,7 +720,7 @@ func _undo() -> void:
 	for s in segs:
 		if int(s.get("i", -1)) == last_idx:
 			_playhead = float(s.start)
-	_preview.text = "[color=lightgreen]Letzte Aktion von %s zurückgenommen.[/color]" % _crew_name(id)
+	_preview.text = Texte.t("plan.zurueckgenommen") % _crew_name(id)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -749,7 +749,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_palette(kind: String) -> void:
 	if _active == "":
-		_preview.text = "[color=orange]Zuerst eine Person im Team auswählen, dann die Aktion anklicken.[/color]"
+		_preview.text = Texte.t("plan.zuerst_person")
 		return
 	_on_dropped(_active, kind)
 
@@ -823,7 +823,7 @@ func _describe(a: Dictionary) -> String:
 		"TOOL":
 			return "%s an %s" % [GameData.TOOLS[a.tool].name, a.on]
 		"OPEN":
-			return "Öffnen: %s" % a.on
+			return Texte.t("plan.oeffnen_obj") % a.on
 		"TAKE":
 			return Texte.t("plan.beute_nehmen")
 		"WAIT":
@@ -902,7 +902,7 @@ func _on_vorschau() -> void:
 	_play_until = -1.0
 	_playing = not (_res.get("frames", []) as Array).is_empty()
 	_grid.follow = _playing
-	_play_btn.text = "❚❚  Pause" if _playing else "▶  Abspielen"
+	_play_btn.text = Texte.t("plan.pause") if _playing else Texte.t("plan.abspielen")
 	_show_at(0.0)
 
 
@@ -915,7 +915,7 @@ func _on_preview() -> void:
 		msgs.append("[color=salmon][b]%d Aktion(en) funktionieren so nicht:[/b][/color]" % _problems.size())
 		for p in _problems:
 			msgs.append("[color=salmon]✗ %s[/color]" % p)
-		msgs.append("[color=gray]Ausführung ist gesperrt, bis alle Aktionen stimmen.[/color]")
+		msgs.append("[color=gray]%s[/color]" % Texte.t("plan.gesperrt_hinweis"))
 	for c in Game.team:
 		var pl: Array = plans[c.id]
 		var ends_at_car: bool = not pl.is_empty() and pl[-1].t == "MOVE" and pl[-1].get("to", "") == "Fluchtwagen"
@@ -927,7 +927,7 @@ func _on_preview() -> void:
 		msgs.append("[color=salmon]⚠ %s[/color]" % (Texte.t("sim.alarm") % [res.alarm_source, float(res.get("alarm_time", 0.0))]).split(" Police", 1)[0])
 	for line in res.log:
 		if str(line).contains("wartet, bis") or str(line).contains("waits until"):
-			msgs.append("[color=orange]⚠ Überschneidung: %s[/color]" % str(line).split("] ", 1)[-1])
+			msgs.append("[color=orange]%s[/color]" % (Texte.t("plan.ueberschneidung") % str(line).split("] ", 1)[-1]))
 	var color := "salmon"
 	match res.status:
 		"ENTKOMMEN":
@@ -945,7 +945,7 @@ func _on_preview() -> void:
 		_show_hint.call_deferred("laut")
 	# Farbe UND Wort: die Bedeutung hängt nicht allein an der Farbe (Barrierefreiheit)
 	var lwort := Texte.t("laerm.leise") if peak <= lim * 0.7 else (Texte.t("laerm.hoerbar") if peak <= lim else Texte.t("laerm.alarm"))
-	msgs.insert(1, "Lautstärke: [color=%s]%d dB · %s[/color] (Grenze %d dB)" % [lcol, int(peak), lwort, int(lim)])
+	msgs.insert(1, Texte.t("plan.lautstaerke") % [lcol, int(peak), lwort, int(lim)])
 	msgs.append("Auszahlung: %s € · Fahndung +%d %%" % [_fmt(int(res.payout)), int(res.heat)])
 	# Teamgröße mit Kosten und Dauer: der Spieler wägt Gewinn gegen Zeit ab
 	var team_n: int = Game.team.size()
@@ -981,7 +981,7 @@ func _duration_lines(res: Dictionary) -> Array:
 			out.append("[color=gray]%s:[/color] %s" % [c.name.split(" ")[0], " · ".join(parts)])
 	if out.is_empty():
 		return out
-	out.insert(0, "[b]Dauer je Person[/b] (je besser die Fähigkeit, desto kürzer):")
+	out.insert(0, Texte.t("plan.dauer_je_person"))
 	return out
 
 
@@ -1036,7 +1036,7 @@ func _on_play() -> void:
 		_playhead = 0.0
 	_playing = not _playing
 	_play_until = -1.0
-	_play_btn.text = "❚❚  Pause" if _playing else "▶  Abspielen"
+	_play_btn.text = Texte.t("plan.pause") if _playing else Texte.t("plan.abspielen")
 
 
 func _on_speed_pick(i: int) -> void:
@@ -1067,11 +1067,11 @@ func _process(delta: float) -> void:
 		_playhead = _play_until
 		_play_until = -1.0
 		_playing = false
-		_play_btn.text = "▶  Abspielen"
+		_play_btn.text = Texte.t("plan.abspielen")
 	if _playhead >= mx:
 		_playhead = mx
 		_playing = false
-		_play_btn.text = "▶  Abspielen"
+		_play_btn.text = Texte.t("plan.abspielen")
 	_slider.set_value_no_signal(_playhead)
 	_show_at(_playhead)
 
@@ -1149,7 +1149,7 @@ func _run_execution() -> void:
 		if not ends_at_car:
 			_problems.append("%s endet nicht am Fluchtwagen (letzte Aktion: Einsteigen oder Gehen zum Wagen)." % c.name.split(" ")[0])
 	if not _problems.is_empty():
-		_preview.text = "[color=salmon]Die Ausführung ist gesperrt: %d Aktion(en) funktionieren so nicht. Bitte korrigieren.[/color]\n%s" % [_problems.size(), _preview.text]
+		_preview.text = Texte.t("plan.gesperrt_kopf") % [_problems.size(), _preview.text]
 		return
 	main.go("execution", {"config": _config()})
 
@@ -1169,7 +1169,7 @@ func _object_entries(cell: Vector2i) -> Array:
 		var nb := _neighbor_of(cell, stand.cell)
 		out.append(["%s: zu weit weg" % nm, {}, false])
 		if nb != Vector2i(-1, -1):
-			out.append(["Neben %s gehen (dann Aktion wählen)" % nm, {"t": "MOVE", "cell": [nb.x, nb.y]}, true])
+			out.append([Texte.t("plan.neben_gehen") % nm, {"t": "MOVE", "cell": [nb.x, nb.y]}, true])
 		return out
 	if st.locked:
 		# Alle Werkzeuge für Schlösser, die man besitzt (Original: Werkzeugliste am Objekt)
@@ -1186,7 +1186,7 @@ func _object_entries(cell: Vector2i) -> Array:
 		if not any:
 			out.append(["%s: kein passendes Werkzeug (Kauf in der Organisation)" % what, {}, false])
 	elif not st.open:
-		out.append(["%s öffnen (von Hand)" % what, {"t": "OPEN", "on": nm}, true])
+		out.append([Texte.t("plan.von_hand") % what, {"t": "OPEN", "on": nm}, true])
 	if st.kind == "case":
 		var lid := ""
 		for l in target.loot:
@@ -1196,7 +1196,7 @@ func _object_entries(cell: Vector2i) -> Array:
 		for l in target.loot:
 			if l.name == nm:
 				kg = int(l.weight)
-		out.append(["Beute nehmen: %s (%d kg)" % [nm, kg] if st.open else "Beute nehmen (erst öffnen): %s" % nm, {"t": "TAKE", "loot": lid}, bool(st.open)])
+		out.append([Texte.t("plan.beute_nehmen_kg") % [nm, kg] if st.open else Texte.t("plan.beute_erst_oeffnen") % nm, {"t": "TAKE", "loot": lid}, bool(st.open)])
 	return out
 
 
@@ -1394,11 +1394,11 @@ func _on_map_click(cell: Vector2i) -> void:
 			_menu_entries.append(["Treppe steigen (8 s)", {"t": "TREPPE"}, true])
 	_menu_entries.append_array(_object_entries(cell))
 	if target.has("panel") and Sim._v2i(target.panel.pos) == cell:
-		_menu_entries.append(["Alarmpanel überbrücken (Bypass)", {"t": "TOOL", "tool": "bypass", "on": target.panel.name}, Game.tools_owned.has("bypass")])
+		_menu_entries.append([Texte.t("plan.bypass"), {"t": "TOOL", "tool": "bypass", "on": target.panel.name}, Game.tools_owned.has("bypass")])
 	for g in target.guards:
 		if Sim._v2i(g.start) == cell:
 			_menu_entries.append(["Wache niederschlagen (Kampfsport, laut)", {"t": "NEUTRALIZE", "guard": g.id, "method": "knock"}, true])
-			_menu_entries.append(["Wache mit Chloroform betäuben (leise)", {"t": "NEUTRALIZE", "guard": g.id, "method": "chloroform"}, Game.tools_owned.has("chloroform")])
+			_menu_entries.append([Texte.t("plan.chloroform"), {"t": "NEUTRALIZE", "guard": g.id, "method": "chloroform"}, Game.tools_owned.has("chloroform")])
 	if _menu == null:
 		_menu = PopupMenu.new()
 		add_child(_menu)
@@ -1448,7 +1448,7 @@ func _watch_last(crew_id: String) -> void:
 	_playhead = float(seg.start)
 	_play_until = float(seg.end)
 	_playing = true
-	_play_btn.text = "❚❚  Pause"
+	_play_btn.text = Texte.t("plan.pause")
 
 
 func _on_menu_pick(i: int) -> void:

@@ -652,7 +652,7 @@ func _check_loudness(dt: float) -> void:
 		total = maxf(total, float(c.get("loud", LOUD_STD)))
 	peak_loud = maxf(peak_loud, total)
 	if total > max_volume:
-		_alarm("Lärm (%.0f dB)" % total, "QUIET", 0.0)
+		_alarm(Texte.t("sim.laerm_quelle") % total, "QUIET", 0.0)
 
 
 ## Streifgänge (Original: player.c, Patrouille pro Sekunde, tcAlarmByPatrol): Ein Streifgang
@@ -952,10 +952,10 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		if tool.destroys:
 			door.destroyed = true
 			open_cells[cell] = true
-			c["msg"] = "Tür aufgebrochen – jetzt offen"
+			c["msg"] = Texte.t("sim.msg_tuer_aufgebrochen")
 			_log(Texte.t("sim.tuer_aufgebrochen") % a.on)
 		else:
-			c["msg"] = "Tür entriegelt – noch zu"
+			c["msg"] = Texte.t("sim.msg_tuer_entriegelt")
 			_log(Texte.t("sim.tuer_entriegelt") % a.on)
 	_noise(center(cell), c.noise)
 	c.used[tool.type] = int(c.used.get(tool.type, 0)) + 1
@@ -1092,7 +1092,7 @@ func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:
 		return
 	if door != null:
 		open_cells[cell] = true
-		c["msg"] = "Tür offen"
+		c["msg"] = Texte.t("sim.msg_tuer_offen")
 		_log(Texte.t("sim.oeffnet") % [c.name, a.on])
 	else:
 		loot[case_id].opened = true

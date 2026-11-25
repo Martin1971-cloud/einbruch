@@ -106,7 +106,7 @@ func _ready() -> void:
 	var bottom := HBoxContainer.new()
 	bottom.add_theme_constant_override("separation", 10)
 	root.add_child(bottom)
-	bottom.add_child(UI.button("‹  Zurück in die Stadt", _on_back, 210))
+	bottom.add_child(UI.button(Texte.t("org.zurueck"), _on_back, 210))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(sp)
@@ -251,7 +251,7 @@ func _refresh_cover() -> void:
 		grid.add_child(_l("%d %%" % need, 14, Color(0.85, 0.9, 0.95)))
 		grid.add_child(_l("%d %%" % have, 14, Color(0.6, 0.95, 0.65) if ok else Color(1, 0.6, 0.5)))
 		if ok:
-			grid.add_child(_l("✓ gedeckt", 14, Color(0.45, 0.95, 0.55)))
+			grid.add_child(_l(Texte.t("org.gedeckt"), 14, Color(0.45, 0.95, 0.55)))
 		else:
 			grid.add_child(_l("✗ −%d %%" % (need - have), 14, Color(1, 0.5, 0.45)))
 		grid.get_child(grid.get_child_count() - 1).tooltip_text = bedarf[skill].grund
@@ -275,7 +275,7 @@ func _shop_fold(title: String, content: Control) -> PanelContainer:
 func _build_shop() -> void:
 	for c in _shop_box.get_children():
 		c.queue_free()
-	_shop_hint.text = "Einkauf auf der Stadtkarte: Werkzeugladen „Stahlmann“ (Werkzeug, Kleidung) und Autohaus „Kaiser“ (Fahrzeuge). Hier siehst du, was du besitzt."
+	_shop_hint.text = Texte.t("org.shop_hint")
 	var owned := VBoxContainer.new()
 	owned.add_theme_constant_override("separation", 3)
 	var tnames: Array = []
@@ -354,7 +354,7 @@ func _refresh_summary() -> void:
 	elif d < 1:
 		missing = Texte.t("org.fehlt_fahrer")
 	_summary.text = "Team: %d Einbrecher, %d Fahrer%s" % [b, d, Texte.t("org.bereit") if missing == "" else "  ·  es fehlt noch: " + missing]
-	_cost_label.text = "Kosten für Team und Fluchtwagen: %s € · verfügbar: %s €" % [_fmt(_cost()), _fmt(Game.money)]
+	_cost_label.text = Texte.t("org.kosten") % [_fmt(_cost()), _fmt(Game.money)]
 	_refresh_cover()
 	_build_shop()
 
@@ -363,17 +363,17 @@ func _on_toggle(pressed: bool, id: String) -> void:
 	var is_driver: bool = _crew_by_id(id).get("driver", false)
 	if pressed:
 		if _team_count() >= MAX_TEAM:
-			_msg.text = "Mehr als %d Personen sind zu auffällig." % MAX_TEAM
+			_msg.text = Texte.t("org.zu_viele") % MAX_TEAM
 			_build_people()
 			_refresh_summary()
 			return
 		if is_driver and _selected_ids(true).size() >= MAX_DRIVERS:
-			_msg.text = "Höchstens %d Fahrer." % MAX_DRIVERS
+			_msg.text = Texte.t("org.hoechstens_fahrer") % MAX_DRIVERS
 			_build_people()
 			_refresh_summary()
 			return
 		if not is_driver and _selected_ids(false).size() >= MAX_BURGLARS:
-			_msg.text = "Höchstens %d Einbrecher." % MAX_BURGLARS
+			_msg.text = Texte.t("org.hoechstens_einbrecher") % MAX_BURGLARS
 			_build_people()
 			_refresh_summary()
 			return
@@ -385,7 +385,7 @@ func _on_toggle(pressed: bool, id: String) -> void:
 
 func _on_burgle_toggle(pressed: bool, id: String) -> void:
 	if pressed and _selected_ids(false).size() >= MAX_BURGLARS:
-		_msg.text = "Höchstens %d Einbrecher." % MAX_BURGLARS
+		_msg.text = Texte.t("org.hoechstens_einbrecher") % MAX_BURGLARS
 		_build_people()
 		return
 	_burgle[id] = pressed

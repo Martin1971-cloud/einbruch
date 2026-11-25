@@ -70,7 +70,7 @@ func _ready() -> void:
 	# Textgröße (Planung): 10 bis 18
 	var trow := HBoxContainer.new()
 	trow.add_theme_constant_override("separation", 10)
-	trow.add_child(UI.label("Textgröße in der Planung", 15, Color(0.92, 0.9, 0.85)))
+	trow.add_child(UI.label(Texte.t("opt.textgroesse"), 15, Color(0.92, 0.9, 0.85)))
 	var tsp := Control.new()
 	tsp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	trow.add_child(tsp)
@@ -93,7 +93,7 @@ func _ready() -> void:
 		box.add_child(_tele_btn)
 	_einfach_btn = UI.button("", _toggle_einfach, 0)
 	box.add_child(_einfach_btn)
-	box.add_child(UI.label("Hinweise zeigen beim ersten Auftreten einer Mechanik. Gesehene Hinweise setzt du im Lexikon zurück.", 12, Color(0.7, 0.74, 0.8), true))
+	box.add_child(UI.label(Texte.t("opt.hinweis_text"), 12, Color(0.7, 0.74, 0.8), true))
 	_refresh()
 
 

@@ -1121,7 +1121,7 @@ func _get_tooltip(at_position: Vector2) -> String:
 	if intel >= 1:
 		for g in target.guards:
 			if Sim._v2i(g.start) == cell:
-				return "%s – Sichtfeld %d Felder, Gehör ab %d dB" % [g.name, int(g.vision), int(g.hearing)]
+				return Texte.t("gridv.sicht") % [g.name, int(g.vision), int(g.hearing)]
 	for d in target.doors:
 		if Sim._v2i(d.pos) == cell:
 			return "%s – verschlossen (Dietrich, Brecheisen oder Bypass)" % d.name

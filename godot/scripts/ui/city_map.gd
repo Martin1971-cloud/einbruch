@@ -115,7 +115,7 @@ func _draw() -> void:
 		if p.id != _hover:
 			continue
 		var c := _px(p.pos)
-		var lines: Array = [p.name, "" if p.active else "noch nicht auswählbar"]
+		var lines: Array = [p.name, "" if p.active else Texte.t("stadt.nicht_waehlbar")]
 		var fs := 13
 		var w := 0.0
 		for ln in lines:
@@ -127,7 +127,7 @@ func _draw() -> void:
 		draw_rect(box, Color(0.89, 0.71, 0.35), false, 1.0)
 		draw_string(font, box.position + Vector2(8, 18), p.name, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.97, 0.85, 0.55))
 		if not p.active:
-			draw_string(font, box.position + Vector2(8, 36), "noch nicht auswählbar", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0.85, 0.6, 0.5))
+			draw_string(font, box.position + Vector2(8, 36), Texte.t("stadt.nicht_waehlbar"), HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0.85, 0.6, 0.5))
 		break
 
 

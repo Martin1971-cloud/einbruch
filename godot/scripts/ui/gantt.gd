@@ -211,6 +211,6 @@ func _get_tooltip(at_position: Vector2) -> String:
 		if t >= float(s.start) and t <= float(s.end):
 			var lab: String = labs[int(s.i)] if int(s.i) < labs.size() else String(s.t)
 			var db := float(s.get("loud", 0.0))
-			var extra := "\nLärm: %d dB" % int(db) if db > LOUD_STD + 0.5 else ""
+			var extra := "\n" + Texte.t("gantt.laerm") % int(db) if db > LOUD_STD + 0.5 else ""
 			return "%s: %s\n%s – %s%s" % [c.name, lab, Sim.clock(float(s.start)), Sim.clock(float(s.end)), extra]
 	return ""

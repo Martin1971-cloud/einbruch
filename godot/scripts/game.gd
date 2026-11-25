@@ -140,11 +140,11 @@ func load_game(n: int = -1) -> bool:
 		# Beschädigt: die Sicherung (.bak) versuchen
 		var bak = _read_save(slot_path(slot) + ".bak")
 		if bak == null:
-			last_error = "Platz %d ist beschädigt und es gibt keine Sicherung. Der Platz kann gelöscht und neu begonnen werden." % slot
+			last_error = Texte.t("game.beschaedigt_ohne_sicherung") % slot
 			return false
 		DirAccess.copy_absolute(slot_path(slot) + ".bak", slot_path(slot))
 		parsed = bak
-		last_error = "Platz %d war beschädigt. Die letzte Sicherung wurde wiederhergestellt." % slot
+		last_error = Texte.t("game.wiederhergestellt") % slot
 	var v := int(parsed.get("version", 1))
 	if v > SAVE_VERSION:
 		last_error = "Platz %d stammt von einer neueren Version des Spiels und kann nicht geladen werden." % slot
