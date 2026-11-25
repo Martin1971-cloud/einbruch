@@ -178,7 +178,9 @@ func _build_world() -> void:
 	var bg_layer := CanvasLayer.new()
 	bg_layer.layer = -1
 	add_child(bg_layer)
-	bg_layer.add_child(UI.backdrop("res://assets/art/bg_ausfuehrung.jpg"))
+	var bg_pic := UI.backdrop("res://assets/art/bg_hafen_nacht.webp")
+	bg_pic.modulate = Color(0.62, 0.64, 0.7)   # dezent: etwas abgedunkelt, damit Gebäude und Figuren im Vordergrund stehen
+	bg_layer.add_child(bg_pic)
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.42, 0.44, 0.52)
 	env.ambient_light_energy = 0.32
