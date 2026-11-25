@@ -62,6 +62,24 @@ func _build() -> void:
 
 
 func _build_laden() -> void:
+	# Zwei Spalten nebeneinander: links Werkzeug (breiter), rechts Kleidung
+	var haupt := _body
+	var cols := HBoxContainer.new()
+	cols.add_theme_constant_override("separation", 18)
+	cols.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cols.alignment = BoxContainer.ALIGNMENT_BEGIN
+	haupt.add_child(cols)
+	var werk := VBoxContainer.new()
+	werk.add_theme_constant_override("separation", 6)
+	werk.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	werk.size_flags_stretch_ratio = 2.2
+	cols.add_child(werk)
+	var kleid := VBoxContainer.new()
+	kleid.add_theme_constant_override("separation", 6)
+	kleid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	kleid.size_flags_stretch_ratio = 1.0
+	cols.add_child(kleid)
+	_body = werk
 	_body.add_child(UI.label(Texte.t("shop.werkzeug_kopf"), 15, Color(0.89, 0.71, 0.35)))
 	for tid in GameData.TOOLS:
 		var t: Dictionary = GameData.TOOLS[tid]
@@ -74,7 +92,8 @@ func _build_laden() -> void:
 		b.custom_minimum_size = Vector2(0, 34)
 		b.tooltip_text = Texte.t("shop.tool_tip") % [t.time, t.noise, t.evidence, t.max]
 		_body.add_child(b)
-	_body.add_child(UI.label("Kleidung", 15, Color(0.89, 0.71, 0.35)))
+	_body = kleid
+	_body.add_child(UI.label(Texte.t("shop.kleidung_kopf"), 15, Color(0.89, 0.71, 0.35)))
 	for gid in GameData.GEAR:
 		if gid == "none":
 			continue
@@ -85,6 +104,7 @@ func _build_laden() -> void:
 		bg.disabled = (not owned_g) and Game.money < int(g.price)
 		bg.custom_minimum_size = Vector2(0, 34)
 		_body.add_child(bg)
+	_body = haupt
 
 
 func _build_autohaus() -> void:

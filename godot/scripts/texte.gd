@@ -296,6 +296,7 @@ const TABELLE := {
 		"stufe.hint": "nach erfolgreichem Einbruch bei %s",
 		"shop.haken_an": "[✓] ",
 		"shop.haken_aus": "[  ] ",
+		"shop.kleidung_kopf": "Kleidung",
 	},
 	"en": {
 		"stadt.hint_umsehen": "A look at the building: one more step of investigation, one hour passes.",
@@ -585,6 +586,7 @@ const TABELLE := {
 		"stufe.hint": "after a successful heist at %s",
 		"shop.haken_an": "[✓] ",
 		"shop.haken_aus": "[  ] ",
+		"shop.kleidung_kopf": "Clothing",
 	},
 }
 

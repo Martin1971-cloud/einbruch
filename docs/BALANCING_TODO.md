@@ -183,3 +183,4 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Lokalisierung Werkzeugladen, Autohaus, Spielstände, Spielende, Journal und Lexikon-Suche umgestellt (Deutsch und Englisch). Geprüft mit `test_lokalisierung_rest`. Pipeline: 55 Tests, 0 Fehler.
 - Stadtkarte: Zoom mit Mausrad zum Mauszeiger, Ziehen zum Verschieben (nur bei Zoom), Rechtsklick oder Doppelklick setzt die Ansicht zurück. Geprüft mit `test_stadtkarte_zoom`.
 - Werkzeugladen: Kaufstatus als Kästchen am Zeilenanfang („[✓]“ / „[  ]“). Sperrhinweis neu formuliert: „nach erfolgreichem Einbruch bei …“ (vorher „ab …“ mit doppeltem Anführungszeichen). Geprüft mit `test_stufen`.
+- Werkzeugladen: Werkzeug und Kleidung nebeneinander in zwei Spalten (Werkzeug breiter), damit die Kleidung nicht unter der Liste verschwindet.
