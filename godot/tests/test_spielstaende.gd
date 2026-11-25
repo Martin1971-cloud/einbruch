@@ -32,7 +32,7 @@ func _run() -> void:
 	G.money = 999
 	G.new_game_in_slot(2)
 	_check(FileAccess.file_exists(G.slot_path(2) + ".bak"), "Überschreiben legt eine Sicherung an")
-	_check(G.load_game(2) and G.money == 80000, "Laden von Platz 2 nach dem Neustart (Startgeld)")
+	_check(G.load_game(2) and G.money == Game.START_MONEY, "Laden von Platz 2 nach dem Neustart (Startgeld)")
 	_check(G.last_slot() == 2, "Letzter Platz wird gemerkt")
 	G.delete_slot(2)
 	_check(not G.has_save(2) and FileAccess.file_exists(G.slot_path(2) + ".bak"), "Löschen entfernt den Platz, Sicherung bleibt")

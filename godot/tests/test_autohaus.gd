@@ -21,6 +21,8 @@ func _process(_d: float) -> bool:
 		var G = root.get_node("/root/Game")
 		var start: int = G.money
 		var price: int = int(GameData.CARS.sport.price)
+		G.money = maxi(G.money, price + 1000)  # Startgeld reicht nicht für den Sportwagen
+		start = G.money
 		G.stufe["kiosk"] = 1
 		G.stufe["curiosity"] = 1  # zwei erfolgreiche Gebäude: Sportwagen freigeschaltet
 		shop.buy_car("sport")

@@ -333,10 +333,10 @@ const TARGETS := {
 		],
 		"sensors": [],
 		"loot": [
-			{"id": "kasse", "name": "Kassenlade", "pos": [10, 3], "value": 4000, "weight": 0.5},
+			{"id": "kasse", "name": "Kassenlade", "pos": [10, 3], "value": 6000, "weight": 0.5},
 			# Wertschrank (Original: Geld 500 g und eine Zigarrenkiste 2 kg, im selben Behälter)
-			# Aufteilung: Geld 12.000 € (500 g), Zigarrenkiste 4.000 € (2 kg). Im Spiel ein Beutestück.
-			{"id": "safe", "name": "Wertschrank", "pos": [8, 2], "value": 16000, "weight": 2.5, "parts": [["Geld", 12000], ["Zigarrenkiste", 4000]]},
+			# Aufteilung: Geld 16.000 € (500 g), Zigarrenkiste 6.000 € (2 kg). Im Spiel ein Beutestück.
+			{"id": "safe", "name": "Wertschrank", "pos": [8, 2], "value": 22000, "weight": 2.5, "parts": [["Geld", 16000], ["Zigarrenkiste", 6000]]},
 		],
 		"guards": [],
 		"facts": [
