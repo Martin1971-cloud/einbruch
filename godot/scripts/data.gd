@@ -780,7 +780,7 @@ const DEKO := {
 	],
 	"juwelier": [
 		{"kind": "regal", "rect": [200, 40, 240, 52]},
-		{"kind": "kiste", "rect": [96, 124, 120, 134]},
+		{"kind": "kiste", "rect": [44, 124, 68, 134]},
 		{"kind": "bild", "rect": [100, 40, 124, 43]},
 		{"kind": "pflanze", "rect": [246, 140, 256, 150]},
 		{"kind": "bild", "rect": [256, 60, 259, 90]},
