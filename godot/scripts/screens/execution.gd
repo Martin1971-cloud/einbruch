@@ -513,6 +513,14 @@ func _build_fine(spec: Dictionary) -> void:
 				leaf.position = Vector3((0.5 if along_x else 0.0), 1.05, (0.0 if along_x else 0.5))
 				hinge.add_child(leaf)
 				_door_nodes[anc] = hinge
+				# Fester dunkler Türrahmen in den Spalten neben dem Blatt: sonst sieht man dort den Boden und es flimmert (Z-Fighting)
+				var jamb_col := Color(0.12, 0.1, 0.09)
+				var jamb_h := 2.0
+				for sgn in [-1.0, 1.0]:
+					if along_x:
+						_box(Vector3(0.06, jamb_h, leaf_t + 0.04), p + Vector3(sgn * 0.475, 0.1 + jamb_h * 0.5, 0), jamb_col, 0.8)
+					else:
+						_box(Vector3(leaf_t + 0.04, jamb_h, 0.06), p + Vector3(0, 0.1 + jamb_h * 0.5, sgn * 0.475), jamb_col, 0.8)
 			"C":
 				_box(Vector3(sz.x, 1.0, sz.z), p + Vector3(0, 0.5, 0), Color(0.93, 0.9, 0.86), 0.25)
 				# Glasdeckel: an der Rückkante gelenkt, hebt sich beim Öffnen der Vitrine (siehe _sync)
