@@ -702,7 +702,7 @@ func _free_for(c: Dictionary, key: String) -> bool:
 			overlaps += 1
 		_log(Texte.t("sim.wartet") % [c.name, _busy_name(key)])
 		c["waiting"] = true
-		c["msg"] = "wartet auf %s" % _busy_name(key)
+		c["msg"] = Texte.t("sim.msg_wartet") % _busy_name(key)
 		return false
 	c["waiting"] = false
 	return true
@@ -716,7 +716,7 @@ func _busy_name(key: String) -> String:
 	for x in crew:
 		if x.id == _busy.get(key, ""):
 			return x.name.split(" ")[0]
-	return "einem Teammitglied"
+	return Texte.t("sim.einem_teammitglied")
 
 
 func _unlock_all(c: Dictionary) -> void:
@@ -1200,7 +1200,7 @@ func _do_take(c: Dictionary, a: Dictionary, dt: float) -> void:
 	l.state = "CARRIED"
 	l.carrier = c.id
 	c.carried.append(l.id)
-	c["msg"] = "%s genommen" % l.name
+	c["msg"] = Texte.t("sim.msg_genommen") % Texte.d(str(l.name))
 	_log(Texte.t("sim.nimmt") % [c.name, l.name])
 	_next(c)
 

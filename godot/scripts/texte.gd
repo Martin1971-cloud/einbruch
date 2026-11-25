@@ -378,6 +378,9 @@ const TABELLE := {
 		"res.werkzeug_an": "%s an %s",
 		"plan.fahrer_zeile": "Fahrer: %s · Fahren %d",
 		"org.kleidung_liste": "Kleidung: %s",
+		"sim.msg_wartet": "wartet auf %s",
+		"sim.einem_teammitglied": "einem Teammitglied",
+		"sim.msg_genommen": "%s genommen",
 	},
 	"en": {
 		"stadt.hint_umsehen": "A look at the building: one more step of investigation, one hour passes.",
@@ -749,6 +752,9 @@ const TABELLE := {
 		"res.werkzeug_an": "%s on %s",
 		"plan.fahrer_zeile": "Driver: %s · Driving %d",
 		"org.kleidung_liste": "Clothing: %s",
+		"sim.msg_wartet": "waiting for %s",
+		"sim.einem_teammitglied": "a team member",
+		"sim.msg_genommen": "%s taken",
 	},
 }
 
