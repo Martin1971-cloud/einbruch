@@ -369,6 +369,7 @@ const TABELLE := {
 		"plan.hilfe_2": "2. Feld im Grundriss anklicken: die Person geht dorthin.",
 		"plan.hilfe_3": "3. Gegenstand anklicken (Tür, Vitrine, Kasse, Wache, Alarmpanel): Menü mit Möglichkeiten.",
 		"plan.hilfe_4": "Beute: erst Vitrine öffnen oder aufbrechen, dann Beute nehmen.",
+		"hint.verstanden": "Verstanden",
 	},
 	"en": {
 		"stadt.hint_umsehen": "A look at the building: one more step of investigation, one hour passes.",
@@ -731,8 +732,16 @@ const TABELLE := {
 		"plan.hilfe_2": "2. Click a cell on the floor plan: the person goes there.",
 		"plan.hilfe_3": "3. Click an object (door, display case, till, guard, alarm panel): menu with options.",
 		"plan.hilfe_4": "Loot: first open the display case or break it open, then take the loot.",
+		"hint.verstanden": "Got it",
 	},
 }
+
+
+## Text aus den Spieldaten (data.gd): in Englisch über die Übersetzungstabelle, sonst der deutsche Text.
+static func d(text: String) -> String:
+	if sprache == "en" and TexteDaten.EN.has(text):
+		return str(TexteDaten.EN[text])
+	return text
 
 
 ## Text zu einem Schlüssel in der eingestellten Sprache.

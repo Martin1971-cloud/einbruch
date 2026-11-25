@@ -779,7 +779,7 @@ func _step_crew(c: Dictionary, dt: float) -> void:
 			_next(c)
 		"FLAG_SET":
 			flags[a.flag] = true
-			_log(Texte.t("sim.signal") % [c.name, GameData.FLAG_NAMES.get(a.flag, a.flag)])
+			_log(Texte.t("sim.signal") % [c.name, Texte.d(GameData.FLAG_NAMES.get(a.flag, a.flag))])
 			_next(c)
 		"FLAG_WAIT":
 			if flags.get(a.flag, false):

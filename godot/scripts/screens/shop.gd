@@ -86,7 +86,7 @@ func _build_laden() -> void:
 		var owned: bool = Game.tools_owned.has(tid)
 		var locked: bool = (not owned) and int(t.get("stufe", 0)) > Game.stage()
 		var lock_txt := "  ·  gesperrt, %s" % GameData.stufe_hint(int(t.get("stufe", 0))) if locked else ""
-		var b := UI.button(Texte.t("shop.tool_btn") % [Texte.t("shop.haken_an") if owned else Texte.t("shop.haken_aus"), t.name, _fmt(int(t.price)), _use_text(t), lock_txt], func() -> void: buy_tool(tid), 0)
+		var b := UI.button(Texte.t("shop.tool_btn") % [Texte.t("shop.haken_an") if owned else Texte.t("shop.haken_aus"), Texte.d(t.name), _fmt(int(t.price)), _use_text(t), lock_txt], func() -> void: buy_tool(tid), 0)
 		b.add_theme_font_size_override("font_size", 13)
 		b.disabled = locked or ((not owned) and Game.money < int(t.price))
 		b.custom_minimum_size = Vector2(0, 34)
@@ -99,7 +99,7 @@ func _build_laden() -> void:
 			continue
 		var g: Dictionary = GameData.GEAR[gid]
 		var owned_g: bool = Game.gear_owned.has(gid)
-		var bg := UI.button(Texte.t("shop.gear_btn") % [Texte.t("shop.haken_an") if owned_g else Texte.t("shop.haken_aus"), g.name, _fmt(int(g.price))], func() -> void: buy_gear(gid), 0)
+		var bg := UI.button(Texte.t("shop.gear_btn") % [Texte.t("shop.haken_an") if owned_g else Texte.t("shop.haken_aus"), Texte.d(g.name), _fmt(int(g.price))], func() -> void: buy_gear(gid), 0)
 		bg.add_theme_font_size_override("font_size", 13)
 		bg.disabled = (not owned_g) and Game.money < int(g.price)
 		bg.custom_minimum_size = Vector2(0, 34)
@@ -118,7 +118,7 @@ func _build_autohaus() -> void:
 		var car_locked: bool = (not owned) and int(c.get("stufe", 0)) > Game.stage()
 		if car_locked:
 			status = "  ·  gesperrt, %s" % GameData.stufe_hint(int(c.get("stufe", 0)))
-		_body.add_child(UI.label("%s  ·  %s%s" % [c.name, price_txt, status], 14, Color(0.92, 0.9, 0.85)))
+		_body.add_child(UI.label("%s  ·  %s%s" % [Texte.d(c.name), price_txt, status], 14, Color(0.92, 0.9, 0.85)))
 		_body.add_child(UI.label(str(c.info), 12, Color(0.75, 0.8, 0.88), true))
 		if owned:
 			var b := UI.button(Texte.t("shop.nehmen") if not chosen else Texte.t("shop.gewaehlt"), func() -> void: choose_car(cid), 0)
@@ -136,19 +136,19 @@ func _build_autohaus() -> void:
 func buy_tool(tid: String) -> void:
 	var t: Dictionary = GameData.TOOLS[tid]
 	if not Game.tools_owned.has(tid) and int(t.get("stufe", 0)) > Game.stage():
-		_msg.text = "%s ist noch nicht zu haben (%s)." % [t.name, GameData.stufe_hint(int(t.get("stufe", 0)))]
+		_msg.text = "%s ist noch nicht zu haben (%s)." % [Texte.d(t.name), GameData.stufe_hint(int(t.get("stufe", 0)))]
 		return
 	if Game.tools_owned.has(tid):
 		Game.tools_owned.erase(tid)
 		Game.money += int(t.price)
-		_msg.text = Texte.t("shop.zurueckgegeben") % [t.name, _fmt(Game.money)]
+		_msg.text = Texte.t("shop.zurueckgegeben") % [Texte.d(t.name), _fmt(Game.money)]
 	else:
 		if Game.money < int(t.price):
-			_msg.text = Texte.t("shop.zu_wenig") % t.name
+			_msg.text = Texte.t("shop.zu_wenig") % Texte.d(t.name)
 			return
 		Game.money -= int(t.price)
 		Game.tools_owned[tid] = true
-		_msg.text = "%s gekauft." % t.name
+		_msg.text = "%s gekauft." % Texte.d(t.name)
 	_build()
 
 
@@ -158,14 +158,14 @@ func buy_gear(gid: String) -> void:
 	if Game.gear_owned.has(gid):
 		Game.gear_owned.erase(gid)
 		Game.money += int(g.price)
-		_msg.text = Texte.t("shop.zurueckgegeben") % [g.name, _fmt(Game.money)]
+		_msg.text = Texte.t("shop.zurueckgegeben") % [Texte.d(g.name), _fmt(Game.money)]
 	else:
 		if Game.money < int(g.price):
-			_msg.text = Texte.t("shop.zu_wenig") % g.name
+			_msg.text = Texte.t("shop.zu_wenig") % Texte.d(g.name)
 			return
 		Game.money -= int(g.price)
 		Game.gear_owned[gid] = true
-		_msg.text = "%s gekauft." % g.name
+		_msg.text = "%s gekauft." % Texte.d(g.name)
 	_build()
 
 
@@ -173,18 +173,18 @@ func buy_gear(gid: String) -> void:
 func buy_car(cid: String) -> void:
 	var c: Dictionary = GameData.CARS[cid]
 	if not Game.cars_owned.has(cid) and int(c.get("stufe", 0)) > Game.stage():
-		_msg.text = "%s ist noch nicht zu haben (%s)." % [c.name, GameData.stufe_hint(int(c.get("stufe", 0)))]
+		_msg.text = "%s ist noch nicht zu haben (%s)." % [Texte.d(c.name), GameData.stufe_hint(int(c.get("stufe", 0)))]
 		return
 	if Game.cars_owned.has(cid):
 		choose_car(cid)
 		return
 	if Game.money < int(c.price):
-		_msg.text = Texte.t("shop.zu_wenig") % c.name
+		_msg.text = Texte.t("shop.zu_wenig") % Texte.d(c.name)
 		return
 	Game.money -= int(c.price)
 	Game.cars_owned[cid] = true
 	Game.car_id = cid
-	_msg.text = Texte.t("shop.car_gekauft") % c.name
+	_msg.text = Texte.t("shop.car_gekauft") % Texte.d(c.name)
 	_build()
 
 

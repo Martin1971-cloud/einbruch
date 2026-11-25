@@ -191,7 +191,7 @@ func _person_card(c: Dictionary, is_driver: bool) -> PanelContainer:
 	skills.custom_minimum_size = Vector2(230, 0)
 	for k in c.skills:
 		var sr := _skill_row(Texte.t(SKILL_NAMES.get(k, k)), int(c.skills[k]))
-		sr.tooltip_text = GameData.SKILL_INFO.get(k, "")
+		sr.tooltip_text = Texte.d(GameData.SKILL_INFO.get(k, ""))
 		skills.add_child(sr)
 	row.add_child(skills)
 	return _card(row)
@@ -246,7 +246,7 @@ func _refresh_cover() -> void:
 		var have := _team_best(skill)
 		var ok := have >= need
 		var name_lbl := _l(Texte.t(SKILL_NAMES.get(skill, skill)), 14, Color(0.95, 0.93, 0.88))
-		name_lbl.tooltip_text = bedarf[skill].grund
+		name_lbl.tooltip_text = Texte.d(bedarf[skill].grund)
 		grid.add_child(name_lbl)
 		grid.add_child(_l("%d %%" % need, 14, Color(0.85, 0.9, 0.95)))
 		grid.add_child(_l("%d %%" % have, 14, Color(0.6, 0.95, 0.65) if ok else Color(1, 0.6, 0.5)))
@@ -254,7 +254,7 @@ func _refresh_cover() -> void:
 			grid.add_child(_l(Texte.t("org.gedeckt"), 14, Color(0.45, 0.95, 0.55)))
 		else:
 			grid.add_child(_l("✗ −%d %%" % (need - have), 14, Color(1, 0.5, 0.45)))
-		grid.get_child(grid.get_child_count() - 1).tooltip_text = bedarf[skill].grund
+		grid.get_child(grid.get_child_count() - 1).tooltip_text = Texte.d(bedarf[skill].grund)
 	_cover_box.add_child(grid)
 	_cover_box.add_child(_l(Texte.t("org.abdeckung_tip"), 11, Color(0.55, 0.6, 0.66)))
 

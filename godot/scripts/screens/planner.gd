@@ -162,7 +162,7 @@ func _left_column() -> Control:
 		art = building
 	info.add_child(art)
 	info.add_child(_l(Texte.t("plan.vorhaben"), 11, Color(0.6, 0.66, 0.74)))
-	info.add_child(_l(target.name, 17, Color(0.97, 0.85, 0.55)))
+	info.add_child(_l(Texte.d(target.name), 17, Color(0.97, 0.85, 0.55)))
 	info.add_child(_l("Beutewert: %s" % GameData.loot_text(target, int(Game.intel.get(target.id, 0))), 13, Color(0.85, 0.88, 0.94)))
 	col.add_child(_card(info))
 	_checklist = VBoxContainer.new()
@@ -508,7 +508,7 @@ func _build_options() -> void:
 	var tools: Array = []
 	for tid in GameData.TOOLS:
 		if Game.tools_owned.has(tid):
-			tools.append([GameData.TOOLS[tid].name, tid])
+			tools.append([Texte.d(GameData.TOOLS[tid].name), tid])
 	var doors: Array = []
 	for d in target.doors:
 		doors.append([d.name, d.name])
@@ -821,7 +821,7 @@ func _describe(a: Dictionary) -> String:
 				return "Gehen nach %s" % _name_at(a.cell)
 			return "Gehen nach %s" % a.get("to", "?")
 		"TOOL":
-			return "%s an %s" % [GameData.TOOLS[a.tool].name, a.on]
+			return "%s an %s" % [Texte.d(GameData.TOOLS[a.tool].name), a.on]
 		"OPEN":
 			return Texte.t("plan.oeffnen_obj") % a.on
 		"TAKE":
@@ -1182,7 +1182,7 @@ func _object_entries(cell: Vector2i) -> Array:
 				continue
 			any = true
 			var how := "aufbrechen (laut, dann offen)" if t.destroys else "entriegeln"
-			out.append(["%s %s: %s" % [what, how, t.name], {"t": "TOOL", "tool": tid, "on": nm}, true])
+			out.append(["%s %s: %s" % [what, how, Texte.d(t.name)], {"t": "TOOL", "tool": tid, "on": nm}, true])
 		if not any:
 			out.append(["%s: kein passendes Werkzeug (Kauf in der Organisation)" % what, {}, false])
 	elif not st.open:
@@ -1359,9 +1359,9 @@ func _show_hint(id: String) -> void:
 		return
 	var h: Dictionary = GameData.HINTS[id]
 	var dlg := AcceptDialog.new()
-	dlg.title = str(h.title)
-	dlg.dialog_text = str(h.text)
-	dlg.ok_button_text = "Verstanden"
+	dlg.title = Texte.d(str(h.title))
+	dlg.dialog_text = Texte.d(str(h.text))
+	dlg.ok_button_text = Texte.t("hint.verstanden")
 	add_child(dlg)
 	dlg.confirmed.connect(dlg.queue_free)
 	dlg.canceled.connect(dlg.queue_free)

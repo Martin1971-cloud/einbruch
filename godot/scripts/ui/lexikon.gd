@@ -81,8 +81,8 @@ func _fill() -> void:
 	var q := _search.text.strip_edges().to_lower() if _search != null else ""
 	var shown := 0
 	for e in GameData.LEXIKON:
-		var term: String = str(e.term)
-		var text: String = str(e.text)
+		var term: String = Texte.d(str(e.term))
+		var text: String = Texte.d(str(e.text))
 		if q != "" and not (term.to_lower().contains(q) or text.to_lower().contains(q)):
 			continue
 		shown += 1

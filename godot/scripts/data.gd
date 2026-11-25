@@ -99,7 +99,7 @@ static func stufe_hint(stufe: int) -> String:
 	if stufe <= 0:
 		return ""
 	var idx := clampi(stufe - 1, 0, ORDER.size() - 1)
-	return Texte.t("stufe.hint") % TARGETS[ORDER[idx]].name
+	return Texte.t("stufe.hint") % Texte.d(TARGETS[ORDER[idx]].name)
 
 
 ## Fahrzeug mit Abholzeit: die Zeit richtet sich nach dem Fahren des Fahrers und dem Fahrzeug.
