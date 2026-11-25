@@ -495,7 +495,8 @@ func _build_fine(spec: Dictionary) -> void:
 				# Türblatt ohne Umriss und etwas dünner als die Öffnung: sonst flimmert es gestrichelt (Z-Fighting mit der Wand)
 				var leaf_t := minf(dsz.x, dsz.z) if minf(dsz.x, dsz.z) < 0.5 else 0.12
 				# 90 % der Öffnung: zu jeder Seite bleibt ein kleiner Spalt, damit die Kanten nicht fast in der Ebene der Wand liegen (Flimmern)
-				var leaf_size := Vector3(dsz.x * 0.9, 2.1, dsz.z * 0.9)
+				# 80 % der Öffnung: die Umrisse der Wände ragen 5 cm in die Öffnung, das Blatt darf nicht in deren Ebene liegen
+				var leaf_size := Vector3(dsz.x * 0.8, 2.1, dsz.z * 0.8)
 				if dsz.x > dsz.z:
 					leaf_size.z = leaf_t
 				else:
@@ -518,9 +519,9 @@ func _build_fine(spec: Dictionary) -> void:
 				var jamb_h := 2.0
 				for sgn in [-1.0, 1.0]:
 					if along_x:
-						_box(Vector3(0.06, jamb_h, leaf_t + 0.04), p + Vector3(sgn * 0.475, 0.1 + jamb_h * 0.5, 0), jamb_col, 0.8)
+						_box(Vector3(0.06, jamb_h, leaf_t + 0.04), p + Vector3(sgn * 0.45, 0.1 + jamb_h * 0.5, 0), jamb_col, 0.8)
 					else:
-						_box(Vector3(leaf_t + 0.04, jamb_h, 0.06), p + Vector3(0, 0.1 + jamb_h * 0.5, sgn * 0.475), jamb_col, 0.8)
+						_box(Vector3(leaf_t + 0.04, jamb_h, 0.06), p + Vector3(0, 0.1 + jamb_h * 0.5, sgn * 0.45), jamb_col, 0.8)
 			"C":
 				_box(Vector3(sz.x, 1.0, sz.z), p + Vector3(0, 0.5, 0), Color(0.93, 0.9, 0.86), 0.25)
 				# Glasdeckel: an der Rückkante gelenkt, hebt sich beim Öffnen der Vitrine (siehe _sync)
@@ -585,9 +586,17 @@ func _build_walls(spec: Dictionary) -> void:
 		for o in openings:
 			if absf((o[1] + o[3]) * 0.5 - cy) < 0.01 and o[2] - o[0] >= o[3] - o[1]:
 				runs = _cut_runs(runs, o[0], o[2])
+		var edges_h := []
+		for o in openings:
+			if absf((o[1] + o[3]) * 0.5 - cy) < 0.01 and o[2] - o[0] >= o[3] - o[1]:
+				edges_h.append(o[0])
+				edges_h.append(o[2])
 		for iv in runs:
-			var ln: float = iv[1] - iv[0] + WALL_T
-			var cx: float = (iv[0] + iv[1]) * 0.5
+			# Wandende an einer Türöffnung nicht verlängern: sonst ragt die Wand ins Türblatt (Z-Fighting)
+			var a0: float = iv[0] - (WALL_T * 0.5 if _kein_rand(iv[0], edges_h) else 0.0)
+			var a1: float = iv[1] + (WALL_T * 0.5 if _kein_rand(iv[1], edges_h) else 0.0)
+			var ln: float = a1 - a0
+			var cx: float = (a0 + a1) * 0.5
 			_box(Vector3(ln, WALL_H, WALL_T), Vector3(cx, WALL_H * 0.5, cy), col, 0.9)
 			_box(Vector3(ln + 0.02, 0.1, WALL_T + 0.02), Vector3(cx, WALL_H + 0.05, cy), cap, 0.5)
 	for key in vt:
@@ -596,11 +605,26 @@ func _build_walls(spec: Dictionary) -> void:
 		for o in openings:
 			if absf((o[0] + o[2]) * 0.5 - cx2) < 0.01 and o[3] - o[1] > o[2] - o[0]:
 				runs2 = _cut_runs(runs2, o[1], o[3])
+		var edges_v := []
+		for o in openings:
+			if absf((o[0] + o[2]) * 0.5 - cx2) < 0.01 and o[3] - o[1] > o[2] - o[0]:
+				edges_v.append(o[1])
+				edges_v.append(o[3])
 		for iv in runs2:
-			var ln2: float = iv[1] - iv[0] + WALL_T
-			var cy2: float = (iv[0] + iv[1]) * 0.5
+			var b0: float = iv[0] - (WALL_T * 0.5 if _kein_rand(iv[0], edges_v) else 0.0)
+			var b1: float = iv[1] + (WALL_T * 0.5 if _kein_rand(iv[1], edges_v) else 0.0)
+			var ln2: float = b1 - b0
+			var cy2: float = (b0 + b1) * 0.5
 			_box(Vector3(WALL_T, WALL_H, ln2), Vector3(cx2, WALL_H * 0.5, cy2), col, 0.9)
 			_box(Vector3(WALL_T + 0.02, 0.1, ln2 + 0.02), Vector3(cx2, WALL_H + 0.05, cy2), cap, 0.5)
+
+
+## True, wenn das Wandende nicht an einer Türöffnung liegt (dann darf die Ecke verlängert werden).
+func _kein_rand(v: float, kanten: Array) -> bool:
+	for k in kanten:
+		if absf(float(k) - v) < 0.01:
+			return false
+	return true
 
 
 func _add_run(lines: Dictionary, key: int, a: float, b: float) -> void:
