@@ -1,7 +1,7 @@
 extends SceneTree
 ## Echter Spielablauf mit echten Bildern (kein Vorspulen): Kiosk-Einbruch, Ausführung läuft in Echtzeit.
 ## Protokolliert je Sekunde Bildrate und Bildzeit. Für die GPU-Messung auf dem PC parallel nvidia-smi laufen lassen.
-## Aufruf: godot --path . --script res://tests/gpu_lauf.gd -- <Sekunden, Standard 60>
+## Aufruf: godot --path . --script res://tests/gpu_lauf.gd -- <Sekunden, Standard 60> [ohne_vsync]
 var _f := 0
 var _step := 0
 var _main: Node
@@ -15,6 +15,10 @@ func _initialize() -> void:
 	var args := OS.get_cmdline_user_args()
 	if args.size() > 0:
 		_laufzeit = float(args[0])
+	# Zweites Argument "ohne_vsync": Bildwiederholung abschalten, um die echte Obergrenze zu sehen
+	if args.size() > 1 and args[1] == "ohne_vsync":
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+		print("GPU-LAUF Vsync aus")
 
 func _process(d: float) -> bool:
 	_f += 1
