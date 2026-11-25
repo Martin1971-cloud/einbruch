@@ -170,3 +170,11 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Prüf-Pipeline: 53 Tests. Der letzte Lauf zeigte einen Fehler im Telemetrie-Test (Alarmquelle nur als Text geliefert), der Test ist angepasst und einzeln grün.
 - Noch offen: Ereignisse im Town-Teil (Hinweistexte, Tagesmeldungen), Meldungen mit Platzhaltern in der Stadt, Ortsnamen in den Gebäudedaten, ROLE_OF und SKILL_NAMES als Funktionen.
 - Stadt-Meldungen und Hinweistexte umgestellt (Stadtmeldungen mit Platzhaltern, sechs Hinweise, Ermittlungsstufen, Skillnamen). Geprüft mit `test_lokalisierung_stadt2`. Pipeline: 54 Tests, 0 Fehler.
+
+## Profiling 3D (Messung auf dem Windows-PC)
+- Rechner: NVIDIA GeForce RTX 4080 SUPER, Vulkan, Forward+. Lauf mit `tests/profil_3d.gd` (Testhaus, Ausführung, Etagenwechsel) durchgelaufen, Screenshots 10_alle und 11_og erzeugt.
+- CPU je Bild (Gesamtbild ohne Sichtkegel): 0,13 ms. Zustand 0,03 ms, Etagen 0,08 ms.
+- Sichtkegel nach Cache-Leerung: 7,93 ms je vollständiger Neuberechnung (alle Wachen). Im Spiel läuft die Aktualisierung alle 0,1 s und nur bei geänderter Wache, im Schnitt deutlich weniger.
+- Einfache Darstellung: Sichtkegel 0,00 ms.
+- Offen: GPU-Frame-Zeit und Draw-Calls aus dem Monitor-Reiter des Editors. Das Skript misst nur die CPU.
+- Hinweis: Messung zuerst mit leerem Cache ergab 0,01 ms. Der Messfehler lag an der Zwischenspeicherung, nicht am Spiel. Die Messung leert den Cache jetzt vor jedem Durchlauf.

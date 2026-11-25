@@ -107,11 +107,13 @@ func _process(_d: float) -> bool:
 				var floors := (Time.get_ticks_usec() - t0) / 1000.0 / n
 				t0 = Time.get_ticks_usec()
 				for _k in range(n):
+					cur._cone_key.clear()
 					cur._update_cones()
 				var cones := (Time.get_ticks_usec() - t0) / 1000.0 / n
 				Game.settings.einfach = true
 				t0 = Time.get_ticks_usec()
 				for _k in range(n):
+					cur._cone_key.clear()
 					cur._update_cones()
 				var cones_einfach := (Time.get_ticks_usec() - t0) / 1000.0 / n
 				Game.settings.einfach = false
