@@ -8,6 +8,18 @@ var args: Dictionary = {}
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(UI.background(Color(0.07, 0.08, 0.11)))
+	# Ausgangsbild über den ganzen Bildschirm, gedämpft: die Texte stehen auf einer dunklen Schicht
+	var bg_status := str(args.get("result", {}).get("status", ""))
+	var bg_path := "res://assets/art/result_erfolg.webp" if bg_status.begins_with("ENTKOMMEN") else ("res://assets/art/result_fehl.webp" if bg_status == "GEFASST" else "")
+	if bg_path != "" and ResourceLoader.exists(bg_path):
+		var pic_bg := UI.backdrop(bg_path)
+		pic_bg.modulate = Color(1, 1, 1, 0.45)
+		add_child(pic_bg)
+		var shade := ColorRect.new()
+		shade.color = Color(0.05, 0.06, 0.09, 0.6)
+		shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+		shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(shade)
 	var res: Dictionary = args.get("result", {})
 	var root := VBoxContainer.new()
 	root.add_theme_constant_override("separation", 14)
