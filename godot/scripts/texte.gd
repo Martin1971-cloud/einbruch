@@ -376,6 +376,8 @@ const TABELLE := {
 		"plan.team_zeile": "[b]Team: %d Personen[/b] · Kosten %s € (Honorar %s €, Wagen %s €) · Gewinn %s%s € · Dauer ca. %s",
 		"plan.beutewert": "Beutewert: %s",
 		"res.werkzeug_an": "%s an %s",
+		"plan.fahrer_zeile": "Fahrer: %s · Fahren %d",
+		"org.kleidung_liste": "Kleidung: %s",
 	},
 	"en": {
 		"stadt.hint_umsehen": "A look at the building: one more step of investigation, one hour passes.",
@@ -745,6 +747,8 @@ const TABELLE := {
 		"plan.team_zeile": "[b]Team: %d people[/b] · Cost %s € (fees %s €, car %s €) · Profit %s%s € · Duration approx. %s",
 		"plan.beutewert": "Loot value: %s",
 		"res.werkzeug_an": "%s on %s",
+		"plan.fahrer_zeile": "Driver: %s · Driving %d",
+		"org.kleidung_liste": "Clothing: %s",
 	},
 }
 

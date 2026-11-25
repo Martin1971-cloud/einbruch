@@ -596,7 +596,7 @@ func _refresh_team() -> void:
 		_team_box.add_child(row)
 		_team_btns[c.id] = b
 	if not Game.driver.is_empty():
-		_team_box.add_child(_l("Fahrer: %s · Fahren %d" % [Game.driver.name, int(Game.driver.skills.FAHREN)], 12, Color(0.85, 0.85, 0.9)))
+		_team_box.add_child(_l(Texte.t("plan.fahrer_zeile") % [Game.driver.name, int(Game.driver.skills.FAHREN)], 12, Color(0.85, 0.85, 0.9)))
 	_team_box.add_child(_l("2. Aktion anklicken oder auf die Zeitleiste ziehen", 12, Color(0.89, 0.71, 0.35)))
 	_shrink_text(_team_box, _text_size)
 	_update_team_floors()
@@ -1101,7 +1101,7 @@ func _status_text(s: String) -> String:
 
 func _loot_text(list: Array) -> String:
 	if list.is_empty():
-		return "keine"
+		return Texte.t("journal.beute_keine")
 	return ", ".join(list)
 
 

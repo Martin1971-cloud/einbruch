@@ -287,7 +287,7 @@ func _build_shop() -> void:
 	for gid in GameData.GEAR:
 		if gid != "none" and Game.gear_owned.has(gid):
 			gnames.append(GameData.GEAR[gid].name)
-	owned.add_child(_w("Kleidung: %s" % (", ".join(gnames) if not gnames.is_empty() else "keine"), 12))
+	owned.add_child(_w(Texte.t("org.kleidung_liste") % (", ".join(gnames) if not gnames.is_empty() else Texte.t("journal.beute_keine")), 12))
 	var car := GameData.car_now(Game.car_id, 85.0)
 	var how := "gemietet, %s € je Einbruch" % _fmt(int(car.rent)) if Game.car_id == "limo" else "gekauft"
 	owned.add_child(_w("Fluchtwagen: %s (%s)" % [car.name, how], 12))
