@@ -415,6 +415,7 @@ const TABELLE := {
 		"slots.laden": "Laden",
 		"shop.geld": "Geld: %s €",
 		"shop.gesperrt_zeile": "  ·  gesperrt, %s",
+		"shop.ab_prozent": "%s ab %d %%",
 	},
 	"en": {
 		"stadt.hint_umsehen": "A look at the building: one more step of investigation, one hour passes.",
@@ -1109,6 +1110,7 @@ const TABELLE := {
 		"slots.laden": "Load",
 		"shop.geld": "Money: %s \u20ac",
 		"shop.gesperrt_zeile": "  \u00b7  locked, %s",
+		"shop.ab_prozent": "%s from %d %%",
 	},
 }
 

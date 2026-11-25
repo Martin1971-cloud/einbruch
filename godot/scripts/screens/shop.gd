@@ -14,6 +14,21 @@ func _ready() -> void:
 	kind = str(args.get("kind", "laden"))
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(UI.backdrop())
+	# Ladenbild über die ganze Fläche, gedämpft: die Auswahl liegt davor
+	var base := ColorRect.new()
+	base.color = Color(0.06, 0.08, 0.11)
+	base.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(base)
+	var pic_path := "res://assets/art/shop_werkzeug.jpg" if kind == "laden" else "res://assets/art/shop_autohaus.jpg"
+	if ResourceLoader.exists(pic_path):
+		var bg := UI.backdrop(pic_path)
+		bg.modulate = Color(1, 1, 1, 0.4)
+		add_child(bg)
+		var shade := ColorRect.new()   # dunkle Schicht: die Texte bleiben lesbar
+		shade.color = Color(0.05, 0.06, 0.09, 0.5)
+		shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+		shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(shade)
 	var root := VBoxContainer.new()
 	root.add_theme_constant_override("separation", 8)
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -30,14 +45,6 @@ func _ready() -> void:
 	head.add_child(UI.button(Texte.t("shop.zurueck"), func() -> void: main.go("town"), 160))
 	root.add_child(head)
 	# Bild des Ortes: ganz zu sehen, Seitenverhältnis bleibt
-	var pic_path := "res://assets/art/shop_werkzeug.jpg" if kind == "laden" else "res://assets/art/shop_autohaus.jpg"
-	if ResourceLoader.exists(pic_path):
-		var pic := TextureRect.new()
-		pic.texture = load(pic_path)
-		pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		pic.custom_minimum_size = Vector2(0, 280)
-		root.add_child(pic)
 	_msg = UI.label("", 14, Color(1, 0.8, 0.5))
 	root.add_child(_msg)
 	var scroll := ScrollContainer.new()
@@ -201,7 +208,7 @@ func choose_car(cid: String) -> void:
 func _use_text(t: Dictionary) -> String:
 	if str(t.get("ability", "")) == "":
 		return Texte.t("shop.jeder")
-	return "%s ab %d %%" % [Texte.t(GameData.TOOL_SKILL_KEY.get(t.type, "skill.technik")), int(t.min)]
+	return Texte.t("shop.ab_prozent") % [Texte.t(GameData.TOOL_SKILL_KEY.get(t.type, "skill.technik")), int(t.min)]
 
 
 func _fmt(n: int) -> String:
