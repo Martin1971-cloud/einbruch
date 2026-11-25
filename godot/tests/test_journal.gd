@@ -20,7 +20,7 @@ func _process(_d: float) -> bool:
 	G.reset()
 	var res := {
 		"status": "ENTKOMMEN", "payout": 12000, "time": 71.0, "loot_taken": ["Kassenlade"],
-		"log": ["[00:10] ALARM durch Mikrofon Verkauf. Polizei in 600 s."],
+		"log": ["[00:10] ALARM durch Mikrofon Verkauf. Polizei in 600 s."], "alarm_source": "Mikrofon Verkauf",
 		"segments": {"teo": [{"fail": "Tür zu"}, {"fail": ""}], "otto": []},
 	}
 	G.apply_result(res)

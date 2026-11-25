@@ -917,11 +917,10 @@ func _on_preview() -> void:
 			msgs.append("[color=orange]%s endet nicht am Fluchtwagen.[/color]" % c.name.split(" ")[0])
 	# Warnung: zwei Personen wollen gleichzeitig an einem Objekt arbeiten. Die Simulation lässt eine warten.
 	# Alarm durch Sensor oder Lärm: der auslösende Melder wird genannt
+	if str(res.get("alarm_source", "")) != "":
+		msgs.append("[color=salmon]⚠ %s[/color]" % (Texte.t("sim.alarm") % [res.alarm_source, float(res.get("alarm_time", 0.0))]).split(" Police", 1)[0])
 	for line in res.log:
-		if str(line).contains("ALARM durch"):
-			msgs.append("[color=salmon]⚠ %s[/color]" % str(line).split("] ", 1)[-1])
-	for line in res.log:
-		if str(line).contains("wartet, bis"):
+		if str(line).contains("wartet, bis") or str(line).contains("waits until"):
 			msgs.append("[color=orange]⚠ Überschneidung: %s[/color]" % str(line).split("] ", 1)[-1])
 	var color := "salmon"
 	match res.status:

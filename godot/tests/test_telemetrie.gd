@@ -29,7 +29,7 @@ func _run() -> void:
 	_check(Telemetrie.export_text() == "", "Ohne Einschalten wird nichts aufgezeichnet")
 	cfg.set_value("telemetrie", "an", true)
 	cfg.save(G.SETTINGS_PATH)
-	G.apply_result({"status": "GEFASST", "payout": 0, "time": 300.0, "log": ["[01:00] ALARM durch Mikrofon Verkauf. Polizei in 600 s."], "segments": {}})
+	G.apply_result({"status": "GEFASST", "payout": 0, "time": 300.0, "log": ["[01:00] ALARM durch Mikrofon Verkauf. Polizei in 600 s."], "alarm_source": "Mikrofon Verkauf", "segments": {}})
 	var lines := Telemetrie.export_text().strip_edges().split("\n")
 	_check(lines.size() == 1, "Eingeschaltet: eine Zeile je Einbruch")
 	var d = JSON.parse_string(lines[0])

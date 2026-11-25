@@ -339,12 +339,7 @@ func journal_add(res: Dictionary) -> void:
 		for sg in res.segments[id]:
 			if str(sg.get("fail", "")) != "":
 				fails.append(str(sg.fail))
-	var alarm_src := ""
-	for l in res.get("log", []):
-		var t := str(l)
-		if t.contains("ALARM durch "):
-			alarm_src = t.split("ALARM durch ", true, 1)[1].split(".", true, 1)[0]
-			break
+	var alarm_src := str(res.get("alarm_source", ""))
 	var driver_extra := 0
 	if not driver.is_empty() and not team.any(func(c): return c.id == driver.get("id", "")):
 		driver_extra = int(driver.get("fee", 0))

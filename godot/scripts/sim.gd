@@ -152,7 +152,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 	for c0 in crew:
 		c0.pos = center(escape_cell)
 	_build_door_tiles()
-	_log("Team im Gebäude. Ablauf beginnt.")
+	_log(Texte.t("sim.start"))
 
 
 ## Kleidung kann als Liste (mehrere Stücke) oder als einzelner Name übergeben werden.
@@ -551,13 +551,18 @@ func _log(text: String) -> void:
 	log_lines.append("[%s] %s" % [clock(time), text])
 
 
+var alarm_source := ""  # wer den Alarm ausgelöst hat (Melder, Wache, Lärm), unabhängig von der Sprache
+var overlaps := 0      # wie oft eine Person auf ein Objekt warten musste, das schon besetzt war
+
+
 func _alarm(source: String, kind: String, delay: float) -> void:
 	if countdown >= 0.0:
 		return
+	alarm_source = source
 	alarm_time = time
 	countdown = (PATROL_ALARM_BASE if kind == "PATROL" else police_base) + delay
 	alarm_active = true
-	_log("ALARM durch %s. Polizei in %.0f s." % [source, countdown])
+	_log(Texte.t("sim.alarm") % [source, countdown])
 
 
 func _end(new_status: String, reason: String) -> void:
@@ -577,7 +582,7 @@ func step(dt: float) -> void:
 	if alarm_active:
 		_dispatch_patrols()
 	if time > TIMEOUT:
-		_end("ABBRUCH", "Zeitlimit erreicht. Das Team verliert die Geduld.")
+		_end("ABBRUCH", Texte.t("end.zeitlimit"))
 		return
 	for c in crew:
 		_step_crew(c, dt)
@@ -599,7 +604,7 @@ func step(dt: float) -> void:
 		countdown -= dt
 		if countdown <= 0.0:
 			countdown = 0.0
-			_end("GEFASST", "Die Polizei riegelt das Gebäude ab. Das Team wird festgenommen.")
+			_end("GEFASST", Texte.t("end.riegelt_ab"))
 			return
 	var all_done := true
 	var at_exit := true
@@ -610,7 +615,7 @@ func step(dt: float) -> void:
 			at_exit = false
 	# Alle Aktionen fertig: Wenn das Team am Ausgang steht und ein Wagen gerufen ist, wird gewartet.
 	if all_done and not (at_exit and car.called):
-		_end("ABBRUCH", "Alle Aktionen sind erledigt, aber das Team kommt nicht vom Gelände weg.")
+		_end("ABBRUCH", Texte.t("end.nicht_weg"))
 
 
 ## Lautstärke: Maximum über alle Personen (Original: tcGetTotalLoudness). Über der Grenze = leiser Alarm.
@@ -649,7 +654,7 @@ func _check_patrols(dt: float) -> void:
 	if total * PATROL_PCT / (125.0 * float(patrol_count)) < changed:
 		_alarm("Streifgang", "QUIET", 0.0)
 	else:
-		_log("Streifgang kontrolliert: nichts Auffälliges.")
+		_log(Texte.t("sim.streife_ok"))
 
 
 func _dispatch_patrols() -> void:
@@ -660,7 +665,7 @@ func _dispatch_patrols() -> void:
 			g.state = "RESPOND"
 			g.path = []
 			g.target = points.get("Außen vor dem Eingang", Vector2i(1, 5))
-			_log("Streifenwagen wird alarmiert und fährt zum Gebäude.")
+			_log(Texte.t("sim.streife_alarm"))
 
 
 ## Objektsperre: an einem Objekt (Tür, Vitrine, Wertschrank, Wache, Beute) arbeitet immer nur eine Person.
@@ -671,7 +676,8 @@ var _busy := {}   # Schlüssel -> Personen-Id
 func _free_for(c: Dictionary, key: String) -> bool:
 	if _busy.has(key) and _busy[key] != c.id:
 		if not c.get("waiting", false):
-			_log("%s wartet, bis %s fertig ist." % [c.name, _busy_name(key)])
+			overlaps += 1
+		_log(Texte.t("sim.wartet") % [c.name, _busy_name(key)])
 		c["waiting"] = true
 		c["msg"] = "wartet auf %s" % _busy_name(key)
 		return false
@@ -712,7 +718,7 @@ func _next(c: Dictionary) -> void:
 
 
 func _fail(c: Dictionary, text: String) -> void:
-	_log("%s: %s" % [c.name, text])
+	_log(Texte.t("sim.fehler_prefix") % [c.name, text])
 	c["fail"] = text
 	_next(c)
 
@@ -744,11 +750,11 @@ func _step_crew(c: Dictionary, dt: float) -> void:
 			if not car.called:
 				car.called = true
 				car.arrive_at = time + car.eta
-				_log("%s ruft den Fluchtwagen. Ankunft in %.0f s." % [c.name, car.eta])
+				_log(Texte.t("sim.wagen_ruf") % [c.name, car.eta])
 			_next(c)
 		"FLAG_SET":
 			flags[a.flag] = true
-			_log("%s setzt Signal: %s" % [c.name, GameData.FLAG_NAMES.get(a.flag, a.flag)])
+			_log(Texte.t("sim.signal") % [c.name, GameData.FLAG_NAMES.get(a.flag, a.flag)])
 			_next(c)
 		"FLAG_WAIT":
 			if flags.get(a.flag, false):
@@ -822,17 +828,17 @@ func _do_move(c: Dictionary, a: Dictionary, dt: float) -> void:
 		if not body_clear(Vector2(goal)):
 			goal = _stand_near(goal)
 		if not body_clear(Vector2(goal)):
-			_fail(c, "%s kann dort nicht stehen (Wand, Fenster oder Vitrine)." % c.name)
+			_fail(c, Texte.t("fail.nicht_stehen") % c.name)
 			return
 		c.path = bfs(here, goal)
 		if c.path.is_empty() and here != goal:
-			_fail(c, "Kein Weg nach %s. Eine Tür ist noch zu oder der Weg ist blockiert." % _goal_name(a))
+			_fail(c, Texte.t("fail.kein_weg") % _goal_name(a))
 			return
 		return
 	if _walk(c, dt):
 		if c.get("stuck", false):
 			c["stuck"] = false
-			_fail(c, "%s stößt an eine Wand oder ein Objekt. Der Weg ist versperrt." % c.name)
+			_fail(c, Texte.t("fail.anstoss") % c.name)
 			return
 		_next(c)
 
@@ -854,23 +860,23 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		if not _free_for(c, key):
 			return
 		if not _reach(c, center(cell)):
-			_fail(c, "%s steht nicht vor %s. Erst davor gehen (in Blickrichtung)." % [c.name, a.on])
+			_fail(c, Texte.t("fail.nicht_vor") % [c.name, a.on])
 			return
 		# Vorkenntnisse: Werkzeug braucht eine Mindeststufe der Fähigkeit (Original: tcGetNecessaryAbility / plCheckAbilities)
 		if float(c.skills.get(tool.type, 0)) < float(tool.get("min", 0)):
-			_fail(c, "%s fehlen die Vorkenntnisse für %s (%s ab %d %%)." % [c.name, tool.name, tool.ability, int(tool.min)])
+			_fail(c, Texte.t("fail.vorkenntnisse") % [c.name, tool.name, tool.ability, int(tool.min)])
 			return
 		# Schaufenster brauchen den Glasschneider, Türen und Vitrinen das Schloss-Werkzeug
 		var needs := door_tool(door) if door != null else "schloss"
 		if (is_panel and tool.obj != "alarm") or ((door != null or case_id != "") and tool.obj != needs):
-			_fail(c, "%s ist für %s nicht geeignet." % [tool.name, a.on])
+			_fail(c, Texte.t("fail.ungeeignet") % [tool.name, a.on])
 			return
 		# Entriegeln geht nur bei verschlossenen Schlössern (Original: LOCK_UNLOCK-Bit)
 		if door != null and not door.locked:
-			_fail(c, "%s ist schon entriegelt. Jetzt öffnen." % a.on)
+			_fail(c, Texte.t("fail.schon_entriegelt") % a.on)
 			return
 		if case_id != "" and not loot[case_id].locked:
-			_fail(c, "%s ist schon entriegelt. Jetzt öffnen." % a.on)
+			_fail(c, Texte.t("fail.schon_entriegelt") % a.on)
 			return
 		var obj := 0.0
 		if is_panel:
@@ -880,10 +886,10 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		elif case_id != "":
 			obj = 40.0 if tool.type in ["TECH", "ELECTRONICS"] else 50.0
 		else:
-			_fail(c, "An %s ist nichts zu öffnen." % a.on)
+			_fail(c, Texte.t("fail.nichts_zu_oeffnen") % a.on)
 			return
 		if obj > float(tool.max):
-			_fail(c, "%s ist für %s zu stabil bzw. zu komplex." % [a.on, tool.name])
+			_fail(c, Texte.t("fail.zu_stabil") % [a.on, tool.name])
 			return
 		var skill := float(c.skills.get(tool.type, 1))
 		var dur: float = float(tool.time) * (1.0 + obj / 100.0) * (1.0 - skill / 150.0)
@@ -894,7 +900,7 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		c["loud"] = c.noise
 		c.started = true
 		_lock(c, key)
-		_log("%s setzt %s an %s an." % [c.name, tool.name, a.on])
+		_log(Texte.t("sim.werkzeug_an") % [c.name, tool.name, a.on])
 		return
 	c.timer -= dt
 	if c.timer > 0.0:
@@ -904,27 +910,27 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		panel.bypassed = true
 		for s in sensors:
 			s.active = false
-		_log("Alarmpanel überbrückt. Mikrofone sind aus.")
+		_log(Texte.t("sim.bypass"))
 	elif case_id != "":
 		# Werkzeug entriegelt. Brecheisen bricht auf: dann ist die Vitrine auch offen.
 		loot[case_id].locked = false
 		if tool.destroys:
 			loot[case_id].opened = true
 			c["msg"] = "Vitrine aufgebrochen – jetzt offen"
-			_log("%s: die Vitrine von %s ist aufgebrochen und offen." % [c.name, loot[case_id].name])
+			_log(Texte.t("sim.vitrine_aufgebrochen") % [c.name, loot[case_id].name])
 		else:
 			c["msg"] = "Vitrine entriegelt – noch zu"
-			_log("%s: die Vitrine von %s ist entriegelt." % [c.name, loot[case_id].name])
+			_log(Texte.t("sim.vitrine_entriegelt") % [c.name, loot[case_id].name])
 	elif door != null:
 		door.locked = false
 		if tool.destroys:
 			door.destroyed = true
 			open_cells[cell] = true
 			c["msg"] = "Tür aufgebrochen – jetzt offen"
-			_log("%s ist aufgebrochen und offen." % a.on)
+			_log(Texte.t("sim.tuer_aufgebrochen") % a.on)
 		else:
 			c["msg"] = "Tür entriegelt – noch zu"
-			_log("%s ist entriegelt." % a.on)
+			_log(Texte.t("sim.tuer_entriegelt") % a.on)
 	_noise(center(cell), c.noise)
 	c.used[tool.type] = int(c.used.get(tool.type, 0)) + 1
 	_next(c)
@@ -1032,24 +1038,24 @@ func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:
 		if not _free_for(c, key):
 			return
 		if not _reach(c, center(cell)):
-			_fail(c, "%s steht nicht vor %s. Erst davor gehen (in Blickrichtung)." % [c.name, a.on])
+			_fail(c, Texte.t("fail.nicht_vor") % [c.name, a.on])
 			return
 		if door != null:
 			if door.locked:
-				_fail(c, "%s ist verschlossen. Erst entriegeln oder aufbrechen." % a.on)
+				_fail(c, Texte.t("fail.verschlossen") % a.on)
 				return
 			if open_cells.has(cell):
-				_fail(c, "%s ist schon offen." % a.on)
+				_fail(c, Texte.t("fail.schon_offen") % a.on)
 				return
 		elif case_id != "":
 			if loot[case_id].locked:
-				_fail(c, "%s ist verschlossen. Erst entriegeln oder aufbrechen." % a.on)
+				_fail(c, Texte.t("fail.verschlossen") % a.on)
 				return
 			if loot[case_id].opened:
-				_fail(c, "%s ist schon offen." % a.on)
+				_fail(c, Texte.t("fail.schon_offen") % a.on)
 				return
 		else:
-			_fail(c, "An %s ist nichts zu öffnen." % a.on)
+			_fail(c, Texte.t("fail.nichts_zu_oeffnen") % a.on)
 			return
 		c.started = true
 		_lock(c, key)
@@ -1061,11 +1067,11 @@ func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:
 	if door != null:
 		open_cells[cell] = true
 		c["msg"] = "Tür offen"
-		_log("%s öffnet %s." % [c.name, a.on])
+		_log(Texte.t("sim.oeffnet") % [c.name, a.on])
 	else:
 		loot[case_id].opened = true
 		c["msg"] = "Vitrine offen"
-		_log("%s öffnet die Vitrine von %s." % [c.name, loot[case_id].name])
+		_log(Texte.t("sim.oeffnet_vitrine") % [c.name, loot[case_id].name])
 	_next(c)
 
 
@@ -1078,22 +1084,22 @@ func _do_neutralize(c: Dictionary, a: Dictionary, dt: float) -> void:
 		if x.id == a.guard:
 			g = x
 	if g.is_empty() or g.state in ["OUT", "IDLE"]:
-		_fail(c, "Die Wache ist nicht mehr da.")
+		_fail(c, Texte.t("fail.wache_weg"))
 		return
 	if not c.started:
 		if not _free_for(c, key):
 			return
 		if not _reach(c, g.pos):
-			_fail(c, "%s steht nicht vor %s." % [c.name, g.name])
+			_fail(c, Texte.t("fail.nicht_vor_wache") % [c.name, g.name])
 			return
 		if g.state == "ALARMED":
-			_fail(c, "%s hat schon Alarm geschlagen. Zu spät." % g.name)
+			_fail(c, Texte.t("fail.zu_spaet") % g.name)
 			return
 		# Kampf der Wache gegen Kampf der Person (Original: tcGuyUsesTool, Kampf verkürzt die Zeit)
 		var k := float(c.skills.get("FORCE", 1))
 		var gk := float(g.get("kampf", 0))
 		if gk > k + 25.0:
-			_fail(c, "%s wehrt sich zu stark. Mit mehr Kampfsport ginge es." % g.name)
+			_fail(c, Texte.t("fail.wehrt_sich") % g.name)
 			return
 		var stretch := 1.0 + maxf(0.0, gk - k) / 50.0
 		c.started = true
@@ -1113,7 +1119,7 @@ func _do_neutralize(c: Dictionary, a: Dictionary, dt: float) -> void:
 	evidence += (3.0 if chloro else 6.0) * float(c.gear.ev)
 	if not chloro:
 		_noise(g.pos, 35.0)
-	_log("%s schaltet %s aus (%s)." % [c.name, g.name, "Chloroform" if chloro else "Niederschlagen"])
+	_log(Texte.t("sim.ausschalten") % [c.name, g.name, "Chloroform" if chloro else "Niederschlagen"])
 	_next(c)
 
 
@@ -1121,19 +1127,19 @@ func _do_neutralize(c: Dictionary, a: Dictionary, dt: float) -> void:
 func _do_stairs(c: Dictionary, a: Dictionary, dt: float) -> void:
 	var here := anchor_of(Vector2i(floori(c.pos.x), floori(c.pos.y)))
 	if not stairs.has(here):
-		_fail(c, "%s steht nicht an einer Treppe." % c.name)
+		_fail(c, Texte.t("fail.keine_treppe") % c.name)
 		return
 	if not c.started:
 		c.started = true
 		c.timer = STAIRS_TIME
-		_log("%s steigt die Treppe." % c.name)
+		_log(Texte.t("sim.treppe_steigt") % c.name)
 		return
 	c.timer -= dt
 	if c.timer > 0.0:
 		return
 	c.pos = center(stairs[here])
 	c.path = []
-	_log("%s ist auf der anderen Etage." % c.name)
+	_log(Texte.t("sim.treppe_fertig") % c.name)
 	_next(c)
 
 
@@ -1144,19 +1150,19 @@ func _do_take(c: Dictionary, a: Dictionary, dt: float) -> void:
 		if not _free_for(c, key):
 			return
 		if not _reach(c, center(l.pos)):
-			_fail(c, "%s steht nicht vor der Beute." % c.name)
+			_fail(c, Texte.t("fail.nicht_vor_beute") % c.name)
 			return
 		if l.state != "ROOM":
-			_fail(c, "%s ist schon weg." % l.name)
+			_fail(c, Texte.t("fail.schon_weg") % l.name)
 			return
 		if not l.opened:
-			_fail(c, "Die Vitrine von %s ist noch zu." % l.name)
+			_fail(c, Texte.t("fail.vitrine_zu") % l.name)
 			return
 		var carried := 0.0
 		for lid in c.carried:
 			carried += float(loot[lid].weight)
 		if carried + float(l.weight) > float(c.capacity):
-			_fail(c, "%s (%d kg) passt nicht: %s trägt noch %d kg, Tragkraft %d kg." % [l.name, int(l.weight), c.name.split(" ")[0], int(float(c.capacity) - carried), int(c.capacity)])
+			_fail(c, Texte.t("fail.tragkraft") % [l.name, int(l.weight), c.name.split(" ")[0], int(float(c.capacity) - carried), int(c.capacity)])
 			return
 		c.started = true
 		_lock(c, key)
@@ -1169,14 +1175,14 @@ func _do_take(c: Dictionary, a: Dictionary, dt: float) -> void:
 	l.carrier = c.id
 	c.carried.append(l.id)
 	c["msg"] = "%s genommen" % l.name
-	_log("%s nimmt %s." % [c.name, l.name])
+	_log(Texte.t("sim.nimmt") % [c.name, l.name])
 	_next(c)
 
 
 func _update_car() -> void:
 	if car.called and not car.present and time >= float(car.arrive_at):
 		car.present = true
-		_log("Der Fluchtwagen wartet am Ausgang.")
+		_log(Texte.t("sim.wagen_wartet"))
 
 
 ## Verfolgungsrechnung: Die Polizei startet nach `countdown` Sekunden am Ausgang. Sie holt den Wagen ein,
@@ -1202,20 +1208,20 @@ func _check_escape() -> void:
 		if not c.done or cheb(cell_of(c.pos), escape_cell) > 1:
 			return
 	departed = true
-	_log("Alle sind am Wagen. Der Wagen fährt los (%.0f s Fahrt)." % car.eta)
+	_log(Texte.t("sim.wagen_faehrt") % car.eta)
 	# Die Polizei darf nicht vor dem Wagen am Ausgang sein
 	if countdown >= 0.0 and countdown <= float(car.eta):
-		_end("GEFASST", "Die Polizei erreicht die Straße, bevor der Wagen wegkommt.")
+		_end("GEFASST", Texte.t("end.erreicht_strasse"))
 		return
 	# Verfolgung (wie Original tcCalcCarEscape): Die Polizei fährt los, sobald sie am Ausgang ist.
 	# Sie holt den Wagen ein, wenn ihr Tempo reicht und die Strecke vorher noch nicht zu Ende ist.
 	if countdown >= 0.0:
 		var verdict := chase_result(car_v, police_v, countdown, escape_km)
 		if verdict == "GEFASST":
-			_end("GEFASST", "Die Polizei holt den Wagen auf der Flucht ein. Fluchtstrecke %.0f km." % escape_km)
+			_end("GEFASST", Texte.t("end.holt_ein") % escape_km)
 			return
 		if verdict == "KNAPP":
-			_log("Knapp: Die Polizei bleibt dicht hinter dem Wagen.")
+			_log(Texte.t("sim.knapp"))
 	var total := 0
 	for c in crew:
 		for lid in c.carried:
@@ -1223,19 +1229,19 @@ func _check_escape() -> void:
 			total += int(loot[lid].value)
 	payout = int(round(total * 0.6))
 	if total == 0:
-		_end("ABBRUCH", "Ohne Beute ist der Einbruch gescheitert.")
+		_end("ABBRUCH", Texte.t("end.ohne_beute"))
 		return
 	if alarm_active:
-		_end("ENTKOMMEN_HEISS", "Das Team entkommt, aber die Polizei sucht bereits.")
+		_end("ENTKOMMEN_HEISS", Texte.t("end.entkommt_heiss"))
 	else:
-		_end("ENTKOMMEN", "Das Team entkommt unbemerkt.")
+		_end("ENTKOMMEN", Texte.t("end.entkommt"))
 
 
 ## Abbruch (Funk): alle Einbrecherinnen gehen sofort zurück zum Wagen.
 func abort() -> void:
 	if status != "RUNNING":
 		return
-	_log("ABBRUCH per Funk: Alle sofort zurück zum Wagen.")
+	_log(Texte.t("sim.funk_abbruch"))
 	for c in crew:
 		_unlock_all(c)
 		c.plan = [{"t": "MOVE", "to": "Fluchtwagen"}]
@@ -1262,7 +1268,7 @@ func _noise(origin: Vector2, db: float) -> void:
 			continue
 		var arr2 := db - origin.distance_to(g.pos) / SUB * DIST_DAMPING - blockers_between(origin, g.pos) * WALL_DAMPING
 		if arr2 > g.hearing:
-			_log("%s hört ein Geräusch." % g.name)
+			_log(Texte.t("sim.hoert") % g.name)
 			_update_suspicion(g, (arr2 - g.hearing) * 2.5, cell_of(origin))
 
 
@@ -1286,7 +1292,7 @@ func _guard_checks_objects() -> void:
 			g.state = "ALARMED"
 			g.path = []
 			_alarm(g.name, "GUARD", 0.0)
-			_log("%s kontrolliert %s: Alarm." % [g.name, what])
+			_log(Texte.t("sim.kontrolliert_alarm") % [g.name, what])
 
 
 func _vision(dt: float) -> void:
@@ -1319,19 +1325,19 @@ func _update_suspicion(g: Dictionary, amount: float, target_cell: Vector2i = Vec
 	var s: float = g.suspicion
 	if s <= 0.0:
 		if g.state != "PATROL":
-			_log("%s beruhigt sich." % g.name)
+			_log(Texte.t("sim.beruhigt") % g.name)
 		g.state = "PATROL"
 		g.inv_arrived = false
 		return
 	if s < 40.0:
 		if g.state != "ALERT":
-			_log("%s wird aufmerksam." % g.name)
+			_log(Texte.t("sim.aufmerksam") % g.name)
 		g.state = "ALERT"
 		g.path = []
 		return
 	if s < 80.0:
 		if g.state != "INVESTIGATE":
-			_log("%s geht einer Spur nach." % g.name)
+			_log(Texte.t("sim.spur") % g.name)
 			g.inv_arrived = false
 			g.path = []
 		g.state = "INVESTIGATE"
@@ -1340,7 +1346,7 @@ func _update_suspicion(g: Dictionary, amount: float, target_cell: Vector2i = Vec
 		return
 	g.state = "ALARMED"
 	var kind := "PATROL" if g.type == "STREET" else "GUARD"
-	_log("%s schlägt Alarm." % g.name)
+	_log(Texte.t("sim.schlaegt_alarm") % g.name)
 	_alarm(g.name, kind, float(g.reaction))
 
 
@@ -1363,7 +1369,7 @@ func _move_guard(g: Dictionary, dt: float) -> void:
 				g.state = "PATROL"
 				g.wp = 0
 				g.dwell = 0.0
-				_log("%s erreicht das Gebäude und sucht es ab." % g.name)
+				_log(Texte.t("sim.sucht_ab") % g.name)
 				return
 			if g.path.is_empty():
 				g.path = path_to(g.pos, g.target)
@@ -1424,6 +1430,8 @@ func result() -> Dictionary:
 		"heat": fence_heat(),
 		"time": time,
 		"peak_loud": peak_loud,
+		"alarm_source": alarm_source,
+		"ueberschneidungen": overlaps,
 		"max_volume": max_volume,
 		"alarm": alarm_active,
 		"log": log_lines,
