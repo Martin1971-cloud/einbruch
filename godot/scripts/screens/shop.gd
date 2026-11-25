@@ -72,7 +72,7 @@ func _build_laden() -> void:
 	# Zwei Spalten nebeneinander: links Werkzeug (breiter), rechts Kleidung
 	var haupt := _body
 	var cols := HBoxContainer.new()
-	cols.add_theme_constant_override("separation", 18)
+	cols.add_theme_constant_override("separation", 26)
 	cols.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	cols.alignment = BoxContainer.ALIGNMENT_BEGIN
 	haupt.add_child(cols)
@@ -80,12 +80,23 @@ func _build_laden() -> void:
 	werk.add_theme_constant_override("separation", 6)
 	werk.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	werk.size_flags_stretch_ratio = 2.2
-	cols.add_child(werk)
+	# Jede Tabelle in eine eigene Karte, damit die Bereiche klar getrennt sind
+	var karte_werk := PanelContainer.new()
+	karte_werk.add_theme_stylebox_override("panel", UI.card_style(Color(0.05, 0.07, 0.12, 0.82)))
+	karte_werk.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	karte_werk.size_flags_stretch_ratio = 2.2
+	karte_werk.add_child(werk)
+	cols.add_child(karte_werk)
 	var kleid := VBoxContainer.new()
 	kleid.add_theme_constant_override("separation", 6)
 	kleid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	kleid.size_flags_stretch_ratio = 1.0
-	cols.add_child(kleid)
+	var karte_kleid := PanelContainer.new()
+	karte_kleid.add_theme_stylebox_override("panel", UI.card_style(Color(0.05, 0.07, 0.12, 0.82)))
+	karte_kleid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	karte_kleid.size_flags_stretch_ratio = 1.0
+	karte_kleid.add_child(kleid)
+	cols.add_child(karte_kleid)
 	_body = werk
 	_body.add_child(UI.label(Texte.t("shop.werkzeug_kopf"), 15, Color(0.89, 0.71, 0.35)))
 	# Tabelle, alphabetisch nach dem angezeigten Namen
