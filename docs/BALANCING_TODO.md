@@ -192,3 +192,4 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Auswertung: Ablauf als Zeitleiste mit einer Spalte je Person, Filter nach Person, Alarm über die ganze Breite. Beute je Person oberhalb. Grundlage: strukturierte Ereignisse `events` in der Simulation (Zeit, Person, Art, Objekt, Ergebnis).
 - Zeitleiste: nur noch die aktuelle Zeit, keine Gesamtzeit mehr. Einzige zeitliche Grenze ist die Polizei (Alarm). Eine Maximalzeit für einzelne Aktionen gibt es nicht; das wäre eine eigene Designentscheidung.
 - Pipeline: 56 Tests, 0 Fehler.
+- Telemetrie-Schalter nur noch in Entwicklungsbuilds sichtbar (`OS.is_debug_build()`). In Auslieferungsbuilds schreibt das Spiel nichts, auch nicht bei einer alten Einstellung. Pipeline: 56 Tests, 0 Fehler.

@@ -87,8 +87,10 @@ func _ready() -> void:
 	box.add_child(_hint_btn)
 	_full_btn = UI.button("", _toggle_full, 0)
 	box.add_child(_full_btn)
-	_tele_btn = UI.button("", _toggle_telemetrie, 0)
-	box.add_child(_tele_btn)
+	# Telemetrie ist nur für die Entwicklung: in Auslieferungsbuilds nicht sichtbar
+	if OS.is_debug_build():
+		_tele_btn = UI.button("", _toggle_telemetrie, 0)
+		box.add_child(_tele_btn)
 	_einfach_btn = UI.button("", _toggle_einfach, 0)
 	box.add_child(_einfach_btn)
 	box.add_child(UI.label("Hinweise zeigen beim ersten Auftreten einer Mechanik. Gesehene Hinweise setzt du im Lexikon zurück.", 12, Color(0.7, 0.74, 0.8), true))
@@ -127,7 +129,8 @@ func _refresh() -> void:
 	_text_lbl.text = "%d" % Game.settings.text_size
 	_hint_btn.text = "Hinweise: %s" % ("an" if Game.hints_enabled else "aus")
 	_full_btn.text = "Vollbild: %s" % ("an" if Game.settings.fullscreen else "aus")
-	_tele_btn.text = "Telemetrie (nur lokal): %s" % ("an" if Telemetrie.enabled() else "aus")
+	if _tele_btn != null:
+		_tele_btn.text = "Telemetrie (nur lokal): %s" % ("an" if Telemetrie.enabled() else "aus")
 	_einfach_btn.text = "Einfache Darstellung (ohne Sichtkegel): %s" % ("an" if bool(Game.settings.get("einfach", false)) else "aus")
 
 

@@ -7,6 +7,9 @@ const PATH := "user://einbruch_telemetrie.jsonl"
 
 
 static func enabled() -> bool:
+	# Auslieferungsbuilds zeichnen nichts auf, auch wenn die Option irgendwann gesetzt war
+	if not OS.is_debug_build():
+		return false
 	var cfg := ConfigFile.new()
 	return cfg.load("user://einbruch_optionen.cfg") == OK and bool(cfg.get_value("telemetrie", "an", false))
 
