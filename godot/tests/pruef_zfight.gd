@@ -84,10 +84,16 @@ func _pruefe(cur: Node) -> void:
 			var achse := _coplanar(a, b)
 			if achse == "":
 				continue
+			# Dunkle Umrisse (Cel-Hülle) werden nur von innen gezeichnet und zählen nicht als sichtbares Flimmern
+			if _dunkel(boxen[i].m) or _dunkel(boxen[j].m):
+				continue
+			# Gleiche Farbe: die Flächen sehen gleich aus, ein Flimmern fällt nicht auf
+			if _gleiche_farbe(boxen[i].m, boxen[j].m):
+				continue
 			treffer += 1
 			if treffer <= 60:
 				print("  %s: %s (%s) <-> %s (%s)" % [achse, str(boxen[i].m.global_position), _farbe(boxen[i].m), str(boxen[j].m.global_position), _farbe(boxen[j].m)])
-	print("Ziel %s: %d Kandidaten für Z-Fighting" % [_ziel, treffer])
+	print("Ziel %s: %d sichtbare Kandidaten für Z-Fighting" % [_ziel, treffer])
 
 
 ## Liefert die Achse, in der sich zwei Körper mit gleicher Flächenlage überlappen, sonst "".
@@ -112,6 +118,21 @@ func _coplanar(a: AABB, b: AABB) -> String:
 		if ok:
 			return ak
 	return ""
+
+
+func _gleiche_farbe(a: MeshInstance3D, b: MeshInstance3D) -> bool:
+	if not (a.material_override is StandardMaterial3D and b.material_override is StandardMaterial3D):
+		return false
+	var ca: Color = (a.material_override as StandardMaterial3D).albedo_color
+	var cb: Color = (b.material_override as StandardMaterial3D).albedo_color
+	return absf(ca.r - cb.r) + absf(ca.g - cb.g) + absf(ca.b - cb.b) < 0.04
+
+
+func _dunkel(m: MeshInstance3D) -> bool:
+	if m.material_override is StandardMaterial3D:
+		var c: Color = (m.material_override as StandardMaterial3D).albedo_color
+		return c.get_luminance() < 0.09
+	return false
 
 
 func _farbe(m: MeshInstance3D) -> String:
