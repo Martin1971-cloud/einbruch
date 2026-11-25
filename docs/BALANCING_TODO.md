@@ -194,3 +194,4 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Pipeline: 56 Tests, 0 Fehler.
 - Telemetrie-Schalter nur noch in Entwicklungsbuilds sichtbar (`OS.is_debug_build()`). In Auslieferungsbuilds schreibt das Spiel nichts, auch nicht bei einer alten Einstellung. Pipeline: 56 Tests, 0 Fehler.
 - Hintergründe: Pinnwand bei der Personenauswahl (gedämpft), Büro hinter dem Grundriss (der Rasen außen entfällt, wenn ein Hintergrund gesetzt ist). Bilder: assets/art/bg_pinnwand.webp, bg_buero.webp.
+- Musik: Stadt und Planung mit Bogenstreichern (Cello-Klang, weich mit Vibrato), Ausführung mit Pizzicato-Streichern. Erzeugt mit tools/make_streicher.py (eigene Synthese, keine Samples). Lautheit an die bisherige Musik angeglichen. Noch nicht gehört: bitte prüfen.
