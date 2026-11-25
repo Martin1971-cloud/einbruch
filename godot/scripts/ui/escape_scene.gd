@@ -66,7 +66,7 @@ func _draw() -> void:
 		draw_circle(Vector2(px + 8, y - 26), 6, Color(0.3, 0.5, 1.0, 0.4 + 0.6 * (1.0 - flash)))
 		draw_circle(Vector2(px - 30, y + 6), 8, Color(0.02, 0.02, 0.02))
 		draw_circle(Vector2(px + 26, y + 6), 8, Color(0.02, 0.02, 0.02))
-	var txt := "Flucht gelungen" if status != "GEFASST" else "Die Polizei holt den Wagen ein"
+	var txt := Texte.t("escape.flucht_gelungen") if status != "GEFASST" else Texte.t("escape.polizei_holt")
 	var font := ThemeDB.fallback_font
 	var sz := font.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 26)
 	draw_string(font, Vector2(w * 0.5 - sz.x * 0.5, h * 0.2), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 26, Color(0.97, 0.85, 0.5))

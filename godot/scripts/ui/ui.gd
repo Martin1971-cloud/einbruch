@@ -174,7 +174,7 @@ static func fold(title: String, content: Control, open := true) -> PanelContaine
 	head.add_theme_font_size_override("font_size", 12)
 	head.add_theme_color_override("font_color", Color(0.89, 0.71, 0.35))
 	head.text = ("▾ " if open else "▸ ") + title.to_upper()
-	head.tooltip_text = "Klicken zum Ein- oder Ausklappen"
+	head.tooltip_text = Texte.t("ui.klick_aufklappen")
 	content.visible = open
 	head.toggled.connect(func(on: bool):
 		content.visible = on

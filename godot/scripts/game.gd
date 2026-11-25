@@ -147,7 +147,7 @@ func load_game(n: int = -1) -> bool:
 		last_error = Texte.t("game.wiederhergestellt") % slot
 	var v := int(parsed.get("version", 1))
 	if v > SAVE_VERSION:
-		last_error = "Platz %d stammt von einer neueren Version des Spiels und kann nicht geladen werden." % slot
+		last_error = Texte.t("game.neuere_version") % slot
 		return false
 	parsed = migrate(parsed)
 	_apply_save(parsed)

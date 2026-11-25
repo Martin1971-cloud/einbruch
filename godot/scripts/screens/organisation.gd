@@ -453,7 +453,7 @@ func _check_tool(b: Button, t: Dictionary) -> void:
 		why = "Passt zum Ziel. %s kann es." % who
 	else:
 		col = Color(1.0, 0.5, 0.45)
-		why = "Passt zum Ziel, aber niemand im Team hat die Vorkenntnisse (%s ab %d %%)." % [t.get("ability", ""), int(t.get("min", 0))] if str(t.get("ability", "")) != "" else "Passt zum Ziel, aber niemand im Team hat die Vorkenntnisse."
+		why = Texte.t("org.vorkenntnisse_ab") % [t.get("ability", ""), int(t.get("min", 0))] if str(t.get("ability", "")) != "" else Texte.t("org.vorkenntnisse")
 	b.add_theme_color_override("font_color", col)
 	b.add_theme_color_override("font_disabled_color", col)
 	b.set_meta("why", why)

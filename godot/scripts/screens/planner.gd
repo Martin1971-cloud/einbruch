@@ -597,7 +597,7 @@ func _refresh_team() -> void:
 		_team_btns[c.id] = b
 	if not Game.driver.is_empty():
 		_team_box.add_child(_l(Texte.t("plan.fahrer_zeile") % [Game.driver.name, int(Game.driver.skills.FAHREN)], 12, Color(0.85, 0.85, 0.9)))
-	_team_box.add_child(_l("2. Aktion anklicken oder auf die Zeitleiste ziehen", 12, Color(0.89, 0.71, 0.35)))
+	_team_box.add_child(_l(Texte.t("plan.aktion_anklicken"), 12, Color(0.89, 0.71, 0.35)))
 	_shrink_text(_team_box, _text_size)
 	_update_team_floors()
 
@@ -874,7 +874,7 @@ func _first_tool() -> String:
 func _on_dropped(crew_id: String, kind: String) -> void:
 	var action := _default_action(kind)
 	if action.t == "TOOL" and not Game.tools_owned.has(action.tool):
-		_preview.text = "[color=orange]Du besitzt kein Werkzeug. Kaufe es in der Organisation.[/color]"
+		_preview.text = Texte.t("plan.kein_werkzeug")
 		return
 	_add(crew_id, action)
 	_on_changed()
@@ -912,7 +912,7 @@ func _on_preview() -> void:
 	_refresh_timeline(res)
 	var msgs: Array = []
 	if not _problems.is_empty():
-		msgs.append("[color=salmon][b]%d Aktion(en) funktionieren so nicht:[/b][/color]" % _problems.size())
+		msgs.append(Texte.t("plan.n_aktionen_kaputt") % _problems.size())
 		for p in _problems:
 			msgs.append("[color=salmon]✗ %s[/color]" % p)
 		msgs.append("[color=gray]%s[/color]" % Texte.t("plan.gesperrt_hinweis"))
@@ -1147,7 +1147,7 @@ func _run_execution() -> void:
 		var pl: Array = plans[c.id]
 		var ends_at_car: bool = not pl.is_empty() and pl[-1].t == "MOVE" and pl[-1].get("to", "") == "Fluchtwagen"
 		if not ends_at_car:
-			_problems.append("%s endet nicht am Fluchtwagen (letzte Aktion: Einsteigen oder Gehen zum Wagen)." % c.name.split(" ")[0])
+			_problems.append(Texte.t("plan.endet_nicht_letzte") % c.name.split(" ")[0])
 	if not _problems.is_empty():
 		_preview.text = Texte.t("plan.gesperrt_kopf") % [_problems.size(), _preview.text]
 		return
@@ -1184,7 +1184,7 @@ func _object_entries(cell: Vector2i) -> Array:
 			var how := "aufbrechen (laut, dann offen)" if t.destroys else "entriegeln"
 			out.append(["%s %s: %s" % [what, how, Texte.d(t.name)], {"t": "TOOL", "tool": tid, "on": nm}, true])
 		if not any:
-			out.append(["%s: kein passendes Werkzeug (Kauf in der Organisation)" % what, {}, false])
+			out.append([Texte.t("plan.kein_passendes_werkzeug") % what, {}, false])
 	elif not st.open:
 		out.append([Texte.t("plan.von_hand") % what, {"t": "OPEN", "on": nm}, true])
 	if st.kind == "case":
@@ -1461,7 +1461,7 @@ func _on_menu_pick(i: int) -> void:
 		_add(_active, {"t": "MOVE", "to": "Fluchtwagen"})
 		_on_changed()
 		_watch_last(_active)
-		_preview.text = "[color=lightgreen]%s steigt ein.[/color]" % _crew_name(_active)
+		_preview.text = Texte.t("plan.steigt_ein") % _crew_name(_active)
 		return
 	if act.has("approach"):
 		# Erst von der gegenüberliegenden Seite kommen, dann auf das Ziel zugehen (Blickrichtung)

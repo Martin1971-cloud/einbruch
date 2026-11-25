@@ -19,6 +19,8 @@ SKRIPTE = os.path.join(ROOT, "scripts")
 UI_SCHLUESSEL = re.compile(r"^[a-z][a-z0-9_]*\.[a-z0-9_.]+$")
 STRING = re.compile(r'"((?:[^"\\]|\\.)*)"')
 ENTRY = re.compile(r'^\t\t("(?:[^"\\]|\\.)*"):\s*("(?:[^"\\]|\\.)*"),?\s*$', re.M)
+# Ortsnamen, die die Simulation und die Planung als Schlüssel nutzen (keine Anzeigetexte)
+ORTSSCHLUESSEL = {"Außen vor dem Eingang", "Eingangstür", "Gemälde „Hafen bei Nacht“"}
 GERMAN_HINT = re.compile(r"[äöüÄÖÜß]|\b(und|der|die|das|ist|nicht|mit|für|von|oder|ein|eine|wird|sind|bei)\b")
 
 
@@ -50,7 +52,7 @@ def fest_stehende_texte():
                     continue
                 for m in STRING.finditer(code):
                     t = m.group(1)
-                    if t.startswith("res://") or re.fullmatch(r"[A-Za-z0-9_.:%/\- ]*", t) and not GERMAN_HINT.search(t):
+                    if t in ORTSSCHLUESSEL or t.startswith("res://") or re.fullmatch(r"[A-Za-z0-9_.:%/\- ]*", t) and not GERMAN_HINT.search(t):
                         continue
                     if GERMAN_HINT.search(t) and re.search(r"[A-Za-zÄÖÜäöüß]{3,}", t):
                         treffer.append((os.path.relpath(pfad, ROOT), nr, t))

@@ -48,7 +48,7 @@ func _row(n: int) -> Control:
 	if info.get("leer", true):
 		txt.add_child(UI.label("Platz %d: leer" % n, 16, Color(0.7, 0.72, 0.78)))
 	elif info.get("defekt", false):
-		txt.add_child(UI.label("Platz %d: Stand nicht lesbar" % n, 16, Color(1, 0.6, 0.5)))
+		txt.add_child(UI.label(Texte.t("slots.stand_unlesbar") % n, 16, Color(1, 0.6, 0.5)))
 	else:
 		var pl: String = " · " + {"fahndung": "Fahndung zu hoch", "pleite": "Pleite"}.get(str(info.pleite), "") if str(info.pleite) != "" else ""
 		txt.add_child(UI.label("Platz %d · Tag %d · Geld %s €%s" % [n, int(info.tag), _fmt(int(info.geld)), pl], 16, Color(0.92, 0.9, 0.85)))

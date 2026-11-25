@@ -135,7 +135,7 @@ func _get_tooltip(at_position: Vector2) -> String:
 	for p in pins:
 		if _px(p.pos).distance_to(at_position) < 18:
 			var info: String = p.get("info", "")
-			return p.name + ("" if p.active else " – noch nicht spielbar") + ("\n" + info if info != "" else "")
+			return p.name + ("" if p.active else Texte.t("stadt.nicht_spielbar")) + ("\n" + info if info != "" else "")
 	return ""
 
 
