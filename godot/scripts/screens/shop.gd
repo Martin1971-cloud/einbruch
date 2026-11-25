@@ -90,7 +90,7 @@ func _build_laden() -> void:
 		b.add_theme_font_size_override("font_size", 13)
 		b.disabled = locked or ((not owned) and Game.money < int(t.price))
 		b.custom_minimum_size = Vector2(0, 34)
-		b.tooltip_text = Texte.t("shop.tool_tip") % [t.time, t.noise, t.evidence, t.max]
+		b.tooltip_text = Texte.t("shop.tool_tip") % [t.time, t.noise, t.evidence, t.max] + "\n" + Texte.t("shop.tool_tip_skill")
 		_body.add_child(b)
 	_body = kleid
 	_body.add_child(UI.label(Texte.t("shop.kleidung_kopf"), 15, Color(0.89, 0.71, 0.35)))
@@ -200,8 +200,8 @@ func choose_car(cid: String) -> void:
 
 func _use_text(t: Dictionary) -> String:
 	if str(t.get("ability", "")) == "":
-		return "jeder kann es"
-	return "%s ab %d %%" % [t.ability, int(t.min)]
+		return Texte.t("shop.jeder")
+	return "%s ab %d %%" % [Texte.t(GameData.TOOL_SKILL_KEY.get(t.type, "skill.technik")), int(t.min)]
 
 
 func _fmt(n: int) -> String:

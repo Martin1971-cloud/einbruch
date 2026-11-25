@@ -297,6 +297,8 @@ const TABELLE := {
 		"shop.haken_an": "[✓] ",
 		"shop.haken_aus": "[  ] ",
 		"shop.kleidung_kopf": "Kleidung",
+		"shop.jeder": "jeder kann es",
+		"shop.tool_tip_skill": "Je besser die Fähigkeit der Person, desto schneller die Aktion: ab 100 % nur etwa ein Drittel der Basiszeit.",
 	},
 	"en": {
 		"stadt.hint_umsehen": "A look at the building: one more step of investigation, one hour passes.",
@@ -587,6 +589,8 @@ const TABELLE := {
 		"shop.haken_an": "[✓] ",
 		"shop.haken_aus": "[  ] ",
 		"shop.kleidung_kopf": "Clothing",
+		"shop.jeder": "anyone can use it",
+		"shop.tool_tip_skill": "The better the person's skill, the faster the action: at 100 % only about a third of the base time.",
 	},
 }
 

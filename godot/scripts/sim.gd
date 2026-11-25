@@ -864,7 +864,7 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 			return
 		# Vorkenntnisse: Werkzeug braucht eine Mindeststufe der Fähigkeit (Original: tcGetNecessaryAbility / plCheckAbilities)
 		if float(c.skills.get(tool.type, 0)) < float(tool.get("min", 0)):
-			_fail(c, Texte.t("fail.vorkenntnisse") % [c.name, tool.name, tool.ability, int(tool.min)])
+			_fail(c, Texte.t("fail.vorkenntnisse") % [c.name, tool.name, Texte.t(GameData.TOOL_SKILL_KEY.get(tool.type, "skill.technik")), int(tool.min)])
 			return
 		# Schaufenster brauchen den Glasschneider, Türen und Vitrinen das Schloss-Werkzeug
 		var needs := door_tool(door) if door != null else "schloss"

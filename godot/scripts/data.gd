@@ -19,8 +19,8 @@ const TOOLS := {
 	"chloroform": {"name": "Chloroform", "type": "FORCE", "ability": "Kampf", "min": 0, "obj": "wache", "max": 100, "time": 4.0, "noise": 0.0, "destroys": false, "evidence": 3.0, "price": 250, "stufe": 3},
 	"bypass": {"name": "Elektroset (Bypass)", "type": "ELECTRONICS", "ability": "Elektronik", "min": 30, "obj": "alarm", "max": 85, "time": 12.0, "noise": 2.0, "destroys": false, "evidence": 5.0, "price": 900, "stufe": 2},
 	"stethoskop": {"name": "Stethoskop", "type": "TECH", "ability": "Safes", "min": 40, "obj": "tresor", "max": 100, "time": 20.0, "noise": 1.0, "destroys": false, "evidence": 3.0, "price": 500, "stufe": 2},
-	"schneidbrenner": {"name": "Schneidbrenner", "type": "TECH", "ability": "Safes", "min": 45, "obj": "tresor", "max": 100, "time": 30.0, "noise": 30.0, "destroys": true, "evidence": 8.0, "price": 2500, "stufe": 2},
-	"kernbohrer": {"name": "Kernbohrer", "type": "TECH", "ability": "Safes", "min": 50, "obj": "tresor", "max": 100, "time": 40.0, "noise": 60.0, "destroys": true, "evidence": 10.0, "price": 3000, "stufe": 3},
+	"schneidbrenner": {"name": "Schneidbrenner", "type": "TECH", "ability": "Safes", "min": 55, "obj": "tresor", "max": 100, "time": 30.0, "noise": 30.0, "destroys": true, "evidence": 8.0, "price": 2500, "stufe": 2},
+	"kernbohrer": {"name": "Kernbohrer", "type": "TECH", "ability": "Safes", "min": 65, "obj": "tresor", "max": 100, "time": 40.0, "noise": 60.0, "destroys": true, "evidence": 10.0, "price": 3000, "stufe": 3},
 	"dynamit": {"name": "Dynamit", "type": "TECH", "ability": "Sprengstoff", "min": 60, "obj": "tresor", "max": 100, "time": 10.0, "noise": 120.0, "destroys": true, "evidence": 40.0, "price": 1500, "stufe": 3},
 }
 
@@ -59,7 +59,7 @@ const LEXIKON := [
 	{"term": "Polizeizeit", "text": "Zeit zwischen dem Alarm und dem Eintreffen der Polizei. Ist sie abgelaufen, ist das Team gefasst."},
 	{"term": "Wachrate", "text": "Wie wachsam die Wachen sind. Bestimmt, wie schnell die Polizei nach dem Alarm kommt."},
 	{"term": "Fahndung", "text": "Die Spuren, die ein Einbruch hinterlässt. Sie steigen nach jedem Einbruch."},
-	{"term": "Werkzeug", "text": "Werkzeuge kaufst du im Laden. Jedes Objekt braucht sein Werkzeug: Schlösser das Dietrich-Set, Glas der Glasschneider, Stahltüren Schneidbrenner oder Stethoskop, Alarmpanels das Elektroset."},
+	{"term": "Werkzeug", "text": "Werkzeuge kaufst du im Laden. Jedes Objekt braucht sein Werkzeug: Schlösser das Dietrich-Set, Glas der Glasschneider, Stahltüren Schneidbrenner oder Stethoskop, Alarmpanels das Elektroset. Je besser die Fähigkeit der Person, desto schneller."},
 	{"term": "Freischaltung", "text": "Jedes erfolgreiche Gebäude schaltet neue Werkzeuge und Autos frei. Gesperrte Artikel stehen im Laden mit dem Hinweis, ab welchem Gebäude sie zu haben sind."},
 	{"term": "Tür", "text": "Türen sind verschlossen oder offen. Verschlossene Türen entriegelst du leise mit dem Dietrich oder brichst sie laut mit dem Brecheisen auf."},
 	{"term": "Vitrine", "text": "Ein Schaukasten mit Beute, meist aus Glas. Erst öffnen, dann die Beute nehmen."},
@@ -136,10 +136,13 @@ const ACTION_INFO := {
 }
 
 ## Hinweise zu den Fähigkeiten (Scroll-over).
+## Fähigkeit je Werkzeugart (Anzeige und Prüfung). Die Crew hat genau diese Fähigkeiten.
+const TOOL_SKILL_KEY := {"TECH": "skill.technik", "FORCE": "skill.kampf", "ELECTRONICS": "skill.elektronik"}
+
 const SKILL_INFO := {
-	"TECH": "Technik: Schlösser öffnen, Dietriche. Wichtig für Türen mit niedriger Komplexität.",
-	"FORCE": "Kampfsport (Boxen, Karate): Brecheisen, Tresortüren, Wachen ausschalten. Kraft verkürzt die Dauer und bestimmt die Tragfähigkeit.",
-	"ELECTRONICS": "Elektronik: Alarmanlagen und Mikrofone überbrücken. Wichtig, wenn ein Alarm sonst auslöst.",
+	"TECH": "Technik: Schlösser öffnen, Dietriche, Stethoskop, Schneidbrenner und Bohrer. Je besser die Technik, desto schneller geht die Aktion. Die Schneidbrenner und Bohrer brauchen einen Fachmann.",
+	"FORCE": "Kampfsport (Boxen, Karate): Brecheisen, Axt, Wachen ausschalten. Je besser der Kampfsport, desto schneller die Aktion.",
+	"ELECTRONICS": "Elektronik: Alarmanlagen und Mikrofone überbrücken. Je besser die Elektronik, desto schneller geht das Überbrücken.",
 	"FAHREN": "Fahren: Bestimmt, wie schnell der Fluchtwagen am Ausgang wegkommt.",
 }
 

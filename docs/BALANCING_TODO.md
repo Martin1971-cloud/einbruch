@@ -184,3 +184,5 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Stadtkarte: Zoom mit Mausrad zum Mauszeiger, Ziehen zum Verschieben (nur bei Zoom), Rechtsklick oder Doppelklick setzt die Ansicht zurück. Geprüft mit `test_stadtkarte_zoom`.
 - Werkzeugladen: Kaufstatus als Kästchen am Zeilenanfang („[✓]“ / „[  ]“). Sperrhinweis neu formuliert: „nach erfolgreichem Einbruch bei …“ (vorher „ab …“ mit doppeltem Anführungszeichen). Geprüft mit `test_stufen`.
 - Werkzeugladen: Werkzeug und Kleidung nebeneinander in zwei Spalten (Werkzeug breiter), damit die Kleidung nicht unter der Liste verschwindet.
+- Werkzeuge: Anzeige nennt die Fähigkeit, die die Crew wirklich hat (Technik, Kampf, Elektronik) statt „Safes“ oder „Sprengstoff“. Schneidbrenner ab Technik 55, Kernbohrer ab 65 (Fachmann). Dauer sinkt mit der Fähigkeit (ab 100 % etwa ein Drittel der Basiszeit), das steht jetzt im Tooltip und im Lexikon.
+- Offen: Die Vorschau in der Planung zeigt die Dauer noch nicht pro Person. Eine Anzeige „Dauer mit diesem Teammitglied“ wäre der nächste Schritt.
