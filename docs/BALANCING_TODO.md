@@ -178,3 +178,5 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Einfache Darstellung: Sichtkegel 0,00 ms.
 - Offen: GPU-Frame-Zeit und Draw-Calls aus dem Monitor-Reiter des Editors. Das Skript misst nur die CPU.
 - Hinweis: Messung zuerst mit leerem Cache ergab 0,01 ms. Der Messfehler lag an der Zwischenspeicherung, nicht am Spiel. Die Messung leert den Cache jetzt vor jedem Durchlauf.
+- GPU-Auslastung (nvidia-smi, Testlauf profil_3d.gd): im Mittel 0,4 %, Spitze 3 %, 9 Messpunkte. Die Testszene belastet die Grafikkarte kaum. Das ist nur eine Momentaufnahme, kein Spielablauf in Echtzeit. Der Prozessor misst die teuersten Teile (Sichtkegel bis etwa 8 ms je Neuberechnung).
+- Noch offen: längere Messung im echten Spielablauf (Ausführung über mindestens 30 s) und die Frame-Zeit der Grafikkarte aus dem Monitor-Reiter des Editors.
