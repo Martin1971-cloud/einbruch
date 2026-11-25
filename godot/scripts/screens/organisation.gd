@@ -6,7 +6,7 @@ extends Control
 const MAX_TEAM := 4
 const MAX_BURGLARS := 3
 const MAX_DRIVERS := 2
-const SKILL_NAMES := {"TECH": "Technik", "FORCE": "Kampfsport", "ELECTRONICS": "Elektronik", "FAHREN": "Fahren"}
+const SKILL_NAMES := {"TECH": "skill.technik", "FORCE": "skill.kampf", "ELECTRONICS": "skill.elektronik", "FAHREN": "skill.fahren"}
 
 var main: Node
 var args: Dictionary = {}
@@ -42,7 +42,7 @@ func _ready() -> void:
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(UI.margin(root, 14))
 
-	root.add_child(_l("Organisation – Team und Ausrüstung", 24, Color(0.95, 0.8, 0.4)))
+	root.add_child(_l(Texte.t("org.titel"), 24, Color(0.95, 0.8, 0.4)))
 	root.add_child(_l("Ziel: %s · Sicherungsstufe %d · Geld: %s" % [GameData.TARGETS[Game.target_id].name, Game.stufe_of(Game.target_id), _fmt(Game.money)], 14, Color(0.8, 0.85, 0.92)))
 	_summary = _l("", 14, Color(0.85, 0.9, 0.95))
 	root.add_child(_summary)
@@ -56,7 +56,7 @@ func _ready() -> void:
 	var left := VBoxContainer.new()
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	left.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	left.add_child(_l("PERSONEN", 12, Color(0.89, 0.71, 0.35)))
+	left.add_child(_l(Texte.t("org.personen"), 12, Color(0.89, 0.71, 0.35)))
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -73,13 +73,13 @@ func _ready() -> void:
 	mid.add_theme_constant_override("separation", 8)
 	_cover_box = VBoxContainer.new()
 	_cover_box.add_theme_constant_override("separation", 6)
-	mid.add_child(_scroll_col(UI.fold("Bedarf des Ziels und Abdeckung", _cover_box, true)))
+	mid.add_child(_scroll_col(UI.fold(Texte.t("org.bedarf"), _cover_box, true)))
 	cols.add_child(mid)
 	# Rechts: Einkauf. Feste Breite, scrollt nicht.
 	var right := VBoxContainer.new()
 	right.custom_minimum_size = Vector2(300, 0)
 	right.add_theme_constant_override("separation", 8)
-	right.add_child(_l("AUSRÜSTUNG UND WERKZEUG", 12, Color(0.89, 0.71, 0.35)))
+	right.add_child(_l(Texte.t("org.ausruestung"), 12, Color(0.89, 0.71, 0.35)))
 	_shop_box = VBoxContainer.new()
 	_shop_box.add_theme_constant_override("separation", 3)
 	_shop_hint = _l("", 12, Color(0.85, 0.88, 0.94))
@@ -103,8 +103,8 @@ func _ready() -> void:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(sp)
-	bottom.add_child(UI.button("Beispielteam laden (Test)", _on_example, 230))
-	bottom.add_child(UI.primary("Team bestätigen und planen  ▶", _on_confirm, 270))
+	bottom.add_child(UI.button(Texte.t("org.beispiel"), _on_example, 230))
+	bottom.add_child(UI.primary(Texte.t("org.bestaetigen"), _on_confirm, 270))
 
 	_build_people()
 	_build_shop()
@@ -126,7 +126,7 @@ func _build_people() -> void:
 	var last_group := ""
 	for c in ordered:
 		var is_driver: bool = c.get("driver", false)
-		var group := "FAHRER – mindestens einer ist Pflicht" if is_driver else "EINBRECHER – 1 bis 3 im Team"
+		var group := Texte.t("org.grp_fahrer") if is_driver else Texte.t("org.grp_einbrecher")
 		if group != last_group:
 			_people_box.add_child(_l(group, 12, Color(0.89, 0.71, 0.35)))
 			last_group = group
@@ -152,22 +152,22 @@ func _person_card(c: Dictionary, is_driver: bool) -> PanelContainer:
 	left.custom_minimum_size = Vector2(230, 0)
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var nb := _choice("%s   %s" % [c.name, c.role], _selected[c.id], _on_toggle.bind(c.id), 16)
-	nb.tooltip_text = "Auswählen, damit diese Person ins Team kommt. Fähigkeiten stehen rechts."
+	nb.tooltip_text = Texte.t("org.auswahl_tip")
 	left.add_child(nb)
 	left.add_child(_l("Honorar %s" % _fmt(int(c.fee)), 12, Color(0.65, 0.7, 0.78)))
 	if is_driver:
-		var bb := _choice("auch einbrechen", _burgle[c.id], _on_burgle_toggle.bind(c.id), 13)
+		var bb := _choice(Texte.t("org.auch_einbrechen"), _burgle[c.id], _on_burgle_toggle.bind(c.id), 13)
 		bb.disabled = not _selected[c.id]
-		bb.tooltip_text = "Der Fahrer arbeitet zusätzlich im Haus, z.B. als Elektriker oder mit Kampfsport. Seine Kleidung wirkt dann."
+		bb.tooltip_text = Texte.t("org.fahrer_tip")
 		left.add_child(bb)
 	var items: Array = []
 	for gid in GameData.GEAR:
 		if gid != "none" and Game.gear_owned.has(gid):
 			items.append([GameData.GEAR[gid].name, gid])
 	if items.is_empty():
-		left.add_child(_l("Kleidung: noch keine gekauft", 12, Color(0.55, 0.6, 0.66)))
+		left.add_child(_l(Texte.t("org.kleidung_keine"), 12, Color(0.55, 0.6, 0.66)))
 	else:
-		left.add_child(UI.multi_menu("Kleidung wählen", items, _gear_pick[c.id], _gear_cb(c.id)))
+		left.add_child(UI.multi_menu(Texte.t("org.kleidung_waehlen"), items, _gear_pick[c.id], _gear_cb(c.id)))
 	row.add_child(left)
 	# Porträt der Person in der Mitte der Karte (zwischen Name und Fähigkeiten)
 	var pp := GameData.portrait_path(c.id)
@@ -183,7 +183,7 @@ func _person_card(c: Dictionary, is_driver: bool) -> PanelContainer:
 	skills.add_theme_constant_override("separation", 3)
 	skills.custom_minimum_size = Vector2(230, 0)
 	for k in c.skills:
-		var sr := _skill_row(SKILL_NAMES.get(k, k), int(c.skills[k]))
+		var sr := _skill_row(Texte.t(SKILL_NAMES.get(k, k)), int(c.skills[k]))
 		sr.tooltip_text = GameData.SKILL_INFO.get(k, "")
 		skills.add_child(sr)
 	row.add_child(skills)
@@ -232,13 +232,13 @@ func _refresh_cover() -> void:
 	grid.columns = 4
 	grid.add_theme_constant_override("h_separation", 18)
 	grid.add_theme_constant_override("v_separation", 8)
-	for head in ["Fähigkeit", "Bedarf", "Team", "Status"]:
+	for head in [Texte.t("org.faehigkeit"), Texte.t("org.bedarf_kopf"), Texte.t("org.team_kopf"), Texte.t("org.status")]:
 		grid.add_child(_l(head.to_upper(), 11, Color(0.89, 0.71, 0.35)))
 	for skill in bedarf:
 		var need: int = bedarf[skill].wert
 		var have := _team_best(skill)
 		var ok := have >= need
-		var name_lbl := _l(SKILL_NAMES.get(skill, skill), 14, Color(0.95, 0.93, 0.88))
+		var name_lbl := _l(Texte.t(SKILL_NAMES.get(skill, skill)), 14, Color(0.95, 0.93, 0.88))
 		name_lbl.tooltip_text = bedarf[skill].grund
 		grid.add_child(name_lbl)
 		grid.add_child(_l("%d %%" % need, 14, Color(0.85, 0.9, 0.95)))
@@ -249,7 +249,7 @@ func _refresh_cover() -> void:
 			grid.add_child(_l("✗ −%d %%" % (need - have), 14, Color(1, 0.5, 0.45)))
 		grid.get_child(grid.get_child_count() - 1).tooltip_text = bedarf[skill].grund
 	_cover_box.add_child(grid)
-	_cover_box.add_child(_l("Bei jeder Zeile: Begründung beim Darüberfahren.", 11, Color(0.55, 0.6, 0.66)))
+	_cover_box.add_child(_l(Texte.t("org.abdeckung_tip"), 11, Color(0.55, 0.6, 0.66)))
 
 
 # ---------------------------------------------------------------- Einkauf
@@ -284,24 +284,24 @@ func _build_shop() -> void:
 	var car := GameData.car_now(Game.car_id, 85.0)
 	var how := "gemietet, %s € je Einbruch" % _fmt(int(car.rent)) if Game.car_id == "limo" else "gekauft"
 	owned.add_child(_w("Fluchtwagen: %s (%s)" % [car.name, how], 12))
-	_shop_box.add_child(_shop_fold("Besitz", owned))
+	_shop_box.add_child(_shop_fold(Texte.t("org.besitz"), owned))
 
 
 ## Wer das Werkzeug benutzen kann (wie im Original: Fähigkeit und Mindeststufe).
 func _use_text(t: Dictionary) -> String:
 	if str(t.get("ability", "")) == "":
-		return "jeder kann es"
+		return Texte.t("org.jeder_kann")
 	return "%s ab %d %%" % [t.ability, int(t.min)]
 
 
 func _purpose(type: String) -> String:
 	match type:
 		"TECH":
-			return "für Schlösser"
+			return Texte.t("org.fuer_schloesser")
 		"FORCE":
-			return "für Kampfsport (laut)"
+			return Texte.t("org.fuer_kampf")
 		_:
-			return "für Elektronik / Alarm"
+			return Texte.t("org.fuer_elektronik")
 
 
 # ---------------------------------------------------------------- Auswahl
@@ -341,12 +341,12 @@ func _refresh_summary() -> void:
 	var d := _selected_ids(true).size()
 	var missing := ""
 	if b < 1 and d < 1:
-		missing = "mindestens ein Einbrecher und ein Fahrer"
+		missing = Texte.t("org.fehlt_beide")
 	elif b < 1:
-		missing = "mindestens ein Einbrecher"
+		missing = Texte.t("org.fehlt_einbrecher")
 	elif d < 1:
-		missing = "mindestens ein Fahrer"
-	_summary.text = "Team: %d Einbrecher, %d Fahrer%s" % [b, d, "  ·  bereit für die Planung" if missing == "" else "  ·  es fehlt noch: " + missing]
+		missing = Texte.t("org.fehlt_fahrer")
+	_summary.text = "Team: %d Einbrecher, %d Fahrer%s" % [b, d, Texte.t("org.bereit") if missing == "" else "  ·  es fehlt noch: " + missing]
 	_cost_label.text = "Kosten für Team und Fluchtwagen: %s € · verfügbar: %s €" % [_fmt(_cost()), _fmt(Game.money)]
 	_refresh_cover()
 	_build_shop()
@@ -438,7 +438,7 @@ func _check_tool(b: Button, t: Dictionary) -> void:
 			who = _crew_by_id(id).name.split(" ")[0]
 			break
 	var col := Color(0.6, 0.62, 0.66)
-	var why := "Für dieses Ziel nicht nötig."
+	var why := Texte.t("org.nicht_noetig")
 	if not needed:
 		pass
 	elif who != "":
@@ -480,16 +480,16 @@ func _on_confirm() -> void:
 	var drivers := _selected_ids(true)
 	# Original: Teamplanung nur mit Ermittlungsstand über etwa 50 % (organisa.c, tcCheckOrganisation)
 	if int(Game.intel.get(Game.target_id, 0)) < 1:
-		_msg.text = "Erst ermitteln: Umsehen oder Informant. Ohne Wachrouten keine Teamplanung."
+		_msg.text = Texte.t("org.msg_ermitteln")
 		return
 	if drivers.is_empty():
-		_msg.text = "Ohne Fahrer gibt es keinen Fluchtweg. Wähle mindestens einen Fahrer aus."
+		_msg.text = Texte.t("org.msg_fahrer")
 		return
 	if burglars.is_empty():
-		_msg.text = "Wähle mindestens einen Einbrecher aus."
+		_msg.text = Texte.t("org.msg_einbrecher")
 		return
 	if Game.money < _cost():
-		_msg.text = "Nicht genug Geld für Team und Fluchtwagen."
+		_msg.text = Texte.t("org.msg_geld")
 		return
 	Game.money -= _cost()
 	var best: String = drivers[0]
@@ -515,7 +515,7 @@ func _on_example() -> void:
 		Game.tools_owned[t] = true
 	for g in ["gloves", "sneakers"]:
 		Game.gear_owned[g] = true
-	_msg.text = "Beispielteam geladen. Jetzt „Team bestätigen und planen“ drücken."
+	_msg.text = Texte.t("org.msg_beispiel")
 	_build_people()
 	_build_shop()
 	_refresh_summary()
