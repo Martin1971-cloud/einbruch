@@ -110,7 +110,7 @@ func _ready() -> void:
 func _header() -> PanelContainer:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 12)
-	var title := _l("DER EINBRUCH", 24, Color(0.97, 0.82, 0.42))
+	var title := _l(Texte.t("app.titel"), 24, Color(0.97, 0.82, 0.42))
 	row.add_child(title)
 	row.add_child(_l("Planung", 15, Color(0.62, 0.7, 0.8)))
 	var sp := Control.new()
@@ -118,13 +118,13 @@ func _header() -> PanelContainer:
 	row.add_child(sp)
 	# Reihenfolge wie der Ablauf: Vorbereitung (Stadt, Organisation), Planung, Vorschau, Ausführung
 	row.add_child(UI.button("Stadt", func(): main.go("town"), 100))
-	row.add_child(UI.button("Organisation", func(): main.go("organisation"), 130))
+	row.add_child(UI.button(Texte.t("nav.organisation"), func(): main.go("organisation"), 130))
 	var tab := UI.primary("Planung", func(): pass, 100)
 	tab.disabled = true
 	row.add_child(tab)
-	row.add_child(UI.button("Beispielplan (Test)", _on_example, 170))
-	var vor_btn := UI.button("Vorschau", _on_vorschau, 100)
-	vor_btn.tooltip_text = "Den ganzen Einbruch mit dieser Planung abspielen"
+	row.add_child(UI.button(Texte.t("plan.beispiel"), _on_example, 170))
+	var vor_btn := UI.button(Texte.t("plan.vorschau"), _on_vorschau, 100)
+	vor_btn.tooltip_text = Texte.t("plan.vorschau_tip")
 	row.add_child(vor_btn)
 	row.add_child(UI.primary("▶ Ausführung", _on_execute, 150))
 	row.add_child(_l("Tag %d  ·  %s" % [Game.day, Game.clock_text()], 15, Color(0.85, 0.88, 0.94)))
@@ -157,13 +157,13 @@ func _left_column() -> Control:
 		building.map = target.map
 		art = building
 	info.add_child(art)
-	info.add_child(_l("VORHABEN", 11, Color(0.6, 0.66, 0.74)))
+	info.add_child(_l(Texte.t("plan.vorhaben"), 11, Color(0.6, 0.66, 0.74)))
 	info.add_child(_l(target.name, 17, Color(0.97, 0.85, 0.55)))
 	info.add_child(_l("Beutewert: %s" % GameData.loot_text(target, int(Game.intel.get(target.id, 0))), 13, Color(0.85, 0.88, 0.94)))
 	col.add_child(_card(info))
 	_checklist = VBoxContainer.new()
 	_checklist.add_theme_constant_override("separation", 4)
-	col.add_child(UI.fold("Vorbereitung", _checklist, false))
+	col.add_child(UI.fold(Texte.t("plan.vorbereitung"), _checklist, false))
 	return col
 
 
@@ -175,7 +175,7 @@ func _center_column() -> Control:
 	inner.add_theme_constant_override("separation", 6)
 	inner.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var head := HBoxContainer.new()
-	head.add_child(_l("GRUNDRISS" if _floor_list().is_empty() else "GRUNDRISS · ETAGEN", 13, Color(0.97, 0.85, 0.55)))
+	head.add_child(_l(Texte.t("plan.grundriss") if _floor_list().is_empty() else Texte.t("plan.grundriss_etagen"), 13, Color(0.97, 0.85, 0.55)))
 	# Etagen-Reiter: Klick zentriert die Etage (groß)
 	for fl in _floor_list():
 		head.add_child(UI.button(str(fl.name), _on_floor.bind(fl), 64))
@@ -199,17 +199,17 @@ func _center_column() -> Control:
 	for i in range(Game.team.size()):
 		var tc: Dictionary = Game.team[i]
 		legend.add_child(_legend_row(CREW_COL.get(tc.id, Color.WHITE), "%d = %s" % [i + 1, tc.name]))
-	legend.add_child(_legend_row(Color(0.85, 0.85, 0.9), "Geplanter Weg (Farbe = Person)"))
-	legend.add_child(_legend_row(Color(1.0, 0.32, 0.32), "Wache · Sichtfeld"))
-	legend.add_child(_legend_row(Color(0.3, 0.9, 1.0), "Sensor · Alarmpanel"))
-	legend.add_child(_legend_row(Color(0.55, 0.36, 0.2), "Tür"))
-	legend.add_child(_legend_row(Color(0.98, 0.8, 0.35), "Beute"))
-	legend.add_child(_legend_row(Color(1.0, 0.85, 0.2), "Sichtlinie"))
-	legend.add_child(_legend_row(Color(0.9, 0.9, 1.0), "Geräusch"))
-	legend.add_child(_legend_row(Color(1.0, 0.6, 0.25), "Verdacht füllt sich"))
+	legend.add_child(_legend_row(Color(0.85, 0.85, 0.9), Texte.t("plan.leg_weg")))
+	legend.add_child(_legend_row(Color(1.0, 0.32, 0.32), Texte.t("plan.leg_wache")))
+	legend.add_child(_legend_row(Color(0.3, 0.9, 1.0), Texte.t("plan.leg_sensor")))
+	legend.add_child(_legend_row(Color(0.55, 0.36, 0.2), Texte.t("plan.leg_tuer")))
+	legend.add_child(_legend_row(Color(0.98, 0.8, 0.35), Texte.t("plan.leg_beute")))
+	legend.add_child(_legend_row(Color(1.0, 0.85, 0.2), Texte.t("plan.leg_sicht")))
+	legend.add_child(_legend_row(Color(0.9, 0.9, 1.0), Texte.t("plan.leg_geraeusch")))
+	legend.add_child(_legend_row(Color(1.0, 0.6, 0.25), Texte.t("plan.leg_verdacht")))
 	legend.visible = false
 	inner.add_child(legend)
-	head.add_child(UI.button("Legende ▾", func(): legend.visible = not legend.visible, 120))
+	head.add_child(UI.button(Texte.t("plan.legende"), func(): legend.visible = not legend.visible, 120))
 	var help_btn := UI.button("?", func(): pass, 36)
 	help_btn.tooltip_text = "So steuerst du:\n1. Auf eine Person klicken (oder Zahl 1 bis 9 drücken).\n2. Feld im Grundriss anklicken: die Person geht dorthin.\n3. Gegenstand anklicken (Tür, Vitrine, Wache, Alarmpanel): Menü mit Möglichkeiten.\nBeute: erst Vitrine öffnen oder aufbrechen, dann Beute nehmen."
 	head.add_child(help_btn)
@@ -281,7 +281,7 @@ func _right_column() -> Control:
 	col.add_theme_constant_override("separation", 10)
 	_team_box = VBoxContainer.new()
 	_team_box.add_theme_constant_override("separation", 5)
-	var team_fold := UI.fold("Team", _team_box, true)
+	var team_fold := UI.fold(Texte.t("plan.team"), _team_box, true)
 	team_fold.size_flags_vertical = Control.SIZE_EXPAND_FILL  # Team nutzt den restlichen Platz links
 	col.add_child(team_fold)
 	return col
@@ -296,7 +296,7 @@ func _side_column() -> Control:
 	# Schriftgröße: A− und A+, Mindestwert TEXT_MIN
 	var size_row := HBoxContainer.new()
 	size_row.add_theme_constant_override("separation", 6)
-	size_row.add_child(_l("Schrift", 12, Color(0.85, 0.85, 0.9)))
+	size_row.add_child(_l(Texte.t("plan.schrift"), 12, Color(0.85, 0.85, 0.9)))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_row.add_child(sp)
@@ -320,7 +320,7 @@ func _side_column() -> Control:
 	steps_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	steps_scroll.add_child(_steps_rt)
 	_steps_rt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var steps_fold := UI.fold("Ablaufplan", steps_scroll, true)
+	var steps_fold := UI.fold(Texte.t("plan.ablauf"), steps_scroll, true)
 	steps_fold.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	col.add_child(steps_fold)
 	_preview = RichTextLabel.new()
@@ -335,7 +335,7 @@ func _side_column() -> Control:
 	prev_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	prev_scroll.add_child(_preview)
 	_preview.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var preview_fold := UI.fold("Vorschau", prev_scroll, true)
+	var preview_fold := UI.fold(Texte.t("plan.vorschau"), prev_scroll, true)
 	preview_fold.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	col.add_child(preview_fold)
 	return col
@@ -364,7 +364,7 @@ func _palette_card() -> Control:
 	info.add_theme_constant_override("separation", 6)
 	for line in ["1. Auf eine Person klicken (oder Zahl 1 bis 9 drücken).", "2. Feld im Grundriss anklicken: die Person geht dorthin.", "3. Gegenstand anklicken (Tür, Vitrine, Wache, Alarmpanel): Menü mit Möglichkeiten.", "Beute: erst Vitrine öffnen oder aufbrechen, dann Beute nehmen."]:
 		info.add_child(_w(line, 12, Color(0.82, 0.86, 0.92)))
-	var card := UI.fold("So steuerst du", info, false)  # standardmäßig zu, Platz für den Zeitplan
+	var card := UI.fold(Texte.t("plan.hilfe_titel"), info, false)  # standardmäßig zu, Platz für den Zeitplan
 	card.custom_minimum_size = Vector2(LEFT_W, 0)
 	return card
 
@@ -376,13 +376,13 @@ func _timeline_card() -> Control:
 	var bar := HBoxContainer.new()
 	bar.add_theme_constant_override("separation", 8)
 	_play_btn = UI.button("▶  Abspielen", _on_play, 130)
-	_play_btn.tooltip_text = "Abspielen oder Pause (Leertaste)"
+	_play_btn.tooltip_text = Texte.t("plan.play_tip")
 	bar.add_child(_play_btn)
 	_speed_btn = UI.dropdown(["1x", "2x", "4x", "8x"], 1, _on_speed_pick)
 	bar.add_child(_speed_btn)
 	# Letzte Aktion zurücknehmen: dort, wo die Aktionen auch bearbeitet werden (Original: Escape = RemLastAction)
 	var undo_btn := UI.button("↶ Letzte Aktion zurück", _undo, 170)
-	undo_btn.tooltip_text = "Letzte Aktion zurücknehmen (Strg+Z, Esc oder Entf)"
+	undo_btn.tooltip_text = Texte.t("plan.undo_tip")
 	bar.add_child(undo_btn)
 	_slider = HSlider.new()
 	_slider.min_value = 0.0
@@ -397,17 +397,17 @@ func _timeline_card() -> Control:
 	# Speichern und Laden in derselben Zeile wie die Abspielsteuerung: die Zeitleiste bekommt die volle Höhe
 	bar.add_child(_vsep())
 	_plan_name = LineEdit.new()
-	_plan_name.placeholder_text = "Name der Planung"
+	_plan_name.placeholder_text = Texte.t("plan.name")
 	_plan_name.custom_minimum_size = Vector2(150, 0)
 	bar.add_child(_plan_name)
-	var save_btn := UI.button("Speichern", _save_plan, 110)
-	save_btn.tooltip_text = "Diese Planung unter dem Namen speichern"
+	var save_btn := UI.button(Texte.t("plan.speichern"), _save_plan, 110)
+	save_btn.tooltip_text = Texte.t("plan.save_tip")
 	bar.add_child(save_btn)
 	_saved_opt = OptionButton.new()
 	_saved_opt.custom_minimum_size = Vector2(150, 0)
 	bar.add_child(_saved_opt)
-	var load_btn := UI.button("Laden", _load_plan, 80)
-	load_btn.tooltip_text = "Die ausgewählte gespeicherte Planung laden"
+	var load_btn := UI.button(Texte.t("plan.laden"), _load_plan, 80)
+	load_btn.tooltip_text = Texte.t("plan.load_tip")
 	bar.add_child(load_btn)
 	_refresh_saved_list()
 	_gantt = Gantt.new()
@@ -417,12 +417,12 @@ func _timeline_card() -> Control:
 	_gantt.dropped.connect(_on_dropped)
 	_gantt.bar_clicked.connect(_open_editor)
 	col.add_child(_gantt)
-	_gantt.tooltip_text = "Aktion ziehen = in die Zeile der Person legen · Balken anklicken = bearbeiten"
+	_gantt.tooltip_text = Texte.t("plan.gantt_tip")
 	# Schriftzüge der Leiste etwas kleiner, damit mehr Platz für die Personen bleibt
 	_timeline_col = col
 	_shrink_text(col, _text_size)
 	col.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	var card := _card(col, "Zeitplan")
+	var card := _card(col, Texte.t("plan.zeitplan"))
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	return card
@@ -455,13 +455,13 @@ func _open_editor(crew_id: String, idx: int) -> void:
 	v.add_theme_constant_override("separation", 8)
 	v.custom_minimum_size = Vector2(440, 0)
 	pop.add_child(v)
-	v.add_child(_l("AKTION BEARBEITEN", 11, Color(0.89, 0.71, 0.35)))
+	v.add_child(_l(Texte.t("plan.aktion_bearbeiten"), 11, Color(0.89, 0.71, 0.35)))
 	var ed := Lane.new(crew_id)
 	ed.setup(plan, _options)
 	ed.changed.connect(_on_changed)
 	ed.changed.connect(func(): pop.queue_free())
 	v.add_child(ed._row(idx))
-	v.add_child(UI.button("Schließen", func(): pop.queue_free(), 120))
+	v.add_child(UI.button(Texte.t("plan.schliessen"), func(): pop.queue_free(), 120))
 	add_child(pop)
 	pop.popup_centered(Vector2i(460, 150))
 
@@ -559,7 +559,7 @@ func _refresh_team() -> void:
 		var sk: Dictionary = c.skills
 		var parts: Array = []
 		for k in sk:
-			parts.append("%s %d %%" % [{"TECH": "Technik", "FORCE": "Kampfsport", "ELECTRONICS": "Elektronik", "FAHREN": "Fahren"}.get(k, k), int(sk[k])])
+			parts.append("%s %d %%" % [{"TECH": Texte.t("skill.technik"), "FORCE": Texte.t("skill.kampf"), "ELECTRONICS": Texte.t("skill.elektronik"), "FAHREN": Texte.t("skill.fahren")}.get(k, k), int(sk[k])])
 		b.tooltip_text = "Fähigkeiten: " + ", ".join(parts) + ". Klicken zum Auswählen."
 		var col: Color = CREW_COL.get(c.id, Color.WHITE)
 		b.add_theme_color_override("font_color", col)
@@ -617,7 +617,7 @@ func _on_check(on: bool, id: String) -> void:
 		_active = ""
 		_grid.selected_id = ""
 		_refresh_team()
-		_preview.text = "Keine Person ausgewählt. Zahlentaste 1 bis 9 oder Tickbox wählt eine aus."
+		_preview.text = Texte.t("plan.keine_person")
 
 
 ## Jede neue Aktion merken, damit man sie wieder zurücknehmen kann (Original: Escape = RemLastAction).
@@ -701,7 +701,7 @@ func _load_plan() -> void:
 
 func _undo() -> void:
 	if _history.is_empty():
-		_preview.text = "Nichts zum Zurücknehmen."
+		_preview.text = Texte.t("plan.nichts_zurueck")
 		return
 	var id: String = _history.pop_back()
 	if plans[id].is_empty():
@@ -780,11 +780,11 @@ func _refresh_checklist() -> void:
 			if a.t == "MOVE" and a.get("to", "") == "Fluchtwagen":
 				has_car_move = true
 	var items := [
-		["Informationsstand", intel_lvl >= 1],
-		["Grundrisse", true],
-		["Sicherheitslage", intel_lvl >= 2],
-		["Zugänge geplant", has_door],
-		["Fluchtweg (alle enden am Wagen)", all_at_car()],
+		[Texte.t("plan.chk_info"), intel_lvl >= 1],
+		[Texte.t("plan.chk_grundriss"), true],
+		[Texte.t("plan.chk_sicherheit"), intel_lvl >= 2],
+		[Texte.t("plan.chk_zugang"), has_door],
+		[Texte.t("plan.chk_flucht"), all_at_car()],
 	]
 	for it in items:
 		var h := HBoxContainer.new()
@@ -819,19 +819,19 @@ func _describe(a: Dictionary) -> String:
 		"OPEN":
 			return "Öffnen: %s" % a.on
 		"TAKE":
-			return "Beute nehmen"
+			return Texte.t("plan.beute_nehmen")
 		"WAIT":
 			return "Warten %d s" % int(a.sec)
 		"TREPPE":
-			return "Treppe steigen"
+			return Texte.t("plan.treppe")
 		"CALL_CAR":
-			return "Fluchtwagen rufen"
+			return Texte.t("plan.wagen_rufen")
 		"NEUTRALIZE":
 			return "Wache ausschalten: %s" % _guard_name(a.guard)
 		"FLAG_SET":
 			return "Signal: %s" % GameData.FLAG_NAMES.get(a.flag, a.flag)
 		_:
-			return "Auf Signal warten"
+			return Texte.t("plan.warte_signal")
 
 
 # ---------------------------------------------------------------- Aktionen
@@ -889,7 +889,7 @@ func _config() -> Dictionary:
 	return {"target": target, "team": team, "plans": plans, "car": car}
 
 
-## Knopf "Vorschau": berechnet den Plan und spielt den ganzen Einbruch von vorn ab (alle Personen, Aktionen).
+## Knopf Texte.t("plan.vorschau"): berechnet den Plan und spielt den ganzen Einbruch von vorn ab (alle Personen, Aktionen).
 func _on_vorschau() -> void:
 	_on_preview()
 	_playhead = 0.0
@@ -938,7 +938,7 @@ func _on_preview() -> void:
 	if peak > LOUD_HINT_DB:
 		_show_hint.call_deferred("laut")
 	# Farbe UND Wort: die Bedeutung hängt nicht allein an der Farbe (Barrierefreiheit)
-	var lwort := "leise" if peak <= lim * 0.7 else ("hörbar" if peak <= lim else "Alarm")
+	var lwort := Texte.t("laerm.leise") if peak <= lim * 0.7 else (Texte.t("laerm.hoerbar") if peak <= lim else Texte.t("laerm.alarm"))
 	msgs.insert(1, "Lautstärke: [color=%s]%d dB · %s[/color] (Grenze %d dB)" % [lcol, int(peak), lwort, int(lim)])
 	msgs.append("Auszahlung: %s € · Fahndung +%d %%" % [_fmt(int(res.payout)), int(res.heat)])
 	# Teamgröße mit Kosten und Dauer: der Spieler wägt Gewinn gegen Zeit ab
@@ -1063,13 +1063,13 @@ func _show_at(t: float) -> void:
 func _status_text(s: String) -> String:
 	match s:
 		"ENTKOMMEN":
-			return "Entkommen"
+			return Texte.t("status.entkommen")
 		"ENTKOMMEN_HEISS":
-			return "Entkommen (heiß)"
+			return Texte.t("status.entkommen_heiss")
 		"GEFASST":
-			return "Festgenommen"
+			return Texte.t("status.festgenommen")
 		_:
-			return "Abbruch"
+			return Texte.t("status.abbruch")
 
 
 func _loot_text(list: Array) -> String:
@@ -1091,7 +1091,7 @@ func _ask_plan_for_execution() -> void:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 8)
 	box.custom_minimum_size = Vector2(340, 0)
-	box.add_child(_l("Mit welchem Plan ausführen?", 15, Color(0.97, 0.85, 0.55)))
+	box.add_child(_l(Texte.t("plan.welcher_plan"), 15, Color(0.97, 0.85, 0.55)))
 	box.add_child(UI.button("Aktuelle Planung (ungespeichert)", func() -> void:
 		pop.hide()
 		_run_execution(), 0))
@@ -1135,7 +1135,7 @@ func _object_entries(cell: Vector2i) -> Array:
 	if st.is_empty():
 		return out
 	var nm: String = st.name
-	var what := "Tür" if st.kind == "door" else "Vitrine"
+	var what := Texte.t("plan.leg_tuer") if st.kind == "door" else "Vitrine"
 	# Crosscheck wie im Original: Objekt nur in Blickrichtung der Person erreichbar (plGetObjectsList)
 	var stand := _stand_after(_active)
 	if absi(stand.cell.x - cell.x) + absi(stand.cell.y - cell.y) != 1:

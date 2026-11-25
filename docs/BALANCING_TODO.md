@@ -163,3 +163,4 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 ## Lokalisierung (laufend)
 - Umgestellt: Titel, Kopfzeile und Knöpfe der Stadt, Ortsbeschriftungen (Schlüssel in `scripts/texte.gd`, Deutsch und Englisch). Geprüft mit `test_lokalisierung_stadt`.
 - Noch offen: Planung, Organisation, Ausführung, Auswertung, Laden, Meldungen und Protokolltexte. Verbleibend etwa 509 deutsche Textstellen im Code.
+- Planung umgestellt: Kopfzeile, Legende, Checkliste, Knöpfe, Tooltips, Statuswörter, Aktionsbeschreibungen (Deutsch und Englisch). Geprüft mit `test_lokalisierung_planung`. Verbleibend etwa 452 deutsche Textstellen, vor allem Meldungen mit Platzhaltern in Organisation, Ausführung, Auswertung und Protokoll.
