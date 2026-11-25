@@ -94,6 +94,7 @@ func _ready() -> void:
 	_einfach_btn = UI.button("", _toggle_einfach, 0)
 	box.add_child(_einfach_btn)
 	box.add_child(UI.label(Texte.t("opt.hinweis_text"), 12, Color(0.7, 0.74, 0.8), true))
+	box.add_child(UI.label(Texte.t("opt.musik_quelle"), 11, Color(0.62, 0.66, 0.72), true))
 	_refresh()
 
 

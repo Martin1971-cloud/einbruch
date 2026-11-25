@@ -231,3 +231,7 @@ Zuordnung im Test: Eingang bei Teodor, Werkzeug-Blöcke an Teammitglieder mit au
 - Kuriositätenladen: Teams 2 und 3 je 37.200 €, Zeit 99 s (Einzelbetrieb 121 s). Ergebnis +23.500 bzw. +20.000 €.
 - Juwelier: Teams 2 und 3 je 108.000 €, Zeit 112 s (Einzelbetrieb 134 s). Ergebnis +94.300 bzw. +90.800 €.
 Fazit: Die Auszahlung ist unabhängig von der Teamgröße (gleiche Beute). Ein größeres Team spart Zeit, kostet aber Honorar. Beim Kiosk lohnt sich ein zweites Teammitglied wegen der kleinen Beute nicht.
+
+## Musik aus Pixabay (Quellenhinweis)
+- Stadt: Schleife aus „Emotional Cello“ von renrebello (Pixabay). Planung: Schleife aus „Chamber Violins and Cello“ von moonpub (Pixabay). Pixabay-Inhaltslizenz (Zusammenfassung): kostenlos, Namensnennung nicht nötig, Bearbeitung erlaubt, nicht als eigenständiges Produkt verkaufen. Die vollständige Lizenz ist nicht geprüft.
+- Quellenhinweis steht in den Optionen (deutsch und englisch). Vor dem Verkauf des Spiels die vollständige Lizenz prüfen.
