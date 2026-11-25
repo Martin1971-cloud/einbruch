@@ -28,6 +28,16 @@ func _ready() -> void:
 			title_col = Color(1.0, 0.6, 0.4)
 	root.add_child(UI.label(title_txt, 32, title_col))
 	root.add_child(UI.label(str(res.get("reason", "")), 17, Color(0.92, 0.9, 0.85), true))
+	# Bild zum Ausgang: erfolgreich oben, gescheitert unten (bei Abbruch ohne Bild)
+	var pic_path := "res://assets/art/result_erfolg.webp" if status.begins_with("ENTKOMMEN") else ("res://assets/art/result_fehl.webp" if status == "GEFASST" else "")
+	if pic_path != "":
+		if ResourceLoader.exists(pic_path):
+			var pic := TextureRect.new()
+			pic.texture = load(pic_path)
+			pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			pic.custom_minimum_size = Vector2(0, 190)
+			root.add_child(pic)
 
 	var card_box := VBoxContainer.new()
 	card_box.add_theme_constant_override("separation", 6)
