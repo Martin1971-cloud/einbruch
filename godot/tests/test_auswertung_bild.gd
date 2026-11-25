@@ -18,11 +18,12 @@ func _check(ok: bool, n: String) -> void:
 		_fails += 1
 
 
-func _find_picture(node: Node) -> TextureRect:
-	if node is TextureRect and node.texture != null:
+func _find_picture(node: Node, path: String = "") -> TextureRect:
+	# ohne Pfad: irgendein Bild; mit Pfad: genau dieses Bild
+	if node is TextureRect and node.texture != null and (path == "" or node.texture.resource_path == path):
 		return node
 	for c in node.get_children():
-		var f := _find_picture(c)
+		var f := _find_picture(c, path)
 		if f != null:
 			return f
 	return null
@@ -57,11 +58,10 @@ func _process(_d: float) -> bool:
 		# einen Bildlauf abwarten, dann prüfen und speichern
 		_phase = 2
 		return false
-	var pic := _find_picture(_main.current)
 	if expect == "":
-		_check(pic == null, "%s: kein Bild" % status)
+		_check(_find_picture(_main.current) == null, "%s: kein Bild" % status)
 	else:
-		_check(pic != null and pic.texture.resource_path == expect, "%s: Bild %s" % [status, expect])
+		_check(_find_picture(_main.current, expect) != null, "%s: Bild %s" % [status, expect])
 	if _out != "":
 		root.get_texture().get_image().save_png(_out.path_join("auswertung_%s.png" % status.to_lower()))
 	_case += 1

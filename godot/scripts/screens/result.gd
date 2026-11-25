@@ -8,16 +8,22 @@ var args: Dictionary = {}
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(UI.background(Color(0.07, 0.08, 0.11)))
-	# Ausgangsbild über den ganzen Bildschirm, gedämpft: die Texte stehen auf einer dunklen Schicht
+	# Ausgangsbild: unscharfe Fassung füllt den ganzen Bildschirm, das scharfe Bild liegt ganz sichtbar in der Mitte
 	var bg_status := str(args.get("result", {}).get("status", ""))
 	var bg_path := "res://assets/art/result_erfolg.webp" if bg_status.begins_with("ENTKOMMEN") else ("res://assets/art/result_fehl.webp" if bg_status == "GEFASST" else "")
 	if bg_path != "" and ResourceLoader.exists(bg_path):
-		var pic_bg := UI.backdrop(bg_path)
-		pic_bg.modulate = Color(1, 1, 1, 0.45)
-		pic_bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED   # ganzes Bild sichtbar, Ränder bleiben dunkel
-		add_child(pic_bg)
+		var fill := UI.backdrop(bg_path.replace(".webp", "_blur.webp"))
+		fill.modulate = Color(1, 1, 1, 0.55)
+		add_child(fill)
+		var sharp := TextureRect.new()
+		sharp.texture = load(bg_path)
+		sharp.set_anchors_preset(Control.PRESET_FULL_RECT)
+		sharp.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		sharp.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		sharp.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(sharp)
 		var shade := ColorRect.new()
-		shade.color = Color(0.05, 0.06, 0.09, 0.6)
+		shade.color = Color(0.05, 0.06, 0.09, 0.45)
 		shade.set_anchors_preset(Control.PRESET_FULL_RECT)
 		shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		add_child(shade)
