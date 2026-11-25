@@ -217,7 +217,8 @@ func _build_world() -> void:
 	if cfg.target.get("floors", []).size() > 1:
 		dz_cam = float(cfg.target.floors[1].rows[0]) - float(cfg.target.floors[0].rows[0])
 	ext.y -= dz_cam
-	cam.size = clampf(maxf(ext.y * 1.6, ext.x * 1.6 / aspect), 10.0, 40.0)
+	# Abstand um das Gebäude knapp: es füllt das Bild besser aus (vorher 1,6)
+	cam.size = clampf(maxf(ext.y * 1.15, ext.x * 1.15 / aspect), 8.0, 40.0)
 	cam.make_current()
 
 	var rows: Array = cfg.target.map
