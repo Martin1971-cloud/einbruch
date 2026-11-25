@@ -417,7 +417,7 @@ func team_fee_total() -> int:
 
 ## Optionen des Spielers: eigene Datei, unabhängig vom Spielstand.
 const SETTINGS_PATH := "user://einbruch_optionen.cfg"
-var settings := {"music": 80, "text_size": 13, "fullscreen": false}
+var settings := {"music": 80, "text_size": 13, "fullscreen": false, "einfach": false}
 
 
 func load_settings() -> void:
@@ -426,6 +426,7 @@ func load_settings() -> void:
 		settings.music = clampi(int(cfg.get_value("ton", "musik", 80)), 0, 100)
 		settings.text_size = clampi(int(cfg.get_value("anzeige", "textgroesse", 13)), 10, 18)
 		settings.fullscreen = bool(cfg.get_value("anzeige", "vollbild", false))
+		settings.einfach = bool(cfg.get_value("anzeige", "einfach", false))
 		hints_enabled = bool(cfg.get_value("hinweise", "an", true))
 	apply_settings()
 
@@ -435,6 +436,7 @@ func save_settings() -> void:
 	cfg.set_value("ton", "musik", settings.music)
 	cfg.set_value("anzeige", "textgroesse", settings.text_size)
 	cfg.set_value("anzeige", "vollbild", settings.fullscreen)
+	cfg.set_value("anzeige", "einfach", bool(settings.get("einfach", false)))
 	cfg.set_value("hinweise", "an", hints_enabled)
 	cfg.save(SETTINGS_PATH)
 

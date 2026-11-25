@@ -92,6 +92,7 @@ func _process(_d: float) -> bool:
 			if cur.get("sim") != null and _wait >= 80 and not _done:
 				_done = true
 				var n := 60
+				var Game = root.get_node("/root/Game")
 				var t0 := Time.get_ticks_usec()
 				for _k in range(n):
 					cur._process(0.016)
@@ -108,6 +109,13 @@ func _process(_d: float) -> bool:
 				for _k in range(n):
 					cur._update_cones()
 				var cones := (Time.get_ticks_usec() - t0) / 1000.0 / n
+				Game.settings.einfach = true
+				t0 = Time.get_ticks_usec()
+				for _k in range(n):
+					cur._update_cones()
+				var cones_einfach := (Time.get_ticks_usec() - t0) / 1000.0 / n
+				Game.settings.einfach = false
+				print("PROFIL einfache Darstellung Sichtkegel %.2f ms" % cones_einfach)
 				print("PROFIL testhaus: Bild gesamt %.2f ms · Zustand %.2f ms · Etagen %.2f ms · Sichtkegel %.2f ms · Szenenknoten %d" % [full, sync, floors, cones, cur.get_child_count()])
 				quit(0)
 			if cur.get("sim") != null:

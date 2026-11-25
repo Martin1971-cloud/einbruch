@@ -1064,13 +1064,28 @@ func _update_sight_and_rings() -> void:
 			line.look_at(b, Vector3.UP)
 
 
+var _cone_key := {}  # Wache -> letzter Zustand des Kegels (nur neu bauen, wenn er sich ändert)
+
+
 func _update_cones() -> void:
+	# Einfache Darstellung: keine Sichtkegel, Sichtlinien und Ringe (weniger Rechenzeit, übersichtlicher)
+	if bool(Game.settings.get("einfach", false)):
+		for g in sim.guards:
+			_cone_nodes[g.id].visible = false
+			_ring_nodes[g.id].visible = false
+		for k in _sight_nodes:
+			_sight_nodes[k].visible = false
+		return
 	_update_sight_and_rings()
 	for g in sim.guards:
 		var cm: MeshInstance3D = _cone_nodes[g.id]
 		if g.state == "IDLE" or g.state == "OUT":
 			cm.visible = false
 			continue
+		var key := "%s|%s|%s|%s" % [str(g.pos), str(g.facing), str(g.vision), str(g.state)]
+		if _cone_key.get(g.id, "") == key and cm.visible:
+			continue
+		_cone_key[g.id] = key
 		var pts := sim.view_cone(g.pos, g.facing, float(g.vision))
 		var verts := PackedVector3Array()
 		for pt in pts:

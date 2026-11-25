@@ -152,3 +152,10 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Fehlerbericht: Bei einem nicht ladbaren Platz erscheint eine Meldung mit Hinweis. Liegt eine Sicherung vor, wird sie automatisch wiederhergestellt und der Spieler wird informiert. Fehler stehen zusätzlich in `user://einbruch_fehler.log`. Geprüft mit `test_fehlerbericht`.
 - Profiling der 3D-Ansicht (`tests/profil_3d.gd`, Software-Rendering): Sichtkegel der Wachen ca. 3,7 ms je Aufruf (der größte Posten), Zustand 0,07 ms, Etagen 0,16 ms. Die Zeit der Grafikkarte ist nicht gemessen; dafür braucht es Messungen auf echter Hardware.
 - Noch offen: Lokalisierung der übrigen Texte, Profiling mit echter Grafikkarte, Sichtkegel-Optimierung (Aktualisierung seltener oder nur bei sichtbaren Wachen), Schalter für einfachere Darstellung.
+
+## Umgesetzt in diesem Schritt
+- Prüf-Pipeline: 48 Tests, 0 Fehler (zwei Läufe und ein Lauf nach den letzten Änderungen).
+- Wachsicht: Sichtkegel werden nur neu gebaut, wenn sich Position, Blickrichtung, Sichtweite oder Zustand der Wache ändern. Im Messlauf mit ruhender Szene fällt der Aufwand von 3,65 ms auf 0,01 ms. Bei sich bewegenden Wachen fällt der Gewinn kleiner aus, das ist nicht separat gemessen.
+- Schalter „Einfache Darstellung (ohne Sichtkegel)“ in den Optionen: blendet Sichtkegel, Sichtlinien und Ringe aus. Gespeichert in den Optionen. Geprüft mit `test_einfach`.
+- Profiling mit echter Grafikkarte: nicht möglich in dieser Umgebung (nur Software-Rendering, kein angebundener Rechner). Anleitung: `tests/profil_3d.gd` auf dem eigenen Rechner ausführen (`godot --path . --script res://tests/profil_3d.gd -- <Ordner>`) und die Zeilen „PROFIL“ senden.
+- Lokalisierung der übrigen Texte: nicht abgeschlossen. Im Code stehen noch 539 deutsche Texte in 17 Dateien. Umstellung je Bildschirm, mit einer Prüfung, die deutsche Texte außerhalb der Texttabelle meldet.
