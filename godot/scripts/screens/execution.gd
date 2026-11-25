@@ -112,6 +112,116 @@ func _outline(parent: Node3D, mesh: Mesh, grow: float, pos: Vector3, size: Vecto
 	parent.add_child(mi)
 
 
+## Außenseite einer Wand: -1 am kleinsten Schlüssel, +1 am größten, sonst 0 (innere Wand).
+func _aussen(key: int, lines: Dictionary) -> int:
+	if lines.size() == 0:
+		return 0
+	var keys := lines.keys()
+	keys.sort()
+	if key == keys[0]:
+		return -1
+	if key == keys[keys.size() - 1]:
+		return 1
+	return 0
+
+
+## Wandstück: innen Stein, außen Ziegel. Außenwände werden in zwei Hälften geteilt (keine gemeinsamen Flächen = kein Flimmern).
+func _wand_stueck(size: Vector3, pos: Vector3, achse: int, aussen: int) -> void:
+	if aussen == 0:
+		_box_m(size, pos, _wand_mat("stein"))
+		return
+	var t: float = size[achse]
+	var halb := size
+	halb[achse] = t * 0.5
+	var off := Vector3.ZERO
+	off[achse] = float(aussen) * t * 0.25
+	_box_m(halb, pos + off, _wand_mat("ziegel"))
+	_box_m(halb, pos - off, _wand_mat("stein"))
+
+
+func _box_m(size: Vector3, pos: Vector3, mat: Material) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = size
+	mi.mesh = bm
+	mi.material_override = mat
+	mi.position = pos
+	add_child(mi)
+	_outline(self, bm, 0.1, pos, size)
+	return mi
+
+
+var _wand_cache := {}
+
+
+## Wandmaterial mit prozeduraler Textur. Triplanar: die Muster laufen ohne Kanten über alle Flächen.
+func _wand_mat(art: String) -> StandardMaterial3D:
+	if _wand_cache.has(art):
+		return _wand_cache[art]
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = _ziegel_bild() if art == "ziegel" else _stein_bild()
+	m.albedo_color = Color(1, 1, 1)
+	m.uv1_triplanar = true
+	m.uv1_world_triplanar = true
+	m.uv1_scale = Vector3(0.6, 0.6, 0.6)
+	m.roughness = 0.92
+	m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
+	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+	_wand_cache[art] = m
+	return m
+
+
+## Ziegelmauer: Reihen mit Versatz, dunkler Mörtel, leicht unterschiedliche Steine.
+func _ziegel_bild() -> ImageTexture:
+	var n := 128
+	var img := Image.create(n, n, false, Image.FORMAT_RGB8)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
+	var reihe := 16
+	var breite := 32
+	for y in range(n):
+		var r := int(y / reihe)
+		var versatz := (breite / 2) if r % 2 == 1 else 0
+		var fy := y % reihe
+		for x in range(n):
+			var xx := (x + versatz) % n
+			var fx := xx % breite
+			var mortel := fy == 0 or fx == 0
+			var basis := Color(0.58, 0.28, 0.2)
+			if mortel:
+				img.set_pixel(x, y, Color(0.68, 0.65, 0.6))
+			else:
+				var ton := 0.9 + rng.randf() * 0.2 if (r * 7 + int(xx / breite)) % 5 != 0 else 0.8
+				img.set_pixel(x, y, Color(basis.r * ton, basis.g * ton, basis.b * ton))
+	return ImageTexture.create_from_image(img)
+
+
+## Bruchsteinmauer: unregelmäßige Blöcke mit dunklen Fugen.
+func _stein_bild() -> ImageTexture:
+	var n := 128
+	var img := Image.create(n, n, false, Image.FORMAT_RGB8)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 11
+	var y := 0
+	while y < n:
+		var h := 18 + rng.randi() % 10
+		var x := 0
+		while x < n:
+			var w := 26 + rng.randi() % 24
+			var g := 0.42 + rng.randf() * 0.12
+			for yy in range(y, mini(y + h, n)):
+				for xx in range(x, mini(x + w, n)):
+					var fuge := yy == y or xx == x
+					if fuge:
+						img.set_pixel(xx, yy, Color(0.22, 0.21, 0.2))
+					else:
+						img.set_pixel(xx, yy, Color(g, g * 0.97, g * 0.92))
+			x += w
+		y += h
+	return ImageTexture.create_from_image(img)
+
+
+
 func _box(size: Vector3, pos: Vector3, col: Color, rough := 0.85, metal := 0.0, emit := 0.0) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	var bm := BoxMesh.new()
@@ -597,7 +707,7 @@ func _build_walls(spec: Dictionary) -> void:
 			var a1: float = iv[1] + (WALL_T * 0.5 if _kein_rand(iv[1], edges_h) else 0.0)
 			var ln: float = a1 - a0
 			var cx: float = (a0 + a1) * 0.5
-			_box(Vector3(ln, WALL_H, WALL_T), Vector3(cx, WALL_H * 0.5, cy), col, 0.9)
+			_wand_stueck(Vector3(ln, WALL_H, WALL_T), Vector3(cx, WALL_H * 0.5, cy), 2, _aussen(key, hz))
 			_box(Vector3(ln + 0.02, 0.1, WALL_T + 0.02), Vector3(cx, WALL_H + 0.05, cy), cap, 0.5)
 	for key in vt:
 		var cx2: float = key / 100.0
@@ -615,7 +725,7 @@ func _build_walls(spec: Dictionary) -> void:
 			var b1: float = iv[1] + (WALL_T * 0.5 if _kein_rand(iv[1], edges_v) else 0.0)
 			var ln2: float = b1 - b0
 			var cy2: float = (b0 + b1) * 0.5
-			_box(Vector3(WALL_T, WALL_H, ln2), Vector3(cx2, WALL_H * 0.5, cy2), col, 0.9)
+			_wand_stueck(Vector3(WALL_T, WALL_H, ln2), Vector3(cx2, WALL_H * 0.5, cy2), 0, _aussen(key, vt))
 			_box(Vector3(WALL_T + 0.02, 0.1, ln2 + 0.02), Vector3(cx2, WALL_H + 0.05, cy2), cap, 0.5)
 
 
