@@ -73,6 +73,6 @@ func _process(_d: float) -> bool:
 					root.get_texture().get_image().save_png(_out.path_join(_shots[_next][1] + ".png"))
 					print("Bild: %s bei %.1f s" % [_shots[_next][1], cur.sim.time])
 					_next += 1
-			if _next >= _shots.size() or _wait > 4000:
+			if _next >= _shots.size() or _wait > 30000:
 				quit(0)
 	return false
