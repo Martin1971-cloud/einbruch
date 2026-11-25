@@ -21,7 +21,7 @@ func _ready() -> void:
 	root.add_child(UI.label(titel, 30, Color(1, 0.55, 0.45)))
 	root.add_child(UI.label(grund, 16, Color(0.9, 0.9, 0.92), true))
 	root.add_child(UI.label(_bilanz(), 15, Color(0.86, 0.9, 0.95), true))
-	root.add_child(UI.label("Ein neues Spiel beginnt wieder in Varenhafen, mit dem Start-Geld und ohne Fortschritt. Der Spielstand wird dabei überschrieben.", 13, Color(0.7, 0.74, 0.8), true))
+	root.add_child(UI.label(Texte.t("gameover.hinweis"), 13, Color(0.7, 0.74, 0.8), true))
 	var sp := Control.new()
 	sp.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	root.add_child(sp)
@@ -46,7 +46,7 @@ func _bilanz() -> String:
 		pay += int(e.auszahlung)
 	if n == 0:
 		return "Noch kein Einbruch abgeschlossen."
-	return "Einbrüche: %d · erfolgreich: %d · festgenommen: %d · Auszahlung gesamt: %d €" % [n, ok, caught, pay]
+	return Texte.t("gameover.bilanz") % [n, ok, caught, pay]
 
 
 func _new_game() -> void:

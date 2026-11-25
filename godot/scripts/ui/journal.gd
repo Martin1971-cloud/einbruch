@@ -28,7 +28,7 @@ func _ready() -> void:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
-	head.add_child(UI.button("Schließen (Esc)", close, 150))
+	head.add_child(UI.button(Texte.t("ui.schliessen"), close, 150))
 	box.add_child(head)
 	var sums := _summary()
 	box.add_child(UI.label(sums, 14, Color(0.86, 0.9, 0.95), true))
@@ -61,7 +61,7 @@ func _summary() -> String:
 			caught += 1
 		pay += int(e.auszahlung)
 		gain += int(e.gewinn)
-	return "Einbrüche: %d · erfolgreich: %d · festgenommen: %d · Auszahlung gesamt: %s € · Gewinn gesamt: %s €" % [n, ok, caught, _fmt(pay), ("+" if gain >= 0 else "") + _fmt(gain)]
+	return Texte.t("journal.summary") % [n, ok, caught, _fmt(pay), ("+" if gain >= 0 else "") + _fmt(gain)]
 
 
 func _entry(e: Dictionary) -> Control:
@@ -71,16 +71,16 @@ func _entry(e: Dictionary) -> Control:
 	# Symbol plus Wort, damit die Bedeutung nicht nur über die Farbe kommt
 	var mark := "✔" if st.begins_with("ENTKOMMEN") else ("✖" if st == "GEFASST" else "–")
 	var col := Color(0.45, 0.9, 0.55) if st.begins_with("ENTKOMMEN") else (Color(1.0, 0.45, 0.4) if st == "GEFASST" else Color(0.85, 0.85, 0.6))
-	var word: String = str({"ENTKOMMEN": "Entkommen", "ENTKOMMEN_HEISS": "Entkommen (heiß)", "GEFASST": "Festgenommen"}.get(st, "Abbruch"))
-	v.add_child(UI.label("%s  Tag %d, %02d:00 · %s · %s" % [mark, int(e.tag), int(e.stunde), str(e.ziel), word], 15, col))
-	var zeile := "Auszahlung %s € · Kosten %s € · Gewinn %s%s € · Dauer %d s" % [_fmt(int(e.auszahlung)), _fmt(int(e.kosten)), "+" if int(e.gewinn) >= 0 else "", _fmt(int(e.gewinn)), int(e.dauer)]
+	var word: String = str({"ENTKOMMEN": Texte.t("journal.st_entkommen"), "ENTKOMMEN_HEISS": Texte.t("journal.st_heiss"), "GEFASST": Texte.t("journal.st_gefasst")}.get(st, Texte.t("journal.st_abbruch")))
+	v.add_child(UI.label(Texte.t("journal.zeile_kopf") % [mark, int(e.tag), int(e.stunde), str(e.ziel), word], 15, col))
+	var zeile := Texte.t("journal.zeile_zahlen") % [_fmt(int(e.auszahlung)), _fmt(int(e.kosten)), "+" if int(e.gewinn) >= 0 else "", _fmt(int(e.gewinn)), int(e.dauer)]
 	v.add_child(UI.label(zeile, 13, Color(0.86, 0.88, 0.93)))
 	var beute: Array = e.beute
-	v.add_child(UI.label("Beute: %s" % (", ".join(beute) if not beute.is_empty() else "keine"), 13, Color(0.8, 0.84, 0.9), true))
+	v.add_child(UI.label(Texte.t("journal.beute") % (", ".join(beute) if not beute.is_empty() else Texte.t("journal.beute_keine")), 13, Color(0.8, 0.84, 0.9), true))
 	if str(e.alarm) != "":
-		v.add_child(UI.label("⚠ Alarm durch: %s" % str(e.alarm), 13, Color(1.0, 0.7, 0.4), true))
+		v.add_child(UI.label(Texte.t("journal.alarm") % str(e.alarm), 13, Color(1.0, 0.7, 0.4), true))
 	if int(e.fehler) > 0:
-		var txt := "✗ %d fehlgeschlagene Aktion(en): %s" % [int(e.fehler), " · ".join(e.fehler_text)]
+		var txt := Texte.t("journal.fehler") % [int(e.fehler), " · ".join(e.fehler_text)]
 		v.add_child(UI.label(txt, 13, Color(1.0, 0.6, 0.5), true))
 	return v
 

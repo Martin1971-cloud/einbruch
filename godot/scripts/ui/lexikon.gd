@@ -49,7 +49,7 @@ func _ready() -> void:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
-	head.add_child(UI.button("Schließen (Esc)", close, 150))
+	head.add_child(UI.button(Texte.t("ui.schliessen"), close, 150))
 	box.add_child(head)
 	# Hinweise: ein/aus und wieder zeigen
 	var hint_row := HBoxContainer.new()
@@ -60,7 +60,7 @@ func _ready() -> void:
 	box.add_child(hint_row)
 	_refresh_hint_button()
 	_search = LineEdit.new()
-	_search.placeholder_text = "Suchen: z.B. Lärm, Treppe, Glas"
+	_search.placeholder_text = Texte.t("lexikon.suche")
 	_search.text_changed.connect(func(_t: String) -> void: _fill())
 	box.add_child(_search)
 	var scroll := ScrollContainer.new()

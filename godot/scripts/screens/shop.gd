@@ -20,14 +20,14 @@ func _ready() -> void:
 	add_child(UI.margin(root, 14))
 	var head := HBoxContainer.new()
 	head.add_theme_constant_override("separation", 12)
-	var title := "Werkzeugladen „Stahlmann“" if kind == "laden" else "Autohaus „Kaiser“"
+	var title := Texte.t("shop.titel_laden") if kind == "laden" else Texte.t("shop.titel_autohaus")
 	head.add_child(UI.label(title, 22, Color(0.97, 0.82, 0.42)))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
 	_money = UI.label("", 15, Color(0.85, 0.9, 0.95))
 	head.add_child(_money)
-	head.add_child(UI.button("Zurück zur Stadt", func() -> void: main.go("town"), 160))
+	head.add_child(UI.button(Texte.t("shop.zurueck"), func() -> void: main.go("town"), 160))
 	root.add_child(head)
 	# Bild des Ortes: ganz zu sehen, Seitenverhältnis bleibt
 	var pic_path := "res://assets/art/shop_werkzeug.jpg" if kind == "laden" else "res://assets/art/shop_autohaus.jpg"
@@ -62,17 +62,17 @@ func _build() -> void:
 
 
 func _build_laden() -> void:
-	_body.add_child(UI.label("Werkzeug – kaufen oder zurückgeben (voller Preis)", 15, Color(0.89, 0.71, 0.35)))
+	_body.add_child(UI.label(Texte.t("shop.werkzeug_kopf"), 15, Color(0.89, 0.71, 0.35)))
 	for tid in GameData.TOOLS:
 		var t: Dictionary = GameData.TOOLS[tid]
 		var owned: bool = Game.tools_owned.has(tid)
 		var locked: bool = (not owned) and int(t.get("stufe", 0)) > Game.stage()
 		var lock_txt := "  ·  gesperrt, %s" % GameData.stufe_hint(int(t.get("stufe", 0))) if locked else ""
-		var b := UI.button("%s – %s €  ·  %s%s%s" % [t.name, _fmt(int(t.price)), _use_text(t), "  ✓ gekauft" if owned else "", lock_txt], func() -> void: buy_tool(tid), 0)
+		var b := UI.button(Texte.t("shop.tool_btn") % [t.name, _fmt(int(t.price)), _use_text(t), Texte.t("shop.gekauft") if owned else "", lock_txt], func() -> void: buy_tool(tid), 0)
 		b.add_theme_font_size_override("font_size", 13)
 		b.disabled = locked or ((not owned) and Game.money < int(t.price))
 		b.custom_minimum_size = Vector2(0, 34)
-		b.tooltip_text = "Zeit-Basis %.0f s · Lärm %.0f dB · Spuren %.0f · bis Schwierigkeit %d" % [t.time, t.noise, t.evidence, t.max]
+		b.tooltip_text = Texte.t("shop.tool_tip") % [t.time, t.noise, t.evidence, t.max]
 		_body.add_child(b)
 	_body.add_child(UI.label("Kleidung", 15, Color(0.89, 0.71, 0.35)))
 	for gid in GameData.GEAR:
@@ -80,7 +80,7 @@ func _build_laden() -> void:
 			continue
 		var g: Dictionary = GameData.GEAR[gid]
 		var owned_g: bool = Game.gear_owned.has(gid)
-		var bg := UI.button("%s – %s €%s" % [g.name, _fmt(int(g.price)), "  ✓ gekauft" if owned_g else ""], func() -> void: buy_gear(gid), 0)
+		var bg := UI.button(Texte.t("shop.gear_btn") % [g.name, _fmt(int(g.price)), Texte.t("shop.gekauft") if owned_g else ""], func() -> void: buy_gear(gid), 0)
 		bg.add_theme_font_size_override("font_size", 13)
 		bg.disabled = (not owned_g) and Game.money < int(g.price)
 		bg.custom_minimum_size = Vector2(0, 34)
@@ -88,20 +88,20 @@ func _build_laden() -> void:
 
 
 func _build_autohaus() -> void:
-	_body.add_child(UI.label("Fahrzeuge – gewählt wird der Wagen für den nächsten Einbruch", 15, Color(0.89, 0.71, 0.35)))
+	_body.add_child(UI.label(Texte.t("shop.fahrzeug_kopf"), 15, Color(0.89, 0.71, 0.35)))
 	for cid in GameData.CARS:
 		var c: Dictionary = GameData.CARS[cid]
 		var chosen: bool = Game.car_id == cid
 		var owned: bool = cid == "limo" or Game.cars_owned.has(cid)
 		var price_txt := "Miete %s € je Einbruch" % _fmt(int(c.rent)) if cid == "limo" else "Kaufpreis %s €" % _fmt(int(c.price))
-		var status := "  ·  ✓ gewählt" if chosen else ""
+		var status := Texte.t("shop.gewaehlt_status") if chosen else ""
 		var car_locked: bool = (not owned) and int(c.get("stufe", 0)) > Game.stage()
 		if car_locked:
 			status = "  ·  gesperrt, %s" % GameData.stufe_hint(int(c.get("stufe", 0)))
 		_body.add_child(UI.label("%s  ·  %s%s" % [c.name, price_txt, status], 14, Color(0.92, 0.9, 0.85)))
 		_body.add_child(UI.label(str(c.info), 12, Color(0.75, 0.8, 0.88), true))
 		if owned:
-			var b := UI.button("Diesen Wagen nehmen" if not chosen else "Gewählt", func() -> void: choose_car(cid), 0)
+			var b := UI.button(Texte.t("shop.nehmen") if not chosen else Texte.t("shop.gewaehlt"), func() -> void: choose_car(cid), 0)
 			b.disabled = chosen
 			b.custom_minimum_size = Vector2(0, 34)
 			_body.add_child(b)
@@ -121,10 +121,10 @@ func buy_tool(tid: String) -> void:
 	if Game.tools_owned.has(tid):
 		Game.tools_owned.erase(tid)
 		Game.money += int(t.price)
-		_msg.text = "%s zurückgegeben. Geld: %s €." % [t.name, _fmt(Game.money)]
+		_msg.text = Texte.t("shop.zurueckgegeben") % [t.name, _fmt(Game.money)]
 	else:
 		if Game.money < int(t.price):
-			_msg.text = "Nicht genug Geld für %s." % t.name
+			_msg.text = Texte.t("shop.zu_wenig") % t.name
 			return
 		Game.money -= int(t.price)
 		Game.tools_owned[tid] = true
@@ -138,10 +138,10 @@ func buy_gear(gid: String) -> void:
 	if Game.gear_owned.has(gid):
 		Game.gear_owned.erase(gid)
 		Game.money += int(g.price)
-		_msg.text = "%s zurückgegeben. Geld: %s €." % [g.name, _fmt(Game.money)]
+		_msg.text = Texte.t("shop.zurueckgegeben") % [g.name, _fmt(Game.money)]
 	else:
 		if Game.money < int(g.price):
-			_msg.text = "Nicht genug Geld für %s." % g.name
+			_msg.text = Texte.t("shop.zu_wenig") % g.name
 			return
 		Game.money -= int(g.price)
 		Game.gear_owned[gid] = true
@@ -159,22 +159,22 @@ func buy_car(cid: String) -> void:
 		choose_car(cid)
 		return
 	if Game.money < int(c.price):
-		_msg.text = "Nicht genug Geld für %s." % c.name
+		_msg.text = Texte.t("shop.zu_wenig") % c.name
 		return
 	Game.money -= int(c.price)
 	Game.cars_owned[cid] = true
 	Game.car_id = cid
-	_msg.text = "%s gekauft. Er steht ab jetzt für jeden Einbruch bereit." % c.name
+	_msg.text = Texte.t("shop.car_gekauft") % c.name
 	_build()
 
 
 ## Fahrzeug wählen: Miete der Limousine oder ein gekaufter Wagen.
 func choose_car(cid: String) -> void:
 	if cid != "limo" and not Game.cars_owned.has(cid):
-		_msg.text = "Dieses Fahrzeug gehört dir nicht."
+		_msg.text = Texte.t("shop.nicht_dein")
 		return
 	Game.car_id = cid
-	_msg.text = "%s gewählt." % GameData.CARS[cid].name
+	_msg.text = Texte.t("shop.car_gewaehlt") % GameData.CARS[cid].name
 	_build()
 
 
