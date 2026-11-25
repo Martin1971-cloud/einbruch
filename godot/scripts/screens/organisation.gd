@@ -25,7 +25,9 @@ var _msg: Label
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(UI.backdrop())
+	var bg := UI.backdrop("res://assets/art/bg_pinnwand.webp")
+	bg.modulate = Color(0.42, 0.42, 0.46)   # Pinnwand gedämpft, damit die Auswahl lesbar bleibt
+	add_child(bg)
 	# Auswahl aus dem Spielzustand übernehmen (oder neu anlegen). Die Dictionaries werden geteilt,
 	# damit jede Änderung sofort im Spielzustand steht und beim Zurückkehren erhalten bleibt.
 	if Game.org_selected.is_empty():

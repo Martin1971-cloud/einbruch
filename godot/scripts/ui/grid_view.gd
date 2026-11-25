@@ -9,6 +9,7 @@ var _waypoints: Array = []
 var selected_id := ""  # die gerade ausgewählte Person (wird markiert)
 var _door_swing := {}    # Öffnungsgrad der Türen (0 = zu, 1 = offen), für die weiche Bewegung
 var follow := false    # beim Abspielen der gewählten Person folgen (Verschieben beendet es)
+var backdrop: Texture2D = null  # Hintergrundbild hinter dem Grundriss (ersetzt den Rasen außen)
 var _tween: Tween
 const FOCUS_ZOOM := 2.0
 var show_end := true   # Türen und Vitrinen im Endzustand des Plans zeigen (nicht bei der Wiedergabe)
@@ -633,6 +634,12 @@ func _draw() -> void:
 	if target.is_empty():
 		return
 	_layout()
+	if backdrop != null:
+		# Bild füllt die Fläche (gleichmäßig skaliert, Mitte sichtbar), etwas abgedunkelt
+		var ts := backdrop.get_size()
+		var k := maxf(size.x / ts.x, size.y / ts.y)
+		var sz := ts * k
+		draw_texture_rect(backdrop, Rect2((size - sz) * 0.5, sz), false, Color(0.45, 0.45, 0.5))
 	var rows: Array = target.map
 	var frame := Rect2(_origin, Vector2(String(rows[0]).length() * _cw, rows.size() * _ch))
 	var fine: Dictionary = Sim.fine_spec(target) if target.has("fine") else {}
@@ -661,6 +668,8 @@ func _draw() -> void:
 					draw_rect(Rect2(r.position, Vector2(r.size.x, maxf(2.0, _cell * 0.12))), WALL_TOP)
 					draw_rect(Rect2(r.position + Vector2(0, r.size.y - _cell * 0.1), Vector2(r.size.x, _cell * 0.1)), WALL_SHADOW)
 				"o":
+					if backdrop != null:
+						continue   # außen kein Rasen: das Hintergrundbild bleibt sichtbar
 					_tile(r, "rasen", x, y)
 					var d := _hash(x, y)
 					if d > 0.6:

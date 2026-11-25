@@ -186,6 +186,7 @@ func _center_column() -> Control:
 	head.add_child(_intel_label)
 	inner.add_child(head)
 	_grid = GridView.new()
+	_grid.backdrop = load("res://assets/art/bg_buero.webp")
 	_grid.cell_clicked.connect(_on_map_click)
 	_grid.point_clicked.connect(func(f: Vector2i) -> void: _click_fine = f)
 	_grid.describe = _describe

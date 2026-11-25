@@ -193,3 +193,4 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Zeitleiste: nur noch die aktuelle Zeit, keine Gesamtzeit mehr. Einzige zeitliche Grenze ist die Polizei (Alarm). Eine Maximalzeit für einzelne Aktionen gibt es nicht; das wäre eine eigene Designentscheidung.
 - Pipeline: 56 Tests, 0 Fehler.
 - Telemetrie-Schalter nur noch in Entwicklungsbuilds sichtbar (`OS.is_debug_build()`). In Auslieferungsbuilds schreibt das Spiel nichts, auch nicht bei einer alten Einstellung. Pipeline: 56 Tests, 0 Fehler.
+- Hintergründe: Pinnwand bei der Personenauswahl (gedämpft), Büro hinter dem Grundriss (der Rasen außen entfällt, wenn ein Hintergrund gesetzt ist). Bilder: assets/art/bg_pinnwand.webp, bg_buero.webp.
