@@ -199,7 +199,7 @@ func _action_bar() -> PanelContainer:
 	row.add_child(_with_icon(UI.button(Texte.t("stadt.gehen"), func(): main.go("organisation"), 0), "walk"))
 	row.add_child(UI.button(Texte.t("stadt.warten"), _on_sleep, 0))
 	row.add_child(UI.button(Texte.t("stadt.ereignisse"), _on_events, 0))
-	var hints := ["Ein Blick auf das Gebäude: eine Stufe mehr Ermittlung, eine Stunde vergeht.", "Ein Informant verrät Wachzeiten und Pläne. Kostet 500 €.", "Kurz nachdenken: zeigt, was du bisher weißt.", "Zur Organisation und Planung des Einbruchs.", "Bis morgen früh warten. Der Tag endet.", "Die Nachrichten der Stadt und die letzten Ereignisse."]
+	var hints := [Texte.t("stadt.hint_umsehen"), Texte.t("stadt.hint_informant"), Texte.t("stadt.hint_nachdenken"), Texte.t("stadt.hint_gehen"), Texte.t("stadt.hint_warten"), Texte.t("stadt.hint_ereignisse")]
 	var bi := 0
 	for b in row.get_children():
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -218,8 +218,8 @@ func _panel(content: Control) -> PanelContainer:
 # ---------------------------------------------------------------- Inhalt
 
 func _refresh() -> void:
-	_clock.text = "Tag %d · %s" % [Game.day, Game.clock_text()]
-	_stats.text = "Varenhafen  ·  Geld: %s €" % _fmt(Game.money)
+	_clock.text = Texte.t("stadt.tag") % [Game.day, Game.clock_text()]
+	_stats.text = Texte.t("stadt.geld") % _fmt(Game.money)
 	_heat_bar.value = Game.heat
 	var t: Dictionary = GameData.target_now(Game.stufe_of(_selected), _selected)
 	_dialog.text = "„%s“" % t.dialog
@@ -246,18 +246,18 @@ func _refresh() -> void:
 		_loc_box.add_child(h)
 	var req := VBoxContainer.new()
 	for skill in t.bedarf:
-		var nm: String = {"TECH": "Technik", "FORCE": "Kampfsport", "ELECTRONICS": "Elektronik", "FAHREN": "Fahren"}.get(skill, skill)
+		var nm: String = Texte.t({"TECH": "skill.technik", "FORCE": "skill.kampf", "ELECTRONICS": "skill.elektronik", "FAHREN": "skill.fahren"}.get(skill, skill))
 		var wert := int(t.bedarf[skill].wert)
 		var txt := ""
 		if lvl == 0:
-			txt = "%s: unbekannt – noch nicht ermittelt" % nm
+			txt = Texte.t("stadt.skill_unbekannt") % nm
 		elif lvl == 1:
-			txt = "%s ca. %d %%" % [nm, int(round(wert / 5.0)) * 5]
+			txt = Texte.t("stadt.skill_ca") % [nm, int(round(wert / 5.0)) * 5]
 		else:
-			txt = "%s ab %d %%: %s" % [nm, wert, t.bedarf[skill].grund]
+			txt = Texte.t("stadt.skill_ab") % [nm, wert, t.bedarf[skill].grund]
 		req.add_child(UI.label(txt, 11, Color(0.8, 0.85, 0.9), true))
 	_loc_box.add_child(UI.fold(Texte.t("stadt.braucht"), req, true))
-	_loc_box.add_child(UI.label("Ermittlung: %s" % ["keine – Wachrouten unbekannt", "Wachrouten bekannt", "vollständig"][lvl], 13, Color(0.6, 0.85, 1.0)))
+	_loc_box.add_child(UI.label(Texte.t("stadt.ermittlung") % [[Texte.t("stadt.ermittlung_0"), Texte.t("stadt.ermittlung_1"), Texte.t("stadt.ermittlung_2")][lvl]], 13, Color(0.6, 0.85, 1.0)))
 	_refresh_image()
 
 
@@ -299,33 +299,33 @@ func _select(id: String) -> void:
 func _on_look() -> void:
 	Game.intel[_selected] = mini(int(Game.intel[_selected]) + 1, 2)
 	Game.advance_hours(1.0)
-	_log("Du beobachtest das Gebäude und den Wachwechsel.")
+	_log(Texte.t("stadt.log_umsehen"))
 
 
 func _on_informant() -> void:
 	var price: int = int(GameData.TARGETS[_selected].price_intel)
 	if Game.money < price:
-		_msg.text = "Zu wenig Geld für den Informanten."
+		_msg.text = Texte.t("stadt.zu_wenig_geld")
 		return
 	Game.money -= price
 	Game.intel[_selected] = mini(int(Game.intel[_selected]) + 1, 2)
 	Game.advance_hours(0.5)
-	_log("Der Informant liefert Pläne und Wachzeiten.")
+	_log(Texte.t("stadt.log_informant"))
 
 
 func _on_think() -> void:
 	var lvl: int = int(Game.intel[_selected])
-	_msg.text = "Du denkst nach: %s." % ["Dir fehlt noch alles", "Die Wachrouten sind bekannt", "Du kennst Routen, Alarm und Sensoren"][lvl]
+	_msg.text = Texte.t("stadt.denken") % [Texte.t("stadt.denken_0"), Texte.t("stadt.denken_1"), Texte.t("stadt.denken_2")][lvl]
 
 
 func _on_sleep() -> void:
 	Game.sleep_until_morning()
-	_log("Ein neuer Tag beginnt.")
+	_log(Texte.t("stadt.log_tag"))
 
 
 func _on_events() -> void:
-	var text := "\n".join(_event_log) if not _event_log.is_empty() else "Noch nichts passiert."
-	_msg.text = "Ereignisse: " + text.replace("\n", "  ·  ")
+	var text := "\n".join(_event_log) if not _event_log.is_empty() else Texte.t("stadt.ereignisse_leer")
+	_msg.text = Texte.t("stadt.ereignisse") + text.replace("\n", "  ·  ")
 
 
 func _log(text: String) -> void:
