@@ -207,3 +207,12 @@ Geprüft in `tests/test_stufen.gd`, das die Anforderungen aus den Gebäudedaten 
 - Ruckler-Diagnose auf dem PC (RTX 4080 SUPER, Echtzeitlauf, 52 s): drei Bilder über 20 ms (17,7 s, 40,8 s, 42,3 s), jeweils 26 bis 45 ms. Dabei Verarbeitung nur 10 bis 15 ms, Physik 0 ms, Knoten unverändert (142), Speicher +0,01 MB. Die übrige Zeit liegt außerhalb des Spielcodes (Darstellung, Treiber oder anderes Programm). Ein Laden durch das Spiel ist damit unwahrscheinlich. Nächster Schritt: Ton ausschalten und prüfen, ob die Ausreißer bleiben.
 - Ruckler ohne Ton (Musik aus): die Ausreißer bleiben (17,7 s, 36,1 s, 42,3 s, 43,7 s). Der Ton ist also nicht die Ursache. Neu: bei 43,7 s dauert die Verarbeitung 60 ms (echte Spielzeit), bei 36,1 s 21 ms. Nächster Schritt: diese Momente im Ablauf zuordnen (was passiert dort).
 - Hintergrund der 3D-Ausführung: neues Innenbild (assets/art/bg_juwelier_ausfuehrung.webp), vollflächig hinter der Szene. Passt zum Juwelier; für den Kiosk eventuell ein eigenes Bild.
+
+## Plan: erste drei Gebäude (Kiosk, Kuriositätenladen, Juwelier)
+Das Museum (Gebäude 4) bleibt bis zur Fertigstellung der ersten drei unberührt.
+1. Kiosk-Balance entscheiden: Honorare für kleine Orte senken, Warnung im Planer oder Einzel-Einstieg (Entscheidung beim Spieler).
+2. Balance-Läufe für Kuriositätenladen und Juwelier mit verschiedenen Teamgrößen (vorhandene Testskripte).
+3. Planer: Teamgröße mit Kosten und voraussichtlicher Zeit sichtbar machen.
+4. Tür-Flimmern auf dem PC mit neuer Türgeometrie prüfen.
+5. Ruckler-Ursache weiter eingrenzen (Ausreißer bei 43 s).
+6. Eigene 3D-Hintergründe für Kiosk und Juwelier, falls das Hafenbild nicht reicht.
