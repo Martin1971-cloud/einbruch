@@ -146,7 +146,7 @@ static func backdrop(path := "res://assets/art/bg_default.jpg") -> TextureRect:
 	return tr
 
 
-static func card_style(color := Color(0.07, 0.1, 0.16, 0.94)) -> StyleBoxFlat:
+static func card_style(color := Color(0.07, 0.1, 0.16, 0.8)) -> StyleBoxFlat:
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = color
 	sb.border_color = Color(0.89, 0.71, 0.35, 0.4)

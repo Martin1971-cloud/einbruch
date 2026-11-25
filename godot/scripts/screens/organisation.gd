@@ -25,8 +25,13 @@ var _msg: Label
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+	var base := ColorRect.new()
+	base.color = Color(0.06, 0.08, 0.11)
+	base.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(base)
+	# Pinnwand über die ganze Fläche, schwach: die Menüs liegen davor und bleiben lesbar
 	var bg := UI.backdrop("res://assets/art/bg_pinnwand.webp")
-	bg.modulate = Color(0.42, 0.42, 0.46)   # Pinnwand gedämpft, damit die Auswahl lesbar bleibt
+	bg.modulate = Color(1, 1, 1, 0.3)
 	add_child(bg)
 	# Auswahl aus dem Spielzustand übernehmen (oder neu anlegen). Die Dictionaries werden geteilt,
 	# damit jede Änderung sofort im Spielzustand steht und beim Zurückkehren erhalten bleibt.

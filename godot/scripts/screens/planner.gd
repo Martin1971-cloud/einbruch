@@ -49,6 +49,10 @@ func _ready() -> void:
 	bg.color = Color(0.06, 0.08, 0.11)
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
+	# Büro-Bild über die ganze Fläche, nur schwach sichtbar: Menüs stehen davor
+	var pic := UI.backdrop("res://assets/art/bg_buero.webp")
+	pic.modulate = Color(1, 1, 1, 0.28)
+	add_child(pic)
 	target = GameData.target_now(Game.stufe_of(Game.target_id), Game.target_id)
 	for c in Game.team:
 		plans[c.id] = []
@@ -129,7 +133,7 @@ func _header() -> PanelContainer:
 	row.add_child(UI.primary("▶ Ausführung", _on_execute, 150))
 	row.add_child(_l("Tag %d  ·  %s" % [Game.day, Game.clock_text()], 15, Color(0.85, 0.88, 0.94)))
 	var wrap := PanelContainer.new()
-	wrap.add_theme_stylebox_override("panel", UI.card_style(Color(0.05, 0.07, 0.12, 0.96)))
+	wrap.add_theme_stylebox_override("panel", UI.card_style(Color(0.05, 0.07, 0.12, 0.85)))
 	wrap.add_child(row)
 	return wrap
 
@@ -187,6 +191,7 @@ func _center_column() -> Control:
 	inner.add_child(head)
 	_grid = GridView.new()
 	_grid.backdrop = load("res://assets/art/bg_buero.webp")
+	_grid.backdrop_alpha = 0.2   # im Grundriss tritt das Bild zurück, das Gebäude steht vorn
 	_grid.cell_clicked.connect(_on_map_click)
 	_grid.point_clicked.connect(func(f: Vector2i) -> void: _click_fine = f)
 	_grid.describe = _describe

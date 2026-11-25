@@ -10,6 +10,7 @@ var selected_id := ""  # die gerade ausgewählte Person (wird markiert)
 var _door_swing := {}    # Öffnungsgrad der Türen (0 = zu, 1 = offen), für die weiche Bewegung
 var follow := false    # beim Abspielen der gewählten Person folgen (Verschieben beendet es)
 var backdrop: Texture2D = null  # Hintergrundbild hinter dem Grundriss (ersetzt den Rasen außen)
+var backdrop_alpha := 0.45       # Helligkeit des Hintergrundbilds
 var _tween: Tween
 const FOCUS_ZOOM := 2.0
 var show_end := true   # Türen und Vitrinen im Endzustand des Plans zeigen (nicht bei der Wiedergabe)
@@ -639,7 +640,7 @@ func _draw() -> void:
 		var ts := backdrop.get_size()
 		var k := maxf(size.x / ts.x, size.y / ts.y)
 		var sz := ts * k
-		draw_texture_rect(backdrop, Rect2((size - sz) * 0.5, sz), false, Color(0.45, 0.45, 0.5))
+		draw_texture_rect(backdrop, Rect2((size - sz) * 0.5, sz), false, Color(backdrop_alpha, backdrop_alpha, backdrop_alpha + 0.05))
 	var rows: Array = target.map
 	var frame := Rect2(_origin, Vector2(String(rows[0]).length() * _cw, rows.size() * _ch))
 	var fine: Dictionary = Sim.fine_spec(target) if target.has("fine") else {}
