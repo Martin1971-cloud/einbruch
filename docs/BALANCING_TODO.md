@@ -216,3 +216,11 @@ Das Museum (Gebäude 4) bleibt bis zur Fertigstellung der ersten drei unberührt
 4. Tür-Flimmern auf dem PC mit neuer Türgeometrie prüfen.
 5. Ruckler-Ursache weiter eingrenzen (Ausreißer bei 43 s).
 6. Eigene 3D-Hintergründe für Kiosk und Juwelier, falls das Hafenbild nicht reicht.
+
+## Ergebnis Punkte 1 bis 3 (erste drei Gebäude)
+1. Kiosk: Entscheidung des Spielers. Werte bleiben, keine Warnung und kein Einzel-Einstieg. Der Planer zeigt die Abwägung: kleines Team mehr Gewinn, aber länger; großes Team weniger Gewinn, aber schneller.
+2. Balance-Läufe (tests/balance_lauf.gd):
+   - Nur Teodor arbeitet: Zeit gleich für alle Teamgrößen (Kiosk 71 s, Kuriositätenladen 121 s, Juwelier 134 s). Mehr Team heißt nur mehr Kosten. Das zeigt noch nicht den Zeitvorteil.
+   - Arbeit verteilt (Eingang bei Teodor, Werkzeug-Blöcke reihum, andere warten vor der Tür): Teams sind schneller (Kiosk 61 s, Kuriositätenladen 63 s, Juwelier 64 bis 68 s). Die Auszahlung bei größeren Teams fällt aber deutlich (Kiosk Team 3: 2.400 € statt 12.000 €). Vermutlich Konflikte durch die Rotation, nicht die Spielregeln. Offen: Protokoll der Teams 3 prüfen.
+   - Ergebnis nur mit Teodor: Kiosk +4.300 € allein, mit 2 Personen -1.700 €. Kuriositätenladen und Juwelier bleiben mit allen Teamgrößen positiv.
+3. Planer: Teambox zeigt Teamgröße und Kosten sofort, die Zeit nach der ersten Vorschau.

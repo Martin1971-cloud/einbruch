@@ -424,6 +424,8 @@ const TABELLE := {
 		"org.team_zeile": "Team: %d Einbrecher, %d Fahrer%s",
 		"org.es_fehlt": "  ·  es fehlt noch: %s",
 		"plan.muskel": "Muskel",
+		"plan.team_abwaegung": "Team: %d Personen · Kosten %s € · Zeit %s",
+		"plan.zeit_offen": "nach der Vorschau",
 	},
 	"en": {
 		"stadt.hint_umsehen": "A look at the building: one more step of investigation, one hour passes.",
@@ -1127,6 +1129,8 @@ const TABELLE := {
 		"org.team_zeile": "Team: %d burglars, %d drivers%s",
 		"org.es_fehlt": "  \u00b7  still missing: %s",
 		"plan.muskel": "Muscle",
+		"plan.team_abwaegung": "Team: %d people \u00b7 cost %s \u20ac \u00b7 time %s",
+		"plan.zeit_offen": "after the preview",
 	},
 }
 
