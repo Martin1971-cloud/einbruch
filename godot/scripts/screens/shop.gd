@@ -88,30 +88,90 @@ func _build_laden() -> void:
 	cols.add_child(kleid)
 	_body = werk
 	_body.add_child(UI.label(Texte.t("shop.werkzeug_kopf"), 15, Color(0.89, 0.71, 0.35)))
-	for tid in GameData.TOOLS:
+	# Tabelle, alphabetisch nach dem angezeigten Namen
+	var ids: Array = GameData.TOOLS.keys()
+	ids.sort_custom(func(x, y): return Texte.d(GameData.TOOLS[x].name) < Texte.d(GameData.TOOLS[y].name))
+	var grid := GridContainer.new()
+	grid.columns = 6
+	grid.add_theme_constant_override("h_separation", 14)
+	grid.add_theme_constant_override("v_separation", 6)
+	_body.add_child(grid)
+	for k in [Texte.t("shop.t_status"), Texte.t("shop.t_name"), Texte.t("shop.t_preis"), Texte.t("shop.t_faehig"), Texte.t("shop.t_bedingung"), Texte.t("shop.t_aktion")]:
+		grid.add_child(_zelle(k, 12, Color(0.6, 0.66, 0.74)))
+	for tid in ids:
 		var t: Dictionary = GameData.TOOLS[tid]
 		var owned: bool = Game.tools_owned.has(tid)
 		var locked: bool = (not owned) and int(t.get("stufe", 0)) > Game.stage()
-		var lock_txt := Texte.t("shop.gesperrt_zeile") % GameData.stufe_hint(int(t.get("stufe", 0))) if locked else ""
-		var b := UI.button(Texte.t("shop.tool_btn") % [Texte.t("shop.haken_an") if owned else Texte.t("shop.haken_aus"), Texte.d(t.name), _fmt(int(t.price)), _use_text(t), lock_txt], func() -> void: buy_tool(tid), 0)
-		b.add_theme_font_size_override("font_size", 13)
-		b.disabled = locked or ((not owned) and Game.money < int(t.price))
-		b.custom_minimum_size = Vector2(0, 34)
-		b.tooltip_text = Texte.t("shop.tool_tip") % [t.time, t.noise, t.evidence, t.max] + "\n" + Texte.t("shop.tool_tip_skill")
-		_body.add_child(b)
+		var col := Color(0.92, 0.9, 0.85) if not locked else Color(0.55, 0.58, 0.64)
+		var lock_txt := Texte.t("shop.gesperrt_zeile") % GameData.stufe_hint(int(t.get("stufe", 0))) if locked else "–"
+		grid.add_child(_zelle(Texte.t("shop.haken_an") if owned else Texte.t("shop.haken_aus"), 13, col))
+		# Der Name ist ebenfalls ein Knopf: Klick auf den Namen kauft bzw. gibt zurück (wie der Knopf rechts)
+		var nk := Button.new()
+		nk.flat = true
+		nk.text = Texte.d(t.name)
+		nk.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		nk.add_theme_font_size_override("font_size", 13)
+		nk.add_theme_color_override("font_color", col)
+		nk.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		nk.disabled = locked or ((not owned) and Game.money < int(t.price))
+		nk.pressed.connect(func() -> void: buy_tool(tid))
+		grid.add_child(nk)
+		grid.add_child(_zelle("%s €" % _fmt(int(t.price)), 13, col))
+		grid.add_child(_zelle(_use_text(t), 13, col, true))
+		grid.add_child(_zelle(lock_txt, 12, Color(0.6, 0.62, 0.68) if locked else col, true))
+		var btn := UI.button(Texte.t("shop.knopf_zurueck") if owned else Texte.t("shop.knopf_kaufen"), func() -> void: buy_tool(tid), 0)
+		btn.add_theme_font_size_override("font_size", 12)
+		btn.disabled = locked or ((not owned) and Game.money < int(t.price))
+		btn.custom_minimum_size = Vector2(110, 28)
+		btn.tooltip_text = Texte.t("shop.tool_tip") % [t.time, t.noise, t.evidence, t.max] + "\n" + Texte.t("shop.tool_tip_skill")
+		grid.add_child(btn)
 	_body = kleid
 	_body.add_child(UI.label(Texte.t("shop.kleidung_kopf"), 15, Color(0.89, 0.71, 0.35)))
+	var gids: Array = []
 	for gid in GameData.GEAR:
-		if gid == "none":
-			continue
+		if gid != "none":
+			gids.append(gid)
+	gids.sort_custom(func(x, y): return Texte.d(GameData.GEAR[x].name) < Texte.d(GameData.GEAR[y].name))
+	var ggrid := GridContainer.new()
+	ggrid.columns = 4
+	ggrid.add_theme_constant_override("h_separation", 12)
+	ggrid.add_theme_constant_override("v_separation", 6)
+	_body.add_child(ggrid)
+	for k in [Texte.t("shop.t_status"), Texte.t("shop.t_name"), Texte.t("shop.t_preis"), Texte.t("shop.t_aktion")]:
+		ggrid.add_child(_zelle(k, 12, Color(0.6, 0.66, 0.74)))
+	for gid in gids:
 		var g: Dictionary = GameData.GEAR[gid]
 		var owned_g: bool = Game.gear_owned.has(gid)
-		var bg := UI.button(Texte.t("shop.gear_btn") % [Texte.t("shop.haken_an") if owned_g else Texte.t("shop.haken_aus"), Texte.d(g.name), _fmt(int(g.price))], func() -> void: buy_gear(gid), 0)
-		bg.add_theme_font_size_override("font_size", 13)
+		ggrid.add_child(_zelle(Texte.t("shop.haken_an") if owned_g else Texte.t("shop.haken_aus"), 13, Color(0.92, 0.9, 0.85)))
+		var gk := Button.new()
+		gk.flat = true
+		gk.text = Texte.d(g.name)
+		gk.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		gk.add_theme_font_size_override("font_size", 13)
+		gk.add_theme_color_override("font_color", Color(0.92, 0.9, 0.85))
+		gk.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		gk.disabled = (not owned_g) and Game.money < int(g.price)
+		gk.pressed.connect(func() -> void: buy_gear(gid))
+		ggrid.add_child(gk)
+		ggrid.add_child(_zelle("%s €" % _fmt(int(g.price)), 13, Color(0.92, 0.9, 0.85)))
+		var bg := UI.button(Texte.t("shop.knopf_zurueck") if owned_g else Texte.t("shop.knopf_kaufen"), func() -> void: buy_gear(gid), 0)
+		bg.add_theme_font_size_override("font_size", 12)
 		bg.disabled = (not owned_g) and Game.money < int(g.price)
-		bg.custom_minimum_size = Vector2(0, 34)
-		_body.add_child(bg)
+		bg.custom_minimum_size = Vector2(110, 28)
+		ggrid.add_child(bg)
 	_body = haupt
+
+
+## Zelle einer Tabelle im Laden.
+func _zelle(txt: String, fs: int, col: Color, grow := false) -> Label:
+	var l := Label.new()
+	l.text = txt
+	l.add_theme_font_size_override("font_size", fs)
+	l.add_theme_color_override("font_color", col)
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	if grow:
+		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return l
 
 
 func _build_autohaus() -> void:
