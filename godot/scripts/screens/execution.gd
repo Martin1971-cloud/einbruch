@@ -153,6 +153,24 @@ func _build_deko(liste: Array) -> void:
 	return
 
 
+## Wandfuß: drei feste, dunklere Streifen auf dem Boden an der Innenseite der Wand (Stufen statt Verlauf, undurchsichtig).
+## Ersetzt den berechneten Schatten am Wandfuß, daher kein Schattenwurf und kein Zackenmuster.
+func _kontakt(center: Vector3, achse: int, laenge: float, aussen: int) -> void:
+	var basis_farbe := Color(0.7, 0.74, 0.82)
+	var stufen := [0.4, 0.6, 0.82]
+	var breite := 0.25
+	for side in [-1, 1]:
+		if aussen != 0 and side == aussen:
+			continue
+		var into := Vector3(0, 0, float(side)) if achse == 2 else Vector3(float(side), 0, 0)
+		var size := Vector3(laenge, 0.004, breite) if achse == 2 else Vector3(breite, 0.004, laenge)
+		for k in range(stufen.size()):
+			var off := WALL_T * 0.5 + breite * (float(k) + 0.5)
+			var pos := center + into * off
+			pos.y = 0.102
+			_box(size, pos, basis_farbe * stufen[k], 0.9)
+
+
 ## Außenerkennung über den Grundriss: von außen (Rand) durch alle freien Felder füllen.
 ## Wände, Türen und Fenster blockieren. Erreichbare Felder gelten als außen.
 func _aussen_gitter(spec: Dictionary) -> PackedByteArray:
@@ -432,7 +450,7 @@ func _build_world() -> void:
 	moon.rotation_degrees = Vector3(-62, 28, 0)
 	moon.light_color = Color(0.7, 0.8, 1.0)
 	moon.light_energy = 0.6
-	moon.shadow_enabled = true
+	moon.shadow_enabled = false
 	add_child(moon)
 
 	var cam := Camera3D.new()
@@ -829,7 +847,9 @@ func _build_walls(spec: Dictionary) -> void:
 			var a1: float = iv[1] + (WALL_T * 0.5 if _kein_rand(iv[1], edges_h) else 0.0)
 			var ln: float = a1 - a0
 			var cx: float = (a0 + a1) * 0.5
-			_wand_stueck(Vector3(ln, WALL_H, WALL_T), Vector3(cx, WALL_H * 0.5, cy), 2, _aussen_h(aussen_g, spec, iv, cy))
+			var aus_h := _aussen_h(aussen_g, spec, iv, cy)
+			_wand_stueck(Vector3(ln, WALL_H, WALL_T), Vector3(cx, WALL_H * 0.5, cy), 2, aus_h)
+			_kontakt(Vector3(cx, 0.0, cy), 2, ln, aus_h)
 			_box(Vector3(ln + 0.02, 0.1, WALL_T + 0.02), Vector3(cx, WALL_H + 0.05, cy), cap, 0.5)
 	for key in vt:
 		var cx2: float = key / 100.0
@@ -847,7 +867,9 @@ func _build_walls(spec: Dictionary) -> void:
 			var b1: float = iv[1] + (WALL_T * 0.5 if _kein_rand(iv[1], edges_v) else 0.0)
 			var ln2: float = b1 - b0
 			var cy2: float = (b0 + b1) * 0.5
-			_wand_stueck(Vector3(WALL_T, WALL_H, ln2), Vector3(cx2, WALL_H * 0.5, cy2), 0, _aussen_v(aussen_g, spec, iv, cx2))
+			var aus_v := _aussen_v(aussen_g, spec, iv, cx2)
+			_wand_stueck(Vector3(WALL_T, WALL_H, ln2), Vector3(cx2, WALL_H * 0.5, cy2), 0, aus_v)
+			_kontakt(Vector3(cx2, 0.0, cy2), 0, ln2, aus_v)
 			_box(Vector3(WALL_T + 0.02, 0.1, ln2 + 0.02), Vector3(cx2, WALL_H + 0.05, cy2), cap, 0.5)
 
 
