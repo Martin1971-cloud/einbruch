@@ -106,14 +106,19 @@ func _draw() -> void:
 	for p in pins:
 		var c := _px(p.pos)
 		var is_sel: bool = p.id == selected
+		# Erfolgreich abgeschlossene Orte: grüne Marke, Euro-Zeichen vor dem Namen
+		var done: bool = p.get("done", false)
 		var col := Color(0.97, 0.8, 0.35) if p.active else Color(0.6, 0.6, 0.65)
+		if done:
+			col = Color(0.55, 0.92, 0.55)
+		var label: String = ("€ " + p.name) if done else p.name
 		if is_sel:
 			draw_circle(c, 14, Color(1, 0.9, 0.5, 0.35))
 		draw_circle(c, 7, col)
 		draw_circle(c, 7, Color(0.1, 0.08, 0.05), false, 1.5)
-		var sz := font.get_string_size(p.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
+		var sz := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12)
 		draw_rect(Rect2(c + Vector2(-sz.x * 0.5 - 4, 10), Vector2(sz.x + 8, 17)), Color(0.05, 0.06, 0.09, 0.85))
-		draw_string(font, c + Vector2(-sz.x * 0.5, 23), p.name, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, col)
+		draw_string(font, c + Vector2(-sz.x * 0.5, 23), label, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, col)
 	# Hinweis beim Darüberfahren: Name, und ob der Ort auswählbar ist
 	for p in pins:
 		if p.id != _hover:

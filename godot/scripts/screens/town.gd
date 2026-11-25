@@ -126,6 +126,8 @@ func _map_card() -> PanelContainer:
 	pins.append({"id": "autohaus", "name": Texte.t("ort.autohaus"), "pos": Vector2(0.60, 0.16), "active": true, "info": Texte.t("ort.autohaus_info")})
 	for o in GameData.OTHER_PLACES:
 		pins.append({"id": o.id, "name": Texte.d(o.name), "pos": Vector2(o.pos[0], o.pos[1]), "active": false, "info": o.get("info", "")})
+	for p in pins:
+		p["done"] = Game.stufe_of(p.id) > 0
 	_map.set_pins(pins, _selected)
 	var c := _panel(col)
 	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -226,7 +228,9 @@ func _refresh() -> void:
 	_map.set_pins(_map.pins, _selected)
 	for c in _loc_box.get_children():
 		c.queue_free()
-	_loc_box.add_child(UI.label(Texte.d(t.name), 19, Color(0.97, 0.85, 0.55)))
+	var erfolgreich := Game.stufe_of(_selected) > 0
+	var name_col := Color(0.55, 0.92, 0.55) if erfolgreich else Color(0.97, 0.85, 0.55)
+	_loc_box.add_child(UI.label(Texte.d(t.name), 19, name_col))
 	if t.has("info"):
 		_loc_box.add_child(UI.label(Texte.d(t.info), 13, Color(0.89, 0.71, 0.35), true))
 	_loc_box.add_child(UI.label(Texte.d(t.desc), 13, Color(0.92, 0.92, 0.95), true))
@@ -258,6 +262,8 @@ func _refresh() -> void:
 		req.add_child(UI.label(txt, 11, Color(0.8, 0.85, 0.9), true))
 	_loc_box.add_child(UI.fold(Texte.t("stadt.braucht"), req, true))
 	_loc_box.add_child(UI.label(Texte.t("stadt.ermittlung") % [[Texte.t("stadt.ermittlung_0"), Texte.t("stadt.ermittlung_1"), Texte.t("stadt.ermittlung_2")][lvl]], 13, Color(0.6, 0.85, 1.0)))
+	if erfolgreich:
+		_loc_box.add_child(UI.label(Texte.t("stadt.erfolgreich"), 15, Color(0.55, 0.92, 0.55)))
 	_refresh_image()
 
 
