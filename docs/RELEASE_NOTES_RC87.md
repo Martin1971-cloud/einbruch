@@ -12,7 +12,7 @@ Stand: Testversion für den Spieler-Test auf dem PC.
 - Ruckler in der 3D-Ausführung: Ursache außerhalb des Spielcodes, noch nicht geklärt.
 - Museum (Gebäude 4) nicht bewertet.
 - Balance der ersten drei Gebäude: durch Spielen zu prüfen.
-- Pixabay-Lizenz: Zusammenfassung geprüft, vollständige Lizenz noch nicht.
+- Pixabay-Lizenz: vollständige Nutzungsbedingungen geprüft. Privates Projekt und Test sind erlaubt. Ein Verkauf des Spiels ist nur mit geklärter Musik zulässig (eigene oder klar lizenzierte Stücke, oder Rückfrage bei Pixabay). Die Audiodateien dürfen nicht einzeln verbreitet werden.
 
 ## Prüfung
 - Alle Tests und Texttabelle: 58 Tests, 0 Fehler.
