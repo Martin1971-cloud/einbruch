@@ -112,6 +112,47 @@ func _outline(parent: Node3D, mesh: Mesh, grow: float, pos: Vector3, size: Vecto
 	parent.add_child(mi)
 
 
+## Deko: Möbel und Bilder, rein zur Ansicht. Sie gehören nicht zur Beute und blockieren nichts.
+func _build_deko(liste: Array) -> void:
+	var sb := float(Sim.SUB)
+	var holz := Color(0.42, 0.28, 0.17)
+	var holz_hell := Color(0.55, 0.4, 0.26)
+	for d in liste:
+		var r: Array = d.rect
+		var x0 := float(r[0]) / sb
+		var y0 := float(r[1]) / sb
+		var x1 := float(r[2]) / sb
+		var y1 := float(r[3]) / sb
+		var w := x1 - x0
+		var dp := y1 - y0
+		var cx := (x0 + x1) * 0.5
+		var cz := (y0 + y1) * 0.5
+		match String(d.kind):
+			"tisch":
+				_box(Vector3(w, 0.08, dp), Vector3(cx, 0.76, cz), holz_hell, 0.6)
+				for ex in [-1.0, 1.0]:
+					for ez in [-1.0, 1.0]:
+						_box(Vector3(0.07, 0.74, 0.07), Vector3(cx + ex * (w * 0.5 - 0.12), 0.37, cz + ez * (dp * 0.5 - 0.12)), holz, 0.7)
+			"stuhl":
+				_box(Vector3(w, 0.07, dp), Vector3(cx, 0.46, cz), holz, 0.7)
+				_box(Vector3(w, 0.5, 0.06), Vector3(cx, 0.72, cz - dp * 0.5 + 0.03), holz, 0.7)
+			"regal":
+				_box(Vector3(w, 2.0, dp), Vector3(cx, 1.0, cz), holz, 0.8)
+				for hy in [0.6, 1.3]:
+					_box(Vector3(w + 0.04, 0.05, dp + 0.04), Vector3(cx, hy, cz), holz_hell, 0.7)
+			"bild":
+				var bw := maxf(w, 0.04)
+				var bd := maxf(dp, 0.04)
+				_box(Vector3(bw, 0.9, bd), Vector3(cx, 1.5, cz), Color(0.3, 0.22, 0.12), 0.6)
+				_box(Vector3(bw * 0.8 + 0.02, 0.7, bd * 0.3 + 0.02), Vector3(cx, 1.5, cz), Color(0.78, 0.7, 0.5), 0.8)
+			"pflanze":
+				_cyl(0.2, 0.4, Vector3(cx, 0.2, cz), Color(0.5, 0.3, 0.2), 0.8)
+				_cyl(0.32, 0.9, Vector3(cx, 0.85, cz), Color(0.2, 0.42, 0.22), 0.9)
+			"kiste":
+				_box(Vector3(w, 0.6, dp), Vector3(cx, 0.3, cz), holz, 0.8)
+	return
+
+
 ## Außenerkennung über den Grundriss: von außen (Rand) durch alle freien Felder füllen.
 ## Wände, Türen und Fenster blockieren. Erreichbare Felder gelten als außen.
 func _aussen_gitter(spec: Dictionary) -> PackedByteArray:
@@ -158,21 +199,33 @@ func _aussen_gitter(spec: Dictionary) -> PackedByteArray:
 		if y < h - 1 and blockiert[i + w] == 0 and aussen[i + w] == 0:
 			aussen[i + w] = 1
 			schlange.append(i + w)
+	for i in range(w * h):
+		if blockiert[i] == 1:
+			aussen[i] = 2
 	return aussen
 
 
-func _ist_aussen(g: PackedByteArray, spec: Dictionary, x_t: float, y_t: float) -> bool:
+## Vom Wandmittelpunkt aus nach der Richtung suchen, bis die erste freie Fläche kommt. True, wenn sie außen liegt.
+func _strahl_aussen(g: PackedByteArray, spec: Dictionary, x_t: float, y_t: float, dx: float, dy: float) -> bool:
 	var sbf := float(Sim.SUB)
-	var ix := clampi(floori(x_t * sbf), 0, int(spec.w) - 1)
-	var iy := clampi(floori(y_t * sbf), 0, int(spec.h) - 1)
-	return g[iy * int(spec.w) + ix] == 1
+	var w := int(spec.w)
+	var h := int(spec.h)
+	var t := 0.0
+	while t < 1.5:
+		var ix := clampi(floori((x_t + dx * t) * sbf), 0, w - 1)
+		var iy := clampi(floori((y_t + dy * t) * sbf), 0, h - 1)
+		var zelle: int = g[iy * w + ix]
+		if zelle != 2:
+			return zelle == 1
+		t += 1.0 / sbf
+	return false
 
 
-## Waagerechte Wand bei cy: -1 = Außenseite liegt oben (kleiner y), +1 = unten, 0 = innen oder beidseitig.
+## Waagerechte Wand bei cy: -1 = Außenseite oben (kleiner y), +1 = unten, 0 = innen oder beidseitig.
 func _aussen_h(g: PackedByteArray, spec: Dictionary, iv: Array, cy: float) -> int:
 	var xm: float = (float(iv[0]) + float(iv[1])) * 0.5
-	var oben := _ist_aussen(g, spec, xm, cy - 0.2)
-	var unten := _ist_aussen(g, spec, xm, cy + 0.2)
+	var oben := _strahl_aussen(g, spec, xm, cy, 0.0, -1.0)
+	var unten := _strahl_aussen(g, spec, xm, cy, 0.0, 1.0)
 	if oben and not unten:
 		return -1
 	if unten and not oben:
@@ -183,8 +236,8 @@ func _aussen_h(g: PackedByteArray, spec: Dictionary, iv: Array, cy: float) -> in
 ## Senkrechte Wand bei cx: -1 = Außenseite links, +1 = rechts.
 func _aussen_v(g: PackedByteArray, spec: Dictionary, iv: Array, cx: float) -> int:
 	var ym: float = (float(iv[0]) + float(iv[1])) * 0.5
-	var links := _ist_aussen(g, spec, cx - 0.2, ym)
-	var rechts := _ist_aussen(g, spec, cx + 0.2, ym)
+	var links := _strahl_aussen(g, spec, cx, ym, -1.0, 0.0)
+	var rechts := _strahl_aussen(g, spec, cx, ym, 1.0, 0.0)
 	if links and not rechts:
 		return -1
 	if rechts and not links:
@@ -453,6 +506,7 @@ func _build_world() -> void:
 
 	if fine_on:
 		_build_fine(Sim.fine_spec(cfg.target))
+		_build_deko(GameData.DEKO.get(str(cfg.target.get("id", "")), []))
 	_build_extras()
 	# Beute: mit feinem Grundriss ist die Vitrine selbst ein Rechteck, sonst ein Sockel mit Absperrung
 	for l in cfg.target.loot:

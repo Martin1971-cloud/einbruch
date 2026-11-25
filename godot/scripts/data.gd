@@ -758,3 +758,31 @@ static func target_now(stufe: int, id := "museum") -> Dictionary:
 	t.stufe = stufe
 	return t
 
+
+
+## Einrichtung ohne Beute (Deko): nur zur Ansicht, nicht anklickbar, blockiert keine Wege.
+## rect in Unterfeldern (1 Feld = 16), kind: tisch, stuhl, regal, bild, pflanze, kiste.
+const DEKO := {
+	"kiosk": [
+		{"kind": "regal", "rect": [104, 24, 120, 40]},
+		{"kind": "tisch", "rect": [108, 84, 124, 100]},
+		{"kind": "stuhl", "rect": [108, 102, 116, 110]},
+		{"kind": "pflanze", "rect": [154, 24, 162, 34]},
+		{"kind": "bild", "rect": [104, 96, 107, 112]},
+	],
+	"curiosity": [
+		{"kind": "regal", "rect": [48, 40, 72, 52]},
+		{"kind": "tisch", "rect": [200, 96, 232, 120]},
+		{"kind": "stuhl", "rect": [204, 122, 212, 130]},
+		{"kind": "stuhl", "rect": [220, 122, 228, 130]},
+		{"kind": "pflanze", "rect": [246, 140, 256, 150]},
+		{"kind": "bild", "rect": [256, 72, 259, 96]},
+	],
+	"juwelier": [
+		{"kind": "regal", "rect": [200, 40, 240, 52]},
+		{"kind": "kiste", "rect": [96, 124, 120, 134]},
+		{"kind": "bild", "rect": [100, 40, 124, 43]},
+		{"kind": "pflanze", "rect": [246, 140, 256, 150]},
+		{"kind": "bild", "rect": [256, 60, 259, 90]},
+	],
+}
