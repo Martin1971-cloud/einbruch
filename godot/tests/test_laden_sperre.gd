@@ -40,8 +40,8 @@ func _process(_d: float) -> bool:
 		var axt := _find(btns, "Axt")
 		var bohr := _find(btns, "Bohrmaschine")
 		_check(glas != null and not glas.disabled, "Glasschneider ist von Anfang an kaufbar (Stufe 0)")
-		_check(axt != null and axt.disabled and str(axt.text).contains("gesperrt"), "Axt ist gesperrt mit Hinweis (Stufe 1)")
-		_check(bohr != null and bohr.disabled and str(bohr.text).contains("gesperrt"), "Bohrmaschine ist gesperrt mit Hinweis (Stufe 2)")
+		_check(axt != null and axt.disabled and _label_has(_main.current, "Kiosk"), "Axt ist gesperrt mit Hinweis (Stufe 1)")
+		_check(bohr != null and bohr.disabled and _label_has(_main.current, "Kuriosit"), "Bohrmaschine ist gesperrt mit Hinweis (Stufe 2)")
 		G.stufe["kiosk"] = 1
 		_main.current._build()
 	elif _frames == 8:
@@ -51,4 +51,14 @@ func _process(_d: float) -> bool:
 		_check(_find(btns, "Bohrmaschine") != null and _find(btns, "Bohrmaschine").disabled, "Bohrmaschine bleibt bis zur Stufe 2 gesperrt")
 		print("Ergebnis: %d Fehler" % _fails)
 		quit(1 if _fails > 0 else 0)
+	return false
+
+
+## Gibt es ein Textfeld mit dem Text (Hinweis auf die Sperre in der Spalte „Verfügbar“)?
+func _label_has(node: Node, text: String) -> bool:
+	if node is Label and str(node.text).contains("gesperrt") and str(node.text).contains(text):
+		return true
+	for c in node.get_children():
+		if _label_has(c, text):
+			return true
 	return false
