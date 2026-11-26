@@ -752,6 +752,8 @@ func _draw() -> void:
 		for s in target.sensors:
 			draw_rect(Rect2(_c(s.pos) - Vector2(_cell * 0.12, _cell * 0.12), Vector2(_cell * 0.24, _cell * 0.24)), Color(0.4, 0.45, 0.5))
 
+	# Alarmanlage: gesicherte Objekte und Verbindungen zum Panel (Hover)
+	_draw_alarm()
 	# Fluchtwagen am Ausgang: alle Einbrecherinnen starten hier und steigen hier wieder ein
 	if target.points.has("Fluchtwagen"):
 		_draw_car(Sim._v2i(target.points["Fluchtwagen"]))
@@ -849,6 +851,61 @@ func _draw() -> void:
 	if not _frame.is_empty():
 		_draw_dynamic()
 
+
+
+## Alarmanlage im Plan abgeschaltet? (Umgehen des Panels mit dem Elektroset)
+func alarm_aus() -> bool:
+	if not target.has("panel"):
+		return false
+	for pid in plans:
+		for a in plans[pid]:
+			if a.t == "TOOL" and a.get("tool", "") == "bypass" and a.get("on", "") == target.panel.name:
+				return true
+	return false
+
+
+## Gesicherte Objekte als Zellen: Türen über den Namen, Vitrinen über die Beute-ID.
+func _gesicherte_zellen() -> Array:
+	var out: Array = []
+	for g in target.get("gesichert", []):
+		var name := str(g)
+		var gefunden := false
+		for d in target.get("doors", []):
+			if str(d.name) == name:
+				out.append({"name": name, "pos": _c(d.pos)})
+				gefunden = true
+		if not gefunden:
+			for l in target.loot:
+				if str(l.get("id", "")) == name:
+					out.append({"name": name, "pos": _c(l.pos)})
+	return out
+
+
+## Alarmanlage zeichnen: aktiv = Alarmzeichen an den Objekten, aus = keine Zeichen mehr.
+## Beim Darüberfahren über das Panel: Verbindungen zu den Objekten (aktiv: durchgezogen, aus: gestrichelt).
+func _draw_alarm() -> void:
+	if not target.has("panel") or intel < 1:
+		return
+	var aus := alarm_aus()
+	var pp := _c(target.panel.pos)
+	var zellen := _gesicherte_zellen()
+	var rot := Color(0.95, 0.35, 0.3)
+	var grau := Color(0.55, 0.58, 0.65)
+	if not aus:
+		for z in zellen:
+			var p: Vector2 = z.pos + Vector2(-_cell * 0.42, -_cell * 0.42)
+			draw_colored_polygon(PackedVector2Array([p + Vector2(0, -_cell * 0.16), p + Vector2(_cell * 0.14, _cell * 0.12), p + Vector2(-_cell * 0.14, _cell * 0.12)]), rot)
+	if _hover_cell == Sim._v2i(target.panel.pos):
+		for z in zellen:
+			if aus:
+				_dashed(pp, z.pos, grau, 1.5)
+			else:
+				draw_line(pp, z.pos, Color(rot, 0.85), 2.0)
+				draw_circle(z.pos, _cell * 0.12, Color(rot, 0.9))
+		if aus:
+			_text_center(pp + Vector2(0, -_cell * 0.6), Texte.t("grid.alarm_aus"), grau, 12)
+		else:
+			_text_center(pp + Vector2(0, -_cell * 0.6), Texte.t("grid.alarm_aktiv"), rot, 12)
 
 
 ## Kleines Zeichen am Schloss: rotes Schloss = verschlossen, gelb = entriegelt, grüner Ring = offen.
@@ -1093,6 +1150,12 @@ func _get_tooltip(at_position: Vector2) -> String:
 	## Beim Darüberfahren: zuerst ein Haltepunkt oder eine Objekt-Aktion im Plan, sonst die Zelle.
 	if target.is_empty():
 		return ""
+	if target.has("panel") and intel >= 1 and _c(target.panel.pos).distance_to(at_position) < _cell * 0.6:
+		var namen: Array = []
+		for z in _gesicherte_zellen():
+			namen.append(str(z.name))
+		var status := Texte.t("grid.alarm_aus") if alarm_aus() else Texte.t("grid.alarm_aktiv")
+		return "%s – %s\n%s" % [str(target.panel.name), status, ", ".join(namen)]
 	var best := -1
 	var bd := _cell * 0.45
 	for i in range(_waypoints.size()):

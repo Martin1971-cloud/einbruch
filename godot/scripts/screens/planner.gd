@@ -171,6 +171,8 @@ func _left_column() -> Control:
 		var alarm := _l(Texte.t("plan.alarm_sichert") % _gesichert_namen(target), 12, Color(0.6, 0.85, 1.0))
 		alarm.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		info.add_child(alarm)
+		var status := _l(Texte.t("grid.alarm_aus") if _alarm_aus_im_plan() else Texte.t("grid.alarm_aktiv"), 12, Color(0.95, 0.5, 0.45) if not _alarm_aus_im_plan() else Color(0.6, 0.62, 0.68))
+		info.add_child(status)
 	col.add_child(_card(info))
 	_checklist = VBoxContainer.new()
 	_checklist.add_theme_constant_override("separation", 4)
@@ -548,6 +550,15 @@ func _refresh_all() -> void:
 	_refresh_grid()
 	_refresh_team()
 	_refresh_checklist()
+
+
+## Ist die Anlage im Plan abgeschaltet (Elektroset auf das Panel)?
+func _alarm_aus_im_plan() -> bool:
+	for pid in plans:
+		for a in plans[pid]:
+			if a.t == "TOOL" and a.get("tool", "") == "bypass" and a.get("on", "") == target.panel.name:
+				return true
+	return false
 
 
 ## Gesicherte Objekte der Alarmanlage mit Anzeigenamen (Türen direkt, Vitrinen über den Beutenamen).
