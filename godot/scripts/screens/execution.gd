@@ -45,6 +45,7 @@ func _build_ui() -> void:
 	_pause_btn = UI.button(Texte.t("ausf.pause"), _on_pause, 110)
 	top.add_child(_pause_btn)
 	top.add_child(UI.dropdown(["1x", "4x", "16x"], 0, func(i: int): speed = [1.0, 4.0, 16.0][i]))
+	top.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 110))
 
 	var spacer := Control.new()
 	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL

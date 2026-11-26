@@ -107,6 +107,7 @@ func _ready() -> void:
 	bottom.add_theme_constant_override("separation", 10)
 	root.add_child(bottom)
 	bottom.add_child(UI.button(Texte.t("org.zurueck"), _on_back, 210))
+	bottom.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 130))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(sp)
