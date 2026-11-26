@@ -28,12 +28,14 @@ jobs:
 
       - name: Export-Vorlagen installieren
         run: |
-          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
-          unzip -q Godot_v${GODOT_VERSION}-stable_export_templates.tpz -d vorlagen
+          curl -fsSL --retry 3 --retry-delay 10 -o vorlagen.tpz \
+            https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          mkdir -p vorlagen
+          unzip -q vorlagen.tpz -d vorlagen
           ZIEL="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
           mkdir -p "$ZIEL"
-          mv vorlagen/templates/* "$ZIEL"/
-          mv vorlagen/version.txt "$ZIEL"/
+          cp -r vorlagen/. "$ZIEL"/
+          ls "$ZIEL" | head -5
 
       - name: Projekt importieren und Tests ausführen
         run: |
