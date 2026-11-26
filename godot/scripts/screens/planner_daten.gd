@@ -360,7 +360,7 @@ func _object_entries(cell: Vector2i) -> Array:
 			if t.obj != needs or not Game.tools_owned.has(tid):
 				continue
 			any = true
-			var how := "aufbrechen (laut, dann offen)" if t.destroys else "entriegeln"
+			var how := Texte.t("plan.aufbrechen") if t.destroys else Texte.t("plan.entriegeln")
 			out.append(["%s %s: %s" % [what, how, Texte.t(t.name)], {"t": "TOOL", "tool": tid, "on": nm}, true])
 		if not any:
 			out.append([Texte.t("plan.kein_passendes_werkzeug") % what, {}, false])

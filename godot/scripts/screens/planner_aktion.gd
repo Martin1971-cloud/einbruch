@@ -558,22 +558,22 @@ func _on_map_click(cell: Vector2i) -> void:
 	# Freier Punkt: genau dorthin gehen, wenn er begehbar ist (Wände, Fenster, Vitrinen und Türen sind nicht erlaubt)
 	var f := _click_fine
 	if f.x >= 0 and Sim.plan_tile(target, f) in ["o", "."]:
-		_menu_entries.append(["Hierher gehen", {"t": "MOVE", "fine": [f.x, f.y]}, true])
+		_menu_entries.append([Texte.t("plan.hierher_gehen"), {"t": "MOVE", "fine": [f.x, f.y]}, true])
 	elif _walkable(cell):
-		_menu_entries.append(["Hierher gehen", {"t": "MOVE", "cell": [cell.x, cell.y]}, true])
+		_menu_entries.append([Texte.t("plan.hierher_gehen"), {"t": "MOVE", "cell": [cell.x, cell.y]}, true])
 	# Am Fluchtwagen: einsteigen = Plan beenden (Original: Rückkehr zum Wagen, plLivingsPosAtCar)
 	if cell == Sim._v2i(target.points.fluchtwagen):
-		_menu_entries.append(["Einsteigen (Plan beenden)", {"t": "BOARD"}, true])
+		_menu_entries.append([Texte.t("plan.einsteigen"), {"t": "BOARD"}, true])
 	# Treppenfeld: die Person steigt auf die andere Etage (8 s)
 	for pr in target.get("treppen", []):
 		if cell == Vector2i(int(pr[0]), int(pr[1])) or cell == Vector2i(int(pr[2]), int(pr[3])):
-			_menu_entries.append(["Treppe steigen (8 s)", {"t": "TREPPE"}, true])
+			_menu_entries.append([Texte.t("plan.treppe_steigen"), {"t": "TREPPE"}, true])
 	_menu_entries.append_array(_object_entries(cell))
 	if target.has("panel") and Sim._v2i(target.panel.pos) == cell:
 		_menu_entries.append([Texte.t("plan.bypass"), {"t": "TOOL", "tool": "bypass", "on": target.panel.id}, Game.tools_owned.has("bypass")])
 	for g in target.guards:
 		if Sim._v2i(g.start) == cell:
-			_menu_entries.append(["Wache niederschlagen (Kampfsport, laut)", {"t": "NEUTRALIZE", "guard": g.id, "method": "knock"}, true])
+			_menu_entries.append([Texte.t("plan.wache_niederschlagen"), {"t": "NEUTRALIZE", "guard": g.id, "method": "knock"}, true])
 			_menu_entries.append([Texte.t("plan.chloroform"), {"t": "NEUTRALIZE", "guard": g.id, "method": "chloroform"}, Game.tools_owned.has("chloroform")])
 	if _menu == null:
 		_menu = PopupMenu.new()

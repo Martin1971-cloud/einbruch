@@ -40,7 +40,7 @@ func show_error(meldung: String, was_tun: String, details := "") -> void:
 	var dlg := AcceptDialog.new()
 	dlg.title = "Hinweis"
 	dlg.dialog_text = "%s\n\nWas du tun kannst: %s" % [meldung, was_tun]
-	dlg.ok_button_text = "Verstanden"
+	dlg.ok_button_text = Texte.t("hint.verstanden")
 	add_child(dlg)
 	dlg.confirmed.connect(dlg.queue_free)
 	dlg.canceled.connect(dlg.queue_free)

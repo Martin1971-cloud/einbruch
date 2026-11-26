@@ -283,7 +283,7 @@ func _build_shop() -> void:
 	for tid in GameData.TOOLS:
 		if Game.tools_owned.has(tid):
 			tnames.append(Texte.t(GameData.TOOLS[tid].name))
-	owned.add_child(_w("Werkzeug: %s" % (", ".join(tnames) if not tnames.is_empty() else "keines"), 12))
+	owned.add_child(_w(Texte.t("org.werkzeug_zeile") % (", ".join(tnames) if not tnames.is_empty() else Texte.t("keines")), 12))
 	var gnames: Array = []
 	for gid in GameData.GEAR:
 		if gid != "none" and Game.gear_owned.has(gid):

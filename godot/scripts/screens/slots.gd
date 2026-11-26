@@ -82,6 +82,7 @@ func _new(n: int) -> void:
 	d.title = Texte.t("slots.ueberschreiben_titel")
 	d.dialog_text = Texte.t("slots.ueberschreiben_text") % n
 	d.ok_button_text = Texte.t("slots.ueberschreiben_ok")
+	d.cancel_button_text = Texte.t("ui.abbrechen")
 	add_child(d)
 	d.confirmed.connect(func(): Game.new_game_in_slot(n); main.go("town"))
 	d.popup_centered()
@@ -92,6 +93,7 @@ func _ask_delete(n: int) -> void:
 	d.title = Texte.t("slots.loeschen_titel")
 	d.dialog_text = Texte.t("slots.loeschen_text") % n
 	d.ok_button_text = Texte.t("slots.loeschen_ok")
+	d.cancel_button_text = Texte.t("ui.abbrechen")
 	add_child(d)
 	d.confirmed.connect(func(): Game.delete_slot(n); _fill())
 	d.popup_centered()
