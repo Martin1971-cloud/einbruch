@@ -246,7 +246,7 @@ func _floor_list() -> Array:
 func _on_floor(fl: Dictionary) -> void:
 	var rows: Array = fl.rows
 	_grid.focus_on(Vector2(10, (float(rows[0]) + float(rows[1])) * 0.5), 1.8, true)
-	_preview.text = "Etage %s angezeigt." % str(fl.name)
+	_preview.text = Texte.t("plan.etage_angezeigt") % str(fl.name)
 
 
 ## Etage eines Feldes (Zeile der Karte). "" wenn das Ziel keine Etagen hat.
@@ -695,7 +695,7 @@ func _save_plan() -> void:
 	var nm := _plan_name.text.strip_edges()
 	var list: Array = _saved_for_target().duplicate(true)
 	if nm == "":
-		nm = "Planung %d" % (list.size() + 1)
+		nm = Texte.t("plan.planung_nr") % (list.size() + 1)
 	var ids: Array = []
 	for c in Game.team:
 		ids.append(c.id)
@@ -842,15 +842,15 @@ func _describe(a: Dictionary) -> String:
 		"TAKE":
 			return Texte.t("plan.beute_nehmen")
 		"WAIT":
-			return "Warten %d s" % int(a.sec)
+			return Texte.t("plan.warten_s") % int(a.sec)
 		"TREPPE":
 			return Texte.t("plan.treppe")
 		"CALL_CAR":
 			return Texte.t("plan.wagen_rufen")
 		"NEUTRALIZE":
-			return "Wache ausschalten: %s" % _guard_name(a.guard)
+			return Texte.t("plan.wache_aus") % _guard_name(a.guard)
 		"FLAG_SET":
-			return "Signal: %s" % GameData.FLAG_NAMES.get(a.flag, a.flag)
+			return Texte.t("plan.signal") % GameData.FLAG_NAMES.get(a.flag, a.flag)
 		_:
 			return Texte.t("plan.warte_signal")
 
@@ -1042,7 +1042,7 @@ func _refresh_timeline(res: Dictionary) -> void:
 	for e in entries:
 		lines.append(e.text)
 	if lines.is_empty():
-		lines.append("[color=gray]Noch keine Aktionen geplant.[/color]")
+		lines.append("[color=gray]%s[/color]" % Texte.t("plan.keine_aktionen"))
 	_steps_rt.text = "\n".join(lines)
 
 
@@ -1135,7 +1135,7 @@ func _ask_plan_for_execution() -> void:
 	box.add_theme_constant_override("separation", 8)
 	box.custom_minimum_size = Vector2(340, 0)
 	box.add_child(_l(Texte.t("plan.welcher_plan"), 15, Color(0.97, 0.85, 0.55)))
-	box.add_child(UI.button("Aktuelle Planung (ungespeichert)", func() -> void:
+	box.add_child(UI.button(Texte.t("plan.aktuell"), func() -> void:
 		pop.hide()
 		_run_execution(), 0))
 	for e in _saved_for_target():
@@ -1143,7 +1143,7 @@ func _ask_plan_for_execution() -> void:
 			pop.hide()
 			_apply_saved(e)
 			_run_execution(), 0))
-	box.add_child(UI.button("Abbrechen", func() -> void: pop.hide(), 0))
+	box.add_child(UI.button(Texte.t("ui.abbrechen"), func() -> void: pop.hide(), 0))
 	pop.add_child(box)
 	add_child(pop)
 	pop.popup_centered()

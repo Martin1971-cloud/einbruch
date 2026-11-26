@@ -90,7 +90,7 @@ func _init() -> void:
 	zoom_box.grow_vertical = Control.GROW_DIRECTION_BOTH
 	zoom_box.add_child(UI.button("+", func() -> void: _zoom_center(1.25), 40))
 	zoom_box.add_child(UI.button("−", func() -> void: _zoom_center(0.8), 40))
-	zoom_box.add_child(UI.button("Alles", func() -> void: _reset_view(), 40))
+	zoom_box.add_child(UI.button(Texte.t("grid.alles"), func() -> void: _reset_view(), 40))
 	add_child(zoom_box)
 
 

@@ -1488,7 +1488,7 @@ func _on_result() -> void:
 func _finish() -> void:
 	finished = true
 	Game.apply_result(sim.result())
-	_status.text = "Ende: %s" % sim.status
+	_status.text = Texte.t("ausf.ende") % sim.status
 	# Erst die Fluchtszene, danach die Auswertung
 	var sc := EscapeScene.new()
 	sc.set_anchors_preset(Control.PRESET_FULL_RECT)

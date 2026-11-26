@@ -173,7 +173,7 @@ static func multi_menu(title: String, items: Array, selected: Array, cb: Callabl
 		elif names.size() == 1:
 			mb.text = names[0]
 		else:
-			mb.text = "%d Teile" % names.size()
+			mb.text = Texte.t("ui.teile") % names.size()
 		mb.tooltip_text = ", ".join(names) if not names.is_empty() else title
 	refresh.call()
 	pm.id_pressed.connect(func(i: int):

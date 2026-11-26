@@ -876,7 +876,7 @@ func _do_move(c: Dictionary, a: Dictionary, dt: float) -> void:
 
 func _goal_name(a: Dictionary) -> String:
 	if a.has("fine"):
-		return "dem Punkt [%d, %d]" % [int(a.fine[0]), int(a.fine[1])]
+		return Texte.t("sim.punkt") % [int(a.fine[0]), int(a.fine[1])]
 	return str(a.get("to", "Feld"))
 
 

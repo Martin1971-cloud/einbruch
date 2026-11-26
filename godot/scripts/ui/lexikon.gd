@@ -45,7 +45,7 @@ func _ready() -> void:
 	box.add_theme_constant_override("separation", 8)
 	card.add_child(box)
 	var head := HBoxContainer.new()
-	head.add_child(UI.label("Lexikon", 22, Color(0.97, 0.82, 0.42)))
+	head.add_child(UI.label(Texte.t("lexikon.titel"), 22, Color(0.97, 0.82, 0.42)))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
@@ -89,7 +89,7 @@ func _fill() -> void:
 		_list.add_child(UI.label(term, 15, Color(0.97, 0.85, 0.55)))
 		_list.add_child(UI.label(text, 13, Color(0.86, 0.88, 0.93), true))
 	if shown == 0:
-		_list.add_child(UI.label("Kein Eintrag gefunden.", 13, Color(0.7, 0.72, 0.78)))
+		_list.add_child(UI.label(Texte.t("lexikon.kein_eintrag"), 13, Color(0.7, 0.72, 0.78)))
 
 
 func _unhandled_input(event: InputEvent) -> void:

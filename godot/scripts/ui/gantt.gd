@@ -173,7 +173,7 @@ func _draw() -> void:
 		var ax := _x(alarm_time)
 		draw_line(Vector2(ax, top - 2), Vector2(ax, bottom + 2), ALARM, 1.5)
 		draw_colored_polygon(PackedVector2Array([Vector2(ax, bottom + 2), Vector2(ax - 5, bottom + 9), Vector2(ax + 5, bottom + 9)]), ALARM)
-		draw_string(font, Vector2(ax + 4, bottom + 9), "Alarm %s" % Sim.clock(alarm_time), HORIZONTAL_ALIGNMENT_LEFT, -1, text_size, ALARM)
+		draw_string(font, Vector2(ax + 4, bottom + 9), Texte.t("gantt.alarm") % Sim.clock(alarm_time), HORIZONTAL_ALIGNMENT_LEFT, -1, text_size, ALARM)
 
 	# Abspielmarke
 	var px := _x(playhead)

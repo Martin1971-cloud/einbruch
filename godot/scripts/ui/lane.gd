@@ -36,7 +36,7 @@ func rebuild() -> void:
 	for c in _rows.get_children():
 		c.queue_free()
 	if actions.is_empty():
-		var hint := UI.label("Aktion hierher ziehen …", 14, Color(0.5, 0.52, 0.56))
+		var hint := UI.label(Texte.t("lane.hierher"), 14, Color(0.5, 0.52, 0.56))
 		_rows.add_child(hint)
 		return
 	for i in range(actions.size()):
