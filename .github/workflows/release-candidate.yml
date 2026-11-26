@@ -1,8 +1,13 @@
 name: Release-Candidate
 
-# Läuft, wenn ein Tag wie rc91 gesetzt wird: Tests, Export für Windows und Linux, Veröffentlichung.
+# Läuft automatisch, wenn die Version im Projekt auf main geändert wird (godot/project.godot).
+# Dann entsteht Tag und Release mit dem Versionsnamen. Ein Tag rc* (von Hand gesetzt) startet ihn ebenfalls.
 on:
   push:
+    branches:
+      - main
+    paths:
+      - "godot/project.godot"
     tags:
       - "rc*"
       - "Rc*"
@@ -22,13 +27,33 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Version bestimmen und prüfen, ob gebaut werden soll
+        id: version
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            NAME="${GITHUB_REF_NAME}"
+            RUN=ja
+          else
+            NAME=$(grep -oP 'config/version="\K[^"]+' godot/project.godot)
+            if git ls-remote --tags origin "refs/tags/${NAME}" | grep -q .; then
+              RUN=nein
+            else
+              RUN=ja
+            fi
+          fi
+          echo "name=${NAME}" >> "$GITHUB_OUTPUT"
+          echo "run=${RUN}" >> "$GITHUB_OUTPUT"
+          echo "Version: ${NAME}, bauen: ${RUN}"
+
       - name: Godot installieren
+        if: steps.version.outputs.run == 'ja'
         run: |
           wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip
           unzip -q Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip
           sudo mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 /usr/local/bin/godot
 
       - name: Export-Vorlagen installieren
+        if: steps.version.outputs.run == 'ja'
         run: |
           curl -fsSL --retry 3 --retry-delay 10 -o vorlagen.tpz \
             https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
@@ -37,10 +62,11 @@ jobs:
           ZIEL="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
           mkdir -p "$ZIEL"
           cp -r vorlagen/templates/. "$ZIEL"/
-          cp vorlagen/version.txt "$ZIEL"/ 2>/dev/null || echo "4.7.2.stable" > "$ZIEL"/version.txt
+          cp vorlagen/version.txt "$ZIEL"/ 2>/dev/null || echo "${GODOT_VERSION}.stable" > "$ZIEL"/version.txt
           ls "$ZIEL" | grep -i "windows_release_x86_64.exe\|version.txt"
 
       - name: Projekt importieren und Tests ausführen
+        if: steps.version.outputs.run == 'ja'
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq xvfb
@@ -49,6 +75,7 @@ jobs:
           GODOT=godot bash tools/pruefe_alles.sh "$RUNNER_TEMP/pruefung"
 
       - name: Windows und Linux exportieren
+        if: steps.version.outputs.run == 'ja'
         run: |
           cd godot
           mkdir -p ../build/windows ../build/linux
@@ -62,24 +89,30 @@ jobs:
           done
 
       - name: Pakete erstellen und Prüfsummen bilden
+        if: steps.version.outputs.run == 'ja'
         run: |
-          VERSION="${GITHUB_REF_NAME}"
+          NAME="${{ steps.version.outputs.name }}"
           cd build
-          (cd windows && zip -q -r "../../Der-Einbruch-${VERSION}-windows.zip" .)
-          (cd linux && zip -q -r "../../Der-Einbruch-${VERSION}-linux.zip" .)
+          (cd windows && zip -q -r "../../Der-Einbruch-${NAME}-windows.zip" .)
+          (cd linux && zip -q -r "../../Der-Einbruch-${NAME}-linux.zip" .)
           cd ..
-          sha256sum Der-Einbruch-${VERSION}-*.zip > SHA256SUMS.txt
+          sha256sum Der-Einbruch-${NAME}-*.zip > SHA256SUMS.txt
 
       - name: Änderungsliste seit dem letzten RC
+        if: steps.version.outputs.run == 'ja'
         run: |
-          VORHER=$(git tag --list 'rc*' --sort=-v:refname | grep -v "^${GITHUB_REF_NAME}$" | head -1 || true)
-          if [ -n "$VORHER" ]; then BEREICH="${VORHER}..${GITHUB_REF_NAME}"; else BEREICH="${GITHUB_REF_NAME}"; fi
+          NAME="${{ steps.version.outputs.name }}"
+          VORHER=$(git tag --list 'rc*' 'Rc*' 'RC*' --sort=-v:refname | grep -v "^${NAME}$" | head -1 || true)
+          if [ -n "$VORHER" ]; then BEREICH="${VORHER}..HEAD"; else BEREICH="HEAD"; fi
           { echo "## Änderungen seit ${VORHER:-Beginn}"; echo; git log --no-merges --pretty="- %s" "$BEREICH"; } > AENDERUNGEN.md
 
-      - name: Release veröffentlichen
+      - name: Release mit Tag veröffentlichen
+        if: steps.version.outputs.run == 'ja'
         uses: softprops/action-gh-release@v2
         with:
-          name: "Der Einbruch ${{ github.ref_name }}"
+          tag_name: ${{ steps.version.outputs.name }}
+          target_commitish: ${{ github.sha }}
+          name: "Der Einbruch ${{ steps.version.outputs.name }}"
           body_path: AENDERUNGEN.md
           prerelease: true
           files: |
