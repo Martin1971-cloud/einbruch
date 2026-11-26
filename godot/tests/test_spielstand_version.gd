@@ -1,5 +1,5 @@
 extends SceneTree
-## Prüft Versionsnummer, Migration alter Stände, Sicherung bei beschädigter Datei und Fehlermeldungen.
+## Prüft Versionsnummer, Löschen alter Stände, Sicherung bei beschädigter Datei und Fehlermeldungen.
 var _fails := 0
 var _frames := 0
 
@@ -36,8 +36,8 @@ func _run() -> void:
 	# Alter Stand ohne Version, Journal und Hinweise
 	var old := {"money": 5000, "day": 3, "hour": 10.0, "heat": 0.0, "target_id": "kiosk", "team": [], "driver": {}, "stufe": {"kiosk": 1}, "unlocked": {"kiosk": true, "museum": false}}
 	_write(G.slot_path(3), JSON.stringify(old))
-	_check(G.load_game(3) and G.money == 5000 and G.journal.is_empty(), "Alter Stand ohne Version wird geladen und migriert")
-	_check(G.hints_enabled == true and G.game_over_reason == "", "Fehlende Felder bekommen Startwerte")
+	_check(not G.load_game(3) and not FileAccess.file_exists(G.slot_path(3)), "Alter Stand ohne Version wird gelöscht")
+	_check(G.last_error.contains("älteren Version"), "Der Spieler erfährt, warum der Stand fehlt")
 	# Beschädigte Datei mit Sicherung
 	G.new_game_in_slot(3)
 	G.money = 4321

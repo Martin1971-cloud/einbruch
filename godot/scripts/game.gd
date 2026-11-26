@@ -48,13 +48,17 @@ func _ready() -> void:
 	_music = AudioStreamPlayer.new()
 	add_child(_music)
 	load_settings()
+	# Ältere Spielstände (vor Version 3) gibt es nicht mehr: die alten Dateien werden entfernt
+	for n in range(1, 4):
+		var v = _read_save(slot_path(n))
+		if v != null and int(v.get("version", 1)) < SAVE_VERSION:
+			loesche_slot(n)
 	reset()
 
 
 const SLOTS := 3  # Speicherplätze
-const SAVE_VERSION := 2  # 1 = bisheriger Stand ohne Journal und Hinweise, 2 = aktuell
+const SAVE_VERSION := 3  # 3 = Objekt-IDs in den Planungen. Ältere Stände werden gelöscht.
 var last_error := ""  # verständliche Meldung für den Spieler (leer = keine)
-const SAVE_PATH := "user://einbruch_spielstand.json"  # alter einzelner Spielstand: wird auf Platz 1 übernommen
 var slot := 1  # aktueller Speicherplatz (1 bis 3)
 const LAST_SLOT_KEY := "letzter_platz"
 ## Gespeicherte Planungen je Ziel: Ziel-Id -> Liste von {name, team, plans}
@@ -88,9 +92,6 @@ func slot_path(n: int) -> String:
 
 func has_save(n: int = -1) -> bool:
 	var k := slot if n < 0 else n
-	if k == 1 and not FileAccess.file_exists(slot_path(1)) and FileAccess.file_exists(SAVE_PATH):
-		# alter Spielstand: auf Platz 1 übernehmen
-		DirAccess.copy_absolute(SAVE_PATH, slot_path(1))
 	return FileAccess.file_exists(slot_path(k))
 
 
@@ -151,9 +152,20 @@ func load_game(n: int = -1) -> bool:
 	if v > SAVE_VERSION:
 		last_error = Texte.t("game.neuere_version") % slot
 		return false
-	parsed = migrate(parsed)
+	if v < SAVE_VERSION:
+		# Älterer Stand: wird gelöscht, nicht umgeschrieben
+		loesche_slot(slot)
+		last_error = Texte.t("game.alt_geloescht") % slot
+		return false
 	_apply_save(parsed)
 	return true
+
+
+## Einen Platz samt Sicherung löschen.
+func loesche_slot(n: int) -> void:
+	for p in [slot_path(n), slot_path(n) + ".bak"]:
+		if FileAccess.file_exists(p):
+			DirAccess.remove_absolute(p)
 
 
 ## Lesen einer Spielstand-Datei. null, wenn sie fehlt, nicht lesbar oder kein Spielstand ist.
@@ -167,18 +179,6 @@ func _read_save(path: String):
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return null
 	return parsed
-
-
-## Migration alter Stände auf die aktuelle Version. Fehlende Felder bekommen ihren Startwert.
-func migrate(d: Dictionary) -> Dictionary:
-	var v := int(d.get("version", 1))
-	if v < 2:
-		d["journal"] = []
-		d["hints_seen"] = {}
-		d["hints_enabled"] = true
-		d["game_over_reason"] = ""
-	d["version"] = SAVE_VERSION
-	return d
 
 
 func _apply_save(parsed: Dictionary) -> void:
@@ -199,7 +199,7 @@ func _apply_save(parsed: Dictionary) -> void:
 	target_id = str(parsed.get("target_id", "kiosk"))
 	unlocked = parsed.get("unlocked", {"kiosk": true, "museum": false})
 	game_over = bool(parsed.get("game_over", false))
-	saved_plans = GameData.migriere_plaene(parsed.get("saved_plans", {}))
+	saved_plans = parsed.get("saved_plans", {})
 	hints_seen = parsed.get("hints_seen", {})
 	hints_enabled = bool(parsed.get("hints_enabled", true))
 	journal = parsed.get("journal", [])

@@ -7,6 +7,7 @@ static var sprache := "de"
 
 const TABELLE := {
 	"de": {
+		"game.alt_geloescht": "Platz %d stammt aus einer älteren Version des Spiels und wurde gelöscht.",
 		"gantt.alarm": "Alarm %s",
 		"ui.teile": "%d Teile",
 		"grid.alles": "Alles",
@@ -475,6 +476,7 @@ const TABELLE := {
 		"opt.musik_quelle": "Musik: „Emotional Cello“ von renrebello, „Chamber Violins and Cello“ von moonpub und „Dramatic Violins“ von music_for_videos, alle auf Pixabay (Pixabay-Inhaltslizenz).",
 	},
 	"en": {
+		"game.alt_geloescht": "Slot %d came from an older version of the game and was deleted.",
 		"gantt.alarm": "Alarm %s",
 		"ui.teile": "%d parts",
 		"grid.alles": "All",

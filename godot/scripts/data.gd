@@ -207,42 +207,6 @@ const NAMEN := {
 ## Fakten der Stadtansicht (Schlüssel -> Anzeigename).
 const FAKTEN := {"oeffnung": "Öffnungszeiten", "wache": "Wachpersonal", "ueberwachung": "Überwachung", "besonderheit": "Besonderheit"}
 
-## Altbestand: gespeicherte Planungen nutzten früher Anzeigenamen als Ziel. Beim Laden werden sie in IDs umgeschrieben.
-const ALTE_IDS := {
-	"Eingangstür": "eingangstuer", "Stahltür": "stahltuer", "Schaufenster": "schaufenster", "Tresortür": "tresortuer",
-	"Mitteltür": "mitteltuer", "Hintertür": "hintertuer", "Alarmpanel": "alarmpanel",
-	"Außen vor dem Eingang": "aussen_eingang", "Außen vor dem Schaufenster": "aussen_schaufenster",
-	"Fluchtwagen": "fluchtwagen", "Halle": "halle", "Mittelraum": "mittelraum", "Tresor": "tresorraum", "Tresorraum": "tresorraum",
-	"Korridor": "korridor", "Gemälde": "gemaelde", "Skulptur": "skulptur", "Diamantkette": "diamant", "Münzsammlung": "muenzen",
-	"Kassenlade": "kasse", "Wertschrank": "safe", "Verkaufsraum": "verkaufsraum", "Verkauf": "verkauf", "Laden": "laden",
-	"Hinterzimmer": "hinterzimmer", "Treppe EG": "treppe_eg", "Treppe OG": "treppe_og", "Obergeschoss": "obergeschoss",
-	"Goldbarren": "goldbarren", "Uhrensammlung": "uhren", "Gemmensammlung": "gemmen", "Diamantring": "diamantring",
-	"Tresorinhalt (Schmuck und Bargeld)": "tresor", "Silberbesteck": "besteck", "Perlenkette": "perlen",
-	"Münzsammlung (OG)": "muenzen_og", "Gemälde „Hafen bei Nacht“": "gemaelde", "Gemälde „Hafen“": "gemaelde",
-	"Gemälde „Landschaft“": "landschaft", "Gemälde „Porträt“": "portraet", "Geldkassette": "kassette",
-	"Antike Pergamente": "pergamente", "Bronzeskulptur": "skulptur",
-}
-
-
-## Gespeicherte Planungen auf IDs umschreiben (Ziele "on" und "to").
-static func migriere_plaene(wert: Variant) -> Variant:
-	if wert is Dictionary:
-		var out := {}
-		for k in wert:
-			var v = wert[k]
-			if (k == "on" or k == "to") and v is String and ALTE_IDS.has(v):
-				out[k] = ALTE_IDS[v]
-			else:
-				out[k] = migriere_plaene(v)
-		return out
-	if wert is Array:
-		var liste: Array = []
-		for v in wert:
-			liste.append(migriere_plaene(v))
-		return liste
-	return wert
-
-
 ## Anzeigename zu einer Objekt-ID (Tür, Panel, Ort, Beute).
 static func name_von(id: String) -> String:
 	if NAMEN.has(id):
