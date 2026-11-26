@@ -24,6 +24,7 @@ func _process(_d: float) -> bool:
 	if _frames == 2:
 		var G = root.get_node("/root/Game")
 		G.reset()
+		G.money = 30000  # Beispielteam kostet mehr als das Startkapital
 		G.target_id = "testhaus"
 		G.unlocked["testhaus"] = true
 		G.intel["testhaus"] = 2

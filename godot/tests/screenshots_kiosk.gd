@@ -20,6 +20,7 @@ func _process(_delta: float) -> bool:
 	if _stage == 0 and _frames == 2:
 		G = root.get_node("/root/Game")
 		G.reset()
+		G.money = 30000  # Beispielteam kostet mehr als das Startkapital
 		G.tools_owned["lockpick"] = true
 		G.team = []
 		for c in GameData.CREW:

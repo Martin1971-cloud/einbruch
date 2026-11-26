@@ -211,6 +211,10 @@ func _build_autohaus() -> void:
 			b.disabled = chosen
 			b.custom_minimum_size = Vector2(0, 34)
 			_body.add_child(b)
+			if cid != "limo":
+				var bv := UI.button(Texte.t("shop.verkaufen") % _fmt(int(c.price) / 2), func() -> void: sell_car(cid), 0)
+				bv.custom_minimum_size = Vector2(0, 34)
+				_body.add_child(bv)
 		else:
 			var b2 := UI.button(Texte.t("shop.kaufen") % _fmt(int(c.price)), func() -> void: buy_car(cid), 0)
 			b2.disabled = car_locked or Game.money < int(c.price)
@@ -271,6 +275,20 @@ func buy_car(cid: String) -> void:
 	Game.cars_owned[cid] = true
 	Game.car_id = cid
 	_msg.text = Texte.t("shop.car_gekauft") % Texte.t(c.name)
+	_build()
+
+
+## Gekauften Wagen verkaufen: Rückkaufwert die Hälfte des Kaufpreises. Ist er gewählt, fährt man danach die Limousine.
+func sell_car(cid: String) -> void:
+	if cid == "limo" or not Game.cars_owned.has(cid):
+		return
+	var c: Dictionary = GameData.CARS[cid]
+	var erloes := int(c.price) / 2
+	Game.cars_owned.erase(cid)
+	Game.money += erloes
+	if Game.car_id == cid:
+		Game.car_id = "limo"
+	_msg.text = Texte.t("shop.car_verkauft") % [Texte.t(c.name), _fmt(erloes)]
 	_build()
 
 

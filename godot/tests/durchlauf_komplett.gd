@@ -27,6 +27,7 @@ func _start() -> void:
 		Texte.sprache = "en"
 	_G = root.get_node("/root/Game")
 	_G.reset()
+	_G.money = 30000  # Beispielteam kostet mehr als das Startkapital
 	_G.tools_owned["lockpick"] = true
 	_G.tools_owned["crowbar"] = true
 	_main = load("res://scenes/main.tscn").instantiate()

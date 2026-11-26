@@ -87,6 +87,7 @@ func _start() -> void:
 		Texte.sprache = "en"
 	_G = root.get_node("/root/Game")
 	_G.reset()
+	_G.money = 30000  # Beispielteam kostet mehr als das Startkapital
 	_G.delete_slot(3)   # Platz 3 leeren: Stände aus früheren Läufen würden überschrieben
 	_main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(_main)

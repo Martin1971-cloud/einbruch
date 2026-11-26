@@ -1,7 +1,7 @@
 extends Node
 ## Globaler Spielzustand (Autoload "Game").
 
-const START_MONEY := 30000
+const START_MONEY := 15000
 const START_HOUR := 19.0
 
 var money := START_MONEY
