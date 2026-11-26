@@ -59,7 +59,7 @@ func _lauf(target_id: String, team: Array, plans: Dictionary, car: String) -> Di
 	for c in team:
 		fees += int(c.fee)
 	return {"status": s.status, "payout": s.payout, "fees": fees, "time": s.time, "alarm": s.alarm_active,
-		"crew": team.size(), "werkzeug": _werkzeug_kosten(plans), "car": car}
+		"crew": team.size(), "werkzeug": _werkzeug_kosten(plans), "car": car, "heat": s.fence_heat()}
 
 
 ## Verteilt den Plan auf das Team: der Eingang bleibt bei Teodor, jeder Werkzeug-Block (Gehen + Werkzeug + Öffnen + Beute)
@@ -191,8 +191,8 @@ func _zeile(r: Dictionary) -> String:
 	var net: int = int(r.payout) - int(r.fees) - car_rent
 	var ausr: int = int(r.werkzeug) + _kleidung_kosten(int(r.crew)) + car_kauf
 	var kontostand: int = Game.START_MONEY - ausr + net
-	return "  %-10s %d Pers.: %-16s Auszahlung %6d  Laufkosten %6d  Ergebnis %+8d  Erstausstattung %6d  Kontostand %+8d  Zeit %4.0f s  Alarm %s" % [
-		r.car, int(r.crew), str(r.status), int(r.payout), int(r.fees) + car_rent, net, ausr, kontostand, float(r.time), str(r.alarm)]
+	return "  %-10s %d Pers.: %-16s Auszahlung %6d  Laufkosten %6d  Ergebnis %+8d  Erstausstattung %6d  Kontostand %+8d  Zeit %4.0f s  Alarm %-5s Hitze %5.1f" % [
+		r.car, int(r.crew), str(r.status), int(r.payout), int(r.fees) + car_rent, net, ausr, kontostand, float(r.time), str(r.alarm), float(r.heat)]
 
 
 func _init() -> void:
