@@ -80,6 +80,7 @@ func _title_bar() -> PanelContainer:
 	row.add_child(UI.button(Texte.t("nav.journal"), func(): main.open_journal(), 120))
 	row.add_child(UI.button(Texte.t("nav.optionen"), func(): main.open_optionen(), 130))
 	row.add_child(UI.button(Texte.t("nav.lexikon"), func(): main.open_lexikon(), 120))
+	row.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 110))
 	return _panel(row)
 
 

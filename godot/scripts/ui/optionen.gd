@@ -102,8 +102,12 @@ func _ready() -> void:
 
 ## Spiel beenden. Im laufenden Spiel wird vorher gefragt, ob der Stand gespeichert werden soll.
 func _on_beenden() -> void:
-	if not im_spiel:
-		get_tree().quit()
+	beenden_frage(self, im_spiel)
+
+
+static func beenden_frage(host: Node, im_spiel_offen: bool) -> void:
+	if not im_spiel_offen:
+		host.get_tree().quit()
 		return
 	var d := ConfirmationDialog.new()
 	d.title = Texte.t("opt.beenden_titel")
@@ -111,15 +115,15 @@ func _on_beenden() -> void:
 	d.ok_button_text = Texte.t("opt.beenden_speichern")
 	d.cancel_button_text = Texte.t("ui.abbrechen")
 	d.add_button(Texte.t("opt.beenden_ohne"), true, "ohne")
-	add_child(d)
-	d.confirmed.connect(func(): Game.save_game(); get_tree().quit())
-	d.custom_action.connect(_beenden_ohne_speichern)
+	host.add_child(d)
+	d.confirmed.connect(func(): Game.save_game(); host.get_tree().quit())
+	d.custom_action.connect(func(aktion: String): _beenden_ohne_speichern(host, aktion))
 	d.popup_centered()
 
 
-func _beenden_ohne_speichern(aktion: String) -> void:
+static func _beenden_ohne_speichern(host: Node, aktion: String) -> void:
 	if aktion == "ohne":
-		get_tree().quit()
+		host.get_tree().quit()
 
 
 func _set_music(v: int) -> void:
