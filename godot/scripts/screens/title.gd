@@ -37,6 +37,10 @@ func _ready() -> void:
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
 	box.add_theme_constant_override("separation", 14)
 	add_child(box)
+	# Versionsnummer unten rechts (Release-Candidate, aus den Projekteinstellungen)
+	var ver := UI.label("%s %s" % [Texte.t("app.version"), ProjectSettings.get_setting("application/config/version", "")], 13, Color(0.7, 0.7, 0.66))
+	add_child(ver)
+	ver.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 12)
 
 	var title := UI.label(Texte.t("app.titel"), 74, Color(0.97, 0.82, 0.42))
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

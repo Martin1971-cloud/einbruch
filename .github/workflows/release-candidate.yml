@@ -1,0 +1,77 @@
+name: Release-Candidate
+
+# Läuft, wenn ein Tag wie rc91 gesetzt wird: Tests, Export für Windows und Linux, Veröffentlichung.
+on:
+  push:
+    tags:
+      - "rc*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: "4.7.2"
+    steps:
+      - name: Quellcode holen
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Godot installieren
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip
+          unzip -q Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip
+          sudo mv Godot_v${GODOT_VERSION}-stable_linux.x86_64 /usr/local/bin/godot
+
+      - name: Export-Vorlagen installieren
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          unzip -q Godot_v${GODOT_VERSION}-stable_export_templates.tpz -d vorlagen
+          ZIEL="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$ZIEL"
+          mv vorlagen/templates/* "$ZIEL"/
+          mv vorlagen/version.txt "$ZIEL"/
+
+      - name: Projekt importieren und Tests ausführen
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb
+          cd godot
+          godot --headless --path . --import > /dev/null 2>&1 || true
+          GODOT=godot bash tools/pruefe_alles.sh "$RUNNER_TEMP/pruefung"
+
+      - name: Windows und Linux exportieren
+        run: |
+          cd godot
+          mkdir -p ../build/windows ../build/linux
+          godot --headless --path . --export-release "Windows Desktop"
+          godot --headless --path . --export-release "Linux"
+
+      - name: Pakete erstellen und Prüfsummen bilden
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          cd build
+          (cd windows && zip -q -r "../../Der-Einbruch-${VERSION}-windows.zip" .)
+          (cd linux && zip -q -r "../../Der-Einbruch-${VERSION}-linux.zip" .)
+          cd ..
+          sha256sum Der-Einbruch-${VERSION}-*.zip > SHA256SUMS.txt
+
+      - name: Änderungsliste seit dem letzten RC
+        run: |
+          VORHER=$(git tag --list 'rc*' --sort=-v:refname | grep -v "^${GITHUB_REF_NAME}$" | head -1 || true)
+          if [ -n "$VORHER" ]; then BEREICH="${VORHER}..${GITHUB_REF_NAME}"; else BEREICH="${GITHUB_REF_NAME}"; fi
+          { echo "## Änderungen seit ${VORHER:-Beginn}"; echo; git log --no-merges --pretty="- %s" "$BEREICH"; } > AENDERUNGEN.md
+
+      - name: Release veröffentlichen
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Der Einbruch ${{ github.ref_name }}"
+          body_path: AENDERUNGEN.md
+          prerelease: true
+          files: |
+            Der-Einbruch-*-windows.zip
+            Der-Einbruch-*-linux.zip
+            SHA256SUMS.txt
