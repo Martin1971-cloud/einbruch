@@ -327,12 +327,15 @@ func _on_look() -> void:
 
 
 func _on_informant() -> void:
+	if bool(Game.quelle_of(_selected).get("inf", false)):
+		_msg.text = Texte.t("stadt.erm_inf_bereits")
+		return
 	var price: int = int(GameData.TARGETS[_selected].price_intel)
 	if Game.money < price:
 		_msg.text = Texte.t("stadt.zu_wenig_geld")
 		return
 	Game.money -= price
-	Game.intel[_selected] = mini(int(Game.intel[_selected]) + 1, 2)
+	Game.intel[_selected] = 2  # Informant liefert alle Insider-Informationen
 	var q: Dictionary = Game.quelle_of(_selected)
 	q["inf"] = true
 	Game.ermittlung_quelle[_selected] = q
