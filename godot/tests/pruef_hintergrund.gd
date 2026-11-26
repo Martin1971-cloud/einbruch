@@ -27,6 +27,11 @@ func _process(_d: float) -> bool:
 			"stadt2":
 				G.intel["kiosk"] = 2
 				main.go("town")
+			"plan_juwelier":
+				G.target_id = "juwelier"
+				G.unlocked["juwelier"] = true
+				G.intel["juwelier"] = 1
+				main.go("planner")
 			"erm_look1":
 				G.intel["kiosk"] = 1
 				G.ermittlung_quelle["kiosk"] = {"look": 1, "inf": false}

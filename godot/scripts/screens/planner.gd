@@ -164,6 +164,10 @@ func _left_column() -> Control:
 	info.add_child(_l(Texte.t("plan.vorhaben"), 11, Color(0.6, 0.66, 0.74)))
 	info.add_child(_l(Texte.d(target.name), 17, Color(0.97, 0.85, 0.55)))
 	info.add_child(_l(Texte.t("plan.beutewert") % GameData.loot_text(target, int(Game.intel.get(target.id, 0))), 13, Color(0.85, 0.88, 0.94)))
+	if target.has("panel"):
+		var alarm := _l(Texte.t("plan.alarm_sichert") % _gesichert_namen(target), 12, Color(0.6, 0.85, 1.0))
+		alarm.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		info.add_child(alarm)
 	col.add_child(_card(info))
 	_checklist = VBoxContainer.new()
 	_checklist.add_theme_constant_override("separation", 4)
@@ -541,6 +545,18 @@ func _refresh_all() -> void:
 	_refresh_grid()
 	_refresh_team()
 	_refresh_checklist()
+
+
+## Gesicherte Objekte der Alarmanlage mit Anzeigenamen (Türen direkt, Vitrinen über den Beutenamen).
+func _gesichert_namen(t: Dictionary) -> String:
+	var namen: Array = []
+	for g in t.get("gesichert", []):
+		var name := str(g)
+		for l in t.get("loot", []):
+			if str(l.get("id", "")) == name:
+				name = Texte.d(str(l.name))
+		namen.append(name)
+	return ", ".join(namen) if namen.size() > 0 else Texte.t("plan.alarm_keine")
 
 
 func _refresh_grid() -> void:

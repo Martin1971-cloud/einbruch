@@ -241,6 +241,8 @@ const TARGETS := {
 			{"name": "EINGANG", "pos": [1, 7]},
 		],
 		"panel": {"name": "Alarmpanel", "pos": [10, 7], "res": 50, "cplx": 45},
+		# Gesichert: Türen (Name) und Vitrinen (Objekt-ID). Öffnen bei eingeschalteter Anlage löst Alarm aus.
+		"gesichert": ["Mitteltür", "Tresortür", "Eingangstür"],
 		"sensors": [
 			{"name": "Mikrofon Korridor", "pos": [13, 8], "threshold": 20.0},
 		],
@@ -422,6 +424,7 @@ const TARGETS := {
 			{"pos": [9, 6], "name": "Stahltür", "res": 80, "cplx": 60, "locked": true, "kind": "stahl"},
 		],
 		"panel": {"name": "Alarmpanel", "pos": [3, 3], "res": 45, "cplx": 40},
+		"gesichert": ["Eingangstür", "Stahltür"],
 		"scheinwerfer": [[6, 11]],
 		"sirene": [9, 1],
 		"points": {
@@ -641,6 +644,7 @@ const TARGETS := {
 			{"pos": [8, 2], "name": "Schaufenster", "res": 20, "cplx": 20, "locked": true, "kind": "glas"},
 		],
 		"panel": {"name": "Alarmpanel", "pos": [3, 3], "res": 50, "cplx": 45},
+		"gesichert": ["Eingangstür", "Stahltür", "Schaufenster", "diamant", "perlen", "tresor"],
 		"sensors": [
 			{"name": "Mikrofon Verkauf", "pos": [5, 8], "threshold": 25.0},
 			# Glasbruchmelder: reagiert schon auf ein zerbrochenes Schaufenster (niedrige Schwelle)

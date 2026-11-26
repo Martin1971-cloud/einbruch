@@ -34,6 +34,7 @@ var points := {}
 var doors := {}        # Vector2i -> Dictionary
 var open_cells := {}   # Vector2i -> true
 var panel := {}
+var gesichert: Array = []  # Namen der Türen und IDs der Vitrinen, die die Anlage sichert
 var stairs := {}   # Treppe: Feld (grob) -> Feld auf der anderen Etage
 const STAIRS_TIME := 8.0  # Original: PLANING_TIME_USE_STAIRS
 var sensors := []
@@ -105,6 +106,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 		var sb := Vector2i(int(pair[2]), int(pair[3]))
 		stairs[sa] = sb
 		stairs[sb] = sa
+	gesichert = target.get("gesichert", [])
 	if target.has("panel"):
 		panel = {"name": target.panel.name, "pos": _v2i(target.panel.pos), "res": float(target.panel.res), "cplx": float(target.panel.cplx), "bypassed": false}
 	for s in target.sensors:
@@ -1055,6 +1057,13 @@ func _sight_clear(a: Vector2, b: Vector2) -> bool:
 
 
 ## Öffnen von Hand: Das Schloss muss offen (entriegelt) sein. Dauert OPEN_TIME.
+## Alarmkontakt: ein gesichertes Objekt, das bei eingeschalteter Anlage geöffnet wird, löst Alarm aus (wie im Original).
+func _pruefe_alarmkontakt(name: String) -> void:
+	if panel.is_empty() or panel.bypassed or not gesichert.has(name):
+		return
+	_alarm(str(panel.name), "GUARD", 0.0)
+
+
 func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:
 	var cell := _cell_of(a, "on")
 	var key := "obj:%d,%d" % [cell.x, cell.y]
@@ -1098,6 +1107,7 @@ func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:
 		loot[case_id].opened = true
 		c["msg"] = Texte.t("sim.msg_offen") % _case_word(loot[case_id])
 		_log(Texte.t("sim.oeffnet_vitrine") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
+	_pruefe_alarmkontakt(str(door.name) if door != null else case_id)
 	_next(c)
 
 
