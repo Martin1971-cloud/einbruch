@@ -26,7 +26,7 @@ Einzelne Tests laufen mit:
 
     godot --headless --path godot --script res://tests/test_sim.gd
 
-`test_sim.gd`: Regeln der Simulation. `smoke_flow.gd`: kompletter Ablauf Stadt → Organisation → Planung → Ausführung → Auswertung.
+`test_sim.gd`: Regeln der Simulation. `durchlauf_komplett.gd`: kompletter Ablauf Titel → Stadt → Organisation → Planung → Ausführung → Auswertung → Tagebuch, mit Bildern (Aufruf mit `-- en` für Englisch).
 
 Die Texttabelle prüft `python3 godot/tools/texte_pruefen.py`: fehlende englische Fassungen (Fehler) und deutsche Texte, die fest im Code stehen (Warnung).
 
