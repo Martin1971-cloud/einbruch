@@ -89,6 +89,8 @@ const ORDER := ["kiosk", "curiosity", "juwelier", "museum"]
 const CARS := {
 	"limo": {"id": "limo", "name": "fahrzeug.limo.name", "bild": "res://assets/art/fz_leihwagen.webp", "seite": "res://assets/art/seite_leihwagen.webp", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 130.0, "ps": 150.0, "laderaum": "mittel", "stufe": 0,
 		"info": "fahrzeug.limo.info"},
+	"kleinwagen": {"id": "kleinwagen", "name": "fahrzeug.kleinwagen.name", "seite": "res://assets/art/seite_kleiner_pkw.webp", "rent": 0, "price": 8000, "eta_base": 18.0, "speed": 145.0, "ps": 120.0, "laderaum": "klein", "stufe": 0,
+		"info": "fahrzeug.kleinwagen.info"},
 	"kombi": {"id": "kombi", "name": "fahrzeug.kombi.name", "bild": "res://assets/art/fz_kombi_modern.webp", "seite": "res://assets/art/seite_kombi.webp", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
 		"info": "fahrzeug.kombi.info"},
 	"sport": {"id": "sport", "name": "fahrzeug.sport.name", "bild": "res://assets/art/fz_sportwagen.webp", "seite": "res://assets/art/seite_sportwagen.webp", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "laderaum": "klein", "stufe": 2,
