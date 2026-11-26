@@ -7,6 +7,8 @@ var _out := "/tmp"
 
 func _initialize() -> void:
 	var a := OS.get_cmdline_user_args()
+	if OS.get_cmdline_user_args().has("en"):
+		Texte.sprache = "en"
 	if a.size() > 0:
 		_out = a[0]
 

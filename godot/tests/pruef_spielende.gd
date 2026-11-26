@@ -7,6 +7,8 @@ var _main: Node
 
 func _initialize() -> void:
 	var args := OS.get_cmdline_user_args()
+	if OS.get_cmdline_user_args().has("en"):
+		Texte.sprache = "en"
 	if args.size() > 0:
 		_out = args[0]
 
