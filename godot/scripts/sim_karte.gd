@@ -440,6 +440,17 @@ func blockers_between(a: Vector2, b: Vector2) -> float:
 	return float(n)
 
 ## Bezeichnung eines Behälters mit Beute: Kasse oder Vitrine.
+## Name des Ziels einer Bewegung: Ort, Feld mit Koordinaten oder Punkt in Unterfeldern.
+func _ziel_name(a: Dictionary) -> String:
+	if a.has("to"):
+		return _disp(str(a.to))
+	if a.has("fine"):
+		return Texte.t("sim.punkt") % [int(a.fine[0]), int(a.fine[1])]
+	if a.has("cell"):
+		return Texte.t("plan.feld_pos") % [int(a.cell[0]), int(a.cell[1])]
+	return ""
+
+
 func _case_word(l: Dictionary) -> String:
 	return Texte.t("obj.kasse") if str(l.get("id", "")) == "kasse" else Texte.t("obj.vitrine")
 
@@ -512,7 +523,7 @@ func _ev_obj(a: Dictionary) -> String:
 		"TAKE":
 			return _disp(str(a.get("loot", "")))
 		"MOVE":
-			return _disp(str(a.get("to", ""))) if a.has("to") else "Feld"
+			return _ziel_name(a)
 		"CALL_CAR":
 			return _disp("fluchtwagen")
 	return ""

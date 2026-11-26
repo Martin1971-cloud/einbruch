@@ -121,9 +121,7 @@ func _do_move(c: Dictionary, a: Dictionary, dt: float) -> void:
 		_next(c)
 
 func _goal_name(a: Dictionary) -> String:
-	if a.has("fine"):
-		return Texte.t("sim.punkt") % [int(a.fine[0]), int(a.fine[1])]
-	return _disp(str(a.get("to", ""))) if a.has("to") else "Feld"
+	return _ziel_name(a)
 
 func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 	var tool: Dictionary = GameData.TOOLS[a.tool]
