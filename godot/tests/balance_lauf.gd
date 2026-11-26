@@ -3,13 +3,35 @@ extends SceneTree
 ## Aufruf: godot --headless --path . --script res://tests/balance_lauf.gd
 
 
+## Grundausrüstung für jedes Teammitglied (einmalige Anschaffung, wirkt auch in der Simulation).
+const GEAR_BASIS := "gloves"
+
+
 func _crew(id: String) -> Dictionary:
 	for c in GameData.CREW:
 		if c.id == id:
 			var d: Dictionary = c.duplicate(true)
-			d["gear"] = []
+			d["gear"] = [GEAR_BASIS]
 			return d
 	return {}
+
+
+## Einmalige Kosten der Werkzeuge: jedes Werkzeug, das in irgendeinem Plan vorkommt, wird einmal gekauft.
+func _werkzeug_kosten(plans: Dictionary) -> int:
+	var nutzt := {}
+	for pid in plans:
+		for a in plans[pid]:
+			if a.t == "TOOL":
+				nutzt[str(a.tool)] = true
+	var summe := 0
+	for w in nutzt:
+		summe += int(GameData.TOOLS[w].price)
+	return summe
+
+
+## Einmalige Kosten der Kleidung: je Teammitglied (inkl. Otto).
+func _kleidung_kosten(anzahl: int) -> int:
+	return anzahl * int(GameData.GEAR[GEAR_BASIS].price)
 
 
 func _run_plans(target_id: String, team_ids: Array, plans: Dictionary) -> Dictionary:
@@ -26,7 +48,8 @@ func _run_plans(target_id: String, team_ids: Array, plans: Dictionary) -> Dictio
 	var fees := 0
 	for c in team:
 		fees += int(c.fee)
-	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CARS.limo.rent), "time": s.time, "alarm": s.alarm_active}
+	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CARS.limo.rent), "time": s.time, "alarm": s.alarm_active,
+		"crew": team.size(), "werkzeug": _werkzeug_kosten(plans)}
 
 
 func _run(target_id: String, team_ids: Array, plan: Array) -> Dictionary:
@@ -49,7 +72,8 @@ func _run(target_id: String, team_ids: Array, plan: Array) -> Dictionary:
 	var fees := 0
 	for c in team:
 		fees += int(c.fee)
-	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CARS.limo.rent), "time": s.time, "alarm": s.alarm_active}
+	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CARS.limo.rent), "time": s.time, "alarm": s.alarm_active,
+		"crew": team.size(), "werkzeug": _werkzeug_kosten(plans)}
 
 
 ## Verteilt den Plan auf das Team: der Eingang bleibt bei Teodor, jeder Werkzeug-Block (Gehen + Werkzeug + Öffnen + Beute)
@@ -167,23 +191,27 @@ func _plans() -> Dictionary:
 	}
 
 
+func _zeile(r: Dictionary) -> String:
+	var net: int = int(r.payout) - int(r.fees) - int(r.car)
+	var ausr: int = int(r.werkzeug) + _kleidung_kosten(int(r.crew))
+	var kontostand: int = Game.START_MONEY - ausr + net
+	return "  %d Pers.: %-16s Auszahlung %7d  Laufkosten %6d  Ergebnis %+8d  Ausrüstung einmalig %6d  Kontostand nach 1. Einbruch %+8d  Zeit %4.0f s  Alarm %s" % [
+		int(r.crew), str(r.status), int(r.payout), int(r.fees) + int(r.car), net, ausr, kontostand, float(r.time), str(r.alarm)]
+
+
 func _init() -> void:
 	var plans := _plans()
 	var teams := [["teo"], ["teo", "ilja"], ["teo", "ilja", "rosa"]]
+	print("Startgeld: %d €, Grundausrüstung je Person: %s" % [Game.START_MONEY, GEAR_BASIS])
 	for tid in ["kiosk", "curiosity", "juwelier"]:
 		print("== %s ==" % tid)
 		for t in teams:
-			var r := _run(tid, t, plans[tid])
-			var net: int = int(r.payout) - int(r.fees) - int(r.car)
-			print("  Team %d: %-22s Auszahlung %7d  Kosten %6d  Ergebnis %+7d  Zeit %5.0f s  Alarm %s" % [t.size(), str(r.status), int(r.payout), int(r.fees) + int(r.car), net, float(r.time), str(r.alarm)])
-	print("== mit verteilter Arbeit (gleiche Teams, Arbeit geteilt) ==")
+			print(_zeile(_run(tid, t, plans[tid])))
+	print("== mit verteilter Arbeit ==")
 	for tid in ["kiosk", "curiosity", "juwelier"]:
 		print("== %s verteilt ==" % tid)
 		for t in teams:
 			if t.size() < 2:
 				continue
-			var ids: Array = t
-			var r := _run_plans(tid, ids, _verteilt(plans[tid], ids))
-			var net: int = int(r.payout) - int(r.fees) - int(r.car)
-			print("  Team %d: %-22s Auszahlung %7d  Kosten %6d  Ergebnis %+7d  Zeit %5.0f s  Alarm %s" % [t.size(), str(r.status), int(r.payout), int(r.fees) + int(r.car), net, float(r.time), str(r.alarm)])
+			print(_zeile(_run_plans(tid, t, _verteilt(plans[tid], t))))
 	quit(0)
