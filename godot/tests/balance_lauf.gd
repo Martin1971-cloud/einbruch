@@ -92,7 +92,10 @@ func _verteilt(plan: Array, ids: Array) -> Dictionary:
 	var out := {}
 	for id in ids:
 		out[id] = []
-	var zaehler := 0
+	# Zeitabschätzung je Person: wer am frühesten frei ist, bekommt den nächsten Block (Helfer warten zuerst 18 s).
+	var frei := {}
+	for id in ids:
+		frei[id] = 0.0 if id == "teo" else 18.0
 	var letzter := "teo"
 	var oben := false
 	for i in range(blocks.size()):
@@ -102,9 +105,12 @@ func _verteilt(plan: Array, ids: Array) -> Dictionary:
 				who = letzter
 			else:
 				var kandidaten := _kann(blocks[i], ids)
-				who = kandidaten[zaehler % kandidaten.size()]
-				zaehler += 1
+				who = kandidaten[0]
+				for k in kandidaten:
+					if float(frei[k]) < float(frei[who]):
+						who = k
 		out[who].append_array(blocks[i])
+		frei[who] = float(frei[who]) + _dauer(blocks[i])
 		letzter = who
 		if _hat_treppe(blocks[i]):
 			oben = not oben
@@ -114,6 +120,24 @@ func _verteilt(plan: Array, ids: Array) -> Dictionary:
 			out[id].append({"t": "MOVE", "to": "fluchtwagen"})
 	out["teo"].append_array(ende)
 	return out
+
+
+## Grobe Zeitabschätzung eines Blocks in Sekunden (Gehen, Werkzeug, Öffnen, Beute, Treppe).
+func _dauer(block: Array) -> float:
+	var sec := 0.0
+	for a in block:
+		match a.t:
+			"MOVE":
+				sec += 0.0 if a.get("to", "") == "fluchtwagen" else 8.0
+			"TOOL":
+				sec += float(GameData.TOOLS[a.tool].time)
+			"TREPPE":
+				sec += 3.0
+			"WAIT":
+				sec += float(a.get("sec", 0.0))
+			_:
+				sec += 2.0
+	return sec
 
 
 func _hat_treppe(block: Array) -> bool:
