@@ -8,6 +8,7 @@ var money := START_MONEY
 var day := 1
 var hour := START_HOUR
 var heat := 0.0
+const HEAT_ABBAU_PRO_TAG := 10.0
 var intel := {}          # target_id -> Stufe 0..2
 ## Woher die Informationen stammen: target_id -> {"look": 0..2 (Umsehen), "inf": bool (Informant)}
 var ermittlung_quelle := {}
@@ -249,6 +250,7 @@ func advance_hours(h: float) -> void:
 	while hour >= 24.0:
 		hour -= 24.0
 		day += 1
+		heat = maxf(0.0, heat - HEAT_ABBAU_PRO_TAG)  # Fahndungslevel klingt jeden Tag ab
 
 
 func sleep_until_morning() -> void:
