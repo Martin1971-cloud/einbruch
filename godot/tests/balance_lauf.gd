@@ -1,10 +1,10 @@
 extends SceneTree
-## Balancing-Testdurchlauf (ohne Grafik): je Gebäude drei Teamgrößen, Ergebnis, Auszahlung und Kosten.
+## Balancing-Testdurchlauf (ohne Grafik): je Gebäude, Fahrzeug und Teamgröße Ergebnis, Auszahlung und Kosten.
 ## Aufruf: godot --headless --path . --script res://tests/balance_lauf.gd
-
 
 ## Grundausrüstung für jedes Teammitglied (einmalige Anschaffung, wirkt auch in der Simulation).
 const GEAR_BASIS := "gloves"
+const AUTOS := ["limo", "kleinwagen", "kleinlaster", "kombi", "sport"]
 
 
 func _crew(id: String) -> Dictionary:
@@ -34,37 +34,23 @@ func _kleidung_kosten(anzahl: int) -> int:
 	return anzahl * int(GameData.GEAR[GEAR_BASIS].price)
 
 
-func _run_plans(target_id: String, team_ids: Array, plans: Dictionary) -> Dictionary:
-	var team := []
-	for id in team_ids:
-		team.append(_crew(id))
-	if not team_ids.has("otto"):
-		team.append(_crew("otto"))
-	var s := Sim.create(GameData.TARGETS[target_id], team, plans, GameData.car_now("limo", 85.0))
-	var n := 0
-	while s.status == "RUNNING" and n < 20000:
-		s.step(Sim.DT)
-		n += 1
-	var fees := 0
-	for c in team:
-		fees += int(c.fee)
-	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CARS.limo.rent), "time": s.time, "alarm": s.alarm_active,
-		"crew": team.size(), "werkzeug": _werkzeug_kosten(plans)}
-
-
-func _run(target_id: String, team_ids: Array, plan: Array) -> Dictionary:
+## Ein Lauf mit festem Plan: Teodor führt den Einbruch aus, die anderen gehen zum Wagen.
+func _run(target_id: String, team_ids: Array, plan: Array, car: String) -> Dictionary:
 	var team := []
 	var plans := {}
 	for id in team_ids:
 		team.append(_crew(id))
-	# Teodor macht den Einbruch, die anderen gehen zum Wagen
 	for id in team_ids:
 		plans[id] = [{"t": "MOVE", "to": "fluchtwagen"}]
 	plans["teo"] = plan.duplicate(true)
-	plans["otto"] = [{"t": "MOVE", "to": "fluchtwagen"}]
 	if not team_ids.has("otto"):
 		team.append(_crew("otto"))
-	var s := Sim.create(GameData.TARGETS[target_id], team, plans, GameData.car_now("limo", 85.0))
+	plans["otto"] = [{"t": "MOVE", "to": "fluchtwagen"}]
+	return _lauf(target_id, team, plans, car)
+
+
+func _lauf(target_id: String, team: Array, plans: Dictionary, car: String) -> Dictionary:
+	var s := Sim.create(GameData.TARGETS[target_id], team, plans, GameData.car_now(car, 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 20000:
 		s.step(Sim.DT)
@@ -72,19 +58,19 @@ func _run(target_id: String, team_ids: Array, plan: Array) -> Dictionary:
 	var fees := 0
 	for c in team:
 		fees += int(c.fee)
-	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CARS.limo.rent), "time": s.time, "alarm": s.alarm_active,
-		"crew": team.size(), "werkzeug": _werkzeug_kosten(plans)}
+	return {"status": s.status, "payout": s.payout, "fees": fees, "time": s.time, "alarm": s.alarm_active,
+		"crew": team.size(), "werkzeug": _werkzeug_kosten(plans), "car": car}
 
 
 ## Verteilt den Plan auf das Team: der Eingang bleibt bei Teodor, jeder Werkzeug-Block (Gehen + Werkzeug + Öffnen + Beute)
-## geht reihum an die Teammitglieder. Alle gehen am Ende zum Fluchtwagen, Teodor ruft den Wagen.
+## geht reihum an die Teammitglieder, die das Werkzeug können. Alle warten vor der Tür, bis der Eingang offen ist.
 func _verteilt(plan: Array, ids: Array) -> Dictionary:
 	var blocks: Array = []
 	var cur: Array = []
 	var pending_move: Dictionary = {}
 	var ende: Array = []
 	for a in plan:
-		if a.t == "CALL_CAR" or (a.t == "MOVE" and a.get("to", "") == "Fluchtwagen"):
+		if a.t == "CALL_CAR" or (a.t == "MOVE" and a.get("to", "") == "fluchtwagen"):
 			ende.append(a)
 			continue
 		if a.t == "MOVE" and a.has("cell"):
@@ -97,7 +83,6 @@ func _verteilt(plan: Array, ids: Array) -> Dictionary:
 			if not cur.is_empty():
 				blocks.append(cur)
 			cur = []
-		# Gehbewegung und Aktion (Werkzeug, Beute, Treppe) bleiben im selben Block
 		if cur.is_empty() and not pending_move.is_empty():
 			cur.append(pending_move)
 			pending_move = {}
@@ -107,10 +92,9 @@ func _verteilt(plan: Array, ids: Array) -> Dictionary:
 	var out := {}
 	for id in ids:
 		out[id] = []
-	# erster Block (Eingang) gehört Teodor, die übrigen reihum an alle, die das Werkzeug können (Fähigkeit mindestens erreicht)
 	var zaehler := 0
 	var letzter := "teo"
-	var oben := false   # Zwischen Treppe hinauf und Treppe hinunter bleibt eine Person zusammen
+	var oben := false
 	for i in range(blocks.size()):
 		var who: String = "teo"
 		if i > 0:
@@ -126,7 +110,6 @@ func _verteilt(plan: Array, ids: Array) -> Dictionary:
 			oben = not oben
 	for id in ids:
 		if id != "teo":
-			# Warten vor der Tür, bis Teodor den Eingang geöffnet hat (sonst scheitern die Wege sofort)
 			out[id] = [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "WAIT", "sec": 18.0}] + out[id]
 			out[id].append({"t": "MOVE", "to": "fluchtwagen"})
 	out["teo"].append_array(ende)
@@ -164,9 +147,20 @@ func _kann(block: Array, ids: Array) -> Array:
 	return ok if not ok.is_empty() else ["teo"]
 
 
+## Aufgaben je Person (ohne Gehen und Warten), zur Diagnose der Verteilung.
+func _aufgaben(plans: Dictionary) -> String:
+	var teile := []
+	for id in plans:
+		var n := 0
+		for a in plans[id]:
+			if a.t != "MOVE" and a.t != "WAIT":
+				n += 1
+		teile.append("%s %d" % [id, n])
+	return ", ".join(teile)
+
+
 func _plans() -> Dictionary:
 	var entry := [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"}]
-	var back := [{"t": "MOVE", "to": "fluchtwagen"}]
 	return {
 		"kiosk": [
 			{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"},
@@ -192,11 +186,13 @@ func _plans() -> Dictionary:
 
 
 func _zeile(r: Dictionary) -> String:
-	var net: int = int(r.payout) - int(r.fees) - int(r.car)
-	var ausr: int = int(r.werkzeug) + _kleidung_kosten(int(r.crew))
+	var car_rent := int(GameData.CARS[r.car].rent)
+	var car_kauf := 0 if car_rent > 0 else int(GameData.CARS[r.car].price)
+	var net: int = int(r.payout) - int(r.fees) - car_rent
+	var ausr: int = int(r.werkzeug) + _kleidung_kosten(int(r.crew)) + car_kauf
 	var kontostand: int = Game.START_MONEY - ausr + net
-	return "  %d Pers.: %-16s Auszahlung %7d  Laufkosten %6d  Ergebnis %+8d  Ausrüstung einmalig %6d  Kontostand nach 1. Einbruch %+8d  Zeit %4.0f s  Alarm %s" % [
-		int(r.crew), str(r.status), int(r.payout), int(r.fees) + int(r.car), net, ausr, kontostand, float(r.time), str(r.alarm)]
+	return "  %-10s %d Pers.: %-16s Auszahlung %6d  Laufkosten %6d  Ergebnis %+8d  Erstausstattung %6d  Kontostand %+8d  Zeit %4.0f s  Alarm %s" % [
+		r.car, int(r.crew), str(r.status), int(r.payout), int(r.fees) + car_rent, net, ausr, kontostand, float(r.time), str(r.alarm)]
 
 
 func _init() -> void:
@@ -205,13 +201,22 @@ func _init() -> void:
 	print("Startgeld: %d €, Grundausrüstung je Person: %s" % [Game.START_MONEY, GEAR_BASIS])
 	for tid in ["kiosk", "curiosity", "juwelier"]:
 		print("== %s ==" % tid)
-		for t in teams:
-			print(_zeile(_run(tid, t, plans[tid])))
-	print("== mit verteilter Arbeit ==")
+		for car in AUTOS:
+			for t in teams:
+				print(_zeile(_run(tid, t, plans[tid], car)))
+	print("== mit verteilter Arbeit (Otto gehört jetzt zum Team der Aufgaben) ==")
 	for tid in ["kiosk", "curiosity", "juwelier"]:
 		print("== %s verteilt ==" % tid)
-		for t in teams:
-			if t.size() < 2:
-				continue
-			print(_zeile(_run_plans(tid, t, _verteilt(plans[tid], t))))
+		for t in [["teo", "otto"], ["teo", "ilja", "otto"], ["teo", "ilja", "rosa", "otto"]]:
+			var verteilt := _verteilt(plans[tid], t)
+			var r := _lauf(tid, _teamliste(t), verteilt, "limo")
+			print(_zeile(r))
+			print("      Aufgaben je Person: %s" % _aufgaben(verteilt))
 	quit(0)
+
+
+func _teamliste(ids: Array) -> Array:
+	var team := []
+	for id in ids:
+		team.append(_crew(id))
+	return team

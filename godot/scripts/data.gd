@@ -776,7 +776,7 @@ const POLIZEI := {
 	"kiosk": {"reaktion": 5.0, "km": 0.84},
 	"testhaus": {"reaktion": 5.0, "km": 0.8},  # Prüfgebäude, nicht auf der Karte
 	"curiosity": {"reaktion": 5.0, "km": 0.85},
-	"juwelier": {"reaktion": 2.0, "km": 0.86},
+	"juwelier": {"reaktion": 2.0, "km": 0.86, "fahrt_min": 0.5},  # Fahrzeit nur hier verkürzt (Minuten)
 	"museum": {"reaktion": 5.0, "km": 0.6},
 }
 
@@ -786,7 +786,7 @@ static func polizei(id: String) -> Dictionary:
 	if not POLIZEI.has(id):
 		return {"zeit": 60.0, "reaktion_s": 60.0, "fahrt_s": 0.0, "lo": 1.0, "hi": 1.0}  # ohne Eintrag: Standard von 60 s, wie bisher
 	var p: Dictionary = POLIZEI[id]
-	var fahrt: float = float(p.km) * FAHRT_FAKTOR + FAHRT_PUFFER
+	var fahrt: float = float(p.fahrt_min) if p.has("fahrt_min") else float(p.km) * FAHRT_FAKTOR + FAHRT_PUFFER
 	var min_: float = float(p.reaktion) + fahrt
 	return {"zeit": min_ * 60.0, "reaktion_s": float(p.reaktion) * 60.0, "fahrt_s": fahrt * 60.0, "lo": float(p.reaktion) + fahrt * (1.0 - FAHRT_SPANNE), "hi": float(p.reaktion) + fahrt * (1.0 + FAHRT_SPANNE)}
 
