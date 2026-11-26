@@ -90,7 +90,7 @@ func test_mic_alarm_from_noise() -> void:
 	var s := make({}, team_of("teo", "none"))
 	s._noise(Sim.center(Vector2i(13, 7)), 65.0)
 	check(s.countdown >= 0.0 and s.alarm_active, "lauter Lärm neben dem Mikrofon löst Alarm aus")
-	check(absf(s.countdown - 60.0) < 0.01, "Polizei in 60 s")
+	check(absf(s.countdown - GameData.polizei("museum").zeit) < 0.01, "Polizei nach Tabelle (Museum)")
 	var q := make({}, team_of("teo", "none"))
 	q._noise(Sim.center(Vector2i(2, 5)), 2.0)
 	check(q.countdown < 0.0, "leiser Lärm bleibt unter der Schwelle")
@@ -102,7 +102,7 @@ func test_guard_alarm_timing() -> void:
 	var g: Dictionary = s.guards[0]
 	s._update_suspicion(g, 100.0)
 	check(g.state == "ALARMED", "Verdacht 100 führt zu ALARMED")
-	check(absf(s.countdown - 64.0) < 0.01, "Wache: 60 s Polizei + 4 s Reaktion")
+	check(absf(s.countdown - (GameData.polizei("museum").zeit + 4.0)) < 0.01, "Wache: Polizeizeit + 4 s Reaktion")
 	var st := make({}, team_of("teo", "none"))
 	st._update_suspicion(st.guards[2], 100.0)
 	check(absf(st.countdown - 13.5) < 0.01, "Streife: 12 s + 1,5 s Reaktion")

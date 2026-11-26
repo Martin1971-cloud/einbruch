@@ -711,33 +711,40 @@ static func loot_text(target: Dictionary, lvl: int) -> String:
 	return "%s – %s €" % [_grp(lo), _grp(hi)]
 
 
-## Polizeizeit nach Alarm: eine Tabelle für alle Gebäude (zum Balancing an dieser Stelle ändern).
-## zeit = Sekunden bis die Polizei nach dem Alarm eintrifft, spanne = Abweichung ohne Informant (0.25 = ±25 %).
-## Mit Informant steht der genaue Wert da, die Simulation rechnet immer mit "zeit".
+## Polizeizeit nach Alarm = Reaktionszeit + Fahrzeit vom Revier.
+## Fahrzeit (Minuten) = Luftlinie (km) x 2,4 + 3 (Umweg durch das Straßennetz, Verkehr, Ausrücken).
+## Tabelle: reaktion = Minuten bis die Streife ausrückt, km = Luftlinie vom Polizeirevier (Karte ~3 km breit).
+## Die Spanne gilt nur für die Fahrt (FAHRT_SPANNE). Mit Informant steht der genaue Wert da.
+const REVIER_REAKTION_STANDARD := 5.0
+const FAHRT_FAKTOR := 2.4
+const FAHRT_PUFFER := 3.0
+const FAHRT_SPANNE := 0.2
 const POLIZEI := {
-	"kiosk": {"zeit": 600.0, "spanne": 0.25},
-	"testhaus": {"zeit": 300.0, "spanne": 0.25},
-	"curiosity": {"zeit": 880.0, "spanne": 0.25},
-	"juwelier": {"zeit": 600.0, "spanne": 0.25},  # bewusst kürzer als im Original (900)
-	"museum": {"zeit": 60.0, "spanne": 0.25},  # Stadtmuseum: noch nicht festgelegt, Standardwert
+	"kiosk": {"reaktion": 5.0, "km": 0.84},
+	"testhaus": {"reaktion": 5.0, "km": 0.8},  # Prüfgebäude, nicht auf der Karte
+	"curiosity": {"reaktion": 5.0, "km": 0.85},
+	"juwelier": {"reaktion": 5.0, "km": 0.86},
+	"museum": {"reaktion": 5.0, "km": 0.6},
 }
-const POLIZEI_STANDARD := {"zeit": 60.0, "spanne": 0.25}
 
 
-## Polizeizeit eines Gebäudes aus der Tabelle (Standard, falls nicht eingetragen).
+## Polizeizeit eines Gebäudes: zeit in Sekunden (Simulation), lo/hi in Minuten (Spanne ohne Informant).
 static func polizei(id: String) -> Dictionary:
-	return POLIZEI.get(id, POLIZEI_STANDARD)
+	if not POLIZEI.has(id):
+		return {"zeit": 60.0, "lo": 1.0, "hi": 1.0}  # ohne Eintrag: Standard von 60 s, wie bisher
+	var p: Dictionary = POLIZEI[id]
+	var fahrt: float = float(p.km) * FAHRT_FAKTOR + FAHRT_PUFFER
+	var min_: float = float(p.reaktion) + fahrt
+	return {"zeit": min_ * 60.0, "lo": float(p.reaktion) + fahrt * (1.0 - FAHRT_SPANNE), "hi": float(p.reaktion) + fahrt * (1.0 + FAHRT_SPANNE)}
 
 
 ## Polizeizeit nach Alarm als Text: genau mit Informant, sonst als Spanne in Minuten.
 static func police_text(target: Dictionary, exakt: bool) -> String:
 	var p := polizei(str(target.get("id", "")))
-	var base: float = float(p.zeit)
 	if exakt:
-		return "%d Min." % maxi(1, roundi(base / 60.0))
-	var sp: float = float(p.spanne)
-	var lo := maxi(1, roundi(base * (1.0 - sp) / 60.0))
-	var hi := maxi(lo, roundi(base * (1.0 + sp) / 60.0))
+		return "%d Min." % maxi(1, roundi(float(p.zeit) / 60.0))
+	var lo := maxi(1, roundi(float(p.lo)))
+	var hi := maxi(lo, roundi(float(p.hi)))
 	return "%d–%d Min." % [lo, hi]
 
 
