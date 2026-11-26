@@ -18,6 +18,7 @@ func _process(_delta: float) -> bool:
 	if _frames == 2:
 		G = root.get_node("/root/Game")
 		G.reset()
+		G.car_id = "limo"  # Leihwagen im Autoverleih gemietet
 		G.money = 30000  # Beispielteam kostet mehr als das Startkapital; hier nur die Teamlogik prüfen
 		G.intel["kiosk"] = 1  # Teamplanung erst nach Ermittlung (Stufe 1)
 		_main = load("res://scenes/main.tscn").instantiate()

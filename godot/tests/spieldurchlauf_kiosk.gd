@@ -19,6 +19,7 @@ func _process(_d: float) -> bool:
 	if _frames == 2:
 		var G = root.get_node("/root/Game")
 		G.reset()
+		G.car_id = "limo"  # Leihwagen im Autoverleih gemietet
 		G.money = 30000  # Beispielteam kostet mehr als das Startkapital
 		_main = load("res://scenes/main.tscn").instantiate()
 		root.add_child(_main)

@@ -437,6 +437,9 @@ func _on_confirm() -> void:
 	if burglars.is_empty():
 		_msg.text = Texte.t("org.msg_einbrecher")
 		return
+	if Game.car_id == "":
+		_msg.text = Texte.t("org.msg_kein_wagen")
+		return
 	if Game.money < _cost():
 		_msg.text = Texte.t("org.msg_geld")
 		return

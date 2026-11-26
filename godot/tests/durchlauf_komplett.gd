@@ -27,6 +27,7 @@ func _start() -> void:
 		Texte.sprache = "en"
 	_G = root.get_node("/root/Game")
 	_G.reset()
+	_G.car_id = "limo"  # Leihwagen im Autoverleih gemietet
 	_G.money = 30000  # Beispielteam kostet mehr als das Startkapital
 	_G.tools_owned["lockpick"] = true
 	_G.tools_owned["crowbar"] = true

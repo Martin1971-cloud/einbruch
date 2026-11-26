@@ -35,7 +35,7 @@ func _ready() -> void:
 	add_child(UI.margin(root, 14))
 	var head := HBoxContainer.new()
 	head.add_theme_constant_override("separation", 12)
-	var title := Texte.t("shop.titel_laden") if kind == "laden" else Texte.t("shop.titel_autohaus")
+	var title := Texte.t("shop.titel_laden") if kind == "laden" else (Texte.t("shop.titel_verleih") if kind == "verleih" else Texte.t("shop.titel_autohaus"))
 	head.add_child(UI.label(title, 22, Color(0.97, 0.82, 0.42)))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -64,6 +64,8 @@ func _build() -> void:
 	_money.text = Texte.t("shop.geld") % _fmt(Game.money)
 	if kind == "laden":
 		_build_laden()
+	elif kind == "verleih":
+		_build_verleih()
 	else:
 		_build_autohaus()
 
@@ -188,6 +190,8 @@ func _zelle(txt: String, fs: int, col: Color, grow := false) -> Label:
 func _build_autohaus() -> void:
 	_body.add_child(UI.label(Texte.t("shop.fahrzeug_kopf"), 15, Color(0.89, 0.71, 0.35)))
 	for cid in GameData.CARS:
+		if cid == "limo":
+			continue  # der Leihwagen wird im Autoverleih gemietet
 		var c: Dictionary = GameData.CARS[cid]
 		var chosen: bool = Game.car_id == cid
 		var owned: bool = cid == "limo" or Game.cars_owned.has(cid)
@@ -287,18 +291,49 @@ func sell_car(cid: String) -> void:
 	Game.cars_owned.erase(cid)
 	Game.money += erloes
 	if Game.car_id == cid:
-		Game.car_id = "limo"
+		Game.car_id = ""
 	_msg.text = Texte.t("shop.car_verkauft") % [Texte.t(c.name), _fmt(erloes)]
 	_build()
 
 
-## Fahrzeug wählen: Miete der Limousine oder ein gekaufter Wagen.
+## Fahrzeug wählen: ein gekaufter Wagen (der Leihwagen wird im Autoverleih gemietet).
 func choose_car(cid: String) -> void:
 	if cid != "limo" and not Game.cars_owned.has(cid):
 		_msg.text = Texte.t("shop.nicht_dein")
 		return
 	Game.car_id = cid
 	_msg.text = Texte.t("shop.car_gewaehlt") % Texte.t(GameData.CARS[cid].name)
+	_build()
+
+
+## Autoverleih: Leihwagen mieten oder den Mietvertrag kündigen.
+func _build_verleih() -> void:
+	_body.add_child(UI.label(Texte.t("shop.verleih_kopf"), 15, Color(0.89, 0.71, 0.35)))
+	var leih: Dictionary = GameData.CARS.limo
+	_body.add_child(UI.label("%s  ·  %s" % [Texte.t(leih.name), Texte.t("shop.miete") % _fmt(int(leih.rent))], 14, Color(0.92, 0.9, 0.85)))
+	_body.add_child(UI.label(Texte.t(str(leih.info)), 12, Color(0.75, 0.8, 0.88), true))
+	if Game.car_id == "limo":
+		_body.add_child(UI.label(Texte.t("shop.verleih_gemietet"), 13, Color(0.6, 0.85, 0.6)))
+		var k := UI.button(Texte.t("shop.verleih_kuendigen"), func() -> void: verleih_kuendigen(), 0)
+		k.custom_minimum_size = Vector2(0, 34)
+		_body.add_child(k)
+	else:
+		if Game.car_id != "":
+			_body.add_child(UI.label(Texte.t("shop.verleih_anderes") % Texte.t(GameData.CARS[Game.car_id].name), 13, Color(0.75, 0.8, 0.88)))
+		var m := UI.button(Texte.t("shop.verleih_mieten"), func() -> void: verleih_mieten(), 0)
+		m.custom_minimum_size = Vector2(0, 34)
+		_body.add_child(m)
+
+
+func verleih_mieten() -> void:
+	Game.car_id = "limo"
+	_msg.text = Texte.t("shop.verleih_gemietet_msg")
+	_build()
+
+
+func verleih_kuendigen() -> void:
+	Game.car_id = ""
+	_msg.text = Texte.t("shop.verleih_gekuendigt")
 	_build()
 
 

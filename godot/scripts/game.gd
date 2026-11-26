@@ -14,7 +14,7 @@ var ermittlung_quelle := {}
 var tools_owned := {}    # tool_id -> true
 var gear_owned := {}     # gear_id -> true
 var cars_owned := {}     # car_id -> true (gekaufte Fahrzeuge)
-var car_id := "limo"     # gewähltes Fahrzeug für den nächsten Einbruch
+var car_id := ""         # gewähltes Fahrzeug für den nächsten Einbruch (leer = keins; Miete im Autoverleih, Kauf im Autohaus)
 # Auswahl in der Organisation (Team, Einbrechen, Kleidung). Bleibt erhalten, wenn man zwischendurch die Stadt oder den Laden besucht.
 var org_selected := {}
 var org_burgle := {}
@@ -191,7 +191,7 @@ func _apply_save(parsed: Dictionary) -> void:
 	tools_owned = parsed.get("tools_owned", {})
 	gear_owned = parsed.get("gear_owned", {"none": true})
 	cars_owned = parsed.get("cars_owned", {})
-	car_id = str(parsed.get("car_id", "limo"))
+	car_id = str(parsed.get("car_id", ""))
 	team = parsed.get("team", [])
 	driver = parsed.get("driver", {})
 	roster = parsed.get("roster", roster)
@@ -220,7 +220,7 @@ func reset() -> void:
 	tools_owned = {}
 	gear_owned = {"none": true}
 	cars_owned = {}
-	car_id = "limo"
+	car_id = ""
 	org_selected = {}
 	org_burgle = {}
 	org_gear_pick = {}

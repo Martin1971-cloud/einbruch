@@ -27,6 +27,7 @@ func _process(d: float) -> bool:
 	if _f == 2:
 		var G = root.get_node("/root/Game")
 		G.reset()
+		G.car_id = "limo"  # Leihwagen im Autoverleih gemietet
 		G.money = 30000  # Beispielteam kostet mehr als das Startkapital
 		G.intel["kiosk"] = 2
 		# Zusatz "ohne_ton": Musik aus, um zu prüfen, ob der Ton die Ruckler auslöst
