@@ -67,6 +67,8 @@ const LOUD_CHECK := 5.0        # Original: alle 15 Ticks (5 s) prüfen
 const PATROL_P := 1.0 / 7230.0 # Original: 1 zu 30*(270 - GRate/2 + 1), GRate 60 angenommen, pro Sekunde
 const PATROL_PCT := 5.0        # tcPATROL_ALARM
 var police_base := 60.0        # Polizeizeit nach Alarm (Original: PoliceTime des Gebäudes)
+var police_reaktion := 60.0    # Reaktionszeit der Polizei (Sekunden), gilt für stillen und lauten Alarm
+var police_fahrt := 0.0        # Fahrzeit vom Revier (Sekunden), schwankt beim stillen Alarm innerhalb der Spanne
 var max_volume := 30.0         # Original: Gebäude-Grenzwert MaxVolume (Wert hier gesetzt, im Quellcode nicht ausgelesen)
 var patrol_count := 0
 var _loud_timer := 0.0
@@ -85,7 +87,10 @@ static func create(target: Dictionary, team: Array, plans: Dictionary, car_cfg: 
 func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary) -> void:
 	target_name = target.name
 	max_volume = float(target.get("max_volume", 30.0))
-	police_base = float(GameData.polizei(str(target.get("id", "")))["zeit"])
+	var pol := GameData.polizei(str(target.get("id", "")))
+	police_base = float(pol["zeit"])
+	police_reaktion = float(pol["reaktion_s"])
+	police_fahrt = float(pol["fahrt_s"])
 	rng.seed = 4711  # fester Seed: Vorschau und Ausführung laufen gleich
 	map = target.map
 	h = map.size()
@@ -579,12 +584,21 @@ var alarm_source := ""  # wer den Alarm ausgelöst hat (Melder, Wache, Lärm), u
 var overlaps := 0      # wie oft eine Person auf ein Objekt warten musste, das schon besetzt war
 
 
+## Eintreffzeit der Polizei je Alarmart. STILL = Alarmkontakt (Anlage meldet an die Zentrale), LAUT = Lärm, Melder, Wache.
+func _eintreffzeit(kind: String) -> float:
+	if kind == "PATROL":
+		return PATROL_ALARM_BASE
+	if kind == "STILL":
+		return police_reaktion + police_fahrt * (1.0 + rng.randf_range(-GameData.FAHRT_SPANNE, GameData.FAHRT_SPANNE))
+	return rng.randf_range(GameData.LAUT_MIN_S, GameData.LAUT_MAX_S)
+
+
 func _alarm(source: String, kind: String, delay: float) -> void:
 	if countdown >= 0.0:
 		return
 	alarm_source = source
 	alarm_time = time
-	countdown = (PATROL_ALARM_BASE if kind == "PATROL" else police_base) + delay
+	countdown = _eintreffzeit(kind) + delay
 	alarm_active = true
 	events.append({"t": time, "end": time, "crew": "", "name": "", "kind": "ALARM", "obj": source, "tool": "", "ok": false, "fail": "", "msg": "", "alarm": true})
 	_log(Texte.t("sim.alarm") % [source, countdown])
@@ -1061,7 +1075,7 @@ func _sight_clear(a: Vector2, b: Vector2) -> bool:
 func _pruefe_alarmkontakt(name: String) -> void:
 	if panel.is_empty() or panel.bypassed or not gesichert.has(name):
 		return
-	_alarm(str(panel.name), "GUARD", 0.0)
+	_alarm(str(panel.name), "STILL", 0.0)
 
 
 func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:

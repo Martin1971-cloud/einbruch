@@ -167,6 +167,8 @@ func _left_column() -> Control:
 	var polizei := _l(Texte.t("plan.polizei") % GameData.police_text(target, bool(Game.quelle_of(target.id).get("inf", false))), 12, Color(0.85, 0.88, 0.94))
 	polizei.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	info.add_child(polizei)
+	var laut := _l(Texte.t("plan.polizei_laut") % ["%d" % roundi(GameData.LAUT_MIN_S / 60.0), "%d" % roundi(GameData.LAUT_MAX_S / 60.0)], 12, Color(0.85, 0.88, 0.94))
+	info.add_child(laut)
 	if target.has("panel"):
 		var alarm := _l(Texte.t("plan.alarm_sichert") % _gesichert_namen(target), 12, Color(0.6, 0.85, 1.0))
 		alarm.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

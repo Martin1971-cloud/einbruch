@@ -719,6 +719,9 @@ const REVIER_REAKTION_STANDARD := 5.0
 const FAHRT_FAKTOR := 2.4
 const FAHRT_PUFFER := 3.0
 const FAHRT_SPANNE := 0.2
+## Lauter Alarm (Mikrofon, Glasbruch, Lärm, Wache): die Streife ist in der Nähe, Eintreffen in dieser Spanne (Sekunden).
+const LAUT_MIN_S := 120.0
+const LAUT_MAX_S := 240.0
 const POLIZEI := {
 	"kiosk": {"reaktion": 5.0, "km": 0.84},
 	"testhaus": {"reaktion": 5.0, "km": 0.8},  # Prüfgebäude, nicht auf der Karte
@@ -731,11 +734,11 @@ const POLIZEI := {
 ## Polizeizeit eines Gebäudes: zeit in Sekunden (Simulation), lo/hi in Minuten (Spanne ohne Informant).
 static func polizei(id: String) -> Dictionary:
 	if not POLIZEI.has(id):
-		return {"zeit": 60.0, "lo": 1.0, "hi": 1.0}  # ohne Eintrag: Standard von 60 s, wie bisher
+		return {"zeit": 60.0, "reaktion_s": 60.0, "fahrt_s": 0.0, "lo": 1.0, "hi": 1.0}  # ohne Eintrag: Standard von 60 s, wie bisher
 	var p: Dictionary = POLIZEI[id]
 	var fahrt: float = float(p.km) * FAHRT_FAKTOR + FAHRT_PUFFER
 	var min_: float = float(p.reaktion) + fahrt
-	return {"zeit": min_ * 60.0, "lo": float(p.reaktion) + fahrt * (1.0 - FAHRT_SPANNE), "hi": float(p.reaktion) + fahrt * (1.0 + FAHRT_SPANNE)}
+	return {"zeit": min_ * 60.0, "reaktion_s": float(p.reaktion) * 60.0, "fahrt_s": fahrt * 60.0, "lo": float(p.reaktion) + fahrt * (1.0 - FAHRT_SPANNE), "hi": float(p.reaktion) + fahrt * (1.0 + FAHRT_SPANNE)}
 
 
 ## Polizeizeit nach Alarm als Text: genau mit Informant, sonst als Spanne in Minuten.
