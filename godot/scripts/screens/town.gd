@@ -271,11 +271,14 @@ func _refresh() -> void:
 
 
 ## Ermittlungstext: je nach Aktionen (Umsehen einmal oder zweimal, Informant).
-## Welche Fakten sichtbar sind: Grundlagen ab Umsehen oder Informant, Besonderheit erst bei zweimal Umsehen.
+## Welche Fakten sichtbar sind: Lage und Öffnungszeiten ab Umsehen 1x, Wache und Überwachung ab Umsehen 2x, Besonderheit über den Informanten.
 func _fakt_sichtbar(name: String, q: Dictionary) -> bool:
+	var n := int(q.get("look", 0))
 	if name == "Besonderheit":
-		return int(q.get("look", 0)) >= 2
-	return int(q.get("look", 0)) >= 1 or bool(q.get("inf", false))
+		return bool(q.get("inf", false))  # Insiderwissen gibt es nur über den Informanten
+	if name == "Wachpersonal" or name == "Überwachung":
+		return n >= 2  # erst beim zweiten Umsehen
+	return n >= 1  # Lage, Öffnungszeiten: schon beim ersten Umsehen
 
 
 func _ermittlung_text(lvl: int) -> String:

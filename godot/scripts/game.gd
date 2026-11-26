@@ -304,10 +304,12 @@ func quelle_of(target_id: String) -> Dictionary:
 	return {"look": int(intel.get(target_id, 0)), "inf": false}
 
 
-## Stufe für Loot-Spanne und Anzeige: Umsehen zählt, Informant zählt, höchstens 2.
+## Stufe für Loot-Spanne: der Informant liefert den genauen Beutewert, Umsehen nur eine Spanne.
 func intel_level(target_id: String) -> int:
 	var q := quelle_of(target_id)
-	return mini(int(q.get("look", 0)) + (1 if bool(q.get("inf", false)) else 0), 2)
+	if bool(q.get("inf", false)):
+		return 2
+	return 1 if int(q.get("look", 0)) >= 1 else 0
 
 
 ## Anzahl erfolgreich abgeschlossener Gebäude (Stufe für Werkzeuge und Autos).
