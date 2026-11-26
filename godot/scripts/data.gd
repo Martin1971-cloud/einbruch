@@ -110,6 +110,25 @@ static func stufe_hint(stufe: int) -> String:
 	return Texte.t("stufe.hint") % Texte.t(TARGETS[ORDER[idx]].name)
 
 
+## Erfolgschance beim Ausschalten einer Wache. Methode „chloroform“ braucht den Mindestwert des Werkzeugs (Kampfsport);
+## „knock“ scheitert, wenn die Stärke der Wache mehr als 25 über dem Kampfsport liegt. Im Toleranzbereich von 5 Punkten
+## um die Grenze ist es ein Versuch mit 50 % Chance.
+static func wache_chance(method: String, k: float, gk: float) -> float:
+	const TOL := 5.0
+	if method == "chloroform":
+		var need := float(TOOLS.chloroform.min)
+		if k >= need:
+			return 1.0
+		if k >= need - TOL:
+			return 0.5
+		return 0.0
+	var diff := gk - k
+	if diff <= 25.0:
+		return 1.0
+	if diff <= 25.0 + TOL:
+		return 0.5
+	return 0.0
+
 ## Fahrzeug mit Abholzeit: die Zeit richtet sich nach dem Fahren des Fahrers und dem Fahrzeug.
 static func car_now(cid: String, skill: float) -> Dictionary:
 	var c: Dictionary = CARS.get(cid, CARS.limo).duplicate(true)

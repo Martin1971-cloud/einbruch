@@ -573,8 +573,8 @@ func _on_map_click(cell: Vector2i) -> void:
 		_menu_entries.append([Texte.t("plan.bypass"), {"t": "TOOL", "tool": "bypass", "on": target.panel.id}, Game.tools_owned.has("bypass")])
 	for g in target.guards:
 		if Sim._v2i(g.start) == cell:
-			_menu_entries.append([Texte.t("plan.wache_niederschlagen"), {"t": "NEUTRALIZE", "guard": g.id, "method": "knock"}, true])
-			_menu_entries.append([Texte.t("plan.chloroform"), {"t": "NEUTRALIZE", "guard": g.id, "method": "chloroform"}, Game.tools_owned.has("chloroform")])
+			_menu_entries.append(_wache_eintrag(g, "knock", Texte.t("plan.wache_niederschlagen")))
+			_menu_entries.append(_wache_eintrag(g, "chloroform", Texte.t("plan.chloroform"), Game.tools_owned.has("chloroform")))
 	if _menu == null:
 		_menu = PopupMenu.new()
 		add_child(_menu)
@@ -602,6 +602,30 @@ func _watch_last(crew_id: String) -> void:
 	_play_until = float(seg.end)
 	_playing = true
 	_play_btn.text = Texte.t("plan.pause")
+
+## Kampfsport der gewählten Person (Fahrer ohne Kampfsport zählt mit 1, wie in der Simulation).
+func _kampf_von(id: String) -> float:
+	for c in Game.team:
+		if c.id == id:
+			return float(c.skills.get("FORCE", 1))
+	if not Game.driver.is_empty() and Game.driver.get("id", "") == id:
+		return float(Game.driver.get("skills", {}).get("FORCE", 1))
+	return 1.0
+
+
+## Menüeintrag für eine Wache: nicht möglich bei zu geringem Kampfsport, riskant im Grenzbereich.
+func _wache_eintrag(g: Dictionary, methode: String, name: String, werkzeug_da: bool = true) -> Array:
+	var chance := GameData.wache_chance(methode, _kampf_von(_active), float(g.get("kampf", 0)))
+	var label := name
+	if not werkzeug_da:
+		return [label, {"t": "NEUTRALIZE", "guard": g.id, "method": methode}, false]
+	if chance <= 0.0:
+		label += Texte.t("plan.wache_zu_schwach")
+		return [label, {"t": "NEUTRALIZE", "guard": g.id, "method": methode}, false]
+	if chance < 1.0:
+		label += Texte.t("plan.wache_riskant")
+	return [label, {"t": "NEUTRALIZE", "guard": g.id, "method": methode}, true]
+
 
 func _on_menu_pick(i: int) -> void:
 	var e: Array = _menu_entries[i]

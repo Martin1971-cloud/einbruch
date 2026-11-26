@@ -279,14 +279,17 @@ func _do_neutralize(c: Dictionary, a: Dictionary, dt: float) -> void:
 		# Kampf der Wache gegen Kampf der Person (Original: tcGuyUsesTool, Kampf verkürzt die Zeit)
 		var k := float(c.skills.get("FORCE", 1))
 		var gk := float(g.get("kampf", 0))
-		var chloro_m: bool = a.get("method", "knock") == "chloroform"
-		if chloro_m:
-			var ch: Dictionary = GameData.TOOLS.chloroform
-			if k < float(ch.min):
+		var methode := str(a.get("method", "knock"))
+		var chance := GameData.wache_chance(methode, k, gk)
+		if chance <= 0.0:
+			if methode == "chloroform":
+				var ch: Dictionary = GameData.TOOLS.chloroform
 				_fail(c, Texte.t("fail.vorkenntnisse") % [c.name, ch.name, Texte.t(GameData.TOOL_SKILL_KEY.get("FORCE", "skill.technik")), int(ch.min)])
-				return
-		elif gk > k + 25.0:
-			_fail(c, Texte.t("fail.wehrt_sich") % g.name)
+			else:
+				_fail(c, Texte.t("fail.wehrt_sich") % g.name)
+			return
+		if chance < 1.0 and rng.randf() > chance:
+			_fail(c, Texte.t("fail.wache_misslingt") % [c.name, g.name])
 			return
 		var stretch := 1.0 + maxf(0.0, gk - k) / 50.0
 		c.started = true
