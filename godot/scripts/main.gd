@@ -62,7 +62,14 @@ func open_optionen() -> void:
 		_optionen = null
 		return
 	_optionen = Optionen.new()
+	_optionen.im_spiel = not _auf_titel()
 	add_child(_optionen)
+
+
+## Ist der Titelbildschirm offen? Dort gibt es noch keinen Spielstand zum Speichern.
+func _auf_titel() -> bool:
+	var skript = current.get_script() if current != null else null
+	return skript != null and str(skript.resource_path).ends_with("title.gd")
 
 
 func _unhandled_input(event: InputEvent) -> void:

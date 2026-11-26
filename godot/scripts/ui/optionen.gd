@@ -2,6 +2,7 @@ class_name Optionen
 extends Control
 ## Optionen: Musik, Textgröße, Hinweise, Vollbild. Öffnet sich mit O (überall) oder über den Knopf im Stadtkopf.
 
+var im_spiel := false  # true, wenn ein Spiel läuft (dann wird beim Beenden gespeichert angeboten)
 var _music_lbl: Label
 var _text_lbl: Label
 var _hint_btn: Button
@@ -93,9 +94,32 @@ func _ready() -> void:
 		box.add_child(_tele_btn)
 	_einfach_btn = UI.button("", _toggle_einfach, 0)
 	box.add_child(_einfach_btn)
+	box.add_child(UI.button(Texte.t("opt.beenden"), _on_beenden, 0))
 	box.add_child(UI.label(Texte.t("opt.hinweis_text"), 12, Color(0.7, 0.74, 0.8), true))
 	box.add_child(UI.label(Texte.t("opt.musik_quelle"), 11, Color(0.62, 0.66, 0.72), true))
 	_refresh()
+
+
+## Spiel beenden. Im laufenden Spiel wird vorher gefragt, ob der Stand gespeichert werden soll.
+func _on_beenden() -> void:
+	if not im_spiel:
+		get_tree().quit()
+		return
+	var d := ConfirmationDialog.new()
+	d.title = Texte.t("opt.beenden_titel")
+	d.dialog_text = Texte.t("opt.beenden_frage")
+	d.ok_button_text = Texte.t("opt.beenden_speichern")
+	d.cancel_button_text = Texte.t("ui.abbrechen")
+	d.add_button(Texte.t("opt.beenden_ohne"), true, "ohne")
+	add_child(d)
+	d.confirmed.connect(func(): Game.save_game(); get_tree().quit())
+	d.custom_action.connect(_beenden_ohne_speichern)
+	d.popup_centered()
+
+
+func _beenden_ohne_speichern(aktion: String) -> void:
+	if aktion == "ohne":
+		get_tree().quit()
 
 
 func _set_music(v: int) -> void:
