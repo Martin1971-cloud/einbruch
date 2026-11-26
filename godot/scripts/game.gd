@@ -304,6 +304,24 @@ func quelle_of(target_id: String) -> Dictionary:
 	return {"look": int(intel.get(target_id, 0)), "inf": false}
 
 
+## Schlüssel des Ermittlungstextes nach Quellen (Umsehen, Informant). Stadt und Planung nutzen denselben Text.
+func ermittlung_key(target_id: String) -> String:
+	var q := quelle_of(target_id)
+	var n := int(q.get("look", 0))
+	var inf := bool(q.get("inf", false))
+	if inf and n >= 2:
+		return "stadt.erm_beide"
+	if inf and n == 1:
+		return "stadt.erm_inf_look1"
+	if inf:
+		return "stadt.erm_inf"
+	if n >= 2:
+		return "stadt.erm_look2"
+	if n == 1:
+		return "stadt.erm_look1"
+	return "stadt.ermittlung_0"
+
+
 ## Stufe für Loot-Spanne: der Informant liefert den genauen Beutewert, Umsehen nur eine Spanne.
 func intel_level(target_id: String) -> int:
 	var q := quelle_of(target_id)

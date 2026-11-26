@@ -187,6 +187,8 @@ func _center_column() -> Control:
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
 	_intel_label = _l("", 12, Color(0.6, 0.85, 1.0))
+	_intel_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_intel_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(_intel_label)
 	inner.add_child(head)
 	_grid = GridView.new()
@@ -544,7 +546,7 @@ func _refresh_all() -> void:
 func _refresh_grid() -> void:
 	var lvl: int = int(Game.intel.get(target.id, 0))
 	_grid.set_state(target, lvl, plans, Game.team)
-	_intel_label.text = Texte.t("stadt.ermittlung") % Texte.t("stadt.ermittlung_%d" % lvl)
+	_intel_label.text = Texte.t("stadt.ermittlung") % Texte.t(Game.ermittlung_key(target.id))
 
 
 func _refresh_team() -> void:
@@ -777,7 +779,9 @@ func _crew_name(id: String) -> String:
 func _refresh_checklist() -> void:
 	for c in _checklist.get_children():
 		c.queue_free()
-	var intel_lvl: int = int(Game.intel.get(target.id, 0))
+	var quelle: Dictionary = Game.quelle_of(target.id)
+	var hat_umsehen := int(quelle.get("look", 0)) >= 1
+	var hat_informant := bool(quelle.get("inf", false))
 	var has_door := false
 	var has_car_call := false
 	var has_car_move := false
@@ -790,9 +794,9 @@ func _refresh_checklist() -> void:
 			if a.t == "MOVE" and a.get("to", "") == "Fluchtwagen":
 				has_car_move = true
 	var items := [
-		[Texte.t("plan.chk_info"), intel_lvl >= 1],
+		[Texte.t("plan.chk_info"), hat_umsehen or hat_informant],
 		[Texte.t("plan.chk_grundriss"), true],
-		[Texte.t("plan.chk_sicherheit"), intel_lvl >= 2],
+		[Texte.t("plan.chk_sicherheit"), hat_informant],
 		[Texte.t("plan.chk_zugang"), has_door],
 		[Texte.t("plan.chk_flucht"), all_at_car()],
 	]

@@ -281,21 +281,8 @@ func _fakt_sichtbar(name: String, q: Dictionary) -> bool:
 	return n >= 1  # Lage, Öffnungszeiten: schon beim ersten Umsehen
 
 
-func _ermittlung_text(lvl: int) -> String:
-	var q: Dictionary = Game.quelle_of(_selected)
-	var n := int(q.get("look", 0))
-	var inf := bool(q.get("inf", false))
-	if inf and n >= 2:
-		return Texte.t("stadt.erm_beide")
-	if inf and n == 1:
-		return Texte.t("stadt.erm_inf_look1")
-	if inf:
-		return Texte.t("stadt.erm_inf")
-	if n >= 2:
-		return Texte.t("stadt.erm_look2")
-	if n == 1:
-		return Texte.t("stadt.erm_look1")
-	return [Texte.t("stadt.ermittlung_0"), Texte.t("stadt.ermittlung_1"), Texte.t("stadt.ermittlung_2")][lvl]
+func _ermittlung_text(_lvl: int) -> String:
+	return Texte.t(Game.ermittlung_key(_selected))
 
 
 func _refresh_image() -> void:
