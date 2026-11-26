@@ -3,3 +3,6 @@
 __pycache__/
 .godot/
 godot/.godot/
+
+# Export-Ausgabe für Release-Candidates
+build/
