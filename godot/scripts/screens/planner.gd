@@ -86,7 +86,8 @@ func _header() -> PanelContainer:
 	var tab := UI.primary(Texte.t("plan.titel"), func(): pass, 100)
 	tab.disabled = true
 	row.add_child(tab)
-	row.add_child(UI.button(Texte.t("plan.beispiel"), _on_example, 170))
+	if GameData.TESTHILFEN:
+		row.add_child(UI.button(Texte.t("plan.beispiel"), _on_example, 170))
 	var vor_btn := UI.button(Texte.t("plan.vorschau"), _on_vorschau, 100)
 	vor_btn.tooltip_text = Texte.t("plan.vorschau_tip")
 	row.add_child(vor_btn)

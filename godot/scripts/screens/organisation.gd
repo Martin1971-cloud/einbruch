@@ -110,7 +110,8 @@ func _ready() -> void:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(sp)
-	bottom.add_child(UI.button(Texte.t("org.beispiel"), _on_example, 230))
+	if GameData.TESTHILFEN:
+		bottom.add_child(UI.button(Texte.t("org.beispiel"), _on_example, 230))
 	bottom.add_child(UI.primary(Texte.t("org.bestaetigen"), _on_confirm, 270))
 
 	_build_people()

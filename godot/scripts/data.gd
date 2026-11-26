@@ -80,6 +80,9 @@ const HINTS := {
 }
 
 ## Reihenfolge der Gebäude: jedes erfolgreiche Gebäude schaltet die Werkzeuge und Autos der nächsten Stufe frei.
+## Testhilfen (Beispielteam, Beispielplan) im Spiel anzeigen. Im Spiel ausgeblendet; zum Testen auf true setzen.
+const TESTHILFEN := false
+
 const ORDER := ["kiosk", "curiosity", "juwelier", "museum"]
 
 ## Fahrzeuge: gemietet (Limousine, Miete je Einbruch) oder gekauft. "stufe" = Anzahl erfolgreicher Gebäude, ab der es zu haben ist.
