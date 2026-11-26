@@ -36,9 +36,9 @@ func _run(target_id: String, team_ids: Array, plan: Array) -> Dictionary:
 		team.append(_crew(id))
 	# Teodor macht den Einbruch, die anderen gehen zum Wagen
 	for id in team_ids:
-		plans[id] = [{"t": "MOVE", "to": "Fluchtwagen"}]
+		plans[id] = [{"t": "MOVE", "to": "fluchtwagen"}]
 	plans["teo"] = plan.duplicate(true)
-	plans["otto"] = [{"t": "MOVE", "to": "Fluchtwagen"}]
+	plans["otto"] = [{"t": "MOVE", "to": "fluchtwagen"}]
 	if not team_ids.has("otto"):
 		team.append(_crew("otto"))
 	var s := Sim.create(GameData.TARGETS[target_id], team, plans, GameData.car_now("limo", 85.0))
@@ -103,8 +103,8 @@ func _verteilt(plan: Array, ids: Array) -> Dictionary:
 	for id in ids:
 		if id != "teo":
 			# Warten vor der Tür, bis Teodor den Eingang geöffnet hat (sonst scheitern die Wege sofort)
-			out[id] = [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "WAIT", "sec": 18.0}] + out[id]
-			out[id].append({"t": "MOVE", "to": "Fluchtwagen"})
+			out[id] = [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "WAIT", "sec": 18.0}] + out[id]
+			out[id].append({"t": "MOVE", "to": "fluchtwagen"})
 	out["teo"].append_array(ende)
 	return out
 
@@ -141,28 +141,28 @@ func _kann(block: Array, ids: Array) -> Array:
 
 
 func _plans() -> Dictionary:
-	var entry := [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"}]
-	var back := [{"t": "MOVE", "to": "Fluchtwagen"}]
+	var entry := [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"}]
+	var back := [{"t": "MOVE", "to": "fluchtwagen"}]
 	return {
 		"kiosk": [
-			{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"},
-			{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "Kassenlade"}, {"t": "OPEN", "on": "Kassenlade"}, {"t": "TAKE", "loot": "kasse"},
-			{"t": "MOVE", "cell": [8, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "Wertschrank"}, {"t": "OPEN", "on": "Wertschrank"}, {"t": "TAKE", "loot": "safe"},
-			{"t": "CALL_CAR"}, {"t": "MOVE", "to": "Fluchtwagen"},
+			{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"},
+			{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "kasse"}, {"t": "OPEN", "on": "kasse"}, {"t": "TAKE", "loot": "kasse"},
+			{"t": "MOVE", "cell": [8, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "safe"}, {"t": "OPEN", "on": "safe"}, {"t": "TAKE", "loot": "safe"},
+			{"t": "CALL_CAR"}, {"t": "MOVE", "to": "fluchtwagen"},
 		],
 		"curiosity": entry + [
-			{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Uhrensammlung"}, {"t": "OPEN", "on": "Uhrensammlung"}, {"t": "TAKE", "loot": "uhren"},
-			{"t": "MOVE", "cell": [6, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Silberbesteck"}, {"t": "OPEN", "on": "Silberbesteck"}, {"t": "TAKE", "loot": "besteck"},
+			{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "uhren"}, {"t": "OPEN", "on": "uhren"}, {"t": "TAKE", "loot": "uhren"},
+			{"t": "MOVE", "cell": [6, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "besteck"}, {"t": "OPEN", "on": "besteck"}, {"t": "TAKE", "loot": "besteck"},
 			{"t": "MOVE", "cell": [4, 6]}, {"t": "TAKE", "loot": "landschaft"},
-			{"t": "MOVE", "cell": [4, 8]}, {"t": "TREPPE"}, {"t": "MOVE", "cell": [4, 17]}, {"t": "TOOL", "tool": "lockpick", "on": "Gemmensammlung"}, {"t": "OPEN", "on": "Gemmensammlung"}, {"t": "TAKE", "loot": "gemmen"},
-			{"t": "MOVE", "cell": [4, 20]}, {"t": "TREPPE"}, {"t": "CALL_CAR"}, {"t": "MOVE", "to": "Fluchtwagen"},
+			{"t": "MOVE", "cell": [4, 8]}, {"t": "TREPPE"}, {"t": "MOVE", "cell": [4, 17]}, {"t": "TOOL", "tool": "lockpick", "on": "gemmen"}, {"t": "OPEN", "on": "gemmen"}, {"t": "TAKE", "loot": "gemmen"},
+			{"t": "MOVE", "cell": [4, 20]}, {"t": "TREPPE"}, {"t": "CALL_CAR"}, {"t": "MOVE", "to": "fluchtwagen"},
 		],
 		"juwelier": entry + [
-			{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Diamantring"}, {"t": "OPEN", "on": "Diamantring"}, {"t": "TAKE", "loot": "diamantring"},
-			{"t": "MOVE", "cell": [6, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Perlenkette"}, {"t": "OPEN", "on": "Perlenkette"}, {"t": "TAKE", "loot": "perlen"},
-			{"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "schneidbrenner", "on": "Stahltür"},
-			{"t": "MOVE", "cell": [12, 7]}, {"t": "TOOL", "tool": "lockpick", "on": "Tresorinhalt (Schmuck und Bargeld)"}, {"t": "OPEN", "on": "Tresorinhalt (Schmuck und Bargeld)"}, {"t": "TAKE", "loot": "tresor"},
-			{"t": "CALL_CAR"}, {"t": "MOVE", "to": "Fluchtwagen"},
+			{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "diamantring"}, {"t": "OPEN", "on": "diamantring"}, {"t": "TAKE", "loot": "diamantring"},
+			{"t": "MOVE", "cell": [6, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "perlen"}, {"t": "OPEN", "on": "perlen"}, {"t": "TAKE", "loot": "perlen"},
+			{"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "schneidbrenner", "on": "stahltuer"},
+			{"t": "MOVE", "cell": [12, 7]}, {"t": "TOOL", "tool": "lockpick", "on": "tresor"}, {"t": "OPEN", "on": "tresor"}, {"t": "TAKE", "loot": "tresor"},
+			{"t": "CALL_CAR"}, {"t": "MOVE", "to": "fluchtwagen"},
 		],
 	}
 

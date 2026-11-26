@@ -24,9 +24,9 @@ func _init() -> void:
 	var k: Dictionary = GameData.TARGETS.kiosk
 	print("Planung: freier Punkt im Raum (Tür erst öffnen):")
 	var plan := {"teo": [
-		{"t": "MOVE", "to": "Außen vor dem Eingang"},
-		{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-		{"t": "OPEN", "on": "Eingangstür"},
+		{"t": "MOVE", "to": "aussen_eingang"},
+		{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+		{"t": "OPEN", "on": "eingangstuer"},
 		{"t": "MOVE", "fine": [71 * U, 35 * U]},
 	]}
 	var s := Sim.create(k, team_of("teo"), plan, GameData.car_now("limo", 85.0))

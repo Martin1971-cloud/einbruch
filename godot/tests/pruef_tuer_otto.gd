@@ -50,10 +50,10 @@ func _process(_d: float) -> bool:
 		2:
 			var pl = _main.current
 			pl.plans["otto"] = [
-				{"t": "MOVE", "to": "Außen vor dem Eingang"},
-				{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-				{"t": "OPEN", "on": "Eingangstür"},
-				{"t": "MOVE", "to": "Fluchtwagen"},
+				{"t": "MOVE", "to": "aussen_eingang"},
+				{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+				{"t": "OPEN", "on": "eingangstuer"},
+				{"t": "MOVE", "to": "fluchtwagen"},
 			]
 			pl._on_changed()
 			_step = 3

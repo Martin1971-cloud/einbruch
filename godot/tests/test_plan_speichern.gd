@@ -10,7 +10,7 @@ func _process(_d: float) -> bool:
 		return false
 	var G = root.get_node("/root/Game")
 	G.reset()
-	G.saved_plans = {"kiosk": [{"name": "Test", "team": ["teo"], "plans": {"teo": [{"t": "MOVE", "to": "Fluchtwagen"}]}}]}
+	G.saved_plans = {"kiosk": [{"name": "Test", "team": ["teo"], "plans": {"teo": [{"t": "MOVE", "to": "fluchtwagen"}]}}]}
 	G.save_game()
 	G.saved_plans = {}
 	var ok: bool = G.load_game()

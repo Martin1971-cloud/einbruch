@@ -144,8 +144,8 @@ func _gui_input(event: InputEvent) -> void:
 func _click(pos: Vector2) -> void:
 	_layout()
 	# Klick auf die Limousine zählt wie ein Klick auf das Wagenfeld (Einsteigen)
-	if target.points.has("Fluchtwagen"):
-		var car_ex := Sim._v2i(target.points["Fluchtwagen"])
+	if target.points.has("fluchtwagen"):
+		var car_ex := Sim._v2i(target.points["fluchtwagen"])
 		if _car_rect(car_ex).has_point(pos):
 			cell_clicked.emit(car_ex)
 			return
@@ -161,7 +161,7 @@ func _click(pos: Vector2) -> void:
 			if Sim._v2i(c.start) == here:
 				on_cell.append(c.id)
 		# Auf dem Wagenfeld stehen am Start alle: Ist die gewählte Person dort, öffnet ein Klick das Wagenmenü
-		var car_cell := Sim._v2i(target.points.Fluchtwagen) if target.has("points") and target.points.has("Fluchtwagen") else Vector2i(-1, -1)
+		var car_cell := Sim._v2i(target.points.fluchtwagen) if target.has("points") and target.points.has("fluchtwagen") else Vector2i(-1, -1)
 		if here == car_cell and on_cell.has(selected_id):
 			cell_clicked.emit(here)
 			return
@@ -319,8 +319,8 @@ func _bounds() -> Rect2i:
 		mn = Vector2i(mini(mn.x, v.x), mini(mn.y, v.y))
 		mx = Vector2i(maxi(mx.x, v.x), maxi(mx.y, v.y))
 	# Der Wagen steht außerhalb: sein Rechteck (4,2 m lang) gehört in den Ausschnitt
-	if target.points.has("Fluchtwagen"):
-		var ex := Sim._v2i(target.points["Fluchtwagen"])
+	if target.points.has("fluchtwagen"):
+		var ex := Sim._v2i(target.points["fluchtwagen"])
 		var o := _car_out(ex)
 		for d in [2.5 - 2.1, 2.5 + 2.1]:
 			var q: Vector2 = Vector2(ex) + o * d
@@ -750,8 +750,8 @@ func _draw() -> void:
 	# Alarmanlage: gesicherte Objekte und Verbindungen zum Panel (Hover)
 	_draw_alarm()
 	# Fluchtwagen am Ausgang: alle Einbrecherinnen starten hier und steigen hier wieder ein
-	if target.points.has("Fluchtwagen"):
-		_draw_car(Sim._v2i(target.points["Fluchtwagen"]))
+	if target.points.has("fluchtwagen"):
+		_draw_car(Sim._v2i(target.points["fluchtwagen"]))
 	# Beute mit Leuchten
 	for l in target.loot:
 		# Hinweis nur, solange die Beute noch im Objekt liegt (Planung immer)
@@ -865,8 +865,8 @@ func _gesicherte_zellen() -> Array:
 		var name := str(g)
 		var gefunden := false
 		for d in target.get("doors", []):
-			if str(d.name) == name:
-				out.append({"name": name, "pos": _c(d.pos)})
+			if str(d.id) == name:
+				out.append({"name": d.name, "pos": _c(d.pos)})
 				gefunden = true
 		if not gefunden:
 			for l in target.loot:

@@ -103,10 +103,10 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 		_upscale_map()
 	for k in target.points:
 		points[k] = _v2i(target.points[k])
-	escape_cell = points.get("Fluchtwagen", Vector2i.ZERO)
+	escape_cell = points.get("fluchtwagen", Vector2i.ZERO)
 	for d in target.doors:
 		var p := _v2i(d.pos)
-		doors[p] = {"name": d.name, "res": float(d.res), "cplx": float(d.cplx), "destroyed": false, "locked": bool(d.get("locked", true)), "kind": str(d.get("kind", "tuer"))}
+		doors[p] = {"id": d.id, "name": d.name, "res": float(d.res), "cplx": float(d.cplx), "destroyed": false, "locked": bool(d.get("locked", true)), "kind": str(d.get("kind", "tuer"))}
 	for pair in target.get("treppen", []):
 		var sa := Vector2i(int(pair[0]), int(pair[1]))
 		var sb := Vector2i(int(pair[2]), int(pair[3]))
@@ -114,7 +114,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 		stairs[sb] = sa
 	gesichert = target.get("gesichert", [])
 	if target.has("panel"):
-		panel = {"name": target.panel.name, "pos": _v2i(target.panel.pos), "res": float(target.panel.res), "cplx": float(target.panel.cplx), "bypassed": false}
+		panel = {"id": target.panel.id, "name": target.panel.name, "pos": _v2i(target.panel.pos), "res": float(target.panel.res), "cplx": float(target.panel.cplx), "bypassed": false}
 	for s in target.sensors:
 		sensors.append({"name": s.name, "pos": _v2i(s.pos), "threshold": float(s.threshold), "active": true})
 	for l in target.loot:
@@ -494,10 +494,10 @@ func _obj_states() -> Dictionary:
 	var out := {}
 	for p in doors:
 		var d: Dictionary = doors[p]
-		out["%d,%d" % [p.x, p.y]] = {"kind": "door", "name": d.name, "locked": d.locked, "open": open_cells.has(p), "glas": str(d.get("kind", "")) == "glas", "needs": door_tool(d)}
+		out["%d,%d" % [p.x, p.y]] = {"kind": "door", "id": d.id, "name": d.name, "locked": d.locked, "open": open_cells.has(p), "glas": str(d.get("kind", "")) == "glas", "needs": door_tool(d)}
 	for lid in loot_order:
 		var l: Dictionary = loot[lid]
-		out["%d,%d" % [l.pos.x, l.pos.y]] = {"kind": "case", "name": l.name, "word": _case_word(l), "locked": l.locked, "open": l.opened}
+		out["%d,%d" % [l.pos.x, l.pos.y]] = {"kind": "case", "id": lid, "name": l.name, "word": _case_word(l), "locked": l.locked, "open": l.opened}
 	return out
 
 
@@ -533,12 +533,11 @@ func _cell_of(a: Dictionary, key: String) -> Vector2i:
 	var nm: String = a.get(key, "")
 	if points.has(nm):
 		return points[nm]
-	for lid in loot_order:
-		if loot[lid].name == nm:
-			return loot[lid].pos
-	# Türen und Fenster (Schaufenster) über ihren Namen
+	if loot.has(nm):
+		return loot[nm].pos
+	# Türen und Fenster (Schaufenster) über ihre ID
 	for k in doors:
-		if str(doors[k].name) == nm:
+		if str(doors[k].id) == nm:
 			return k
 	return Vector2i(-1, -1)
 
@@ -551,18 +550,22 @@ func _case_at(cell: Vector2i) -> String:
 	return ""
 
 
+## Anzeigename zu einer Objekt-ID (für Meldungen und das Ereignisprotokoll).
+func _disp(id: String) -> String:
+	return GameData.name_von(id)
+
+
 ## Bezeichnung des Ziels einer Aktion (für das Ereignisprotokoll).
 func _ev_obj(a: Dictionary) -> String:
 	match str(a.t):
 		"TOOL", "OPEN":
-			return str(a.get("on", ""))
+			return _disp(str(a.get("on", "")))
 		"TAKE":
-			var lid := str(a.get("loot", ""))
-			return str(loot[lid].name) if loot.has(lid) else lid
+			return _disp(str(a.get("loot", "")))
 		"MOVE":
-			return str(a.get("to", "Feld" if a.has("cell") else "Ziel"))
+			return _disp(str(a.get("to", ""))) if a.has("to") else "Feld"
 		"CALL_CAR":
-			return "Fluchtwagen"
+			return _disp("fluchtwagen")
 	return ""
 
 
@@ -693,7 +696,7 @@ func _dispatch_patrols() -> void:
 		if g.type == "STREET" and g.state == "IDLE":
 			g.state = "RESPOND"
 			g.path = []
-			g.target = points.get("Außen vor dem Eingang", Vector2i(1, 5))
+			g.target = points.get("aussen_eingang", Vector2i(1, 5))
 			_log(Texte.t("sim.streife_alarm"))
 
 
@@ -877,7 +880,7 @@ func _do_move(c: Dictionary, a: Dictionary, dt: float) -> void:
 func _goal_name(a: Dictionary) -> String:
 	if a.has("fine"):
 		return Texte.t("sim.punkt") % [int(a.fine[0]), int(a.fine[1])]
-	return str(a.get("to", "Feld"))
+	return _disp(str(a.get("to", ""))) if a.has("to") else "Feld"
 
 
 func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
@@ -891,7 +894,7 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		if not _free_for(c, key):
 			return
 		if not _reach(c, center(cell)):
-			_fail(c, Texte.t("fail.nicht_vor") % [c.name, a.on])
+			_fail(c, Texte.t("fail.nicht_vor") % [c.name, _disp(a.on)])
 			return
 		# Vorkenntnisse: Werkzeug braucht eine Mindeststufe der Fähigkeit (Original: tcGetNecessaryAbility / plCheckAbilities)
 		if float(c.skills.get(tool.type, 0)) < float(tool.get("min", 0)):
@@ -900,14 +903,14 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		# Schaufenster brauchen den Glasschneider, Türen und Vitrinen das Schloss-Werkzeug
 		var needs := door_tool(door) if door != null else "schloss"
 		if (is_panel and tool.obj != "alarm") or ((door != null or case_id != "") and tool.obj != needs):
-			_fail(c, Texte.t("fail.ungeeignet") % [tool.name, a.on])
+			_fail(c, Texte.t("fail.ungeeignet") % [tool.name, _disp(a.on)])
 			return
 		# Entriegeln geht nur bei verschlossenen Schlössern (Original: LOCK_UNLOCK-Bit)
 		if door != null and not door.locked:
-			_fail(c, Texte.t("fail.schon_entriegelt") % a.on)
+			_fail(c, Texte.t("fail.schon_entriegelt") % _disp(a.on))
 			return
 		if case_id != "" and not loot[case_id].locked:
-			_fail(c, Texte.t("fail.schon_entriegelt") % a.on)
+			_fail(c, Texte.t("fail.schon_entriegelt") % _disp(a.on))
 			return
 		var obj := 0.0
 		if is_panel:
@@ -917,10 +920,10 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		elif case_id != "":
 			obj = 40.0 if tool.type in ["TECH", "ELECTRONICS"] else 50.0
 		else:
-			_fail(c, Texte.t("fail.nichts_zu_oeffnen") % a.on)
+			_fail(c, Texte.t("fail.nichts_zu_oeffnen") % _disp(a.on))
 			return
 		if obj > float(tool.max):
-			_fail(c, Texte.t("fail.zu_stabil") % [a.on, tool.name])
+			_fail(c, Texte.t("fail.zu_stabil") % [_disp(a.on), tool.name])
 			return
 		var skill := float(c.skills.get(tool.type, 1))
 		var dur: float = float(tool.time) * (1.0 + obj / 100.0) * (1.0 - skill / 150.0)
@@ -932,7 +935,7 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		c["loud"] = c.noise
 		c.started = true
 		_lock(c, key)
-		_log(Texte.t("sim.werkzeug_an") % [c.name, tool.name, a.on])
+		_log(Texte.t("sim.werkzeug_an") % [c.name, tool.name, _disp(a.on)])
 		return
 	c.timer -= dt
 	if c.timer > 0.0:
@@ -959,10 +962,10 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 			door.destroyed = true
 			open_cells[cell] = true
 			c["msg"] = Texte.t("sim.msg_tuer_aufgebrochen")
-			_log(Texte.t("sim.tuer_aufgebrochen") % a.on)
+			_log(Texte.t("sim.tuer_aufgebrochen") % _disp(a.on))
 		else:
 			c["msg"] = Texte.t("sim.msg_tuer_entriegelt")
-			_log(Texte.t("sim.tuer_entriegelt") % a.on)
+			_log(Texte.t("sim.tuer_entriegelt") % _disp(a.on))
 	_noise(center(cell), c.noise)
 	c.used[tool.type] = int(c.used.get(tool.type, 0)) + 1
 	_next(c)
@@ -1062,8 +1065,8 @@ func _sight_clear(a: Vector2, b: Vector2) -> bool:
 
 ## Öffnen von Hand: Das Schloss muss offen (entriegelt) sein. Dauert OPEN_TIME.
 ## Alarmkontakt: ein gesichertes Objekt, das bei eingeschalteter Anlage geöffnet wird, löst Alarm aus (wie im Original).
-func _pruefe_alarmkontakt(name: String) -> void:
-	if panel.is_empty() or panel.bypassed or not gesichert.has(name):
+func _pruefe_alarmkontakt(id: String) -> void:
+	if panel.is_empty() or panel.bypassed or not gesichert.has(id):
 		return
 	_alarm(str(panel.name), "STILL", 0.0)
 
@@ -1077,24 +1080,24 @@ func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:
 		if not _free_for(c, key):
 			return
 		if not _reach(c, center(cell)):
-			_fail(c, Texte.t("fail.nicht_vor") % [c.name, a.on])
+			_fail(c, Texte.t("fail.nicht_vor") % [c.name, _disp(a.on)])
 			return
 		if door != null:
 			if door.locked:
-				_fail(c, Texte.t("fail.verschlossen") % a.on)
+				_fail(c, Texte.t("fail.verschlossen") % _disp(a.on))
 				return
 			if open_cells.has(cell):
-				_fail(c, Texte.t("fail.schon_offen") % a.on)
+				_fail(c, Texte.t("fail.schon_offen") % _disp(a.on))
 				return
 		elif case_id != "":
 			if loot[case_id].locked:
-				_fail(c, Texte.t("fail.verschlossen") % a.on)
+				_fail(c, Texte.t("fail.verschlossen") % _disp(a.on))
 				return
 			if loot[case_id].opened:
-				_fail(c, Texte.t("fail.schon_offen") % a.on)
+				_fail(c, Texte.t("fail.schon_offen") % _disp(a.on))
 				return
 		else:
-			_fail(c, Texte.t("fail.nichts_zu_oeffnen") % a.on)
+			_fail(c, Texte.t("fail.nichts_zu_oeffnen") % _disp(a.on))
 			return
 		c.started = true
 		_lock(c, key)
@@ -1106,12 +1109,12 @@ func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:
 	if door != null:
 		open_cells[cell] = true
 		c["msg"] = Texte.t("sim.msg_tuer_offen")
-		_log(Texte.t("sim.oeffnet") % [c.name, a.on])
+		_log(Texte.t("sim.oeffnet") % [c.name, _disp(a.on)])
 	else:
 		loot[case_id].opened = true
 		c["msg"] = Texte.t("sim.msg_offen") % _case_word(loot[case_id])
 		_log(Texte.t("sim.oeffnet_vitrine") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
-	_pruefe_alarmkontakt(str(door.name) if door != null else case_id)
+	_pruefe_alarmkontakt(str(door.id) if door != null else case_id)
 	_next(c)
 
 
@@ -1289,7 +1292,7 @@ func abort() -> void:
 	_log(Texte.t("sim.funk_abbruch"))
 	for c in crew:
 		_unlock_all(c)
-		c.plan = [{"t": "MOVE", "to": "Fluchtwagen"}]
+		c.plan = [{"t": "MOVE", "to": "fluchtwagen"}]
 		c.idx = 0
 		c.started = false
 		c.path = []

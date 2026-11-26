@@ -51,23 +51,23 @@ func _process(_d: float) -> bool:
 		2:
 			var pl = _main.current
 			var plan := [
-				{"t": "MOVE", "to": "Außen vor dem Eingang"},
-				{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-				{"t": "OPEN", "on": "Eingangstür"},
+				{"t": "MOVE", "to": "aussen_eingang"},
+				{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+				{"t": "OPEN", "on": "eingangstuer"},
 				{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]},
-				{"t": "TOOL", "tool": "lockpick", "on": "Kassenlade"},
-				{"t": "OPEN", "on": "Kassenlade"},
+				{"t": "TOOL", "tool": "lockpick", "on": "kasse"},
+				{"t": "OPEN", "on": "kasse"},
 				{"t": "TAKE", "loot": "kasse"},
 				{"t": "MOVE", "cell": [8, 3]},
-				{"t": "TOOL", "tool": "lockpick", "on": "Wertschrank"},
-				{"t": "OPEN", "on": "Wertschrank"},
+				{"t": "TOOL", "tool": "lockpick", "on": "safe"},
+				{"t": "OPEN", "on": "safe"},
 				{"t": "TAKE", "loot": "safe"},
 				{"t": "CALL_CAR"},
-				{"t": "MOVE", "to": "Fluchtwagen"},
+				{"t": "MOVE", "to": "fluchtwagen"},
 			]
 			pl.plans["teo"] = plan.duplicate(true)
 			if pl.plans.has("otto"):
-				pl.plans["otto"] = [{"t": "MOVE", "to": "Fluchtwagen"}]
+				pl.plans["otto"] = [{"t": "MOVE", "to": "fluchtwagen"}]
 			pl._on_changed()
 			_step = 3
 		3:

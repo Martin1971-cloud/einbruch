@@ -2,9 +2,9 @@ extends SceneTree
 ## Lautstärke am Kiosk-Plan: je Aktion und Spitze, mit Ausrüstung aus dem Spiel und ohne Kleidung.
 func _init() -> void:
 	var plan := [
-		{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"},
-		{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "Kassenlade"}, {"t": "OPEN", "on": "Kassenlade"}, {"t": "TAKE", "loot": "kasse"},
-		{"t": "CALL_CAR"}, {"t": "MOVE", "to": "Fluchtwagen"},
+		{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"},
+		{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "kasse"}, {"t": "OPEN", "on": "kasse"}, {"t": "TAKE", "loot": "kasse"},
+		{"t": "CALL_CAR"}, {"t": "MOVE", "to": "fluchtwagen"},
 	]
 	for variant in ["ohne Kleidung", "Brecheisen mit Kleidung"]:
 		var team := []
@@ -15,8 +15,8 @@ func _init() -> void:
 				team.append(d)
 		var p := plan.duplicate(true)
 		if variant != "ohne Kleidung":
-			p[1] = {"t": "TOOL", "tool": "crowbar", "on": "Eingangstür"}
-		var s := Sim.create(GameData.TARGETS.kiosk, team, {"teo": p, "otto": [{"t": "MOVE", "to": "Fluchtwagen"}]}, GameData.car_now("limo", 85.0))
+			p[1] = {"t": "TOOL", "tool": "crowbar", "on": "eingangstuer"}
+		var s := Sim.create(GameData.TARGETS.kiosk, team, {"teo": p, "otto": [{"t": "MOVE", "to": "fluchtwagen"}]}, GameData.car_now("limo", 85.0))
 		var n := 0
 		while s.status == "RUNNING" and n < 9000:
 			s.step(Sim.DT)

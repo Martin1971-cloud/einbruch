@@ -22,13 +22,13 @@ func team_of(id: String) -> Array:
 func _init() -> void:
 	var plans := {"teo": [
 		{"t": "MOVE", "cell": [0, 5]}, {"t": "MOVE", "cell": [1, 5]},
-		{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-		{"t": "OPEN", "on": "Eingangstür"},
+		{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+		{"t": "OPEN", "on": "eingangstuer"},
 		{"t": "MOVE", "cell": [5, 5]}, {"t": "MOVE", "cell": [5, 4]},
-		{"t": "TOOL", "tool": "lockpick", "on": "Gemälde „Hafen bei Nacht“"},
-		{"t": "OPEN", "on": "Gemälde „Hafen bei Nacht“"},
+		{"t": "TOOL", "tool": "lockpick", "on": "gemaelde"},
+		{"t": "OPEN", "on": "gemaelde"},
 		{"t": "TAKE", "loot": "gemaelde"},
-		{"t": "MOVE", "to": "Fluchtwagen"},
+		{"t": "MOVE", "to": "fluchtwagen"},
 	]}
 	var s := Sim.create(GameData.TARGETS.museum, team_of("teo"), plans, GameData.car_now("limo", 85.0))
 	print("Start:")

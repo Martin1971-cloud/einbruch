@@ -53,12 +53,12 @@ func _process(d: float) -> bool:
 	if _f == 12 and _step == 1:
 		var pl = _main.current
 		pl.plans["teo"] = [
-			{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-			{"t": "OPEN", "on": "Eingangstür"}, {"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]},
-			{"t": "TOOL", "tool": "lockpick", "on": "Kassenlade"}, {"t": "OPEN", "on": "Kassenlade"},
-			{"t": "TAKE", "loot": "kasse"}, {"t": "CALL_CAR"}, {"t": "MOVE", "to": "Fluchtwagen"}]
+			{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+			{"t": "OPEN", "on": "eingangstuer"}, {"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]},
+			{"t": "TOOL", "tool": "lockpick", "on": "kasse"}, {"t": "OPEN", "on": "kasse"},
+			{"t": "TAKE", "loot": "kasse"}, {"t": "CALL_CAR"}, {"t": "MOVE", "to": "fluchtwagen"}]
 		if pl.plans.has("otto"):
-			pl.plans["otto"] = [{"t": "MOVE", "to": "Fluchtwagen"}]
+			pl.plans["otto"] = [{"t": "MOVE", "to": "fluchtwagen"}]
 		pl._on_changed()
 		pl._on_execute()
 		_step = 2

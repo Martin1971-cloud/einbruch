@@ -20,7 +20,7 @@ func _team() -> Array:
 
 
 func _run(plan: Array) -> Dictionary:
-	var s := Sim.create(GameData.TARGETS.curiosity, _team(), {"teo": plan.duplicate(true), "otto": [{"t": "MOVE", "to": "Fluchtwagen"}]}, GameData.car_now("kombi", 85.0))
+	var s := Sim.create(GameData.TARGETS.curiosity, _team(), {"teo": plan.duplicate(true), "otto": [{"t": "MOVE", "to": "fluchtwagen"}]}, GameData.car_now("kombi", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 9000:
 		s.step(Sim.DT)
@@ -35,7 +35,7 @@ func _has(log: Array, text: String) -> bool:
 	return false
 
 
-const ENTRY := [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"}]
+const ENTRY := [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"}]
 
 
 func _init() -> void:
@@ -45,13 +45,13 @@ func _init() -> void:
 	_check(s0.loot.has("gemmen") and not s0.loot["gemmen"].opened, "Gemmen-Vitrine im OG verschlossen")
 
 	# Schaufenster: Dietrich passt nicht, Glasschneider öffnet
-	var r1 := _run([{"t": "MOVE", "to": "Außen vor dem Schaufenster"}, {"t": "TOOL", "tool": "lockpick", "on": "Schaufenster"}])
+	var r1 := _run([{"t": "MOVE", "to": "aussen_schaufenster"}, {"t": "TOOL", "tool": "lockpick", "on": "schaufenster"}])
 	_check(_has(r1.log, "nicht geeignet"), "Dietrich passt nicht am Schaufenster")
-	var r2 := _run([{"t": "MOVE", "to": "Außen vor dem Schaufenster"}, {"t": "TOOL", "tool": "glasschneider", "on": "Schaufenster"}, {"t": "OPEN", "on": "Schaufenster"}])
+	var r2 := _run([{"t": "MOVE", "to": "aussen_schaufenster"}, {"t": "TOOL", "tool": "glasschneider", "on": "schaufenster"}, {"t": "OPEN", "on": "schaufenster"}])
 	_check(_has(r2.log, "Schaufenster"), "Glasschneider öffnet das Schaufenster")
 
 	# Erdgeschoss: Uhrensammlung in der Vitrine
-	var r3 := _run(ENTRY + [{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Uhrensammlung"}, {"t": "OPEN", "on": "Uhrensammlung"}, {"t": "TAKE", "loot": "uhren"}])
+	var r3 := _run(ENTRY + [{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "uhren"}, {"t": "OPEN", "on": "uhren"}, {"t": "TAKE", "loot": "uhren"}])
 	_check(r3.sim.loot["uhren"].state != "ROOM", "Uhrensammlung im Verkaufsraum genommen")
 
 	# Gemälde an der Wand ohne Werkzeug
@@ -59,7 +59,7 @@ func _init() -> void:
 	_check(r4.sim.loot["landschaft"].state != "ROOM", "Gemälde „Landschaft“ wird abgenommen")
 
 	# Treppe: ins OG, Gemmen-Vitrine
-	var r5 := _run(ENTRY + [{"t": "MOVE", "cell": [4, 8]}, {"t": "TREPPE"}, {"t": "MOVE", "cell": [4, 17]}, {"t": "TOOL", "tool": "lockpick", "on": "Gemmensammlung"}, {"t": "OPEN", "on": "Gemmensammlung"}, {"t": "TAKE", "loot": "gemmen"}])
+	var r5 := _run(ENTRY + [{"t": "MOVE", "cell": [4, 8]}, {"t": "TREPPE"}, {"t": "MOVE", "cell": [4, 17]}, {"t": "TOOL", "tool": "lockpick", "on": "gemmen"}, {"t": "OPEN", "on": "gemmen"}, {"t": "TAKE", "loot": "gemmen"}])
 	_check(_has(r5.log, "anderen Etage"), "Treppe wechselt die Etage")
 	_check(r5.sim.loot["gemmen"].state != "ROOM", "Gemmen im Obergeschoss genommen")
 

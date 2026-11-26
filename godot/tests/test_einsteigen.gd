@@ -31,7 +31,7 @@ func _process(_d: float) -> bool:
 	elif _frames == 6:
 		var p = _main.current
 		p._active = "teo"
-		p._add("teo", {"t": "MOVE", "to": "Außen vor dem Eingang"})
+		p._add("teo", {"t": "MOVE", "to": "aussen_eingang"})
 		p._on_changed()
 		p._on_map_click(Vector2i(5, 7))
 		var found := false

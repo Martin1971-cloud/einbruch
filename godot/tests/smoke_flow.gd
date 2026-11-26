@@ -60,7 +60,7 @@ func _process(_delta: float) -> bool:
 				p._on_dropped("teo", "MOVE")
 				p.plans["teo"][1]["to"] = "Eingangstür"
 				p._on_dropped("teo", "TOOL")
-				p.plans["teo"][2] = {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}
+				p.plans["teo"][2] = {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}
 				p._on_dropped("teo", "MOVE")
 				p.plans["teo"][3]["to"] = "Gemälde"
 				p._on_dropped("teo", "TAKE")

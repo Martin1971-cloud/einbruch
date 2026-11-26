@@ -39,15 +39,15 @@ func _process(_delta: float) -> bool:
 	if _stage == 0 and _frames == 10:
 		var p = _main.current
 		p.plans["teo"] = [
-			{"t": "MOVE", "to": "Außen vor dem Eingang"},
-			{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-			{"t": "MOVE", "to": "Gemälde"},
+			{"t": "MOVE", "to": "aussen_eingang"},
+			{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+			{"t": "MOVE", "to": "gemaelde"},
 			{"t": "TAKE", "loot": "gemaelde"},
 			{"t": "CALL_CAR"},
-			{"t": "MOVE", "to": "Fluchtwagen"},
+			{"t": "MOVE", "to": "fluchtwagen"},
 		]
-		p.plans["ilja"] = [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "MOVE", "to": "Fluchtwagen"}]
-		p.plans["rosa"] = [{"t": "MOVE", "to": "Fluchtwagen"}]
+		p.plans["ilja"] = [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "MOVE", "to": "fluchtwagen"}]
+		p.plans["rosa"] = [{"t": "MOVE", "to": "fluchtwagen"}]
 		p._on_changed()
 		_stage = 1
 		_frames = 0

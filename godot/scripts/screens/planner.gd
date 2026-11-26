@@ -56,7 +56,7 @@ func _ready() -> void:
 	target = GameData.target_now(Game.stufe_of(Game.target_id), Game.target_id)
 	for c in Game.team:
 		plans[c.id] = []
-		c["start"] = target.points["Fluchtwagen"]
+		c["start"] = target.points["fluchtwagen"]
 	_build_options()
 
 	var root := VBoxContainer.new()
@@ -504,21 +504,20 @@ func _w(t: String, size := 14, col := Color(0.92, 0.9, 0.85)) -> Label:
 
 func _build_options() -> void:
 	var points: Array = []
-	var names: Array = target.points.keys()
-	names.sort()
-	for n in names:
-		points.append([n, n])
+	for id in target.points:
+		points.append([GameData.name_von(id), id])
+	points.sort_custom(func(x, y): return x[0] < y[0])
 	var tools: Array = []
 	for tid in GameData.TOOLS:
 		if Game.tools_owned.has(tid):
 			tools.append([Texte.d(GameData.TOOLS[tid].name), tid])
 	var doors: Array = []
 	for d in target.doors:
-		doors.append([d.name, d.name])
+		doors.append([d.name, d.id])
 	if target.has("panel"):
-		doors.append([target.panel.name, target.panel.name])
+		doors.append([target.panel.name, target.panel.id])
 	for l in target.loot:
-		doors.append([l.name, l.name])
+		doors.append([l.name, l.id])
 	var loot: Array = []
 	for l in target.loot:
 		loot.append([l.name, l.id])
@@ -541,7 +540,7 @@ func _refresh_all() -> void:
 func _alarm_aus_im_plan() -> bool:
 	for pid in plans:
 		for a in plans[pid]:
-			if a.t == "TOOL" and a.get("tool", "") == "bypass" and a.get("on", "") == target.panel.name:
+			if a.t == "TOOL" and a.get("tool", "") == "bypass" and a.get("on", "") == target.panel.id:
 				return true
 	return false
 
@@ -550,11 +549,7 @@ func _alarm_aus_im_plan() -> bool:
 func _gesichert_namen(t: Dictionary) -> String:
 	var namen: Array = []
 	for g in t.get("gesichert", []):
-		var name := str(g)
-		for l in t.get("loot", []):
-			if str(l.get("id", "")) == name:
-				name = Texte.d(str(l.name))
-		namen.append(name)
+		namen.append(Texte.d(GameData.name_von(str(g))))
 	return ", ".join(namen) if namen.size() > 0 else Texte.t("plan.alarm_keine")
 
 
@@ -779,7 +774,7 @@ func _on_palette(kind: String) -> void:
 func all_at_car() -> bool:
 	for c in Game.team:
 		var pl: Array = plans[c.id]
-		if pl.is_empty() or not (pl[-1].t == "MOVE" and pl[-1].get("to", "") == "Fluchtwagen"):
+		if pl.is_empty() or not (pl[-1].t == "MOVE" and pl[-1].get("to", "") == "fluchtwagen"):
 			return false
 	return not Game.team.is_empty()
 
@@ -806,7 +801,7 @@ func _refresh_checklist() -> void:
 				has_door = true
 			if a.t == "CALL_CAR":
 				has_car_call = true
-			if a.t == "MOVE" and a.get("to", "") == "Fluchtwagen":
+			if a.t == "MOVE" and a.get("to", "") == "fluchtwagen":
 				has_car_move = true
 	var items := [
 		[Texte.t("plan.chk_info"), hat_umsehen or hat_informant],
@@ -834,11 +829,11 @@ func _describe(a: Dictionary) -> String:
 				return Texte.t("res.geh_nach") % Texte.d(_point_label(Vector2i(int(a.fine[0]), int(a.fine[1]))))
 			if a.has("cell"):
 				return Texte.t("res.geh_nach") % Texte.d(_name_at(a.cell))
-			return Texte.t("res.geh_nach") % Texte.d(str(a.get("to", "?")))
+			return Texte.t("res.geh_nach") % Texte.d(GameData.name_von(str(a.get("to", "?"))))
 		"TOOL":
-			return "%s an %s" % [Texte.d(GameData.TOOLS[a.tool].name), Texte.d(a.on)]
+			return "%s an %s" % [Texte.d(GameData.TOOLS[a.tool].name), Texte.d(GameData.name_von(a.on))]
 		"OPEN":
-			return Texte.t("plan.oeffnen_obj") % Texte.d(a.on)
+			return Texte.t("plan.oeffnen_obj") % Texte.d(GameData.name_von(a.on))
 		"TAKE":
 			return Texte.t("plan.beute_nehmen")
 		"WAIT":
@@ -860,13 +855,13 @@ func _describe(a: Dictionary) -> String:
 func _default_action(kind: String) -> Dictionary:
 	match kind:
 		"MOVE":
-			return {"t": "MOVE", "to": "Halle"}
+			return {"t": "MOVE", "to": "halle"}
 		"TOOL":
-			return {"t": "TOOL", "tool": _first_tool(), "on": "Eingangstür"}
+			return {"t": "TOOL", "tool": _first_tool(), "on": "eingangstuer"}
 		"TAKE":
 			return {"t": "TAKE", "loot": "gemaelde"}
 		"OPEN":
-			return {"t": "OPEN", "on": "Eingangstür"}
+			return {"t": "OPEN", "on": "eingangstuer"}
 		"WAIT":
 			return {"t": "WAIT", "sec": 5.0}
 		"NEUTRALIZE":
@@ -933,7 +928,7 @@ func _on_preview() -> void:
 		msgs.append("[color=gray]%s[/color]" % Texte.t("plan.gesperrt_hinweis"))
 	for c in Game.team:
 		var pl: Array = plans[c.id]
-		var ends_at_car: bool = not pl.is_empty() and pl[-1].t == "MOVE" and pl[-1].get("to", "") == "Fluchtwagen"
+		var ends_at_car: bool = not pl.is_empty() and pl[-1].t == "MOVE" and pl[-1].get("to", "") == "fluchtwagen"
 		if not ends_at_car:
 			msgs.append("[color=orange]%s[/color]" % (Texte.t("plan.endet_nicht") % c.name.split(" ")[0]))
 	# Warnung: zwei Personen wollen gleichzeitig an einem Objekt arbeiten. Die Simulation lässt eine warten.
@@ -1161,7 +1156,7 @@ func _run_execution() -> void:
 	# Jede Person muss am Ende am Fluchtwagen stehen, sonst kommt das Team nicht vom Gelände
 	for c in Game.team:
 		var pl: Array = plans[c.id]
-		var ends_at_car: bool = not pl.is_empty() and pl[-1].t == "MOVE" and pl[-1].get("to", "") == "Fluchtwagen"
+		var ends_at_car: bool = not pl.is_empty() and pl[-1].t == "MOVE" and pl[-1].get("to", "") == "fluchtwagen"
 		if not ends_at_car:
 			_problems.append(Texte.t("plan.endet_nicht_letzte") % c.name.split(" ")[0])
 	if not _problems.is_empty():
@@ -1177,15 +1172,15 @@ func _object_entries(cell: Vector2i) -> Array:
 	var st: Dictionary = _res.get("states", {}).get("%d,%d" % [cell.x, cell.y], {}) if _res != null else {}
 	if st.is_empty():
 		return out
-	var nm: String = st.name
+	var nm: String = str(st.get("id", ""))
 	var what := Texte.t("plan.leg_tuer") if st.kind == "door" else str(st.get("word", Texte.t("obj.vitrine")))
 	# Crosscheck wie im Original: Objekt nur in Blickrichtung der Person erreichbar (plGetObjectsList)
 	var stand := _stand_after(_active)
 	if absi(stand.cell.x - cell.x) + absi(stand.cell.y - cell.y) != 1:
 		var nb := _neighbor_of(cell, stand.cell)
-		out.append(["%s: zu weit weg" % Texte.d(nm), {}, false])
+		out.append(["%s: zu weit weg" % Texte.d(GameData.name_von(nm)), {}, false])
 		if nb != Vector2i(-1, -1):
-			out.append([Texte.t("plan.neben_gehen") % Texte.d(nm), {"t": "MOVE", "cell": [nb.x, nb.y]}, true])
+			out.append([Texte.t("plan.neben_gehen") % Texte.d(GameData.name_von(nm)), {"t": "MOVE", "cell": [nb.x, nb.y]}, true])
 		return out
 	if st.locked:
 		# Alle Werkzeuge für Schlösser, die man besitzt (Original: Werkzeugliste am Objekt)
@@ -1206,13 +1201,13 @@ func _object_entries(cell: Vector2i) -> Array:
 	if st.kind == "case":
 		var lid := ""
 		for l in target.loot:
-			if l.name == nm:
+			if l.id == nm:
 				lid = l.id
 		var kg := 0
 		for l in target.loot:
-			if l.name == nm:
+			if l.id == nm:
 				kg = int(l.weight)
-		out.append([Texte.t("plan.beute_nehmen_kg") % [Texte.d(nm), kg] if st.open else Texte.t("plan.beute_erst_oeffnen") % Texte.d(nm), {"t": "TAKE", "loot": lid}, bool(st.open)])
+		out.append([Texte.t("plan.beute_nehmen_kg") % [Texte.d(GameData.name_von(nm)), kg] if st.open else Texte.t("plan.beute_erst_oeffnen") % Texte.d(GameData.name_von(nm)), {"t": "TAKE", "loot": lid}, bool(st.open)])
 	return out
 
 
@@ -1253,7 +1248,7 @@ func _stand_after(id: String) -> Dictionary:
 	if ends.has(id):
 		var e: Dictionary = ends[id]
 		return {"cell": Vector2i(int(e.cell[0]), int(e.cell[1])), "face": Vector2i(int(e.face[0]), int(e.face[1]))}
-	return {"cell": Sim._v2i(target.points.Fluchtwagen), "face": Vector2i(0, 1)}
+	return {"cell": Sim._v2i(target.points.fluchtwagen), "face": Vector2i(0, 1)}
 
 
 func _walkable(c: Vector2i) -> bool:
@@ -1284,7 +1279,7 @@ func _name_at(cell) -> String:
 	var v := Sim._v2i(cell)
 	for k in target.points:
 		if Sim._v2i(target.points[k]) == v:
-			return k
+			return GameData.name_von(k)
 	return Texte.t("plan.feld_pos") % [v.x, v.y]
 
 
@@ -1293,18 +1288,18 @@ func _on_example() -> void:
 	if Game.target_id == "kiosk":
 		var kex := {
 			"teo": [
-				{"t": "MOVE", "to": "Außen vor dem Eingang"},
-				{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-				{"t": "OPEN", "on": "Eingangstür"},
+				{"t": "MOVE", "to": "aussen_eingang"},
+				{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+				{"t": "OPEN", "on": "eingangstuer"},
 				{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]},
-				{"t": "TOOL", "tool": "lockpick", "on": "Kassenlade"},
-				{"t": "OPEN", "on": "Kassenlade"},
+				{"t": "TOOL", "tool": "lockpick", "on": "kasse"},
+				{"t": "OPEN", "on": "kasse"},
 				{"t": "TAKE", "loot": "kasse"},
 				{"t": "CALL_CAR"},
-				{"t": "MOVE", "to": "Fluchtwagen"},
+				{"t": "MOVE", "to": "fluchtwagen"},
 			],
-			"ilja": [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "MOVE", "to": "Fluchtwagen"}],
-			"rosa": [{"t": "MOVE", "to": "Fluchtwagen"}],
+			"ilja": [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "MOVE", "to": "fluchtwagen"}],
+			"rosa": [{"t": "MOVE", "to": "fluchtwagen"}],
 		}
 		for id in plans:
 			plans[id] = kex[id].duplicate(true) if kex.has(id) else []
@@ -1313,17 +1308,17 @@ func _on_example() -> void:
 	var ex := {
 		"teo": [
 			{"t": "MOVE", "cell": [0, 5]}, {"t": "MOVE", "cell": [1, 5]},
-			{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-			{"t": "OPEN", "on": "Eingangstür"},
+			{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+			{"t": "OPEN", "on": "eingangstuer"},
 			{"t": "MOVE", "cell": [5, 5]}, {"t": "MOVE", "cell": [5, 4]},
-			{"t": "TOOL", "tool": "lockpick", "on": "Gemälde „Hafen bei Nacht“"},
-			{"t": "OPEN", "on": "Gemälde „Hafen bei Nacht“"},
+			{"t": "TOOL", "tool": "lockpick", "on": "gemaelde"},
+			{"t": "OPEN", "on": "gemaelde"},
 			{"t": "TAKE", "loot": "gemaelde"},
 			{"t": "CALL_CAR"},
-			{"t": "MOVE", "to": "Fluchtwagen"},
+			{"t": "MOVE", "to": "fluchtwagen"},
 		],
-		"ilja": [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "MOVE", "to": "Fluchtwagen"}],
-		"rosa": [{"t": "MOVE", "to": "Fluchtwagen"}],
+		"ilja": [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "MOVE", "to": "fluchtwagen"}],
+		"rosa": [{"t": "MOVE", "to": "fluchtwagen"}],
 	}
 	for id in plans:
 		plans[id] = ex[id].duplicate(true) if ex.has(id) else []
@@ -1365,7 +1360,7 @@ func _point_label(f: Vector2i) -> String:
 	var sb := float(Sim.SUB)
 	for k in target.points:
 		if Vector2(Sim.center(Sim._v2i(target.points[k]))).distance_to(Vector2(f)) <= sb:
-			return k
+			return GameData.name_von(k)
 	return Texte.t("plan.punkt_pos") % [f.x / sb, f.y / sb]
 
 
@@ -1402,7 +1397,7 @@ func _on_map_click(cell: Vector2i) -> void:
 	elif _walkable(cell):
 		_menu_entries.append(["Hierher gehen", {"t": "MOVE", "cell": [cell.x, cell.y]}, true])
 	# Am Fluchtwagen: einsteigen = Plan beenden (Original: Rückkehr zum Wagen, plLivingsPosAtCar)
-	if cell == Sim._v2i(target.points.Fluchtwagen):
+	if cell == Sim._v2i(target.points.fluchtwagen):
 		_menu_entries.append(["Einsteigen (Plan beenden)", {"t": "BOARD"}, true])
 	# Treppenfeld: die Person steigt auf die andere Etage (8 s)
 	for pr in target.get("treppen", []):
@@ -1410,7 +1405,7 @@ func _on_map_click(cell: Vector2i) -> void:
 			_menu_entries.append(["Treppe steigen (8 s)", {"t": "TREPPE"}, true])
 	_menu_entries.append_array(_object_entries(cell))
 	if target.has("panel") and Sim._v2i(target.panel.pos) == cell:
-		_menu_entries.append([Texte.t("plan.bypass"), {"t": "TOOL", "tool": "bypass", "on": target.panel.name}, Game.tools_owned.has("bypass")])
+		_menu_entries.append([Texte.t("plan.bypass"), {"t": "TOOL", "tool": "bypass", "on": target.panel.id}, Game.tools_owned.has("bypass")])
 	for g in target.guards:
 		if Sim._v2i(g.start) == cell:
 			_menu_entries.append(["Wache niederschlagen (Kampfsport, laut)", {"t": "NEUTRALIZE", "guard": g.id, "method": "knock"}, true])
@@ -1474,7 +1469,7 @@ func _on_menu_pick(i: int) -> void:
 		# Einsteigen: den Wagen rufen (falls noch nicht geschehen) und zum Wagen gehen
 		if not _has_call_car(_active):
 			_add(_active, {"t": "CALL_CAR"})
-		_add(_active, {"t": "MOVE", "to": "Fluchtwagen"})
+		_add(_active, {"t": "MOVE", "to": "fluchtwagen"})
 		_on_changed()
 		_watch_last(_active)
 		_preview.text = Texte.t("plan.steigt_ein") % _crew_name(_active)

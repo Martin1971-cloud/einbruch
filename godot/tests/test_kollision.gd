@@ -20,15 +20,15 @@ func _init() -> void:
 			d["gear"] = []
 			team.append(d)
 	var seq := [
-		{"t": "MOVE", "to": "Außen vor dem Eingang"},
-		{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-		{"t": "OPEN", "on": "Eingangstür"},
+		{"t": "MOVE", "to": "aussen_eingang"},
+		{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+		{"t": "OPEN", "on": "eingangstuer"},
 		{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]},
-		{"t": "TOOL", "tool": "lockpick", "on": "Kassenlade"},
-		{"t": "OPEN", "on": "Kassenlade"},
+		{"t": "TOOL", "tool": "lockpick", "on": "kasse"},
+		{"t": "OPEN", "on": "kasse"},
 		{"t": "TAKE", "loot": "kasse"},
 		{"t": "MOVE", "cell": [8, 4]},
-		{"t": "MOVE", "to": "Fluchtwagen"},
+		{"t": "MOVE", "to": "fluchtwagen"},
 	]
 	var s := Sim.create(k, team, {"teo": seq.duplicate(true), "ilja": seq.duplicate(true)}, GameData.car_now("limo", 85.0))
 	var bad := 0

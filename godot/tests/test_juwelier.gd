@@ -20,7 +20,7 @@ func _team() -> Array:
 
 
 func _run(plan: Array) -> Dictionary:
-	var s := Sim.create(GameData.TARGETS.juwelier, _team(), {"teo": plan.duplicate(true), "otto": [{"t": "MOVE", "to": "Fluchtwagen"}]}, GameData.car_now("limo", 85.0))
+	var s := Sim.create(GameData.TARGETS.juwelier, _team(), {"teo": plan.duplicate(true), "otto": [{"t": "MOVE", "to": "fluchtwagen"}]}, GameData.car_now("limo", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 9000:
 		s.step(Sim.DT)
@@ -35,7 +35,7 @@ func _has(log: Array, text: String) -> bool:
 	return false
 
 
-const ENTRY := [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"}]
+const ENTRY := [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"}]
 
 
 func _init() -> void:
@@ -45,10 +45,10 @@ func _init() -> void:
 	_check(s0.doors.has(Vector2i(9, 6)) and s0.doors[Vector2i(9, 6)].kind == "stahl", "Stahltür zum Tresorraum")
 	_check(Sim.door_tool({"kind": "stahl"}) == "tresor", "Stahltür braucht das Tresor-Werkzeug")
 
-	var r1 := _run(ENTRY + [{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Diamantring"}, {"t": "OPEN", "on": "Diamantring"}, {"t": "TAKE", "loot": "diamantring"}])
+	var r1 := _run(ENTRY + [{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "diamantring"}, {"t": "OPEN", "on": "diamantring"}, {"t": "TAKE", "loot": "diamantring"}])
 	_check(r1.sim.loot["diamantring"].state != "ROOM", "Diamantring aus der Vitrine genommen")
 
-	var r2 := _run(ENTRY + [{"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "lockpick", "on": "Stahltür"}])
+	var r2 := _run(ENTRY + [{"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "lockpick", "on": "stahltuer"}])
 	_check(_has(r2.log, "nicht geeignet"), "Dietrich passt nicht an die Stahltür")
 
 	print("Ergebnis: %d Fehler" % _fails)

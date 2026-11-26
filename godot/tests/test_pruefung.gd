@@ -27,9 +27,9 @@ func _run() -> void:
 	var k: Dictionary = GameData.TARGETS.kiosk
 	print("Beute ohne Vitrine:")
 	var p1 := {"teo": [
-		{"t": "MOVE", "to": "Außen vor dem Eingang"},
-		{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-		{"t": "OPEN", "on": "Eingangstür"},
+		{"t": "MOVE", "to": "aussen_eingang"},
+		{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+		{"t": "OPEN", "on": "eingangstuer"},
 		{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]},
 		{"t": "TAKE", "loot": "kasse"},
 	]}

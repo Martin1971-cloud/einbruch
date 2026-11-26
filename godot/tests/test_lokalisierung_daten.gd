@@ -19,8 +19,10 @@ func _init() -> void:
 				fehlend.append("%s.%s" % [id, feld])
 		for f in t.get("facts", []):
 			for x in f:
-				if typeof(x) == TYPE_STRING and not Texte.TABELLE["en"].has(x) and x.length() > 2 and not x.begins_with("res://"):
-					fehlend.append("%s fakt %s" % [id, x])
+				# Fakt-Schlüssel wie "oeffnung" werden über ihren Anzeigenamen geprüft
+				var txt := str(GameData.FAKTEN[x]) if typeof(x) == TYPE_STRING and GameData.FAKTEN.has(x) else str(x)
+				if typeof(x) == TYPE_STRING and not Texte.TABELLE["en"].has(txt) and txt.length() > 2 and not txt.begins_with("res://"):
+					fehlend.append("%s fakt %s" % [id, txt])
 		for skill in t.get("bedarf", {}):
 			var g := str(t.bedarf[skill].get("grund", ""))
 			if g != "" and not Texte.TABELLE["en"].has(g):

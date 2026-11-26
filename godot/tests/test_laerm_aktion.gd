@@ -16,7 +16,7 @@ func _init() -> void:
 			var d: Dictionary = c.duplicate(true)
 			d["gear"] = []
 			team.append(d)
-	var plan := [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "crowbar", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"}]
+	var plan := [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "crowbar", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"}]
 	var s := Sim.create(GameData.TARGETS.kiosk, team, {"teo": plan}, GameData.car_now("limo", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 9000:

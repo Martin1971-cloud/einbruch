@@ -37,15 +37,15 @@ func _init() -> void:
 
 func _run() -> void:
 	var low := {"TECH": 5, "FORCE": 5, "ELECTRONICS": 5, "FAHREN": 5}
-	var pre := [{"t": "MOVE", "to": "Außen vor dem Eingang"}]
+	var pre := [{"t": "MOVE", "to": "aussen_eingang"}]
 	print("Dietrich braucht Schlösser:")
-	var r1 := run(person(low), pre + [{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}])
+	var r1 := run(person(low), pre + [{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}])
 	_check(fail_text(r1).contains("Vorkenntnisse"), "ohne Schlösser-Wissen: %s" % fail_text(r1))
 	print("Brecheisen braucht niemanden:")
-	var r2 := run(person(low), pre + [{"t": "TOOL", "tool": "crowbar", "on": "Eingangstür"}])
+	var r2 := run(person(low), pre + [{"t": "TOOL", "tool": "crowbar", "on": "eingangstuer"}])
 	_check(fail_text(r2) == "", "Brecheisen ohne Vorkenntnisse möglich")
 	print("Elektroset (Bypass) braucht Elektronik:")
-	var r3 := run(person(low), [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "bypass", "on": "Eingangstür"}], GameData.TARGETS.museum)
+	var r3 := run(person(low), [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "bypass", "on": "eingangstuer"}], GameData.TARGETS.museum)
 	_check(fail_text(r3).contains("Vorkenntnisse") or fail_text(r3).contains("Alarmpanel") or fail_text(r3) != "", "Bypass ohne Elektronik: %s" % fail_text(r3))
 	print("Chloroform und starke Wache:")
 	var strong := {"TECH": 5, "FORCE": 30, "ELECTRONICS": 5, "FAHREN": 5}

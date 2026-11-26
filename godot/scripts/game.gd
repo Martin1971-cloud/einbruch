@@ -199,7 +199,7 @@ func _apply_save(parsed: Dictionary) -> void:
 	target_id = str(parsed.get("target_id", "kiosk"))
 	unlocked = parsed.get("unlocked", {"kiosk": true, "museum": false})
 	game_over = bool(parsed.get("game_over", false))
-	saved_plans = parsed.get("saved_plans", {})
+	saved_plans = GameData.migriere_plaene(parsed.get("saved_plans", {}))
 	hints_seen = parsed.get("hints_seen", {})
 	hints_enabled = bool(parsed.get("hints_enabled", true))
 	journal = parsed.get("journal", [])

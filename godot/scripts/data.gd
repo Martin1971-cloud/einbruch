@@ -193,6 +193,65 @@ const ITEMS := {
 
 
 ## Setzt Name, Gewicht, Größe und Icon aus ITEMS in die Beute jedes Ziels ein. Die Ziele enthalten nur ID, Position, Wert.
+## Anzeigenamen der Türen, des Alarmpanels und der Orte. Beute steht in ITEMS, Wachen und Figuren bei ihren Listen.
+const NAMEN := {
+	"eingangstuer": "Eingangstür", "stahltuer": "Stahltür", "schaufenster": "Schaufenster", "tresortuer": "Tresortür",
+	"mitteltuer": "Mitteltür", "hintertuer": "Hintertür", "alarmpanel": "Alarmpanel",
+	"aussen_eingang": "Außen vor dem Eingang", "aussen_schaufenster": "Außen vor dem Schaufenster",
+	"fluchtwagen": "Fluchtwagen", "halle": "Halle", "mittelraum": "Mittelraum", "tresorraum": "Tresor",
+	"korridor": "Korridor", "verkauf": "Verkauf", "verkaufsraum": "Verkaufsraum", "laden": "Laden",
+	"hinterzimmer": "Hinterzimmer", "treppe_eg": "Treppe EG", "treppe_og": "Treppe OG", "obergeschoss": "Obergeschoss",
+}
+
+
+## Fakten der Stadtansicht (Schlüssel -> Anzeigename).
+const FAKTEN := {"oeffnung": "Öffnungszeiten", "wache": "Wachpersonal", "ueberwachung": "Überwachung", "besonderheit": "Besonderheit"}
+
+## Altbestand: gespeicherte Planungen nutzten früher Anzeigenamen als Ziel. Beim Laden werden sie in IDs umgeschrieben.
+const ALTE_IDS := {
+	"Eingangstür": "eingangstuer", "Stahltür": "stahltuer", "Schaufenster": "schaufenster", "Tresortür": "tresortuer",
+	"Mitteltür": "mitteltuer", "Hintertür": "hintertuer", "Alarmpanel": "alarmpanel",
+	"Außen vor dem Eingang": "aussen_eingang", "Außen vor dem Schaufenster": "aussen_schaufenster",
+	"Fluchtwagen": "fluchtwagen", "Halle": "halle", "Mittelraum": "mittelraum", "Tresor": "tresorraum", "Tresorraum": "tresorraum",
+	"Korridor": "korridor", "Gemälde": "gemaelde", "Skulptur": "skulptur", "Diamantkette": "diamant", "Münzsammlung": "muenzen",
+	"Kassenlade": "kasse", "Wertschrank": "safe", "Verkaufsraum": "verkaufsraum", "Verkauf": "verkauf", "Laden": "laden",
+	"Hinterzimmer": "hinterzimmer", "Treppe EG": "treppe_eg", "Treppe OG": "treppe_og", "Obergeschoss": "obergeschoss",
+	"Goldbarren": "goldbarren", "Uhrensammlung": "uhren", "Gemmensammlung": "gemmen", "Diamantring": "diamantring",
+	"Tresorinhalt (Schmuck und Bargeld)": "tresor", "Silberbesteck": "besteck", "Perlenkette": "perlen",
+	"Münzsammlung (OG)": "muenzen_og", "Gemälde „Hafen bei Nacht“": "gemaelde", "Gemälde „Hafen“": "gemaelde",
+	"Gemälde „Landschaft“": "landschaft", "Gemälde „Porträt“": "portraet", "Geldkassette": "kassette",
+	"Antike Pergamente": "pergamente", "Bronzeskulptur": "skulptur",
+}
+
+
+## Gespeicherte Planungen auf IDs umschreiben (Ziele "on" und "to").
+static func migriere_plaene(wert: Variant) -> Variant:
+	if wert is Dictionary:
+		var out := {}
+		for k in wert:
+			var v = wert[k]
+			if (k == "on" or k == "to") and v is String and ALTE_IDS.has(v):
+				out[k] = ALTE_IDS[v]
+			else:
+				out[k] = migriere_plaene(v)
+		return out
+	if wert is Array:
+		var liste: Array = []
+		for v in wert:
+			liste.append(migriere_plaene(v))
+		return liste
+	return wert
+
+
+## Anzeigename zu einer Objekt-ID (Tür, Panel, Ort, Beute).
+static func name_von(id: String) -> String:
+	if NAMEN.has(id):
+		return NAMEN[id]
+	if ITEMS.has(id):
+		return ITEMS[id].name
+	return id
+
+
 static func _mit_beute(ziele: Dictionary) -> Dictionary:
 	var out := {}
 	for zid in ziele:
@@ -206,6 +265,10 @@ static func _mit_beute(ziele: Dictionary) -> Dictionary:
 			m["size"] = it.groesse
 			liste.append(m)
 		z["loot"] = liste
+		for d in z.doors:
+			d["name"] = name_von(d.id)
+		if z.has("panel"):
+			z.panel["name"] = name_von(z.panel.id)
 		out[zid] = z
 	return out
 
@@ -237,25 +300,25 @@ const ZIELE_ROH := {
 			"oooooooooooooooooooo",
 		],
 		"doors": [
-			{"pos": [8, 4], "name": "Mitteltür", "res": 35, "cplx": 45, "locked": true},
-			{"pos": [12, 4], "name": "Tresortür", "res": 70, "cplx": 55, "locked": true},
-			{"pos": [2, 5], "name": "Eingangstür", "res": 25, "cplx": 35, "locked": true},
+			{"pos": [8, 4], "id": "mitteltuer", "res": 35, "cplx": 45, "locked": true},
+			{"pos": [12, 4], "id": "tresortuer", "res": 70, "cplx": 55, "locked": true},
+			{"pos": [2, 5], "id": "eingangstuer", "res": 25, "cplx": 35, "locked": true},
 		],
 		"points": {
-			"Außen vor dem Eingang": [1, 5],
-			"Eingangstür": [2, 5],
-			"Halle": [5, 5],
-			"Mitteltür": [8, 4],
-			"Mittelraum": [10, 4],
-			"Tresortür": [12, 4],
-			"Tresor": [14, 4],
-			"Korridor": [10, 7],
-			"Alarmpanel": [10, 7],
-			"Gemälde": [5, 3],
-			"Skulptur": [4, 8],
-			"Diamantkette": [15, 3],
-			"Münzsammlung": [14, 5],
-			"Fluchtwagen": [19, 6],
+			"aussen_eingang": [1, 5],
+			"eingangstuer": [2, 5],
+			"halle": [5, 5],
+			"mitteltuer": [8, 4],
+			"mittelraum": [10, 4],
+			"tresortuer": [12, 4],
+			"tresorraum": [14, 4],
+			"korridor": [10, 7],
+			"alarmpanel": [10, 7],
+			"gemaelde": [5, 3],
+			"skulptur": [4, 8],
+			"diamant": [15, 3],
+			"muenzen": [14, 5],
+			"fluchtwagen": [19, 6],
 		},
 		"rooms": [
 			{"name": "GALERIE WEST", "pos": [5, 5]},
@@ -264,9 +327,9 @@ const ZIELE_ROH := {
 			{"name": "KORRIDOR", "pos": [10, 8]},
 			{"name": "EINGANG", "pos": [1, 7]},
 		],
-		"panel": {"name": "Alarmpanel", "pos": [10, 7], "res": 50, "cplx": 45},
+		 "panel": {"id": "alarmpanel", "pos": [10, 7], "res": 50, "cplx": 45},
 		# Gesichert: Türen (Name) und Vitrinen (Objekt-ID). Öffnen bei eingeschalteter Anlage löst Alarm aus.
-		"gesichert": ["Mitteltür", "Tresortür", "Eingangstür"],
+		"gesichert": ["mitteltuer", "tresortuer", "eingangstuer"],
 		"sensors": [
 			{"name": "Mikrofon Korridor", "pos": [13, 8], "threshold": 20.0},
 		],
@@ -282,10 +345,10 @@ const ZIELE_ROH := {
 			{"id": "streife", "name": "Streifenwagen", "kampf": 0, "type": "STREET", "start": [19, 0], "route": [[19, 0], [19, 11], [11, 11], [11, 0]], "vision": 8.0, "hearing": 40.0, "reaction": 1.5, "dwell": 1.0},
 		],
 		"facts": [
-			["Öffnungszeiten", "10:00 – 18:00 Uhr"],
-			["Wachpersonal", "Tag- und Nachtdienst"],
-			["Überwachung", "Video (Teilbereiche)"],
-			["Besonderheit", "mehrere Alarmkreise"],
+			["oeffnung", "10:00 – 18:00 Uhr"],
+			["wache", "Tag- und Nachtdienst"],
+			["ueberwachung", "Video (Teilbereiche)"],
+			["besonderheit", "mehrere Alarmkreise"],
 		],
 		"bedarf": {
 			"TECH": {"wert": 45, "grund": "Schlösser an Eingang und Mitteltür (Komplexität 35–45)"},
@@ -342,16 +405,16 @@ const ZIELE_ROH := {
 			],
 		},
 		"doors": [
-			{"pos": [8, 7], "name": "Eingangstür", "res": 20, "cplx": 20, "locked": true},
-			{"pos": [6, 4], "name": "Schaufenster", "res": 15, "cplx": 15, "locked": true, "kind": "glas"},
+			{"pos": [8, 7], "id": "eingangstuer", "res": 20, "cplx": 20, "locked": true},
+			{"pos": [6, 4], "id": "schaufenster", "res": 15, "cplx": 15, "locked": true, "kind": "glas"},
 		],
 		"points": {
-			"Außen vor dem Eingang": [8, 8],
-			"Eingangstür": [8, 7],
-			"Verkaufsraum": [7, 4],
-			"Kassenlade": [10, 3],
-			"Wertschrank": [8, 2],
-			"Fluchtwagen": [5, 7],
+			"aussen_eingang": [8, 8],
+			"eingangstuer": [8, 7],
+			"verkaufsraum": [7, 4],
+			"kasse": [10, 3],
+			"safe": [8, 2],
+			"fluchtwagen": [5, 7],
 		},
 		"rooms": [
 			{"name": "VERKAUF", "pos": [7, 5]},
@@ -366,10 +429,10 @@ const ZIELE_ROH := {
 		"guards": [],
 		"facts": [
 			["Lage", "Hafenstraße, Ecke Kaianlage"],
-			["Öffnungszeiten", "8:00 – 20:00 Uhr"],
-			["Wachpersonal", "keines"],
-			["Überwachung", "keine"],
-			["Besonderheit", "Die Kasse wird abends nicht geleert"],
+			["oeffnung", "8:00 – 20:00 Uhr"],
+			["wache", "keines"],
+			["ueberwachung", "keine"],
+			["besonderheit", "Die Kasse wird abends nicht geleert"],
 		],
 		"bedarf": {
 			"TECH": {"wert": 25, "grund": "Eingangstür mit einfachem Schloss (Komplexität 20)"},
@@ -442,24 +505,24 @@ const ZIELE_ROH := {
 			],
 		},
 		"doors": [
-			{"pos": [6, 10], "name": "Eingangstür", "res": 30, "cplx": 35, "locked": true},
-			{"pos": [9, 6], "name": "Stahltür", "res": 80, "cplx": 60, "locked": true, "kind": "stahl"},
+			{"pos": [6, 10], "id": "eingangstuer", "res": 30, "cplx": 35, "locked": true},
+			{"pos": [9, 6], "id": "stahltuer", "res": 80, "cplx": 60, "locked": true, "kind": "stahl"},
 		],
-		"panel": {"name": "Alarmpanel", "pos": [3, 3], "res": 45, "cplx": 40},
-		"gesichert": ["Eingangstür", "Stahltür"],
+		 "panel": {"id": "alarmpanel", "pos": [3, 3], "res": 45, "cplx": 40},
+		"gesichert": ["eingangstuer", "stahltuer"],
 		"scheinwerfer": [[6, 11]],
 		"sirene": [9, 1],
 		"points": {
-			"Außen vor dem Eingang": [6, 11],
-			"Eingangstür": [6, 10],
-			"Halle": [5, 6],
-			"Stahltür": [9, 6],
-			"Tresorraum": [12, 7],
-			"Alarmpanel": [3, 3],
-			"Fluchtwagen": [3, 11],
-			"Treppe EG": [4, 8],
-			"Treppe OG": [4, 20],
-			"Obergeschoss": [6, 18],
+			"aussen_eingang": [6, 11],
+			"eingangstuer": [6, 10],
+			"halle": [5, 6],
+			"stahltuer": [9, 6],
+			"tresorraum": [12, 7],
+			"alarmpanel": [3, 3],
+			"fluchtwagen": [3, 11],
+			"treppe_eg": [4, 8],
+			"treppe_og": [4, 20],
+			"obergeschoss": [6, 18],
 		},
 		"rooms": [
 			{"name": "HALLE", "pos": [5, 6]},
@@ -485,9 +548,9 @@ const ZIELE_ROH := {
 		],
 		"facts": [
 			["Lage", "Prüfstand, nicht auf der Karte"],
-			["Öffnungszeiten", "immer"],
-			["Wachpersonal", "eine Wache im Tresorraum"],
-			["Überwachung", "Mikrofon und Alarmpanel"],
+			["oeffnung", "immer"],
+			["wache", "eine Wache im Tresorraum"],
+			["ueberwachung", "Mikrofon und Alarmpanel"],
 		],
 		"bedarf": {
 			"TECH": {"wert": 40, "grund": "Eingangstür mit Schloss (Komplexität 35)"},
@@ -564,24 +627,24 @@ const ZIELE_ROH := {
 			],
 		},
 		"doors": [
-			{"pos": [6, 10], "name": "Eingangstür", "res": 30, "cplx": 35, "locked": true},
-			{"pos": [9, 6], "name": "Hintertür", "res": 25, "cplx": 25, "locked": true},
-			{"pos": [8, 2], "name": "Schaufenster", "res": 15, "cplx": 15, "locked": true, "kind": "glas"},
+			{"pos": [6, 10], "id": "eingangstuer", "res": 30, "cplx": 35, "locked": true},
+			{"pos": [9, 6], "id": "hintertuer", "res": 25, "cplx": 25, "locked": true},
+			{"pos": [8, 2], "id": "schaufenster", "res": 15, "cplx": 15, "locked": true, "kind": "glas"},
 		],
 		"floors": [{"id": "eg", "name": "EG", "rows": [0, 13]}, {"id": "og", "name": "OG", "rows": [13, 24]}],
 		"treppen": [[4, 8, 4, 20]],
 		"points": {
-			"Außen vor dem Eingang": [6, 11],
-			"Eingangstür": [6, 10],
-			"Außen vor dem Schaufenster": [8, 1],
-			"Schaufenster": [8, 2],
-			"Laden": [5, 6],
-			"Hintertür": [9, 6],
-			"Hinterzimmer": [12, 6],
-			"Treppe EG": [4, 8],
-			"Treppe OG": [4, 20],
-			"Obergeschoss": [6, 18],
-			"Fluchtwagen": [3, 11],
+			"aussen_eingang": [6, 11],
+			"eingangstuer": [6, 10],
+			"aussen_schaufenster": [8, 1],
+			"schaufenster": [8, 2],
+			"laden": [5, 6],
+			"hintertuer": [9, 6],
+			"hinterzimmer": [12, 6],
+			"treppe_eg": [4, 8],
+			"treppe_og": [4, 20],
+			"obergeschoss": [6, 18],
+			"fluchtwagen": [3, 11],
 		},
 		"rooms": [
 			{"name": "LADEN", "pos": [5, 6]},
@@ -601,10 +664,10 @@ const ZIELE_ROH := {
 		"guards": [],
 		"facts": [
 			["Lage", "Alte Gasse 7, Ecke Hafenmarkt"],
-			["Öffnungszeiten", "10:00 – 18:00 Uhr"],
-			["Wachpersonal", "keines"],
-			["Überwachung", "keine"],
-			["Besonderheit", "Zwei Etagen, Schaufenster zur Gasse"],
+			["oeffnung", "10:00 – 18:00 Uhr"],
+			["wache", "keines"],
+			["ueberwachung", "keine"],
+			["besonderheit", "Zwei Etagen, Schaufenster zur Gasse"],
 		],
 		"bedarf": {
 			"TECH": {"wert": 40, "grund": "Eingangstür und Hintertür mit Schloss (Komplexität 25–35)"},
@@ -659,27 +722,27 @@ const ZIELE_ROH := {
 			],
 		},
 		"doors": [
-			{"pos": [6, 10], "name": "Eingangstür", "res": 35, "cplx": 40, "locked": true},
-			{"pos": [9, 6], "name": "Stahltür", "res": 80, "cplx": 60, "locked": true, "kind": "stahl"},
-			{"pos": [8, 2], "name": "Schaufenster", "res": 20, "cplx": 20, "locked": true, "kind": "glas"},
+			{"pos": [6, 10], "id": "eingangstuer", "res": 35, "cplx": 40, "locked": true},
+			{"pos": [9, 6], "id": "stahltuer", "res": 80, "cplx": 60, "locked": true, "kind": "stahl"},
+			{"pos": [8, 2], "id": "schaufenster", "res": 20, "cplx": 20, "locked": true, "kind": "glas"},
 		],
-		"panel": {"name": "Alarmpanel", "pos": [3, 3], "res": 50, "cplx": 45},
-		"gesichert": ["Eingangstür", "Stahltür", "Schaufenster", "diamantring", "perlen", "tresor"],
+		 "panel": {"id": "alarmpanel", "pos": [3, 3], "res": 50, "cplx": 45},
+		"gesichert": ["eingangstuer", "stahltuer", "schaufenster", "diamantring", "perlen", "tresor"],
 		"sensors": [
 			{"name": "Mikrofon Verkauf", "pos": [5, 8], "threshold": 25.0},
 			# Glasbruchmelder: reagiert schon auf ein zerbrochenes Schaufenster (niedrige Schwelle)
 			{"name": "Glasbruchmelder Schaufenster", "pos": [8, 3], "threshold": 15.0},
 		],
 		"points": {
-			"Außen vor dem Eingang": [6, 11],
-			"Eingangstür": [6, 10],
-			"Außen vor dem Schaufenster": [8, 1],
-			"Schaufenster": [8, 2],
-			"Verkauf": [5, 6],
-			"Alarmpanel": [3, 3],
-			"Stahltür": [9, 6],
-			"Tresorraum": [12, 6],
-			"Fluchtwagen": [3, 11],
+			"aussen_eingang": [6, 11],
+			"eingangstuer": [6, 10],
+			"aussen_schaufenster": [8, 1],
+			"schaufenster": [8, 2],
+			"verkauf": [5, 6],
+			"alarmpanel": [3, 3],
+			"stahltuer": [9, 6],
+			"tresorraum": [12, 6],
+			"fluchtwagen": [3, 11],
 		},
 		"rooms": [
 			{"name": "VERKAUF", "pos": [5, 6]},
@@ -693,10 +756,10 @@ const ZIELE_ROH := {
 		"guards": [],
 		"facts": [
 			["Lage", "Marktplatz, Ecke Goldgasse"],
-			["Öffnungszeiten", "9:00 – 18:30 Uhr"],
-			["Wachpersonal", "keines, nachts nur Alarm"],
-			["Überwachung", "Alarmanlage mit Mikrofonen"],
-			["Besonderheit", "Der Tresor wird nachts verschlossen"],
+			["oeffnung", "9:00 – 18:30 Uhr"],
+			["wache", "keines, nachts nur Alarm"],
+			["ueberwachung", "Alarmanlage mit Mikrofonen"],
+			["besonderheit", "Der Tresor wird nachts verschlossen"],
 		],
 		"bedarf": {
 			"TECH": {"wert": 45, "grund": "Eingangstür mit Sicherheitsschloss (Komplexität 40)"},

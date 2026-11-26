@@ -19,7 +19,7 @@ func _run(team_ids: Array, plans: Dictionary) -> Dictionary:
 	var all := plans.duplicate(true)
 	if not team_ids.has("otto"):
 		team.append(_crew("otto"))
-	all["otto"] = [{"t": "MOVE", "to": "Fluchtwagen"}]
+	all["otto"] = [{"t": "MOVE", "to": "fluchtwagen"}]
 	var s := Sim.create(GameData.TARGETS.kiosk, team, all, GameData.car_now("limo", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 20000:
@@ -32,29 +32,29 @@ func _run(team_ids: Array, plans: Dictionary) -> Dictionary:
 
 
 func _init() -> void:
-	var door := [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "FLAG_WAIT", "flag": "tuer"}]
-	var teo_entry := [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"}, {"t": "FLAG_SET", "flag": "tuer"}]
+	var door := [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "FLAG_WAIT", "flag": "tuer"}]
+	var teo_entry := [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"}, {"t": "FLAG_SET", "flag": "tuer"}]
 	var variants := {
 		"Teo allein": {
 			"ids": ["teo"],
-			"plans": {"teo": [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"},
-				{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "Kassenlade"}, {"t": "OPEN", "on": "Kassenlade"}, {"t": "TAKE", "loot": "kasse"},
-				{"t": "MOVE", "cell": [8, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "Wertschrank"}, {"t": "OPEN", "on": "Wertschrank"}, {"t": "TAKE", "loot": "safe"},
-				{"t": "CALL_CAR"}, {"t": "MOVE", "to": "Fluchtwagen"}]},
+			"plans": {"teo": [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"},
+				{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "kasse"}, {"t": "OPEN", "on": "kasse"}, {"t": "TAKE", "loot": "kasse"},
+				{"t": "MOVE", "cell": [8, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "safe"}, {"t": "OPEN", "on": "safe"}, {"t": "TAKE", "loot": "safe"},
+				{"t": "CALL_CAR"}, {"t": "MOVE", "to": "fluchtwagen"}]},
 		},
 		"Teo + Ilja": {
 			"ids": ["teo", "ilja"],
 			"plans": {
-				"teo": teo_entry + [{"t": "MOVE", "cell": [9, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "Kassenlade"}, {"t": "OPEN", "on": "Kassenlade"}, {"t": "TAKE", "loot": "kasse"}, {"t": "CALL_CAR"}, {"t": "MOVE", "to": "Fluchtwagen"}],
-				"ilja": door + [{"t": "MOVE", "cell": [8, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "Wertschrank"}, {"t": "OPEN", "on": "Wertschrank"}, {"t": "TAKE", "loot": "safe"}, {"t": "MOVE", "to": "Fluchtwagen"}],
+				"teo": teo_entry + [{"t": "MOVE", "cell": [9, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "kasse"}, {"t": "OPEN", "on": "kasse"}, {"t": "TAKE", "loot": "kasse"}, {"t": "CALL_CAR"}, {"t": "MOVE", "to": "fluchtwagen"}],
+				"ilja": door + [{"t": "MOVE", "cell": [8, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "safe"}, {"t": "OPEN", "on": "safe"}, {"t": "TAKE", "loot": "safe"}, {"t": "MOVE", "to": "fluchtwagen"}],
 			},
 		},
 		"Teo + Ilja + Rosa": {
 			"ids": ["teo", "ilja", "rosa"],
 			"plans": {
-				"teo": teo_entry + [{"t": "MOVE", "cell": [9, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "Kassenlade"}, {"t": "OPEN", "on": "Kassenlade"}, {"t": "TAKE", "loot": "kasse"}, {"t": "CALL_CAR"}, {"t": "MOVE", "to": "Fluchtwagen"}],
-				"ilja": door + [{"t": "MOVE", "cell": [8, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "Wertschrank"}, {"t": "OPEN", "on": "Wertschrank"}, {"t": "MOVE", "to": "Fluchtwagen"}],
-				"rosa": door + [{"t": "MOVE", "cell": [8, 3]}, {"t": "WAIT", "sec": 40}, {"t": "TAKE", "loot": "safe"}, {"t": "MOVE", "to": "Fluchtwagen"}],
+				"teo": teo_entry + [{"t": "MOVE", "cell": [9, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "kasse"}, {"t": "OPEN", "on": "kasse"}, {"t": "TAKE", "loot": "kasse"}, {"t": "CALL_CAR"}, {"t": "MOVE", "to": "fluchtwagen"}],
+				"ilja": door + [{"t": "MOVE", "cell": [8, 3]}, {"t": "TOOL", "tool": "lockpick", "on": "safe"}, {"t": "OPEN", "on": "safe"}, {"t": "MOVE", "to": "fluchtwagen"}],
+				"rosa": door + [{"t": "MOVE", "cell": [8, 3]}, {"t": "WAIT", "sec": 40}, {"t": "TAKE", "loot": "safe"}, {"t": "MOVE", "to": "fluchtwagen"}],
 			},
 		},
 	}

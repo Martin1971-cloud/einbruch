@@ -20,7 +20,7 @@ func _team() -> Array:
 
 
 func _run(plan: Array) -> Dictionary:
-	var s := Sim.create(GameData.TARGETS.testhaus, _team(), {"teo": plan.duplicate(true), "otto": [{"t": "MOVE", "to": "Fluchtwagen"}]}, GameData.car_now("kombi", 85.0))
+	var s := Sim.create(GameData.TARGETS.testhaus, _team(), {"teo": plan.duplicate(true), "otto": [{"t": "MOVE", "to": "fluchtwagen"}]}, GameData.car_now("kombi", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 9000:
 		s.step(Sim.DT)
@@ -35,7 +35,7 @@ func _has(log: Array, text: String) -> bool:
 	return false
 
 
-const ENTRY_PLAN := [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"}]
+const ENTRY_PLAN := [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"}]
 
 
 func _init() -> void:
@@ -52,16 +52,16 @@ func _init() -> void:
 	_check(Sim.plan_tile(GameData.TARGETS.testhaus, Vector2i(4 * 16 + 8, 4 * 16 + 8)) == "C", "Vitrine liegt auf einem C-Feld")
 
 	# Lockpick passt nicht an die Stahltür
-	var r1 := _run([{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"}, {"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "lockpick", "on": "Stahltür"}])
+	var r1 := _run([{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"}, {"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "lockpick", "on": "stahltuer"}])
 	_check(_has(r1.log, "nicht geeignet"), "Dietrich passt nicht an die Stahltür")
 
 	# Schneidbrenner öffnet die Stahltür (Werkzeug wird angesetzt)
-	var r2 := _run([{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"}, {"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "schneidbrenner", "on": "Stahltür"}])
+	var r2 := _run([{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"}, {"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "schneidbrenner", "on": "stahltuer"}])
 	_check(_has(r2.log, "setzt Schneidbrenner an Stahltür"), "Schneidbrenner wird an der Stahltür angesetzt")
 	_check(not _has(r2.log, "nicht geeignet"), "Schneidbrenner ist für die Stahltür geeignet")
 
 	# Vitrine: Dietrich entriegelt, danach öffnen
-	var r3 := _run([{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"}, {"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Diamantkette"}, {"t": "OPEN", "on": "Diamantkette"}])
+	var r3 := _run([{"t": "MOVE", "to": "aussen_eingang"}, {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}, {"t": "OPEN", "on": "eingangstuer"}, {"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "diamant"}, {"t": "OPEN", "on": "diamant"}])
 	_check(_has(r3.log, "Diamantkette"), "Vitrine wird bearbeitet")
 	_check(r3.sim.loot["diamant"].opened, "Diamantkette: Vitrine ist offen")
 
@@ -72,7 +72,7 @@ func _init() -> void:
 	# Etagen: ohne Treppe kommt man nicht ins Obergeschoss, mit Treppe schon
 	var r5 := _run(ENTRY_PLAN + [{"t": "MOVE", "cell": [4, 17]}])
 	_check(_has(r5.log, "Kein Weg") or _has(r5.log, "blockiert") or _has(r5.log, "nicht"), "ohne Treppe kein Weg ins Obergeschoss")
-	var r6 := _run(ENTRY_PLAN + [{"t": "MOVE", "cell": [4, 8]}, {"t": "TREPPE"}, {"t": "MOVE", "cell": [4, 17]}, {"t": "TOOL", "tool": "lockpick", "on": "Münzsammlung (OG)"}, {"t": "OPEN", "on": "Münzsammlung (OG)"}, {"t": "TAKE", "loot": "muenzen_og"}])
+	var r6 := _run(ENTRY_PLAN + [{"t": "MOVE", "cell": [4, 8]}, {"t": "TREPPE"}, {"t": "MOVE", "cell": [4, 17]}, {"t": "TOOL", "tool": "lockpick", "on": "muenzen_og"}, {"t": "OPEN", "on": "muenzen_og"}, {"t": "TAKE", "loot": "muenzen_og"}])
 	_check(_has(r6.log, "anderen Etage"), "Treppe wechselt die Etage")
 	_check(r6.sim.loot["muenzen_og"].state != "ROOM", "Münzen im Obergeschoss erreicht und genommen")
 

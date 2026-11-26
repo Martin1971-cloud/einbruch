@@ -245,7 +245,7 @@ func _refresh() -> void:
 	shown_facts.insert(0, [Texte.t("stadt.polizeizeit"), Texte.t("stadt.polizeizeit_wert") % GameData.police_text(t, bool(q.get("inf", false)))])
 	for f in shown_facts:
 		var h := HBoxContainer.new()
-		var k := UI.label(Texte.d(f[0]), 13, Color(0.7, 0.75, 0.82))
+		var k := UI.label(Texte.d(GameData.FAKTEN.get(f[0], f[0])), 13, Color(0.7, 0.75, 0.82))
 		k.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		h.add_child(k)
 		h.add_child(UI.label(Texte.d(str(f[1])), 13))
@@ -275,9 +275,9 @@ func _refresh() -> void:
 ## Welche Fakten sichtbar sind: Lage und Öffnungszeiten ab Umsehen 1x, Wache und Überwachung ab Umsehen 2x, Besonderheit über den Informanten.
 func _fakt_sichtbar(name: String, q: Dictionary) -> bool:
 	var n := int(q.get("look", 0))
-	if name == "Besonderheit":
+	if name == "besonderheit":
 		return bool(q.get("inf", false))  # Insiderwissen gibt es nur über den Informanten
-	if name == "Wachpersonal" or name == "Überwachung":
+	if name == "wache" or name == "ueberwachung":
 		return n >= 2  # erst beim zweiten Umsehen
 	return n >= 1  # Lage, Öffnungszeiten: schon beim ersten Umsehen
 

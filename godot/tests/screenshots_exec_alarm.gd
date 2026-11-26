@@ -32,15 +32,15 @@ func _process(_delta: float) -> bool:
 				G.team.append(d)
 		var plans := {
 			"teo": [
-				{"t": "MOVE", "to": "Außen vor dem Eingang"},
-				{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-				{"t": "MOVE", "to": "Gemälde"},
+				{"t": "MOVE", "to": "aussen_eingang"},
+				{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+				{"t": "MOVE", "to": "gemaelde"},
 				{"t": "TAKE", "loot": "gemaelde"},
 				{"t": "CALL_CAR"},
-				{"t": "MOVE", "to": "Fluchtwagen"},
+				{"t": "MOVE", "to": "fluchtwagen"},
 			],
-			"ilja": [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "MOVE", "to": "Fluchtwagen"}],
-			"rosa": [{"t": "MOVE", "to": "Fluchtwagen"}],
+			"ilja": [{"t": "MOVE", "to": "aussen_eingang"}, {"t": "MOVE", "to": "fluchtwagen"}],
+			"rosa": [{"t": "MOVE", "to": "fluchtwagen"}],
 		}
 		var cfg := {"target": GameData.TARGETS.museum, "team": G.team, "plans": plans, "car": GameData.car_now("limo", 85.0)}
 		_main = load("res://scenes/main.tscn").instantiate()

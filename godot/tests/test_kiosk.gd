@@ -33,15 +33,15 @@ func _run() -> void:
 
 	print("Einbruch mit Dietrich:")
 	var plans := {"teo": [
-		{"t": "MOVE", "to": "Außen vor dem Eingang"},
-		{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-		{"t": "OPEN", "on": "Eingangstür"},
+		{"t": "MOVE", "to": "aussen_eingang"},
+		{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+		{"t": "OPEN", "on": "eingangstuer"},
 		{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]},
-		{"t": "TOOL", "tool": "lockpick", "on": "Kassenlade"},
-		{"t": "OPEN", "on": "Kassenlade"},
+		{"t": "TOOL", "tool": "lockpick", "on": "kasse"},
+		{"t": "OPEN", "on": "kasse"},
 		{"t": "TAKE", "loot": "kasse"},
 		{"t": "CALL_CAR"},
-		{"t": "MOVE", "to": "Fluchtwagen"},
+		{"t": "MOVE", "to": "fluchtwagen"},
 	]}
 	var res := Sim.preview(k, team_of("teo"), plans, GameData.car_now("limo", 85.0))
 	_check(str(res.status).begins_with("ENTKOMMEN"), "Kiosk gelingt mit Dietrich (%s)" % res.status)

@@ -44,7 +44,7 @@ func _process(_d: float) -> bool:
 			_step = 2
 		2:
 			var pl = _main.current
-			pl.plans["otto"] = [{"t": "MOVE", "to": "Fluchtwagen"}]
+			pl.plans["otto"] = [{"t": "MOVE", "to": "fluchtwagen"}]
 			pl._on_changed()
 			_step = 3
 		3:

@@ -32,9 +32,9 @@ func _process(_d: float) -> bool:
 	if _frames == 10:
 		var pl = _main.current
 		pl.plans["teo"] = [
-			{"t": "MOVE", "to": "Außen vor dem Eingang"},
-			{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-			{"t": "OPEN", "on": "Eingangstür"},
+			{"t": "MOVE", "to": "aussen_eingang"},
+			{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+			{"t": "OPEN", "on": "eingangstuer"},
 			{"t": "MOVE", "fine": [60 * U, 46 * U]},
 			{"t": "MOVE", "fine": [96 * U, 60 * U]},
 		]

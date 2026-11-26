@@ -604,7 +604,7 @@ func _build_world() -> void:
 			_sight_nodes[g.id + "|" + c.id] = line
 
 	# Fluchtwagen mit Scheinwerfern am Ausgang
-	var ex := Sim._v2i(cfg.target.points.Fluchtwagen)
+	var ex := Sim._v2i(cfg.target.points.fluchtwagen)
 	var car := Node3D.new()
 	# Mittelklasse-Limousine, 4,2 m lang, 1,6 m breit (1 Feld = 1 m), Front in +x
 	_box_child(car, Vector3(4.2, 0.7, 1.6), Vector3(0, 0.6, 0), Color(0.28, 0.42, 0.56), 0.4, 0.0)
@@ -1273,9 +1273,9 @@ func _sync_body() -> void:
 		var act := _current_act(c)
 		if act != "TOOL" and act != "OPEN":
 			continue
-		var on_name := str(c.plan[c.idx].get("on", ""))
+		var on_id := str(c.plan[c.idx].get("on", ""))
 		for lid in sim.loot:
-			if str(sim.loot[lid].get("name", "")) == on_name and sim.loot[lid].state == "ROOM":
+			if str(sim.loot[lid].get("id", "")) == on_id and sim.loot[lid].state == "ROOM":
 				_loot_nodes[lid].scale = Vector3.ONE * (1.0 + 0.15 * absf(sin(t_now * 10.0)))
 	_car_node.visible = sim.car.present
 	_refresh_ui()

@@ -57,9 +57,9 @@ func _process(_d: float) -> bool:
 		2:
 			var pl = _main.current
 			var plan := [
-				{"t": "MOVE", "to": "Außen vor dem Eingang"},
-				{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"},
-				{"t": "OPEN", "on": "Eingangstür"},
+				{"t": "MOVE", "to": "aussen_eingang"},
+				{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+				{"t": "OPEN", "on": "eingangstuer"},
 				{"t": "MOVE", "cell": [4, 8]},
 				{"t": "TREPPE"},
 				{"t": "MOVE", "cell": [4, 17]},

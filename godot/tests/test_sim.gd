@@ -72,7 +72,7 @@ func test_pathfinding_and_doors() -> void:
 
 func test_lockpick_duration() -> void:
 	print("Werkzeug")
-	var plan := {"teo": [{"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"}]}
+	var plan := {"teo": [{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"}]}
 	var s := make(plan, team_of("teo", "sneakers"))
 	s.crew[0].pos = Sim.center(Vector2i(1, 5))
 	s.crew[0]["facing"] = Vector2(1, 0)  # blickt auf die Tür
@@ -119,7 +119,7 @@ func test_escape_plan_terminates() -> void:
 	print("Flucht")
 	var plan := {"teo": [
 		{"t": "CALL_CAR"},
-		{"t": "MOVE", "to": "Fluchtwagen"},
+		{"t": "MOVE", "to": "fluchtwagen"},
 	]}
 	var s := make(plan, team_of("teo", "darksuit"))
 	run_until_done(s)

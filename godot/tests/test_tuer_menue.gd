@@ -31,7 +31,7 @@ func _process(_d: float) -> bool:
 	elif _frames == 6:
 		var p = _main.current
 		p._active = "teo"
-		p._add("teo", {"t": "MOVE", "to": "Außen vor dem Eingang"})
+		p._add("teo", {"t": "MOVE", "to": "aussen_eingang"})
 		p._on_changed()
 		var door := Vector2i(8, 7)
 		var e: Array = p._object_entries(door)
@@ -40,7 +40,7 @@ func _process(_d: float) -> bool:
 			if x[2] and str(x[1].get("t", "")) == "TOOL":
 				usable += 1
 		_check(usable >= 1, "vor der Tür: Dietrich wird angeboten (%d Einträge)" % usable)
-		p._add("teo", {"t": "TOOL", "tool": "lockpick", "on": "Eingangstür"})
+		p._add("teo", {"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"})
 		p._on_changed()
 		e = p._object_entries(door)
 		var can_open := false
