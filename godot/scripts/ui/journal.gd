@@ -88,7 +88,7 @@ func _entry(e: Dictionary) -> Control:
 func _names(a: Array) -> Array:
 	var out: Array = []
 	for x in a:
-		out.append(Texte.d(str(x)))
+		out.append(Texte.t(str(x)))
 	return out
 
 

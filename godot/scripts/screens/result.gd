@@ -92,7 +92,7 @@ func _ablauf_box(res: Dictionary) -> Control:
 	var beute := {}
 	for ev in res.get("events", []):
 		if str(ev.kind) == "TAKE" and bool(ev.ok):
-			beute[str(ev.crew)] = beute.get(str(ev.crew), []) + [Texte.d(str(ev.obj))]
+			beute[str(ev.crew)] = beute.get(str(ev.crew), []) + [Texte.t(str(ev.obj))]
 	var teile: Array = []
 	for c in res.get("crew", []):
 		var liste: Array = beute.get(str(c.id), [])
@@ -139,7 +139,7 @@ func _fill() -> void:
 		var row := HBoxContainer.new()
 		row.add_child(_cell(Sim.clock(float(ev.t)), 60, Color(0.6, 0.65, 0.72)))
 		if is_alarm:
-			row.add_child(_cell(Texte.t("res.alarm_zeile") % Texte.d(str(ev.obj)), 0, Color(1.0, 0.7, 0.4), true))
+			row.add_child(_cell(Texte.t("res.alarm_zeile") % Texte.t(str(ev.obj)), 0, Color(1.0, 0.7, 0.4), true))
 		else:
 			for c in crew:
 				if _filter != "" and str(c.id) != _filter:
@@ -156,13 +156,13 @@ func _ev_text(ev: Dictionary) -> String:
 	var txt := ""
 	match str(ev.kind):
 		"MOVE":
-			txt = Texte.t("res.geh_nach") % Texte.d(str(ev.obj))
+			txt = Texte.t("res.geh_nach") % Texte.t(str(ev.obj))
 		"TOOL":
-			txt = Texte.t("res.werkzeug_an") % [Texte.d(str(ev.tool)), Texte.d(str(ev.obj))]
+			txt = Texte.t("res.werkzeug_an") % [Texte.t(str(ev.tool)), Texte.t(str(ev.obj))]
 		"OPEN":
-			txt = Texte.t("res.oeffnet") % Texte.d(str(ev.obj))
+			txt = Texte.t("res.oeffnet") % Texte.t(str(ev.obj))
 		"TAKE":
-			txt = Texte.t("res.nimmt") % Texte.d(str(ev.obj))
+			txt = Texte.t("res.nimmt") % Texte.t(str(ev.obj))
 		"CALL_CAR":
 			txt = Texte.t("res.ruft_wagen")
 		_:
@@ -192,7 +192,7 @@ func _list(a: Array) -> String:
 		return "nichts"
 	var names: Array = []
 	for x in a:
-		names.append(Texte.d(str(x)))
+		names.append(Texte.t(str(x)))
 	return ", ".join(names)
 
 

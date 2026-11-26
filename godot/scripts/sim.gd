@@ -86,7 +86,7 @@ static func create(target: Dictionary, team: Array, plans: Dictionary, car_cfg: 
 
 
 func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary) -> void:
-	target_name = target.name
+	target_name = Texte.t(target.name)
 	max_volume = float(target.get("max_volume", 30.0))
 	var pol := GameData.polizei(str(target.get("id", "")))
 	police_base = float(pol["zeit"])
@@ -106,7 +106,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 	escape_cell = points.get("fluchtwagen", Vector2i.ZERO)
 	for d in target.doors:
 		var p := _v2i(d.pos)
-		doors[p] = {"id": d.id, "name": d.name, "res": float(d.res), "cplx": float(d.cplx), "destroyed": false, "locked": bool(d.get("locked", true)), "kind": str(d.get("kind", "tuer"))}
+		doors[p] = {"id": d.id, "name": Texte.t(d.name), "res": float(d.res), "cplx": float(d.cplx), "destroyed": false, "locked": bool(d.get("locked", true)), "kind": str(d.get("kind", "tuer"))}
 	for pair in target.get("treppen", []):
 		var sa := Vector2i(int(pair[0]), int(pair[1]))
 		var sb := Vector2i(int(pair[2]), int(pair[3]))
@@ -114,13 +114,13 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 		stairs[sb] = sa
 	gesichert = target.get("gesichert", [])
 	if target.has("panel"):
-		panel = {"id": target.panel.id, "name": target.panel.name, "pos": _v2i(target.panel.pos), "res": float(target.panel.res), "cplx": float(target.panel.cplx), "bypassed": false}
+		panel = {"id": target.panel.id, "name": Texte.t(target.panel.name), "pos": _v2i(target.panel.pos), "res": float(target.panel.res), "cplx": float(target.panel.cplx), "bypassed": false}
 	for s in target.sensors:
-		sensors.append({"name": s.name, "pos": _v2i(s.pos), "threshold": float(s.threshold), "active": true})
+		sensors.append({"name": Texte.t(s.name), "pos": _v2i(s.pos), "threshold": float(s.threshold), "active": true})
 	for l in target.loot:
 		if not use_fine:
 			_case_cells[_v2i(l.pos)] = true   # ohne feinen Grundriss blockiert die Vitrine ihr ganzes Feld
-		loot[l.id] = {"id": l.id, "name": l.name, "pos": _v2i(l.pos), "value": int(l.value), "weight": float(l.weight), "size": l.size,"state": "ROOM", "carrier": "", "opened": bool(l.get("open", false)), "locked": not bool(l.get("open", false))}
+		loot[l.id] = {"id": l.id, "name": Texte.t(l.name), "pos": _v2i(l.pos), "value": int(l.value), "weight": float(l.weight), "size": l.size,"state": "ROOM", "carrier": "", "opened": bool(l.get("open", false)), "locked": not bool(l.get("open", false))}
 		loot_order.append(l.id)
 	for g in target.guards:
 		var st := _v2i(g.start)
@@ -128,7 +128,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 		for r in g.route:
 			route.append(_v2i(r))
 		guards.append({
-			"id": g.id, "name": g.name, "type": g.type, "kampf": float(g.get("kampf", 0)),
+			"id": g.id, "name": Texte.t(g.name), "type": g.type, "kampf": float(g.get("kampf", 0)),
 			"pos": center(st), "route": route, "wp": 0, "path": [], "dwell": 0.0,
 			"dwell_sec": float(g.dwell), "state": "PATROL", "suspicion": 0.0,
 			"vision": float(g.vision), "hearing": float(g.hearing), "reaction": float(g.reaction),
@@ -552,7 +552,7 @@ func _case_at(cell: Vector2i) -> String:
 
 ## Anzeigename zu einer Objekt-ID (für Meldungen und das Ereignisprotokoll).
 func _disp(id: String) -> String:
-	return GameData.name_von(id)
+	return Texte.t(GameData.name_von(id))
 
 
 ## Bezeichnung des Ziels einer Aktion (für das Ereignisprotokoll).
@@ -575,6 +575,7 @@ func _log(text: String) -> void:
 
 var alarm_source := ""  # wer den Alarm ausgelöst hat (Melder, Wache, Lärm), unabhängig von der Sprache
 var overlaps := 0      # wie oft eine Person auf ein Objekt warten musste, das schon besetzt war
+var overlap_lines: Array = []  # Meldungen dazu (für den Planer, ohne Zeitstempel)
 
 
 ## Eintreffzeit der Polizei je Alarmart. STILL = Alarmkontakt (Anlage meldet an die Zentrale), LAUT = Lärm, Melder, Wache.
@@ -709,7 +710,9 @@ func _free_for(c: Dictionary, key: String) -> bool:
 	if _busy.has(key) and _busy[key] != c.id:
 		if not c.get("waiting", false):
 			overlaps += 1
-		_log(Texte.t("sim.wartet") % [c.name, _busy_name(key)])
+		var zeile: String = Texte.t("sim.wartet") % [c.name, _busy_name(key)]
+		overlap_lines.append(zeile)
+		_log(zeile)
 		c["waiting"] = true
 		c["msg"] = Texte.t("sim.msg_wartet") % _busy_name(key)
 		return false
@@ -788,7 +791,7 @@ func _step_crew(c: Dictionary, dt: float) -> void:
 			_next(c)
 		"FLAG_SET":
 			flags[a.flag] = true
-			_log(Texte.t("sim.signal") % [c.name, Texte.d(GameData.FLAG_NAMES.get(a.flag, a.flag))])
+			_log(Texte.t("sim.signal") % [c.name, Texte.t(GameData.FLAG_NAMES.get(a.flag, a.flag))])
 			_next(c)
 		"FLAG_WAIT":
 			if flags.get(a.flag, false):
@@ -903,7 +906,7 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		# Schaufenster brauchen den Glasschneider, Türen und Vitrinen das Schloss-Werkzeug
 		var needs := door_tool(door) if door != null else "schloss"
 		if (is_panel and tool.obj != "alarm") or ((door != null or case_id != "") and tool.obj != needs):
-			_fail(c, Texte.t("fail.ungeeignet") % [tool.name, _disp(a.on)])
+			_fail(c, Texte.t("fail.ungeeignet") % [Texte.t(tool.name), _disp(a.on)])
 			return
 		# Entriegeln geht nur bei verschlossenen Schlössern (Original: LOCK_UNLOCK-Bit)
 		if door != null and not door.locked:
@@ -923,7 +926,7 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 			_fail(c, Texte.t("fail.nichts_zu_oeffnen") % _disp(a.on))
 			return
 		if obj > float(tool.max):
-			_fail(c, Texte.t("fail.zu_stabil") % [_disp(a.on), tool.name])
+			_fail(c, Texte.t("fail.zu_stabil") % [_disp(a.on), Texte.t(tool.name)])
 			return
 		var skill := float(c.skills.get(tool.type, 1))
 		var dur: float = float(tool.time) * (1.0 + obj / 100.0) * (1.0 - skill / 150.0)
@@ -935,7 +938,7 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		c["loud"] = c.noise
 		c.started = true
 		_lock(c, key)
-		_log(Texte.t("sim.werkzeug_an") % [c.name, tool.name, _disp(a.on)])
+		_log(Texte.t("sim.werkzeug_an") % [c.name, Texte.t(tool.name), _disp(a.on)])
 		return
 	c.timer -= dt
 	if c.timer > 0.0:
@@ -1221,7 +1224,7 @@ func _do_take(c: Dictionary, a: Dictionary, dt: float) -> void:
 	l.state = "CARRIED"
 	l.carrier = c.id
 	c.carried.append(l.id)
-	c["msg"] = Texte.t("sim.msg_genommen") % Texte.d(str(l.name))
+	c["msg"] = Texte.t("sim.msg_genommen") % Texte.t(str(l.name))
 	_log(Texte.t("sim.nimmt") % [c.name, l.name])
 	_next(c)
 
@@ -1480,6 +1483,7 @@ func result() -> Dictionary:
 		"peak_loud": peak_loud,
 		"alarm_source": alarm_source,
 		"ueberschneidungen": overlaps,
+		"ueberschneidung_zeilen": overlap_lines,
 		"max_volume": max_volume,
 		"alarm": alarm_active,
 		"log": log_lines,

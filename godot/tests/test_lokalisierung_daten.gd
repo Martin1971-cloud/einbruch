@@ -30,8 +30,8 @@ func _init() -> void:
 	_check(fehlend.is_empty(), "Alle Gebäudetexte haben eine englische Fassung %s" % str(fehlend))
 	Texte.sprache = "en"
 	var kiosk: Dictionary = GameData.TARGETS.kiosk
-	_check(Texte.d(kiosk.name) != kiosk.name, "In Englisch wird der Name des Kiosks übersetzt")
+	_check(Texte.t(kiosk.name) != kiosk.name, "In Englisch wird der Name des Kiosks übersetzt")
 	Texte.sprache = "de"
-	_check(Texte.d(kiosk.name) == kiosk.name, "In Deutsch bleibt der Name unverändert")
+	_check(Texte.t(kiosk.name) == Texte.TABELLE["de"][kiosk.name], "In Deutsch steht der deutsche Text aus der Tabelle")
 	print("Ergebnis: %d Fehler" % _fails)
 	quit(1 if _fails > 0 else 0)

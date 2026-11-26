@@ -8,26 +8,26 @@ extends RefCounted
 const TOOLS := {
 	# Fähigkeit laut Quelle (tcGetNecessaryAbility): "Schlösser", "Kampf", "Elektronik", "Safes", "Sprengstoff" oder "" (jeder).
 	# min = Mindeststufe der Fähigkeit (Vorkenntnisse). obj = was damit geöffnet wird: schloss, alarm, glas, tresor, wache.
-	"lockpick": {"name": "Dietrich-Set", "type": "TECH", "ability": "Schlösser", "min": 25, "obj": "schloss", "max": 60, "time": 15.0, "noise": 5.0, "destroys": false, "evidence": 2.0, "price": 300, "stufe": 0},
-	"schlosstecher": {"name": "Schlosstecher", "type": "TECH", "ability": "Schlösser", "min": 15, "obj": "schloss", "max": 40, "time": 10.0, "noise": 4.0, "destroys": false, "evidence": 2.0, "price": 150, "stufe": 0},
-	"bohrmaschine": {"name": "Bohrmaschine", "type": "TECH", "ability": "Schlösser", "min": 35, "obj": "schloss", "max": 75, "time": 8.0, "noise": 45.0, "destroys": true, "evidence": 6.0, "price": 700, "stufe": 2},
-	"crowbar": {"name": "Brecheisen", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 75, "time": 4.0, "noise": 65.0, "destroys": true, "evidence": 20.0, "price": 200, "stufe": 0},
-	"hammer": {"name": "Hammer", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 70, "time": 5.0, "noise": 60.0, "destroys": true, "evidence": 20.0, "price": 60, "stufe": 0},
-	"axt": {"name": "Axt", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 80, "time": 5.0, "noise": 70.0, "destroys": true, "evidence": 25.0, "price": 120, "stufe": 1},
-	"glasschneider": {"name": "Glasschneider", "type": "FORCE", "ability": "", "min": 10, "obj": "glas", "max": 40, "time": 8.0, "noise": 5.0, "destroys": true, "evidence": 3.0, "price": 120, "stufe": 0},
-	"chloroform": {"name": "Chloroform", "type": "FORCE", "ability": "Kampf", "min": 0, "obj": "wache", "max": 100, "time": 4.0, "noise": 0.0, "destroys": false, "evidence": 3.0, "price": 250, "stufe": 3},
-	"bypass": {"name": "Elektroset (Bypass)", "type": "ELECTRONICS", "ability": "Elektronik", "min": 30, "obj": "alarm", "max": 85, "time": 12.0, "noise": 2.0, "destroys": false, "evidence": 5.0, "price": 900, "stufe": 2},
-	"stethoskop": {"name": "Stethoskop", "type": "TECH", "ability": "Safes", "min": 40, "obj": "tresor", "max": 100, "time": 20.0, "noise": 1.0, "destroys": false, "evidence": 3.0, "price": 500, "stufe": 2},
-	"schneidbrenner": {"name": "Schneidbrenner", "type": "TECH", "ability": "Safes", "min": 55, "obj": "tresor", "max": 100, "time": 30.0, "noise": 30.0, "destroys": true, "evidence": 8.0, "price": 2500, "stufe": 2},
-	"kernbohrer": {"name": "Kernbohrer", "type": "TECH", "ability": "Safes", "min": 65, "obj": "tresor", "max": 100, "time": 40.0, "noise": 60.0, "destroys": true, "evidence": 10.0, "price": 3000, "stufe": 3},
-	"dynamit": {"name": "Dynamit", "type": "TECH", "ability": "Sprengstoff", "min": 60, "obj": "tresor", "max": 100, "time": 10.0, "noise": 120.0, "destroys": true, "evidence": 40.0, "price": 1500, "stufe": 3},
+	"lockpick": {"name": "werkzeug.lockpick.name", "type": "TECH", "ability": "Schlösser", "min": 25, "obj": "schloss", "max": 60, "time": 15.0, "noise": 5.0, "destroys": false, "evidence": 2.0, "price": 300, "stufe": 0},
+	"schlosstecher": {"name": "werkzeug.schlosstecher.name", "type": "TECH", "ability": "Schlösser", "min": 15, "obj": "schloss", "max": 40, "time": 10.0, "noise": 4.0, "destroys": false, "evidence": 2.0, "price": 150, "stufe": 0},
+	"bohrmaschine": {"name": "werkzeug.bohrmaschine.name", "type": "TECH", "ability": "Schlösser", "min": 35, "obj": "schloss", "max": 75, "time": 8.0, "noise": 45.0, "destroys": true, "evidence": 6.0, "price": 700, "stufe": 2},
+	"crowbar": {"name": "werkzeug.crowbar.name", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 75, "time": 4.0, "noise": 65.0, "destroys": true, "evidence": 20.0, "price": 200, "stufe": 0},
+	"hammer": {"name": "werkzeug.hammer.name", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 70, "time": 5.0, "noise": 60.0, "destroys": true, "evidence": 20.0, "price": 60, "stufe": 0},
+	"axt": {"name": "werkzeug.axt.name", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 80, "time": 5.0, "noise": 70.0, "destroys": true, "evidence": 25.0, "price": 120, "stufe": 1},
+	"glasschneider": {"name": "werkzeug.glasschneider.name", "type": "FORCE", "ability": "", "min": 10, "obj": "glas", "max": 40, "time": 8.0, "noise": 5.0, "destroys": true, "evidence": 3.0, "price": 120, "stufe": 0},
+	"chloroform": {"name": "werkzeug.chloroform.name", "type": "FORCE", "ability": "Kampf", "min": 0, "obj": "wache", "max": 100, "time": 4.0, "noise": 0.0, "destroys": false, "evidence": 3.0, "price": 250, "stufe": 3},
+	"bypass": {"name": "werkzeug.bypass.name", "type": "ELECTRONICS", "ability": "Elektronik", "min": 30, "obj": "alarm", "max": 85, "time": 12.0, "noise": 2.0, "destroys": false, "evidence": 5.0, "price": 900, "stufe": 2},
+	"stethoskop": {"name": "werkzeug.stethoskop.name", "type": "TECH", "ability": "Safes", "min": 40, "obj": "tresor", "max": 100, "time": 20.0, "noise": 1.0, "destroys": false, "evidence": 3.0, "price": 500, "stufe": 2},
+	"schneidbrenner": {"name": "werkzeug.schneidbrenner.name", "type": "TECH", "ability": "Safes", "min": 55, "obj": "tresor", "max": 100, "time": 30.0, "noise": 30.0, "destroys": true, "evidence": 8.0, "price": 2500, "stufe": 2},
+	"kernbohrer": {"name": "werkzeug.kernbohrer.name", "type": "TECH", "ability": "Safes", "min": 65, "obj": "tresor", "max": 100, "time": 40.0, "noise": 60.0, "destroys": true, "evidence": 10.0, "price": 3000, "stufe": 3},
+	"dynamit": {"name": "werkzeug.dynamit.name", "type": "TECH", "ability": "Sprengstoff", "min": 60, "obj": "tresor", "max": 100, "time": 10.0, "noise": 120.0, "destroys": true, "evidence": 40.0, "price": 1500, "stufe": 3},
 }
 
 const GEAR := {
-	"none": {"name": "Keine", "ev": 1.0, "noise": 1.0, "vis": 1.0, "price": 0},
-	"gloves": {"name": "Lederhandschuhe", "ev": 0.2, "noise": 1.0, "vis": 1.0, "price": 100},
-	"sneakers": {"name": "Gummisohlen", "ev": 0.5, "noise": 0.4, "vis": 1.0, "price": 150},
-	"darksuit": {"name": "Dunkler Anzug", "ev": 1.0, "noise": 1.0, "vis": 0.7, "price": 400},
+	"none": {"name": "ausruestung.none.name", "ev": 1.0, "noise": 1.0, "vis": 1.0, "price": 0},
+	"gloves": {"name": "ausruestung.gloves.name", "ev": 0.2, "noise": 1.0, "vis": 1.0, "price": 100},
+	"sneakers": {"name": "ausruestung.sneakers.name", "ev": 0.5, "noise": 0.4, "vis": 1.0, "price": 150},
+	"darksuit": {"name": "ausruestung.darksuit.name", "ev": 1.0, "noise": 1.0, "vis": 0.7, "price": 400},
 }
 
 ## Personen. Jede Person hat ein Punktebudget von 150, verteilt auf ihre Fähigkeiten (höchstens 100 je Fähigkeit).
@@ -35,48 +35,48 @@ const GEAR := {
 const BUDGET := 150
 const SKILL_CAP := 100
 const CREW := [
-	{"id": "mira", "name": "Mira Calder", "role": "Planerin", "skills": {"TECH": 60, "FORCE": 35, "ELECTRONICS": 55}, "fee": 4000, "start": [0, 4]},
-	{"id": "ilja", "name": "Ilja Brandt", "role": "Elektronikerin", "skills": {"TECH": 30, "FORCE": 20, "ELECTRONICS": 100}, "fee": 6000, "start": [0, 6]},
-	{"id": "teo", "name": "Teodor Vance", "role": "Einsteiger", "skills": {"TECH": 65, "FORCE": 40, "ELECTRONICS": 45}, "fee": 5000, "start": [0, 5]},
-	{"id": "rosa", "name": "Rosa Wendt", "role": "Muskelpaket", "skills": {"TECH": 20, "FORCE": 100, "ELECTRONICS": 30}, "fee": 3500, "start": [0, 7]},
-	{"id": "greta", "name": "Greta Lind", "role": "Fahrerin", "skills": {"FAHREN": 100, "TECH": 50}, "fee": 2500, "start": [19, 5], "driver": true},
-	{"id": "otto", "name": "Otto Brenner", "role": "Fahrer", "skills": {"FAHREN": 60, "TECH": 45, "FORCE": 45}, "fee": 1200, "start": [19, 5], "driver": true},
+	{"id": "mira", "name": "Mira Calder", "role": "rolle.mira.role", "skills": {"TECH": 60, "FORCE": 35, "ELECTRONICS": 55}, "fee": 4000, "start": [0, 4]},
+	{"id": "ilja", "name": "Ilja Brandt", "role": "rolle.ilja.role", "skills": {"TECH": 30, "FORCE": 20, "ELECTRONICS": 100}, "fee": 6000, "start": [0, 6]},
+	{"id": "teo", "name": "Teodor Vance", "role": "rolle.teo.role", "skills": {"TECH": 65, "FORCE": 40, "ELECTRONICS": 45}, "fee": 5000, "start": [0, 5]},
+	{"id": "rosa", "name": "Rosa Wendt", "role": "rolle.rosa.role", "skills": {"TECH": 20, "FORCE": 100, "ELECTRONICS": 30}, "fee": 3500, "start": [0, 7]},
+	{"id": "greta", "name": "Greta Lind", "role": "rolle.greta.role", "skills": {"FAHREN": 100, "TECH": 50}, "fee": 2500, "start": [19, 5], "driver": true},
+	{"id": "otto", "name": "Otto Brenner", "role": "rolle.otto.role", "skills": {"FAHREN": 60, "TECH": 45, "FORCE": 45}, "fee": 1200, "start": [19, 5], "driver": true},
 ]
 
 
 ## Lexikon: Begriffe des Spiels, in der Reihenfolge der Anzeige.
 const LEXIKON := [
-	{"term": "Ermittlung", "text": "Vor dem Einbruch sammelst du Informationen: Umsehen oder Informant. Mit steigender Ermittlung zeigt die Planung genauere Angaben (Wachen, Öffnungszeiten, Sicherheitslage), und der Beutewert wird genau."},
-	{"term": "Team und Honorar", "text": "Jede Person im Team bekommt ein Honorar. Mehr Personen sind schneller, kosten aber mehr. Der Fahrer wird immer bezahlt."},
-	{"term": "Fluchtwagen", "text": "Am Ende müssen alle Personen am Fluchtwagen sein. Der Wagen wird gerufen und braucht eine Abholzeit."},
-	{"term": "Auszahlung", "text": "60 % der mitgenommenen Beute werden als Geld ausgezahlt."},
-	{"term": "Gewinn", "text": "Auszahlung minus Kosten (Honorare und Wagenmiete). Ist er negativ, war der Einbruch zu teuer."},
-	{"term": "Dauer", "text": "Die Zeit vom ersten Schritt bis zum Entkommen. Ein größeres Team ist schneller."},
-	{"term": "Lautstärke", "text": "Jede Aktion macht Lärm, gemessen in Dezibel. Überschreitet der Lärm die Grenze des Gebäudes, schlägt die Anlage Alarm."},
-	{"term": "Alarm", "text": "Ein Melder oder zu viel Lärm löst den Alarm aus. Dann startet die Polizeizeit."},
-	{"term": "Polizeizeit", "text": "Zeit zwischen dem Alarm und dem Eintreffen der Polizei. Ist sie abgelaufen, ist das Team gefasst."},
-	{"term": "Wachrate", "text": "Wie wachsam die Wachen sind. Bestimmt, wie schnell die Polizei nach dem Alarm kommt."},
-	{"term": "Fahndung", "text": "Die Spuren, die ein Einbruch hinterlässt. Sie steigen nach jedem Einbruch."},
-	{"term": "Werkzeug", "text": "Werkzeuge kaufst du im Laden. Jedes Objekt braucht sein Werkzeug: Schlösser das Dietrich-Set, Glas der Glasschneider, Stahltüren Schneidbrenner oder Stethoskop, Alarmpanels das Elektroset. Je besser die Fähigkeit der Person, desto schneller."},
-	{"term": "Freischaltung", "text": "Jedes erfolgreiche Gebäude schaltet neue Werkzeuge und Autos frei. Gesperrte Artikel stehen im Laden mit dem Hinweis, ab welchem Gebäude sie zu haben sind."},
-	{"term": "Tür", "text": "Türen sind verschlossen oder offen. Verschlossene Türen entriegelst du leise mit dem Dietrich oder brichst sie laut mit dem Brecheisen auf."},
-	{"term": "Vitrine", "text": "Ein Schaukasten mit Beute, meist aus Glas. Erst öffnen, dann die Beute nehmen."},
-	{"term": "Kasse", "text": "Die Ladenkasse: eine Schublade mit Bargeld. Sie ist wie eine Vitrine erst zu öffnen, dann nimmt man das Geld."},
-	{"term": "Schaufenster", "text": "Ein Fenster aus Glas. Dafür braucht man den Glasschneider."},
-	{"term": "Treppe", "text": "Verbindet zwei Etagen. Das Hinaufsteigen dauert 8 Sekunden."},
-	{"term": "Etage", "text": "Manche Gebäude haben mehrere Etagen. Die Ansicht zeigt die Etage der Person, die gerade läuft, mit Schaltern für EG, OG und Alle."},
-	{"term": "Beute", "text": "Gegenstände mit Wert und Gewicht. Jede Person kann nur so viel tragen, wie ihre Tragkraft erlaubt."},
-	{"term": "Mikrofon", "text": "Ein Sensor, der Geräusche im Raum hört. Ab einem Schwellwert löst er Alarm aus."},
-	{"term": "Glasbruchmelder", "text": "Ein Sensor am Schaufenster. Er reagiert schon auf leisen Lärm."},
-	{"term": "Tastenkürzel", "text": "Leertaste: abspielen oder Pause. Tab und Shift+Tab: nächste oder vorige Person. Strg+Z, Esc oder Entf: letzte Aktion zurück. Ziffern 1 bis 9: Person wählen. L: Lexikon. J: Journal. O: Optionen. F1: Lexikon."},
-	{"term": "Wache", "text": "Wachen sehen und hören. Wer in ihr Sichtfeld kommt, wird entdeckt. Wachen lassen sich niederschlagen oder betäuben."},
+	{"term": "lex.0.term", "text": "lex.0.text"},
+	{"term": "lex.1.term", "text": "lex.1.text"},
+	{"term": "lex.2.term", "text": "lex.2.text"},
+	{"term": "lex.3.term", "text": "lex.3.text"},
+	{"term": "lex.4.term", "text": "lex.4.text"},
+	{"term": "lex.5.term", "text": "lex.5.text"},
+	{"term": "lex.6.term", "text": "lex.6.text"},
+	{"term": "lex.7.term", "text": "lex.7.text"},
+	{"term": "lex.8.term", "text": "lex.8.text"},
+	{"term": "lex.9.term", "text": "lex.9.text"},
+	{"term": "lex.10.term", "text": "lex.10.text"},
+	{"term": "lex.11.term", "text": "lex.11.text"},
+	{"term": "lex.12.term", "text": "lex.12.text"},
+	{"term": "lex.13.term", "text": "lex.13.text"},
+	{"term": "lex.14.term", "text": "lex.14.text"},
+	{"term": "lex.15.term", "text": "lex.15.text"},
+	{"term": "lex.16.term", "text": "lex.16.text"},
+	{"term": "lex.17.term", "text": "lex.17.text"},
+	{"term": "lex.18.term", "text": "lex.18.text"},
+	{"term": "lex.19.term", "text": "lex.19.text"},
+	{"term": "lex.20.term", "text": "lex.20.text"},
+	{"term": "lex.21.term", "text": "lex.21.text"},
+	{"term": "lex.22.term", "text": "lex.22.text"},
+	{"term": "lex.23.term", "text": "lex.23.text"},
 ]
 
 ## Hinweise beim ersten Auftreten einer Mechanik (Text als Daten, nicht im Code).
 const HINTS := {
-	"glas": {"title": "Glas", "text": "Ein Schaufenster oder eine Glasvitrine ist aus Glas. Dafür brauchst du den Glasschneider. Ein Brecheisen würde auch helfen, ist aber laut und hinterlässt viele Spuren."},
-	"treppe": {"title": "Treppe", "text": "Eine Treppe verbindet zwei Etagen. Das Hinaufsteigen dauert 8 Sekunden. Stell die Person auf das Treppenfeld und wähle „Treppe steigen“."},
-	"laut": {"title": "Lärm", "text": "Jede Aktion macht Lärm. Die Vorschau zeigt den lautesten Moment. Überschreitet der Lärm die Grenze des Gebäudes, schlägt die Anlage Alarm. Leise Werkzeuge wie der Dietrich sind sicherer als das Brecheisen."},
+	"glas": {"title": "hinweis.glas.title", "text": "hinweis.glas.text"},
+	"treppe": {"title": "hinweis.treppe.title", "text": "hinweis.treppe.text"},
+	"laut": {"title": "hinweis.laut.title", "text": "hinweis.laut.text"},
 }
 
 ## Reihenfolge der Gebäude: jedes erfolgreiche Gebäude schaltet die Werkzeuge und Autos der nächsten Stufe frei.
@@ -84,12 +84,12 @@ const ORDER := ["kiosk", "curiosity", "juwelier", "museum"]
 
 ## Fahrzeuge: gemietet (Limousine, Miete je Einbruch) oder gekauft. "stufe" = Anzahl erfolgreicher Gebäude, ab der es zu haben ist.
 const CARS := {
-	"limo": {"id": "limo", "name": "Leihwagen", "bild": "res://assets/art/fz_leihwagen.webp", "seite": "res://assets/art/seite_leihwagen.webp", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 130.0, "ps": 150.0, "laderaum": "mittel", "stufe": 0,
-		"info": "Gemietet für jeden Einbruch. Abholung je nach Fahren des Fahrers (20–30 s)."},
-	"kombi": {"id": "kombi", "name": "Kombi Grau", "bild": "res://assets/art/fz_kombi_modern.webp", "seite": "res://assets/art/seite_kombi.webp", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
-		"info": "Gekauft, steht immer bereit. Schneller als die Limousine, ab dem ersten erfolgreichen Gebäude."},
-	"sport": {"id": "sport", "name": "Sportwagen", "bild": "res://assets/art/fz_sportwagen.webp", "seite": "res://assets/art/seite_sportwagen.webp", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "laderaum": "klein", "stufe": 2,
-		"info": "Gekauft, steht immer bereit. Kommt deutlich schneller am Ziel an. Ab dem zweiten erfolgreichen Gebäude."},
+	"limo": {"id": "limo", "name": "fahrzeug.limo.name", "bild": "res://assets/art/fz_leihwagen.webp", "seite": "res://assets/art/seite_leihwagen.webp", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 130.0, "ps": 150.0, "laderaum": "mittel", "stufe": 0,
+		"info": "fahrzeug.limo.info"},
+	"kombi": {"id": "kombi", "name": "fahrzeug.kombi.name", "bild": "res://assets/art/fz_kombi_modern.webp", "seite": "res://assets/art/seite_kombi.webp", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
+		"info": "fahrzeug.kombi.info"},
+	"sport": {"id": "sport", "name": "fahrzeug.sport.name", "bild": "res://assets/art/fz_sportwagen.webp", "seite": "res://assets/art/seite_sportwagen.webp", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "laderaum": "klein", "stufe": 2,
+		"info": "fahrzeug.sport.info"},
 }
 
 ## Polizeifahrzeuge: die Szene wählt pro Einbruch zufällig eines.
@@ -100,7 +100,7 @@ static func stufe_hint(stufe: int) -> String:
 	if stufe <= 0:
 		return ""
 	var idx := clampi(stufe - 1, 0, ORDER.size() - 1)
-	return Texte.t("stufe.hint") % Texte.d(TARGETS[ORDER[idx]].name)
+	return Texte.t("stufe.hint") % Texte.t(TARGETS[ORDER[idx]].name)
 
 
 ## Fahrzeug mit Abholzeit: die Zeit richtet sich nach dem Fahren des Fahrers und dem Fahrzeug.
@@ -130,25 +130,25 @@ static func car_eta(skill: float) -> float:
 const TOOL_SKILL_KEY := {"TECH": "skill.technik", "FORCE": "skill.kampf", "ELECTRONICS": "skill.elektronik"}
 
 const SKILL_INFO := {
-	"TECH": "Technik: Schlösser öffnen, Dietriche, Stethoskop, Schneidbrenner und Bohrer. Je besser die Technik, desto schneller geht die Aktion. Die Schneidbrenner und Bohrer brauchen einen Fachmann.",
-	"FORCE": "Kampfsport (Boxen, Karate): Brecheisen, Axt, Wachen ausschalten. Je besser der Kampfsport, desto schneller die Aktion.",
-	"ELECTRONICS": "Elektronik: Alarmanlagen und Mikrofone überbrücken. Je besser die Elektronik, desto schneller geht das Überbrücken.",
-	"FAHREN": "Fahren: Bestimmt, wie schnell der Fluchtwagen am Ausgang wegkommt.",
+	"TECH": "faehigkeit.TECH.info",
+	"FORCE": "faehigkeit.FORCE.info",
+	"ELECTRONICS": "faehigkeit.ELECTRONICS.info",
+	"FAHREN": "faehigkeit.FAHREN.info",
 }
 
 const FLAGS := ["tuer", "alarm"]
-const FLAG_NAMES := {"tuer": "Tür offen", "alarm": "Alarm aus"}
+const FLAG_NAMES := {"tuer": "signal.tuer", "alarm": "signal.alarm"}
 
 const ACTION_NAMES := {
-	"MOVE": "Gehen nach",
-	"TOOL": "Werkzeug einsetzen",
-	"OPEN": "Tür oder Vitrine öffnen",
-	"TAKE": "Beute nehmen",
-	"WAIT": "Warten",
-	"CALL_CAR": "Fluchtwagen rufen",
-	"FLAG_SET": "Signal setzen",
-	"FLAG_WAIT": "Auf Signal warten",
-	"NEUTRALIZE": "Wache ausschalten",
+	"MOVE": "aktion.MOVE",
+	"TOOL": "aktion.TOOL",
+	"OPEN": "aktion.OPEN",
+	"TAKE": "aktion.TAKE",
+	"WAIT": "aktion.WAIT",
+	"CALL_CAR": "aktion.CALL_CAR",
+	"FLAG_SET": "aktion.FLAG_SET",
+	"FLAG_WAIT": "aktion.FLAG_WAIT",
+	"NEUTRALIZE": "aktion.NEUTRALIZE",
 }
 
 ## Zielgebäude: "Museum Varenhafen". Karte 20 x 12 Zellen.
@@ -171,41 +171,41 @@ static func portrait_path(id: String) -> String:
 ## dem Laderaum liegt (CARS.laderaum). Icons: assets/icons/loot/.
 const SIZE_RANK := {"klein": 0, "mittel": 1, "gross": 2}
 const ITEMS := {
-	"kasse": {"name": "Kassenlade", "gewicht": 0.5, "groesse": "mittel", "icon": "kasse"},
-	"safe": {"name": "Wertschrank", "gewicht": 2.5, "groesse": "mittel", "icon": "tresor"},
-	"gemaelde": {"name": "Gemälde „Hafen bei Nacht“", "gewicht": 2, "groesse": "gross"},
-	"landschaft": {"name": "Gemälde „Landschaft“", "gewicht": 2, "groesse": "gross"},
-	"portraet": {"name": "Gemälde „Porträt“", "gewicht": 2, "groesse": "gross"},
-	"skulptur": {"name": "Bronzeskulptur", "gewicht": 7, "groesse": "gross", "icon": "bronzestatue"},
-	"diamant": {"name": "Diamantkette", "gewicht": 1, "groesse": "klein"},
-	"diamantring": {"name": "Diamantring", "gewicht": 1, "groesse": "klein"},
-	"perlen": {"name": "Perlenkette", "gewicht": 1, "groesse": "klein"},
-	"gemmen": {"name": "Gemmensammlung", "gewicht": 1, "groesse": "klein"},
-	"muenzen": {"name": "Münzsammlung", "gewicht": 3, "groesse": "mittel", "icon": "muenzsammlung"},
-	"muenzen_og": {"name": "Münzsammlung (OG)", "gewicht": 3, "groesse": "mittel"},
-	"goldbarren": {"name": "Goldbarren", "gewicht": 6, "groesse": "mittel"},
-	"uhren": {"name": "Uhrensammlung", "gewicht": 3, "groesse": "mittel"},
-	"besteck": {"name": "Silberbesteck", "gewicht": 4, "groesse": "mittel"},
-	"kassette": {"name": "Geldkassette", "gewicht": 5, "groesse": "mittel"},
-	"pergamente": {"name": "Antike Pergamente", "gewicht": 2, "groesse": "mittel"},
-	"tresor": {"name": "Tresorinhalt (Schmuck und Bargeld)", "gewicht": 6, "groesse": "mittel"},
+	"kasse": {"name": "beute.kasse.name", "gewicht": 0.5, "groesse": "mittel", "icon": "kasse"},
+	"safe": {"name": "beute.safe.name", "gewicht": 2.5, "groesse": "mittel", "icon": "tresor"},
+	"gemaelde": {"name": "beute.gemaelde.name", "gewicht": 2, "groesse": "gross"},
+	"landschaft": {"name": "beute.landschaft.name", "gewicht": 2, "groesse": "gross"},
+	"portraet": {"name": "beute.portraet.name", "gewicht": 2, "groesse": "gross"},
+	"skulptur": {"name": "beute.skulptur.name", "gewicht": 7, "groesse": "gross", "icon": "bronzestatue"},
+	"diamant": {"name": "beute.diamant.name", "gewicht": 1, "groesse": "klein"},
+	"diamantring": {"name": "beute.diamantring.name", "gewicht": 1, "groesse": "klein"},
+	"perlen": {"name": "beute.perlen.name", "gewicht": 1, "groesse": "klein"},
+	"gemmen": {"name": "beute.gemmen.name", "gewicht": 1, "groesse": "klein"},
+	"muenzen": {"name": "beute.muenzen.name", "gewicht": 3, "groesse": "mittel", "icon": "muenzsammlung"},
+	"muenzen_og": {"name": "beute.muenzen_og.name", "gewicht": 3, "groesse": "mittel"},
+	"goldbarren": {"name": "beute.goldbarren.name", "gewicht": 6, "groesse": "mittel"},
+	"uhren": {"name": "beute.uhren.name", "gewicht": 3, "groesse": "mittel"},
+	"besteck": {"name": "beute.besteck.name", "gewicht": 4, "groesse": "mittel"},
+	"kassette": {"name": "beute.kassette.name", "gewicht": 5, "groesse": "mittel"},
+	"pergamente": {"name": "beute.pergamente.name", "gewicht": 2, "groesse": "mittel"},
+	"tresor": {"name": "beute.tresor.name", "gewicht": 6, "groesse": "mittel"},
 }
 
 
 ## Setzt Name, Gewicht, Größe und Icon aus ITEMS in die Beute jedes Ziels ein. Die Ziele enthalten nur ID, Position, Wert.
 ## Anzeigenamen der Türen, des Alarmpanels und der Orte. Beute steht in ITEMS, Wachen und Figuren bei ihren Listen.
 const NAMEN := {
-	"eingangstuer": "Eingangstür", "stahltuer": "Stahltür", "schaufenster": "Schaufenster", "tresortuer": "Tresortür",
-	"mitteltuer": "Mitteltür", "hintertuer": "Hintertür", "alarmpanel": "Alarmpanel",
-	"aussen_eingang": "Außen vor dem Eingang", "aussen_schaufenster": "Außen vor dem Schaufenster",
-	"fluchtwagen": "Fluchtwagen", "halle": "Halle", "mittelraum": "Mittelraum", "tresorraum": "Tresor",
-	"korridor": "Korridor", "verkauf": "Verkauf", "verkaufsraum": "Verkaufsraum", "laden": "Laden",
-	"hinterzimmer": "Hinterzimmer", "treppe_eg": "Treppe EG", "treppe_og": "Treppe OG", "obergeschoss": "Obergeschoss",
+	"eingangstuer": "name.eingangstuer", "stahltuer": "name.stahltuer", "schaufenster": "name.schaufenster", "tresortuer": "name.tresortuer",
+	"mitteltuer": "name.mitteltuer", "hintertuer": "name.hintertuer", "alarmpanel": "name.alarmpanel",
+	"aussen_eingang": "name.aussen_eingang", "aussen_schaufenster": "name.aussen_schaufenster",
+	"fluchtwagen": "name.fluchtwagen", "halle": "name.halle", "mittelraum": "name.mittelraum", "tresorraum": "name.tresorraum",
+	"korridor": "name.korridor", "verkauf": "name.verkauf", "verkaufsraum": "name.verkaufsraum", "laden": "name.laden",
+	"hinterzimmer": "name.hinterzimmer", "treppe_eg": "name.treppe_eg", "treppe_og": "name.treppe_og", "obergeschoss": "name.obergeschoss",
 }
 
 
 ## Fakten der Stadtansicht (Schlüssel -> Anzeigename).
-const FAKTEN := {"oeffnung": "Öffnungszeiten", "wache": "Wachpersonal", "ueberwachung": "Überwachung", "besonderheit": "Besonderheit"}
+const FAKTEN := {"oeffnung": "fakt.name.oeffnung", "wache": "fakt.name.wache", "ueberwachung": "fakt.name.ueberwachung", "besonderheit": "fakt.name.besonderheit"}
 
 ## Anzeigename zu einer Objekt-ID (Tür, Panel, Ort, Beute).
 static func name_von(id: String) -> String:
@@ -244,11 +244,11 @@ const ZIELE_ROH := {
 	"museum": {
 		"id": "museum",
 		"glasvitrinen": true,  # Ausstellungskästen aus Glas: Glasschneider nötig (auch wenn man aufbrechen könnte)
-		"name": "Stadtmuseum Varenhafen",
+		"name": "ziel.museum.name",
 		"guard_rate": 170.0,  # Wachrate (Richtwert nach Original, vergleichbares Museum)
 		"escape_km": 38.0,    # Fluchtweg in km (Richtwert nach Original)
-		"info": "Kunst, Antiquitäten und seltene Exponate aus aller Welt.",
-		"desc": "Wechselausstellung im Erdgeschoss. Der Tresor liegt im Ostflügel. Die Sicherheit gilt als modern, aber nicht unangreifbar.",
+		"info": "ziel.museum.info",
+		"desc": "ziel.museum.desc",
 		"map": [
 			"oooooooooooooooooooo",
 			"oooooooooooooooooooo",
@@ -285,17 +285,17 @@ const ZIELE_ROH := {
 			"fluchtwagen": [19, 6],
 		},
 		"rooms": [
-			{"name": "GALERIE WEST", "pos": [5, 5]},
-			{"name": "MITTELRAUM", "pos": [10, 4]},
-			{"name": "TRESOR", "pos": [14, 4]},
-			{"name": "KORRIDOR", "pos": [10, 8]},
-			{"name": "EINGANG", "pos": [1, 7]},
+			{"name": "ziel.museum.raum.1.name", "pos": [5, 5]},
+			{"name": "ziel.museum.raum.2.name", "pos": [10, 4]},
+			{"name": "ziel.museum.raum.3.name", "pos": [14, 4]},
+			{"name": "ziel.museum.raum.4.name", "pos": [10, 8]},
+			{"name": "ziel.museum.raum.5.name", "pos": [1, 7]},
 		],
 		 "panel": {"id": "alarmpanel", "pos": [10, 7], "res": 50, "cplx": 45},
 		# Gesichert: Türen (Name) und Vitrinen (Objekt-ID). Öffnen bei eingeschalteter Anlage löst Alarm aus.
 		"gesichert": ["mitteltuer", "tresortuer", "eingangstuer"],
 		"sensors": [
-			{"name": "Mikrofon Korridor", "pos": [13, 8], "threshold": 20.0},
+			{"name": "ziel.museum.sensor.1.name", "pos": [13, 8], "threshold": 20.0},
 		],
 		"loot": [
 			{"id": "gemaelde", "pos": [5, 3], "value": 60000},
@@ -304,24 +304,24 @@ const ZIELE_ROH := {
 			{"id": "muenzen", "pos": [14, 5], "value": 90000},
 		],
 		"guards": [
-			{"id": "g_ost", "name": "Wache Ost", "kampf": 45, "type": "INDOOR", "start": [9, 8], "route": [[9, 8], [15, 8], [15, 7], [9, 7]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
-			{"id": "g_gal", "name": "Wache Galerie", "kampf": 60, "type": "INDOOR", "start": [4, 3], "route": [[4, 3], [7, 3], [7, 6], [4, 6]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
-			{"id": "streife", "name": "Streifenwagen", "kampf": 0, "type": "STREET", "start": [19, 0], "route": [[19, 0], [19, 11], [11, 11], [11, 0]], "vision": 8.0, "hearing": 40.0, "reaction": 1.5, "dwell": 1.0},
+			{"id": "g_ost", "name": "ziel.museum.wache.g_ost.name", "kampf": 45, "type": "INDOOR", "start": [9, 8], "route": [[9, 8], [15, 8], [15, 7], [9, 7]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
+			{"id": "g_gal", "name": "ziel.museum.wache.g_gal.name", "kampf": 60, "type": "INDOOR", "start": [4, 3], "route": [[4, 3], [7, 3], [7, 6], [4, 6]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
+			{"id": "streife", "name": "ziel.museum.wache.streife.name", "kampf": 0, "type": "STREET", "start": [19, 0], "route": [[19, 0], [19, 11], [11, 11], [11, 0]], "vision": 8.0, "hearing": 40.0, "reaction": 1.5, "dwell": 1.0},
 		],
 		"facts": [
-			["oeffnung", "10:00 – 18:00 Uhr"],
-			["wache", "Tag- und Nachtdienst"],
-			["ueberwachung", "Video (Teilbereiche)"],
-			["besonderheit", "mehrere Alarmkreise"],
+			["oeffnung", "ziel.museum.fakt.oeffnung"],
+			["wache", "ziel.museum.fakt.wache"],
+			["ueberwachung", "ziel.museum.fakt.ueberwachung"],
+			["besonderheit", "ziel.museum.fakt.besonderheit"],
 		],
 		"bedarf": {
-			"TECH": {"wert": 45, "grund": "Schlösser an Eingang und Mitteltür (Komplexität 35–45)"},
-			"FORCE": {"wert": 60, "grund": "Tresortür nur mit Brecheisen oder roher Kraft zu öffnen (Widerstand 70)"},
-			"ELECTRONICS": {"wert": 60, "grund": "Alarmpanel und Mikrofone im Korridor (Komplexität 45–55)"},
-			"FAHREN": {"wert": 50, "grund": "Fluchtwagen muss rechtzeitig am Ausgang sein"},
+			"TECH": {"wert": 45, "grund": "ziel.museum.grund.TECH"},
+			"FORCE": {"wert": 60, "grund": "ziel.museum.grund.FORCE"},
+			"ELECTRONICS": {"wert": 60, "grund": "ziel.museum.grund.ELECTRONICS"},
+			"FAHREN": {"wert": 50, "grund": "ziel.museum.grund.FAHREN"},
 		},
 		"speaker": "Mira Calder",
-		"dialog": "Das Museum ... genau der richtige Ort. Bevor wir aber an die Planung gehen, sollten wir noch ein paar Informationen sammeln. Vielleicht findet sich jemand, der uns mehr über die Sicherung erzählt.",
+		"dialog": "ziel.museum.dialog",
 		"fence": 0.6,
 		"price_intel": 500,
 	},
@@ -331,9 +331,9 @@ const ZIELE_ROH := {
 		"guard_rate": 10.0,   # Wachrate (Original GRate): bestimmt das Polizeitempo
 		"escape_km": 10.0,    # Fluchtweg in km (Original EscapeRouteLength)
 		"max_volume": 200.0,
-		"name": "Kiosk „Zum Anker“",
-		"info": "Zeitungen, Tickets, Zigaretten – ein guter Ort für Informationen.",
-		"desc": "Kleiner Kiosk an der Hafenstraße. Keine Wache, kein Alarm, nur ein Schloss an der Eingangstür. Der Einstieg in das Spiel.",
+		"name": "ziel.kiosk.name",
+		"info": "ziel.kiosk.info",
+		"desc": "ziel.kiosk.desc",
 		# Grundriss aus den Originaldaten (tools/make_kiosk_grundriss.py, TOBAETA0.DAT / TCBUILD.DAT).
 		# Pixel des Originals = Unterfelder (SUB 16). Ein Feld = 16 Pixel.
 		"map": [
@@ -381,30 +381,30 @@ const ZIELE_ROH := {
 			"fluchtwagen": [5, 7],
 		},
 		"rooms": [
-			{"name": "VERKAUF", "pos": [7, 5]},
+			{"name": "ziel.kiosk.raum.1.name", "pos": [7, 5]},
 		],
 		"sensors": [],
 		"loot": [
 			{"id": "kasse", "pos": [10, 3], "value": 6000},
 			# Wertschrank (Original: Geld 500 g und eine Zigarrenkiste 2 kg, im selben Behälter)
 			# Aufteilung: Geld 16.000 € (500 g), Zigarrenkiste 6.000 € (2 kg). Im Spiel ein Beutestück.
-			{"id": "safe", "pos": [8, 2], "value": 22000, "parts": [["Geld", 16000], ["Zigarrenkiste", 6000]]},
+			{"id": "safe", "pos": [8, 2], "value": 22000, "parts": [["ziel.kiosk.teil.safe.0", 16000], ["ziel.kiosk.teil.safe.1", 6000]]},
 		],
 		"guards": [],
 		"facts": [
-			["Lage", "Hafenstraße, Ecke Kaianlage"],
-			["oeffnung", "8:00 – 20:00 Uhr"],
-			["wache", "keines"],
-			["ueberwachung", "keine"],
-			["besonderheit", "Die Kasse wird abends nicht geleert"],
+			["Lage", "ziel.kiosk.fakt.Lage"],
+			["oeffnung", "ziel.kiosk.fakt.oeffnung"],
+			["wache", "ziel.kiosk.fakt.wache"],
+			["ueberwachung", "ziel.kiosk.fakt.ueberwachung"],
+			["besonderheit", "ziel.kiosk.fakt.besonderheit"],
 		],
 		"bedarf": {
-			"TECH": {"wert": 25, "grund": "Eingangstür mit einfachem Schloss (Komplexität 20)"},
-			"FORCE": {"wert": 25, "grund": "Brecheisen öffnet Tür und Vitrinen ebenfalls"},
-			"FAHREN": {"wert": 20, "grund": "Fluchtwagen steht direkt vor dem Laden"},
+			"TECH": {"wert": 25, "grund": "ziel.kiosk.grund.TECH"},
+			"FORCE": {"wert": 25, "grund": "ziel.kiosk.grund.FORCE"},
+			"FAHREN": {"wert": 20, "grund": "ziel.kiosk.grund.FAHREN"},
 		},
 		"speaker": "Mira Calder",
-		"dialog": "Ein kleiner Kiosk am Hafen. Keine Wache, kein Alarm, nur ein Schloss und eine Kasse. Das ist der richtige Einstieg. Wenn wir hier unbemerkt rauskommen, öffnen sich vielleicht größere Ziele.",
+		"dialog": "ziel.kiosk.dialog",
 		"fence": 0.6,
 		"price_intel": 200,
 	},
@@ -415,9 +415,9 @@ const ZIELE_ROH := {
 		"guard_rate": 60.0,
 		"escape_km": 15.0,
 		"max_volume": 150.0,
-		"name": "Testgebäude „Prüfstand“",
-		"info": "Prüfgebäude mit Stahltür, Alarmpanel und Ausstellungskästen.",
-		"desc": "Kein echter Ort. Hier werden Animationen und Abläufe ausprobiert.",
+		"name": "ziel.testhaus.name",
+		"info": "ziel.testhaus.info",
+		"desc": "ziel.testhaus.desc",
 		"map": [
 			"oooooooooooooooooooo",
 			"oooooooooooooooooooo",
@@ -489,16 +489,16 @@ const ZIELE_ROH := {
 			"obergeschoss": [6, 18],
 		},
 		"rooms": [
-			{"name": "HALLE", "pos": [5, 6]},
-			{"name": "TRESORRAUM", "pos": [12, 7]},
-			{"name": "OBERGESCHOSS", "pos": [6, 18]},
+			{"name": "ziel.testhaus.raum.1.name", "pos": [5, 6]},
+			{"name": "ziel.testhaus.raum.2.name", "pos": [12, 7]},
+			{"name": "ziel.testhaus.raum.3.name", "pos": [6, 18]},
 		],
 		# Treppe: EG-Feld [4, 8] und OG-Feld [4, 20] sind verbunden
 		"treppen": [[4, 8, 4, 20]],
 		# Etagen: Kartenzeilen von bis (ohne Ende). Ohne "floors" gibt es nur einen Grundriss.
 		"floors": [{"id": "eg", "name": "EG", "rows": [0, 13]}, {"id": "og", "name": "OG", "rows": [13, 24]}],
 		"sensors": [
-			{"name": "Mikrofon Halle", "pos": [5, 8], "threshold": 20.0},
+			{"name": "ziel.testhaus.sensor.1.name", "pos": [5, 8], "threshold": 20.0},
 		],
 		"loot": [
 			{"id": "diamant", "pos": [4, 4], "value": 150000},
@@ -508,22 +508,22 @@ const ZIELE_ROH := {
 			{"id": "gemaelde", "pos": [3, 6], "value": 60000, "open": true, "wall": true},
 		],
 		"guards": [
-			{"id": "g_tres", "name": "Wache Tresor", "kampf": 50, "type": "INDOOR", "start": [11, 8], "route": [[11, 8], [13, 8], [13, 4], [11, 4]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
+			{"id": "g_tres", "name": "ziel.testhaus.wache.g_tres.name", "kampf": 50, "type": "INDOOR", "start": [11, 8], "route": [[11, 8], [13, 8], [13, 4], [11, 4]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
 		],
 		"facts": [
-			["Lage", "Prüfstand, nicht auf der Karte"],
-			["oeffnung", "immer"],
-			["wache", "eine Wache im Tresorraum"],
-			["ueberwachung", "Mikrofon und Alarmpanel"],
+			["Lage", "ziel.testhaus.fakt.Lage"],
+			["oeffnung", "ziel.testhaus.fakt.oeffnung"],
+			["wache", "ziel.testhaus.fakt.wache"],
+			["ueberwachung", "ziel.testhaus.fakt.ueberwachung"],
 		],
 		"bedarf": {
-			"TECH": {"wert": 40, "grund": "Eingangstür mit Schloss (Komplexität 35)"},
-			"FORCE": {"wert": 50, "grund": "Brecheisen oder Axt gegen die Vitrinen"},
-			"ELECTRONICS": {"wert": 50, "grund": "Alarmpanel (Komplexität 40)"},
-			"FAHREN": {"wert": 40, "grund": "Fluchtwagen steht vor dem Eingang"},
+			"TECH": {"wert": 40, "grund": "ziel.testhaus.grund.TECH"},
+			"FORCE": {"wert": 50, "grund": "ziel.testhaus.grund.FORCE"},
+			"ELECTRONICS": {"wert": 50, "grund": "ziel.testhaus.grund.ELECTRONICS"},
+			"FAHREN": {"wert": 40, "grund": "ziel.testhaus.grund.FAHREN"},
 		},
 		"speaker": "Mira Calder",
-		"dialog": "Ein Prüfstand, kein richtiges Ziel. Hier sehen wir, ob alles funktioniert.",
+		"dialog": "ziel.testhaus.dialog",
 		"fence": 0.6,
 		"price_intel": 0,
 	},
@@ -534,9 +534,9 @@ const ZIELE_ROH := {
 		"guard_rate": 90.0,
 		"escape_km": 20.0,
 		"max_volume": 170.0,
-		"name": "Kuriositätenladen „Alte Gasse 7“",
-		"info": "Zwei Etagen voller Raritäten, Gemälde an den Wänden und ein Schaufenster zur Gasse.",
-		"desc": "Ein Laden für Sammler. Unten der Verkaufsraum mit Vitrinen, dahinter ein Hinterzimmer mit Geldkassette. Oben das Lager mit der Gemmensammlung.",
+		"name": "ziel.curiosity.name",
+		"info": "ziel.curiosity.info",
+		"desc": "ziel.curiosity.desc",
 		"map": [
 			"oooooooooooooooooooo",
 			"oooooooooooooooooooo",
@@ -611,9 +611,9 @@ const ZIELE_ROH := {
 			"fluchtwagen": [3, 11],
 		},
 		"rooms": [
-			{"name": "LADEN", "pos": [5, 6]},
-			{"name": "HINTERZIMMER", "pos": [12, 6]},
-			{"name": "OBERGESCHOSS", "pos": [6, 18]},
+			{"name": "ziel.curiosity.raum.1.name", "pos": [5, 6]},
+			{"name": "ziel.curiosity.raum.2.name", "pos": [12, 6]},
+			{"name": "ziel.curiosity.raum.3.name", "pos": [6, 18]},
 		],
 		"sensors": [],
 		"loot": [
@@ -627,19 +627,19 @@ const ZIELE_ROH := {
 		],
 		"guards": [],
 		"facts": [
-			["Lage", "Alte Gasse 7, Ecke Hafenmarkt"],
-			["oeffnung", "10:00 – 18:00 Uhr"],
-			["wache", "keines"],
-			["ueberwachung", "keine"],
-			["besonderheit", "Zwei Etagen, Schaufenster zur Gasse"],
+			["Lage", "ziel.curiosity.fakt.Lage"],
+			["oeffnung", "ziel.curiosity.fakt.oeffnung"],
+			["wache", "ziel.curiosity.fakt.wache"],
+			["ueberwachung", "ziel.curiosity.fakt.ueberwachung"],
+			["besonderheit", "ziel.curiosity.fakt.besonderheit"],
 		],
 		"bedarf": {
-			"TECH": {"wert": 40, "grund": "Eingangstür und Hintertür mit Schloss (Komplexität 25–35)"},
-			"FORCE": {"wert": 25, "grund": "Brecheisen gegen Vitrinen und Geldkassette"},
-			"FAHREN": {"wert": 30, "grund": "Fluchtwagen steht vor dem Laden"},
+			"TECH": {"wert": 40, "grund": "ziel.curiosity.grund.TECH"},
+			"FORCE": {"wert": 25, "grund": "ziel.curiosity.grund.FORCE"},
+			"FAHREN": {"wert": 30, "grund": "ziel.curiosity.grund.FAHREN"},
 		},
 		"speaker": "Mira Calder",
-		"dialog": "Ein Kuriositätenladen mit zwei Etagen. Keine Wache, aber Gemälde an den Wänden und Vitrinen oben und unten. Hier lernen wir, mit Treppen und Fenstern zu arbeiten.",
+		"dialog": "ziel.curiosity.dialog",
 		"fence": 0.6,
 		"price_intel": 300,
 	},
@@ -650,9 +650,9 @@ const ZIELE_ROH := {
 		"guard_rate": 100.0,
 		"escape_km": 13.0,
 		"max_volume": 150.0,
-		"name": "Juwelier „Silberstern“",
-		"info": "Schmuck, Uhren und Edelsteine hinter Glas. Alarmanlage mit Mikrofonen.",
-		"desc": "Ein Juwelier am Marktplatz. Vitrinen im Verkaufsraum, ein Tresorraum mit Stahltür. Die Alarmanlage meldet jede Erschütterung an die Polizei.",
+		"name": "ziel.juwelier.name",
+		"info": "ziel.juwelier.info",
+		"desc": "ziel.juwelier.desc",
 		"map": [
 			"oooooooooooooooooooo",
 			"oooooooooooooooooooo",
@@ -693,9 +693,9 @@ const ZIELE_ROH := {
 		 "panel": {"id": "alarmpanel", "pos": [3, 3], "res": 50, "cplx": 45},
 		"gesichert": ["eingangstuer", "stahltuer", "schaufenster", "diamantring", "perlen", "tresor"],
 		"sensors": [
-			{"name": "Mikrofon Verkauf", "pos": [5, 8], "threshold": 25.0},
+			{"name": "ziel.juwelier.sensor.1.name", "pos": [5, 8], "threshold": 25.0},
 			# Glasbruchmelder: reagiert schon auf ein zerbrochenes Schaufenster (niedrige Schwelle)
-			{"name": "Glasbruchmelder Schaufenster", "pos": [8, 3], "threshold": 15.0},
+			{"name": "ziel.juwelier.sensor.2.name", "pos": [8, 3], "threshold": 15.0},
 		],
 		"points": {
 			"aussen_eingang": [6, 11],
@@ -709,8 +709,8 @@ const ZIELE_ROH := {
 			"fluchtwagen": [3, 11],
 		},
 		"rooms": [
-			{"name": "VERKAUF", "pos": [5, 6]},
-			{"name": "TRESORRAUM", "pos": [12, 6]},
+			{"name": "ziel.juwelier.raum.1.name", "pos": [5, 6]},
+			{"name": "ziel.juwelier.raum.2.name", "pos": [12, 6]},
 		],
 		"loot": [
 			{"id": "diamantring", "pos": [4, 4], "value": 50000},
@@ -719,20 +719,20 @@ const ZIELE_ROH := {
 		],
 		"guards": [],
 		"facts": [
-			["Lage", "Marktplatz, Ecke Goldgasse"],
-			["oeffnung", "9:00 – 18:30 Uhr"],
-			["wache", "keines, nachts nur Alarm"],
-			["ueberwachung", "Alarmanlage mit Mikrofonen"],
-			["besonderheit", "Der Tresor wird nachts verschlossen"],
+			["Lage", "ziel.juwelier.fakt.Lage"],
+			["oeffnung", "ziel.juwelier.fakt.oeffnung"],
+			["wache", "ziel.juwelier.fakt.wache"],
+			["ueberwachung", "ziel.juwelier.fakt.ueberwachung"],
+			["besonderheit", "ziel.juwelier.fakt.besonderheit"],
 		],
 		"bedarf": {
-			"TECH": {"wert": 45, "grund": "Eingangstür mit Sicherheitsschloss (Komplexität 40)"},
-			"ELECTRONICS": {"wert": 50, "grund": "Alarmpanel und Mikrofon (Komplexität 45)"},
-			"FORCE": {"wert": 40, "grund": "Vitrinen und Stahltür: Brecheisen oder Schneidbrenner"},
-			"FAHREN": {"wert": 35, "grund": "Fluchtwagen steht am Markt"},
+			"TECH": {"wert": 45, "grund": "ziel.juwelier.grund.TECH"},
+			"ELECTRONICS": {"wert": 50, "grund": "ziel.juwelier.grund.ELECTRONICS"},
+			"FORCE": {"wert": 40, "grund": "ziel.juwelier.grund.FORCE"},
+			"FAHREN": {"wert": 35, "grund": "ziel.juwelier.grund.FAHREN"},
 		},
 		"speaker": "Mira Calder",
-		"dialog": "Ein Juwelier mit Alarmanlage. Die Mikrofone hören jeden Schritt. Erst wenn wir den Alarm im Griff haben, kommen wir an den Tresor.",
+		"dialog": "ziel.juwelier.dialog",
 		"fence": 0.6,
 		"price_intel": 400,
 	},
@@ -805,16 +805,16 @@ static func _grp(n: int) -> String:
 
 ## Weitere Orte der Stadt (auf dem Stadtplan, noch nicht spielbar).
 const OTHER_PLACES := [
-	{"id": "villa", "name": "Villa Lindemann", "pos": [0.913, 0.284], "info": "Privates Anwesen mit wertvoller Kunstsammlung."},
-	{"id": "bank", "name": "Bankhaus Brandt", "pos": [0.513, 0.273], "info": "Diskreter Tresorbereich, hohe Sicherheitsstandards und wechselnde Werte."},
-	{"id": "auktion", "name": "Auktionshaus Roth", "pos": [0.700, 0.420], "info": "Hochkarätige Objekte, wechselnde Sammlungen und diskrete Kunden."},
-	{"id": "theater", "name": "Stadttheater", "pos": [0.373, 0.462], "info": "Requisiten, Kostüme und gelegentlich wertvolle Leihgaben."},
-	{"id": "hafen", "name": "Hafen", "pos": [0.833, 0.569], "info": "Lagerhallen, Kräne und Frachtverkehr am Flussufer."},
-	{"id": "bahnhof", "name": "Hauptbahnhof", "pos": [0.143, 0.237], "info": "Gleise, Gepäckhallen und ein Kommen und Gehen ohne Ende."},
-	{"id": "schloss", "name": "Schloss Königstein", "pos": [0.837, 0.083], "info": "Historisches Schloss mit Museum, Schatzkammer und Sonderausstellungen."},
-	{"id": "buero", "name": "Bürogebäude", "pos": [0.900, 0.840], "info": "Mehrere Etagen, sensible Unterlagen und technische Infrastruktur."},
-	{"id": "archiv", "name": "Stadtarchiv", "pos": [0.180, 0.830], "info": "Historische Dokumente, Karten und seltene Originale."},
-	{"id": "labor", "name": "Forschungsinstitut", "pos": [0.280, 0.900], "info": "Forschung, Prototypen und vertrauliche Entwicklungen."},
+	{"id": "villa", "name": "ort.villa.name", "pos": [0.913, 0.284], "info": "ort.villa.info"},
+	{"id": "bank", "name": "ort.bank.name", "pos": [0.513, 0.273], "info": "ort.bank.info"},
+	{"id": "auktion", "name": "ort.auktion.name", "pos": [0.700, 0.420], "info": "ort.auktion.info"},
+	{"id": "theater", "name": "ort.theater.name", "pos": [0.373, 0.462], "info": "ort.theater.info"},
+	{"id": "hafen", "name": "ort.hafen.name", "pos": [0.833, 0.569], "info": "ort.hafen.info"},
+	{"id": "bahnhof", "name": "ort.bahnhof.name", "pos": [0.143, 0.237], "info": "ort.bahnhof.info"},
+	{"id": "schloss", "name": "ort.schloss.name", "pos": [0.837, 0.083], "info": "ort.schloss.info"},
+	{"id": "buero", "name": "ort.buero.name", "pos": [0.900, 0.840], "info": "ort.buero.info"},
+	{"id": "archiv", "name": "ort.archiv.name", "pos": [0.180, 0.830], "info": "ort.archiv.info"},
+	{"id": "labor", "name": "ort.labor.name", "pos": [0.280, 0.900], "info": "ort.labor.info"},
 ]
 
 

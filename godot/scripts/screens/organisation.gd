@@ -50,7 +50,7 @@ func _ready() -> void:
 	add_child(UI.margin(root, 14))
 
 	root.add_child(_l(Texte.t("org.titel"), 24, Color(0.95, 0.8, 0.4)))
-	root.add_child(_l(Texte.t("org.ziel_zeile") % [GameData.TARGETS[Game.target_id].name, Game.stufe_of(Game.target_id), _fmt(Game.money)], 14, Color(0.8, 0.85, 0.92)))
+	root.add_child(_l(Texte.t("org.ziel_zeile") % [Texte.t(GameData.TARGETS[Game.target_id].name), Game.stufe_of(Game.target_id), _fmt(Game.money)], 14, Color(0.8, 0.85, 0.92)))
 	_summary = _l("", 14, Color(0.85, 0.9, 0.95))
 	root.add_child(_summary)
 
@@ -158,7 +158,7 @@ func _person_card(c: Dictionary, is_driver: bool) -> PanelContainer:
 	left.add_theme_constant_override("separation", 4)
 	left.custom_minimum_size = Vector2(230, 0)
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var nb := _choice("%s   %s" % [c.name, Texte.d(c.role)], _selected[c.id], _on_toggle.bind(c.id), 16)
+	var nb := _choice("%s   %s" % [c.name, Texte.t(c.role)], _selected[c.id], _on_toggle.bind(c.id), 16)
 	nb.tooltip_text = Texte.t("org.auswahl_tip")
 	left.add_child(nb)
 	left.add_child(_l(Texte.t("org.honorar") % _fmt(int(c.fee)), 12, Color(0.65, 0.7, 0.78)))
@@ -170,7 +170,7 @@ func _person_card(c: Dictionary, is_driver: bool) -> PanelContainer:
 	var items: Array = []
 	for gid in GameData.GEAR:
 		if gid != "none" and Game.gear_owned.has(gid):
-			items.append([GameData.GEAR[gid].name, gid])
+			items.append([Texte.t(GameData.GEAR[gid].name), gid])
 	if items.is_empty():
 		left.add_child(_l(Texte.t("org.kleidung_keine"), 12, Color(0.55, 0.6, 0.66)))
 	else:
@@ -191,7 +191,7 @@ func _person_card(c: Dictionary, is_driver: bool) -> PanelContainer:
 	skills.custom_minimum_size = Vector2(230, 0)
 	for k in c.skills:
 		var sr := _skill_row(Texte.t(SKILL_NAMES.get(k, k)), int(c.skills[k]))
-		sr.tooltip_text = Texte.d(GameData.SKILL_INFO.get(k, ""))
+		sr.tooltip_text = Texte.t(GameData.SKILL_INFO.get(k, ""))
 		skills.add_child(sr)
 	row.add_child(skills)
 	return _card(row)
@@ -246,7 +246,7 @@ func _refresh_cover() -> void:
 		var have := _team_best(skill)
 		var ok := have >= need
 		var name_lbl := _l(Texte.t(SKILL_NAMES.get(skill, skill)), 14, Color(0.95, 0.93, 0.88))
-		name_lbl.tooltip_text = Texte.d(bedarf[skill].grund)
+		name_lbl.tooltip_text = Texte.t(bedarf[skill].grund)
 		grid.add_child(name_lbl)
 		grid.add_child(_l("%d %%" % need, 14, Color(0.85, 0.9, 0.95)))
 		grid.add_child(_l("%d %%" % have, 14, Color(0.6, 0.95, 0.65) if ok else Color(1, 0.6, 0.5)))
@@ -254,7 +254,7 @@ func _refresh_cover() -> void:
 			grid.add_child(_l(Texte.t("org.gedeckt"), 14, Color(0.45, 0.95, 0.55)))
 		else:
 			grid.add_child(_l("✗ −%d %%" % (need - have), 14, Color(1, 0.5, 0.45)))
-		grid.get_child(grid.get_child_count() - 1).tooltip_text = Texte.d(bedarf[skill].grund)
+		grid.get_child(grid.get_child_count() - 1).tooltip_text = Texte.t(bedarf[skill].grund)
 	_cover_box.add_child(grid)
 	_cover_box.add_child(_l(Texte.t("org.abdeckung_tip"), 11, Color(0.55, 0.6, 0.66)))
 
@@ -281,12 +281,12 @@ func _build_shop() -> void:
 	var tnames: Array = []
 	for tid in GameData.TOOLS:
 		if Game.tools_owned.has(tid):
-			tnames.append(GameData.TOOLS[tid].name)
+			tnames.append(Texte.t(GameData.TOOLS[tid].name))
 	owned.add_child(_w("Werkzeug: %s" % (", ".join(tnames) if not tnames.is_empty() else "keines"), 12))
 	var gnames: Array = []
 	for gid in GameData.GEAR:
 		if gid != "none" and Game.gear_owned.has(gid):
-			gnames.append(GameData.GEAR[gid].name)
+			gnames.append(Texte.t(GameData.GEAR[gid].name))
 	owned.add_child(_w(Texte.t("org.kleidung_liste") % (", ".join(gnames) if not gnames.is_empty() else Texte.t("journal.beute_keine")), 12))
 	var car := GameData.car_now(Game.car_id, 85.0)
 	var how := Texte.t("org.gemietet") % _fmt(int(car.rent)) if Game.car_id == "limo" else Texte.t("org.gekauft")

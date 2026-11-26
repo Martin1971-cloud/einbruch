@@ -116,17 +116,17 @@ func _map_card() -> PanelContainer:
 	_map.picked.connect(_select)
 	col.add_child(_map)
 	var pins: Array = [
-		{"id": "kiosk", "name": Texte.d(GameData.TARGETS.kiosk.name), "pos": Vector2(0.3, 0.62), "active": true, "info": GameData.TARGETS.kiosk.get("info", "")},
-		{"id": "museum", "name": Texte.d(GameData.TARGETS.museum.name), "pos": Vector2(0.153, 0.379), "active": Game.unlocked.museum, "info": GameData.TARGETS.museum.get("info", "")},
-		{"id": "curiosity", "name": Texte.d(GameData.TARGETS.curiosity.name), "pos": Vector2(0.45, 0.66), "active": Game.unlocked.get("curiosity", false), "info": GameData.TARGETS.curiosity.get("info", "")},
-		{"id": "juwelier", "name": Texte.d(GameData.TARGETS.juwelier.name), "pos": Vector2(0.58, 0.46), "active": Game.unlocked.get("juwelier", false), "info": GameData.TARGETS.juwelier.get("info", "")},
+		{"id": "kiosk", "name": Texte.t(GameData.TARGETS.kiosk.name), "pos": Vector2(0.3, 0.62), "active": true, "info": GameData.TARGETS.kiosk.get("info", "")},
+		{"id": "museum", "name": Texte.t(GameData.TARGETS.museum.name), "pos": Vector2(0.153, 0.379), "active": Game.unlocked.museum, "info": GameData.TARGETS.museum.get("info", "")},
+		{"id": "curiosity", "name": Texte.t(GameData.TARGETS.curiosity.name), "pos": Vector2(0.45, 0.66), "active": Game.unlocked.get("curiosity", false), "info": GameData.TARGETS.curiosity.get("info", "")},
+		{"id": "juwelier", "name": Texte.t(GameData.TARGETS.juwelier.name), "pos": Vector2(0.58, 0.46), "active": Game.unlocked.get("juwelier", false), "info": GameData.TARGETS.juwelier.get("info", "")},
 	]
 	# Einkaufsorte: anklickbar wie ein Ziel, öffnen den Laden oder das Autohaus
 	pins.append({"id": "laden", "name": Texte.t("ort.laden"), "pos": Vector2(0.27, 0.70), "active": true, "info": Texte.t("ort.laden_info")})
 	pins.append({"id": "autohaus", "name": Texte.t("ort.autohaus"), "pos": Vector2(0.60, 0.16), "active": true, "info": Texte.t("ort.autohaus_info")})
 	pins.append({"id": "revier", "name": Texte.t("ort.revier"), "pos": Vector2(0.33, 0.21), "active": false, "info": Texte.t("ort.revier_info")})
 	for o in GameData.OTHER_PLACES:
-		pins.append({"id": o.id, "name": Texte.d(o.name), "pos": Vector2(o.pos[0], o.pos[1]), "active": false, "info": o.get("info", "")})
+		pins.append({"id": o.id, "name": Texte.t(o.name), "pos": Vector2(o.pos[0], o.pos[1]), "active": false, "info": Texte.t(o.get("info", ""))})
 	for p in pins:
 		p["done"] = Game.stufe_of(p.id) > 0
 	_map.set_pins(pins, _selected)
@@ -225,16 +225,16 @@ func _refresh() -> void:
 	_stats.text = Texte.t("stadt.geld") % _fmt(Game.money)
 	_heat_bar.value = Game.heat
 	var t: Dictionary = GameData.target_now(Game.stufe_of(_selected), _selected)
-	_dialog.text = "„%s“" % Texte.d(t.dialog)
+	_dialog.text = "„%s“" % Texte.t(t.dialog)
 	_map.set_pins(_map.pins, _selected)
 	for c in _loc_box.get_children():
 		c.queue_free()
 	var erfolgreich := Game.stufe_of(_selected) > 0
 	var name_col := Color(0.55, 0.92, 0.55) if erfolgreich else Color(0.97, 0.85, 0.55)
-	_loc_box.add_child(UI.label(Texte.d(t.name), 19, name_col))
+	_loc_box.add_child(UI.label(Texte.t(t.name), 19, name_col))
 	if t.has("info"):
-		_loc_box.add_child(UI.label(Texte.d(t.info), 13, Color(0.89, 0.71, 0.35), true))
-	_loc_box.add_child(UI.label(Texte.d(t.desc), 13, Color(0.92, 0.92, 0.95), true))
+		_loc_box.add_child(UI.label(Texte.t(t.info), 13, Color(0.89, 0.71, 0.35), true))
+	_loc_box.add_child(UI.label(Texte.t(t.desc), 13, Color(0.92, 0.92, 0.95), true))
 	var lvl: int = int(Game.intel.get(_selected, 0))
 	var q: Dictionary = Game.quelle_of(_selected)
 	var shown_facts: Array = []
@@ -245,10 +245,10 @@ func _refresh() -> void:
 	shown_facts.insert(0, [Texte.t("stadt.polizeizeit"), Texte.t("stadt.polizeizeit_wert") % GameData.police_text(t, bool(q.get("inf", false)))])
 	for f in shown_facts:
 		var h := HBoxContainer.new()
-		var k := UI.label(Texte.d(GameData.FAKTEN.get(f[0], f[0])), 13, Color(0.7, 0.75, 0.82))
+		var k := UI.label(Texte.t(GameData.FAKTEN.get(f[0], f[0])), 13, Color(0.7, 0.75, 0.82))
 		k.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		h.add_child(k)
-		h.add_child(UI.label(Texte.d(str(f[1])), 13))
+		h.add_child(UI.label(Texte.t(str(f[1])), 13))
 		_loc_box.add_child(h)
 	var req := VBoxContainer.new()
 	for skill in t.bedarf:
@@ -260,7 +260,7 @@ func _refresh() -> void:
 		elif lvl == 1:
 			txt = Texte.t("stadt.skill_ca") % [nm, int(round(wert / 5.0)) * 5]
 		else:
-			txt = Texte.t("stadt.skill_ab") % [nm, wert, Texte.d(t.bedarf[skill].grund)]
+			txt = Texte.t("stadt.skill_ab") % [nm, wert, Texte.t(t.bedarf[skill].grund)]
 		req.add_child(UI.label(txt, 11, Color(0.8, 0.85, 0.9), true))
 	_loc_box.add_child(UI.fold(Texte.t("stadt.braucht"), req, true))
 	_loc_box.add_child(UI.label(Texte.t("stadt.ermittlung") % _ermittlung_text(lvl), 13, Color(0.6, 0.85, 1.0), true))

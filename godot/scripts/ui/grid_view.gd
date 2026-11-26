@@ -420,7 +420,7 @@ func _draw_car(ex: Vector2i) -> void:
 	var front := center - out * along * 0.5
 	draw_circle(front + Vector2(-out.y, out.x) * across * 0.3, _cell * 0.1, Color(1, 1, 0.8))
 	draw_circle(front - Vector2(-out.y, out.x) * across * 0.3, _cell * 0.1, Color(1, 1, 0.8))
-	_text_center(center + Vector2(0, -across * 0.5 - _cell * 0.3), Texte.d("Fluchtwagen"), Color(0.97, 0.85, 0.5), maxf(9.0, _cell * 0.36))
+	_text_center(center + Vector2(0, -across * 0.5 - _cell * 0.3), Texte.t(GameData.name_von("fluchtwagen")), Color(0.97, 0.85, 0.5), maxf(9.0, _cell * 0.36))
 
 
 func _draw_fine(spec: Dictionary) -> void:
@@ -634,7 +634,7 @@ func _draw_floors() -> void:
 		var y: float = _origin.y + float(fl.rows[0]) * _ch
 		if i > 0:
 			draw_line(Vector2(_origin.x, y), Vector2(_origin.x + w, y), Color(0.97, 0.85, 0.55, 0.75), 2.0)
-		draw_string(font, Vector2(_origin.x + 6, y + 18), Texte.d(str(fl.name)), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.97, 0.85, 0.55, 0.9))
+		draw_string(font, Vector2(_origin.x + 6, y + 18), Texte.t(str(fl.name)), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.97, 0.85, 0.55, 0.9))
 
 
 func _draw() -> void:
@@ -706,7 +706,7 @@ func _draw() -> void:
 	# Raumnamen
 	for room in target.get("rooms", []):
 		var p := _c(room.pos)
-		var txt: String = Texte.d(room.name)
+		var txt: String = Texte.t(room.name)
 		var fs := maxi(9, int(_cell * 0.4))
 		var sz := ThemeDB.fallback_font.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 		draw_string(ThemeDB.fallback_font, p + Vector2(-sz.x * 0.5 + 1, fs * 0.35 + 1), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.05, 0.04, 0.03, 0.7))
@@ -853,7 +853,7 @@ func alarm_aus() -> bool:
 		return false
 	for pid in plans:
 		for a in plans[pid]:
-			if a.t == "TOOL" and a.get("tool", "") == "bypass" and a.get("on", "") == target.panel.name:
+			if a.t == "TOOL" and a.get("tool", "") == "bypass" and a.get("on", "") == target.panel.id:
 				return true
 	return false
 
@@ -1136,9 +1136,9 @@ func _get_tooltip(at_position: Vector2) -> String:
 	if target.has("panel") and intel >= 1 and _c(target.panel.pos).distance_to(at_position) < _cell * 0.6:
 		var namen: Array = []
 		for z in _gesicherte_zellen():
-			namen.append(str(z.name))
+			namen.append(Texte.t(str(z.name)))
 		var status := Texte.t("grid.alarm_aus") if alarm_aus() else Texte.t("grid.alarm_aktiv")
-		return "%s – %s\n%s" % [str(target.panel.name), status, ", ".join(namen)]
+		return "%s – %s\n%s" % [Texte.t(str(target.panel.name)), status, ", ".join(namen)]
 	var best := -1
 	var bd := _cell * 0.45
 	for i in range(_waypoints.size()):
@@ -1167,21 +1167,21 @@ func _get_tooltip(at_position: Vector2) -> String:
 			if l.has("parts"):
 				var ps: Array = []
 				for pt in l.parts:
-					ps.append("%s %d €" % [pt[0], int(pt[1])])
+					ps.append("%s %d €" % [Texte.t(str(pt[0])), int(pt[1])])
 				parts_txt = " (%s)" % ", ".join(ps)
 			var state := str(_frame.get("loot", {}).get(l.id, "ROOM")) if not _frame.is_empty() else "ROOM"
 			var status := "" if state == "ROOM" else " – genommen"
-			var loot_txt := "Beute: %s – %d €%s, Gewicht %.1f kg%s" % [Texte.d(l.name), int(l.value), parts_txt, float(l.weight), status]
+			var loot_txt := "Beute: %s – %d €%s, Gewicht %.1f kg%s" % [Texte.t(l.name), int(l.value), parts_txt, float(l.weight), status]
 			return loot_txt if wp_txt == "" else loot_txt + "\n" + wp_txt
 	if wp_txt != "":
 		return wp_txt
 	if intel >= 1:
 		for g in target.guards:
 			if Sim._v2i(g.start) == cell:
-				return Texte.t("gridv.sicht") % [g.name, int(g.vision), int(g.hearing)]
+				return Texte.t("gridv.sicht") % [Texte.t(g.name), int(g.vision), int(g.hearing)]
 	for d in target.doors:
 		if Sim._v2i(d.pos) == cell:
-			return "%s – verschlossen (Dietrich, Brecheisen oder Bypass)" % Texte.d(d.name)
+			return "%s – verschlossen (Dietrich, Brecheisen oder Bypass)" % Texte.t(d.name)
 	match row.substr(cx, 1):
 		"F":
 			return Texte.t("gridv.fenster")
@@ -1192,7 +1192,7 @@ func _get_tooltip(at_position: Vector2) -> String:
 		_:
 			for room in target.get("rooms", []):
 				if Sim._v2i(room.pos) == cell:
-					return Texte.d(room.name).capitalize()
+					return Texte.t(room.name).capitalize()
 			return Texte.t("gridv.raum")
 
 

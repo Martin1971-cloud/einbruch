@@ -1421,7 +1421,7 @@ func _build_ui() -> void:
 	if not cfg.target.get("floors", []).is_empty():
 		top.add_child(UI.button(Texte.t("ausf.folgen"), _on_floor_pick.bind("folgen"), 80))
 	for fl in cfg.target.get("floors", []):
-		top.add_child(UI.button(str(fl.name), _on_floor_pick.bind(str(fl.id)), 70))
+		top.add_child(UI.button(Texte.t(str(fl.name)), _on_floor_pick.bind(str(fl.id)), 70))
 	if not cfg.target.get("floors", []).is_empty():
 		top.add_child(UI.button(Texte.t("ausf.alle"), _on_floor_pick.bind("alle"), 70))
 	var abort_btn := UI.button(Texte.t("ausf.funk"), _on_abort, 250)

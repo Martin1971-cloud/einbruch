@@ -30,7 +30,6 @@ var _team_btns := {}
 
 const CREW_COL := GridView.COLORS
 const LOUD_HINT_DB := 5.5  # ab diesem Lärm erklärt der Hinweis „Lärm“ (über dem Gehen)
-const ROLE_OF := {"mira": "Planerin", "ilja": "Elektronik", "teo": "Einsteiger", "rosa": "Muskel"}
 const LEFT_W := 270
 const RIGHT_W := 250
 const SIDE_W := 200   # Spalte rechts neben dem Grundriss: Ablaufplan und Vorschau
@@ -162,7 +161,7 @@ func _left_column() -> Control:
 		art = building
 	info.add_child(art)
 	info.add_child(_l(Texte.t("plan.vorhaben"), 11, Color(0.6, 0.66, 0.74)))
-	info.add_child(_l(Texte.d(target.name), 17, Color(0.97, 0.85, 0.55)))
+	info.add_child(_l(Texte.t(target.name), 17, Color(0.97, 0.85, 0.55)))
 	info.add_child(_l(Texte.t("plan.beutewert") % GameData.loot_text(target, int(Game.intel.get(target.id, 0))), 13, Color(0.85, 0.88, 0.94)))
 	var polizei := _l(Texte.t("plan.polizei") % GameData.police_text(target, bool(Game.quelle_of(target.id).get("inf", false))), 12, Color(0.85, 0.88, 0.94))
 	polizei.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -193,7 +192,7 @@ func _center_column() -> Control:
 	head.add_child(_l(Texte.t("plan.grundriss") if _floor_list().is_empty() else Texte.t("plan.grundriss_etagen"), 13, Color(0.97, 0.85, 0.55)))
 	# Etagen-Reiter: Klick zentriert die Etage (groß)
 	for fl in _floor_list():
-		head.add_child(UI.button(str(fl.name), _on_floor.bind(fl), 64))
+		head.add_child(UI.button(Texte.t(str(fl.name)), _on_floor.bind(fl), 64))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
@@ -246,14 +245,14 @@ func _floor_list() -> Array:
 func _on_floor(fl: Dictionary) -> void:
 	var rows: Array = fl.rows
 	_grid.focus_on(Vector2(10, (float(rows[0]) + float(rows[1])) * 0.5), 1.8, true)
-	_preview.text = Texte.t("plan.etage_angezeigt") % str(fl.name)
+	_preview.text = Texte.t("plan.etage_angezeigt") % Texte.t(str(fl.name))
 
 
 ## Etage eines Feldes (Zeile der Karte). "" wenn das Ziel keine Etagen hat.
 func _floor_name_at_row(y: float) -> String:
 	for fl in _floor_list():
 		if y >= float(fl.rows[0]) and y < float(fl.rows[1]):
-			return str(fl.name)
+			return Texte.t(str(fl.name))
 	return ""
 
 
@@ -510,23 +509,23 @@ func _build_options() -> void:
 	var tools: Array = []
 	for tid in GameData.TOOLS:
 		if Game.tools_owned.has(tid):
-			tools.append([Texte.d(GameData.TOOLS[tid].name), tid])
+			tools.append([Texte.t(GameData.TOOLS[tid].name), tid])
 	var doors: Array = []
 	for d in target.doors:
-		doors.append([d.name, d.id])
+		doors.append([Texte.t(d.name), d.id])
 	if target.has("panel"):
-		doors.append([target.panel.name, target.panel.id])
+		doors.append([Texte.t(target.panel.name), target.panel.id])
 	for l in target.loot:
-		doors.append([l.name, l.id])
+		doors.append([Texte.t(l.name), l.id])
 	var loot: Array = []
 	for l in target.loot:
-		loot.append([l.name, l.id])
+		loot.append([Texte.t(l.name), l.id])
 	var flags: Array = []
 	for f in GameData.FLAGS:
 		flags.append([GameData.FLAG_NAMES[f], f])
 	var guards: Array = []
 	for g in target.guards:
-		guards.append([g.name, g.id])
+		guards.append([Texte.t(g.name), g.id])
 	_options = {"points": points, "tools": tools, "doors": doors, "loot": loot, "flags": flags, "guards": guards}
 
 
@@ -549,7 +548,7 @@ func _alarm_aus_im_plan() -> bool:
 func _gesichert_namen(t: Dictionary) -> String:
 	var namen: Array = []
 	for g in t.get("gesichert", []):
-		namen.append(Texte.d(GameData.name_von(str(g))))
+		namen.append(Texte.t(GameData.name_von(str(g))))
 	return ", ".join(namen) if namen.size() > 0 else Texte.t("plan.alarm_keine")
 
 
@@ -566,7 +565,7 @@ func _refresh_team() -> void:
 	_team_box.add_child(_l(Texte.t("plan.person_waehlen"), 12, Color(0.89, 0.71, 0.35)))
 	for i in range(Game.team.size()):
 		var c: Dictionary = Game.team[i]
-		var role: String = Texte.d(ROLE_OF.get(c.id, ""))
+		var role: String = Texte.t(str(c.get("role", "")))
 		var b := UI.button("%d   %s%s" % [i + 1, c.name, "  ·  " + role if role != "" else ""], _on_pick.bind(c.id), 0)
 		b.set_meta("base", b.text)
 		b.add_theme_font_size_override("font_size", _text_size)
@@ -826,14 +825,14 @@ func _describe(a: Dictionary) -> String:
 	match a.t:
 		"MOVE":
 			if a.has("fine"):
-				return Texte.t("res.geh_nach") % Texte.d(_point_label(Vector2i(int(a.fine[0]), int(a.fine[1]))))
+				return Texte.t("res.geh_nach") % Texte.t(_point_label(Vector2i(int(a.fine[0]), int(a.fine[1]))))
 			if a.has("cell"):
-				return Texte.t("res.geh_nach") % Texte.d(_name_at(a.cell))
-			return Texte.t("res.geh_nach") % Texte.d(GameData.name_von(str(a.get("to", "?"))))
+				return Texte.t("res.geh_nach") % Texte.t(_name_at(a.cell))
+			return Texte.t("res.geh_nach") % Texte.t(GameData.name_von(str(a.get("to", "?"))))
 		"TOOL":
-			return "%s an %s" % [Texte.d(GameData.TOOLS[a.tool].name), Texte.d(GameData.name_von(a.on))]
+			return "%s an %s" % [Texte.t(GameData.TOOLS[a.tool].name), Texte.t(GameData.name_von(a.on))]
 		"OPEN":
-			return Texte.t("plan.oeffnen_obj") % Texte.d(GameData.name_von(a.on))
+			return Texte.t("plan.oeffnen_obj") % Texte.t(GameData.name_von(a.on))
 		"TAKE":
 			return Texte.t("plan.beute_nehmen")
 		"WAIT":
@@ -935,9 +934,8 @@ func _on_preview() -> void:
 	# Alarm durch Sensor oder Lärm: der auslösende Melder wird genannt
 	if str(res.get("alarm_source", "")) != "":
 		msgs.append("[color=salmon]⚠ %s[/color]" % (Texte.t("sim.alarm") % [res.alarm_source, float(res.get("alarm_time", 0.0))]).split(" Police", 1)[0])
-	for line in res.log:
-		if str(line).contains("wartet, bis") or str(line).contains("waits until"):
-			msgs.append("[color=orange]%s[/color]" % (Texte.t("plan.ueberschneidung") % str(line).split("] ", 1)[-1]))
+	for line in res.get("ueberschneidung_zeilen", []):
+		msgs.append("[color=orange]%s[/color]" % (Texte.t("plan.ueberschneidung") % str(line)))
 	var color := "salmon"
 	match res.status:
 		"ENTKOMMEN":
@@ -1178,9 +1176,9 @@ func _object_entries(cell: Vector2i) -> Array:
 	var stand := _stand_after(_active)
 	if absi(stand.cell.x - cell.x) + absi(stand.cell.y - cell.y) != 1:
 		var nb := _neighbor_of(cell, stand.cell)
-		out.append(["%s: zu weit weg" % Texte.d(GameData.name_von(nm)), {}, false])
+		out.append(["%s: zu weit weg" % Texte.t(GameData.name_von(nm)), {}, false])
 		if nb != Vector2i(-1, -1):
-			out.append([Texte.t("plan.neben_gehen") % Texte.d(GameData.name_von(nm)), {"t": "MOVE", "cell": [nb.x, nb.y]}, true])
+			out.append([Texte.t("plan.neben_gehen") % Texte.t(GameData.name_von(nm)), {"t": "MOVE", "cell": [nb.x, nb.y]}, true])
 		return out
 	if st.locked:
 		# Alle Werkzeuge für Schlösser, die man besitzt (Original: Werkzeugliste am Objekt)
@@ -1193,7 +1191,7 @@ func _object_entries(cell: Vector2i) -> Array:
 				continue
 			any = true
 			var how := "aufbrechen (laut, dann offen)" if t.destroys else "entriegeln"
-			out.append(["%s %s: %s" % [what, how, Texte.d(t.name)], {"t": "TOOL", "tool": tid, "on": nm}, true])
+			out.append(["%s %s: %s" % [what, how, Texte.t(t.name)], {"t": "TOOL", "tool": tid, "on": nm}, true])
 		if not any:
 			out.append([Texte.t("plan.kein_passendes_werkzeug") % what, {}, false])
 	elif not st.open:
@@ -1207,7 +1205,7 @@ func _object_entries(cell: Vector2i) -> Array:
 		for l in target.loot:
 			if l.id == nm:
 				kg = int(l.weight)
-		out.append([Texte.t("plan.beute_nehmen_kg") % [Texte.d(GameData.name_von(nm)), kg] if st.open else Texte.t("plan.beute_erst_oeffnen") % Texte.d(GameData.name_von(nm)), {"t": "TAKE", "loot": lid}, bool(st.open)])
+		out.append([Texte.t("plan.beute_nehmen_kg") % [Texte.t(GameData.name_von(nm)), kg] if st.open else Texte.t("plan.beute_erst_oeffnen") % Texte.t(GameData.name_von(nm)), {"t": "TAKE", "loot": lid}, bool(st.open)])
 	return out
 
 
@@ -1343,7 +1341,7 @@ func _fmt(n: int) -> String:
 func _guard_name(id: String) -> String:
 	for g in target.guards:
 		if g.id == id:
-			return g.name
+			return Texte.t(g.name)
 	return id
 
 
@@ -1370,8 +1368,8 @@ func _show_hint(id: String) -> void:
 		return
 	var h: Dictionary = GameData.HINTS[id]
 	var dlg := AcceptDialog.new()
-	dlg.title = Texte.d(str(h.title))
-	dlg.dialog_text = Texte.d(str(h.text))
+	dlg.title = Texte.t(str(h.title))
+	dlg.dialog_text = Texte.t(str(h.text))
 	dlg.ok_button_text = Texte.t("hint.verstanden")
 	add_child(dlg)
 	dlg.confirmed.connect(dlg.queue_free)

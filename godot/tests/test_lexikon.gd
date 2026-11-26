@@ -21,7 +21,7 @@ func _process(_d: float) -> bool:
 		_check(GameData.LEXIKON.size() >= 15, "Lexikon hat mindestens 15 Einträge (%d)" % GameData.LEXIKON.size())
 		var terms := []
 		for e in GameData.LEXIKON:
-			terms.append(str(e.term))
+			terms.append(Texte.t(str(e.term)))
 		for t in ["Lautstärke", "Treppe", "Schaufenster", "Etage"]:
 			var found := false
 			for x in terms:
@@ -30,7 +30,7 @@ func _process(_d: float) -> bool:
 			_check(found, "Begriff „%s“ vorhanden" % t)
 		var lärm_im_text := false
 		for e in GameData.LEXIKON:
-			if str(e.text).to_lower().contains("lärm"):
+			if Texte.t(str(e.text)).to_lower().contains("lärm"):
 				lärm_im_text = true
 		_check(lärm_im_text, "„Lärm“ wird im Lexikon erklärt (Suche findet „Lautstärke“)")
 		_main.open_lexikon()
