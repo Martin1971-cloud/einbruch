@@ -49,8 +49,14 @@ jobs:
         run: |
           cd godot
           mkdir -p ../build/windows ../build/linux
-          godot --headless --path . --export-release "Windows Desktop"
-          godot --headless --path . --export-release "Linux"
+          for preset in "Windows Desktop" "Linux"; do
+            if ! godot --headless --path . --export-release "$preset" > export.log 2>&1; then
+              echo "Export '$preset' fehlgeschlagen:"
+              grep -iE "error|fehler|failed|cannot|could not" export.log | sed 's/^/::error::/'
+              cat export.log
+              exit 1
+            fi
+          done
 
       - name: Pakete erstellen und Prüfsummen bilden
         run: |
