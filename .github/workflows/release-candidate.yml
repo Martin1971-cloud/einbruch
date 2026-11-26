@@ -34,8 +34,9 @@ jobs:
           unzip -q vorlagen.tpz -d vorlagen
           ZIEL="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
           mkdir -p "$ZIEL"
-          cp -r vorlagen/. "$ZIEL"/
-          ls "$ZIEL" | head -5
+          cp -r vorlagen/templates/. "$ZIEL"/
+          cp vorlagen/version.txt "$ZIEL"/ 2>/dev/null || echo "4.7.2.stable" > "$ZIEL"/version.txt
+          ls "$ZIEL" | grep -i "windows_release_x86_64.exe\|version.txt"
 
       - name: Projekt importieren und Tests ausführen
         run: |
