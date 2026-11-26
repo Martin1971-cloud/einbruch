@@ -7,6 +7,8 @@ extends Control
 signal done
 
 const DUR := 4.5
+## Höhe aller Fahrzeuge in der Szene, als Anteil an der Szenenhöhe. Die Seitenbilder sind auf gleiche Karosseriehöhe normiert.
+const FAHRZEUG_HOEHE := 0.26
 ## Vollflächiger Hintergrund: Straße mit Häusern. Fehlt die Datei, bleibt die gezeichnete Nachtstraße.
 const BG_BILD := "res://assets/art/escape_strasse.webp"
 var status := "ENTKOMMEN"
@@ -54,17 +56,19 @@ func _car_x(w: float) -> float:
 
 
 func _police_x(w: float, car_x: float) -> float:
+	# Abstände in Vielfachen der Szenenhöhe, damit sie zur Fahrzeuggröße passen (ein Fahrzeug ist knapp 0,75 h lang)
+	var h := size.y
 	if status == "GEFASST":
-		return car_x - 6.0 + 18.0 * clampf(_t / DUR, 0.0, 1.0)
+		return car_x - 0.02 * h + 0.2 * h * clampf(_t / DUR, 0.0, 1.0)
 	if chase == "KNAPP":
-		# Knapp: die Polizei holt auf, bleibt aber hinter dem Wagen
-		return car_x - lerpf(260.0, 70.0, clampf(_t / DUR, 0.0, 1.0))
-	return car_x - 260.0
+		# Knapp: die Polizei holt auf, bleibt aber hinter dem Wagen (fast Stoßstange an Stoßstange)
+		return car_x - lerpf(1.1 * h, 0.78 * h, clampf(_t / DUR, 0.0, 1.0))
+	return car_x - 1.1 * h
 
 
-## Fahrzeugbild mit Mitte x und Unterkante y, Breite in Pixeln; Seitenverhältnis bleibt.
-func _bild(tex: Texture2D, x: float, y: float, breite: float) -> void:
-	var hoehe := breite * float(tex.get_height()) / float(tex.get_width())
+## Fahrzeugbild mit Mitte x und Unterkante y; alle Fahrzeuge haben die gleiche Höhe, die Breite ergibt sich daraus.
+func _bild(tex: Texture2D, x: float, y: float, hoehe: float) -> void:
+	var breite := hoehe * float(tex.get_width()) / float(tex.get_height())
 	draw_texture_rect(tex, Rect2(x - breite * 0.5, y - hoehe, breite, hoehe), false)
 
 
@@ -90,7 +94,7 @@ func _draw() -> void:
 			draw_rect(Rect2(x, h * 0.7, 56, 4), Color(0.9, 0.85, 0.5, 0.6))
 	# Fluchtwagen
 	if _car_tex != null:
-		_bild(_car_tex, cx, y + 10.0, w * 0.22)
+		_bild(_car_tex, cx, y + 10.0, h * FAHRZEUG_HOEHE)
 	else:
 		draw_rect(Rect2(cx - 46, y - 22, 92, 26), Color(0.62, 0.16, 0.14))
 		draw_rect(Rect2(cx - 24, y - 36, 48, 16), Color(0.5, 0.12, 0.1))
@@ -103,14 +107,16 @@ func _draw() -> void:
 		var px := _police_x(w, cx)
 		var flash := 0.5 + 0.5 * sin(_t * 18.0)
 		if _police_tex != null:
-			_bild(_police_tex, px, y + 10.0, w * 0.22)
+			_bild(_police_tex, px, y + 10.0, h * FAHRZEUG_HOEHE)
 		else:
 			draw_rect(Rect2(px - 44, y - 20, 88, 24), Color(0.92, 0.92, 0.95))
 			draw_rect(Rect2(px - 40, y - 12, 80, 6), Color(0.15, 0.3, 0.8))
 			draw_circle(Vector2(px - 30, y + 6), 8, Color(0.02, 0.02, 0.02))
 			draw_circle(Vector2(px + 26, y + 6), 8, Color(0.02, 0.02, 0.02))
-		draw_circle(Vector2(px - 8, y - 26), 6, Color(1.0, 0.2, 0.2, 0.4 + 0.6 * flash))
-		draw_circle(Vector2(px + 8, y - 26), 6, Color(0.3, 0.5, 1.0, 0.4 + 0.6 * (1.0 - flash)))
+		# Blaulicht blinkt auf dem Dach (bei Bildern: oberhalb des Fahrzeugbilds)
+		var dach := y - h * FAHRZEUG_HOEHE + 14.0 if _police_tex != null else y - 26
+		draw_circle(Vector2(px - 8, dach), 6, Color(1.0, 0.2, 0.2, 0.4 + 0.6 * flash))
+		draw_circle(Vector2(px + 8, dach), 6, Color(0.3, 0.5, 1.0, 0.4 + 0.6 * (1.0 - flash)))
 	var txt := Texte.t("escape.flucht_gelungen")
 	if status == "GEFASST":
 		txt = Texte.t("escape.polizei_holt")
