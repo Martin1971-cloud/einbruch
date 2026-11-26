@@ -348,7 +348,7 @@ func _fmt(n: int) -> String:
 	var out := ""
 	var i := s.length()
 	while i > 3:
-		out = "." + s.substr(i - 3, 3) + out
+		out = ("," if Texte.sprache == "en" else ".") + s.substr(i - 3, 3) + out
 		i -= 3
 	out = s.substr(0, i) + out
 	return ("-" if n < 0 else "") + out

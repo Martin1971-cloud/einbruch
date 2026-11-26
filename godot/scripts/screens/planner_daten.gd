@@ -229,7 +229,7 @@ func _describe(a: Dictionary) -> String:
 				return Texte.t("res.geh_nach") % Texte.t(_name_at(a.cell))
 			return Texte.t("res.geh_nach") % Texte.t(GameData.name_von(str(a.get("to", "?"))))
 		"TOOL":
-			return "%s an %s" % [Texte.t(GameData.TOOLS[a.tool].name), Texte.t(GameData.name_von(a.on))]
+			return Texte.t("res.werkzeug_an") % [Texte.t(GameData.TOOLS[a.tool].name), Texte.t(GameData.name_von(a.on))]
 		"OPEN":
 			return Texte.t("plan.oeffnen_obj") % Texte.t(GameData.name_von(a.on))
 		"TAKE":
@@ -309,7 +309,7 @@ func _duration_lines(res: Dictionary) -> Array:
 			var a: Dictionary = plans[c.id][int(seg.i)]
 			var tool: Dictionary = GameData.TOOLS[a.tool]
 			var skill_name := Texte.t(GameData.TOOL_SKILL_KEY.get(tool.type, "skill.technik"))
-			parts.append("%s: %s s (%s %d)" % [_describe(a), ("%.1f" % float(seg.dur)).replace(".", ","), skill_name, int(seg.skill)])
+			parts.append("%s: %s s (%s %d)" % [_describe(a), ("%.1f" % float(seg.dur)).replace(".", "," if Texte.sprache == "de" else "."), skill_name, int(seg.skill)])
 		if not parts.is_empty():
 			out.append("[color=gray]%s:[/color] %s" % [c.name.split(" ")[0], " · ".join(parts)])
 	if out.is_empty():
@@ -450,7 +450,7 @@ func _fmt(n: int) -> String:
 	var out := ""
 	var i := s.length()
 	while i > 3:
-		out = "." + s.substr(i - 3, 3) + out
+		out = ("," if Texte.sprache == "en" else ".") + s.substr(i - 3, 3) + out
 		i -= 3
 	out = s.substr(0, i) + out
 	return ("-" if n < 0 else "") + out
