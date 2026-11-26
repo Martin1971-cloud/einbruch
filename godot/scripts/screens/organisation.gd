@@ -299,7 +299,7 @@ func _build_shop() -> void:
 func _use_text(t: Dictionary) -> String:
 	if str(t.get("ability", "")) == "":
 		return Texte.t("org.jeder_kann")
-	return "%s ab %d %%" % [t.ability, int(t.min)]
+	return "%s ab %d %%" % [Texte.t(str(t.ability)), int(t.min)]
 
 
 # ---------------------------------------------------------------- Auswahl
