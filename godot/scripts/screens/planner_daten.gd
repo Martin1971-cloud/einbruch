@@ -251,13 +251,13 @@ func _describe(a: Dictionary) -> String:
 func _default_action(kind: String) -> Dictionary:
 	match kind:
 		"MOVE":
-			return {"t": "MOVE", "to": "halle"}
+			return {"t": "MOVE", "to": _ort_vorschlag()}
 		"TOOL":
-			return {"t": "TOOL", "tool": _first_tool(), "on": "eingangstuer"}
+			return {"t": "TOOL", "tool": _first_tool(), "on": _tuer_vorschlag()}
 		"TAKE":
-			return {"t": "TAKE", "loot": "gemaelde"}
+			return {"t": "TAKE", "loot": target.loot[0].id if not target.loot.is_empty() else ""}
 		"OPEN":
-			return {"t": "OPEN", "on": "eingangstuer"}
+			return {"t": "OPEN", "on": _tuer_vorschlag()}
 		"WAIT":
 			return {"t": "WAIT", "sec": 5.0}
 		"NEUTRALIZE":
@@ -268,6 +268,20 @@ func _default_action(kind: String) -> Dictionary:
 			return {"t": "FLAG_SET", "flag": "tuer"}
 		_:
 			return {"t": "FLAG_WAIT", "flag": "tuer"}
+
+## Vorschläge passen zum gewählten Ziel: erster Ort (außer dem Wagen), erste Tür.
+func _ort_vorschlag() -> String:
+	if target.points.has("aussen_eingang"):
+		return "aussen_eingang"
+	for k in target.points:
+		if k != "fluchtwagen":
+			return k
+	return ""
+
+
+func _tuer_vorschlag() -> String:
+	return target.doors[0].id if not target.doors.is_empty() else ""
+
 
 func _first_tool() -> String:
 	for tid in GameData.TOOLS:

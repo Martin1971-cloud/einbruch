@@ -386,7 +386,7 @@ func journal_add(res: Dictionary) -> void:
 	var cost := team_fee_total() + driver_extra + rent
 	var payout_v := int(res.get("payout", 0))
 	journal.append({
-		"tag": day, "stunde": hour, "ziel": GameData.TARGETS[target_id].name,
+		"tag": day, "stunde": hour, "ziel": Texte.t(GameData.TARGETS[target_id].name),
 		"status": str(res.get("status", "")), "auszahlung": payout_v, "kosten": cost, "gewinn": payout_v - cost,
 		"dauer": int(res.get("time", 0.0)), "beute": res.get("loot_taken", []), "fehler": fails.size(),
 		"fehler_text": fails.slice(0, 3), "alarm": alarm_src,

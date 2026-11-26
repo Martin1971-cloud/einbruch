@@ -325,6 +325,9 @@ func _do_stairs(c: Dictionary, a: Dictionary, dt: float) -> void:
 	_next(c)
 
 func _do_take(c: Dictionary, a: Dictionary, dt: float) -> void:
+	if not loot.has(a.loot):
+		_fail(c, Texte.t("fail.nicht_vor_beute") % c.name)
+		return
 	var l: Dictionary = loot[a.loot]
 	var key := "loot:%s" % a.loot
 	if not c.started:

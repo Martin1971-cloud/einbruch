@@ -290,7 +290,7 @@ func _build_shop() -> void:
 	owned.add_child(_w(Texte.t("org.kleidung_liste") % (", ".join(gnames) if not gnames.is_empty() else Texte.t("journal.beute_keine")), 12))
 	var car := GameData.car_now(Game.car_id, 85.0)
 	var how := Texte.t("org.gemietet") % _fmt(int(car.rent)) if Game.car_id == "limo" else Texte.t("org.gekauft")
-	owned.add_child(_w(Texte.t("org.fluchtwagen_info") % [car.name, how], 12))
+	owned.add_child(_w(Texte.t("org.fluchtwagen_info") % [Texte.t(car.name), how], 12))
 	_shop_box.add_child(_shop_fold(Texte.t("org.besitz"), owned))
 
 

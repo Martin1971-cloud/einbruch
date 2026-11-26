@@ -280,7 +280,7 @@ func choose_car(cid: String) -> void:
 		_msg.text = Texte.t("shop.nicht_dein")
 		return
 	Game.car_id = cid
-	_msg.text = Texte.t("shop.car_gewaehlt") % GameData.CARS[cid].name
+	_msg.text = Texte.t("shop.car_gewaehlt") % Texte.t(GameData.CARS[cid].name)
 	_build()
 
 
