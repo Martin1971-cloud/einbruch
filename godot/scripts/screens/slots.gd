@@ -8,7 +8,12 @@ var _rows: VBoxContainer
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(UI.backdrop())
+	add_child(UI.backdrop("res://assets/art/bg_einbruch.webp"))
+	var schleier := ColorRect.new()
+	schleier.color = Color(0, 0, 0, 0.45)
+	schleier.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	schleier.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(schleier)
 	var root := VBoxContainer.new()
 	root.add_theme_constant_override("separation", 14)
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
