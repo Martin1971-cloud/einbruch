@@ -54,6 +54,8 @@ func _process(_d: float) -> bool:
 				main.go("town")
 			"laden":
 				main.go("shop", {"kind": "laden"})
+			"autohaus":
+				main.go("shop", {"kind": "autohaus"})
 			"spielende":
 				G.game_over_reason = "fahndung"
 				main.go("gameover")

@@ -196,6 +196,14 @@ func _build_autohaus() -> void:
 		var car_locked: bool = (not owned) and int(c.get("stufe", 0)) > Game.stage()
 		if car_locked:
 			status = Texte.t("shop.gesperrt_zeile") % GameData.stufe_hint(int(c.get("stufe", 0)))
+		if c.has("bild") and ResourceLoader.exists(str(c.bild)):
+			var tr := TextureRect.new()
+			tr.texture = load(str(c.bild))
+			tr.custom_minimum_size = Vector2(0, 150)
+			tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			_body.add_child(tr)
 		_body.add_child(UI.label("%s  ·  %s%s" % [Texte.d(c.name), price_txt, status], 14, Color(0.92, 0.9, 0.85)))
 		_body.add_child(UI.label(Texte.d(str(c.info)), 12, Color(0.75, 0.8, 0.88), true))
 		if owned:
