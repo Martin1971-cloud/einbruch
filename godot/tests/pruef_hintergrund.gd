@@ -24,6 +24,9 @@ func _process(_d: float) -> bool:
 		match _ziel:
 			"stadt":
 				main.go("town")
+			"stadt2":
+				G.intel["kiosk"] = 2
+				main.go("town")
 			"laden":
 				main.go("shop", {"kind": "laden"})
 			"spielende":

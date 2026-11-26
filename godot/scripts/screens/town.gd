@@ -262,6 +262,8 @@ func _refresh() -> void:
 		req.add_child(UI.label(txt, 11, Color(0.8, 0.85, 0.9), true))
 	_loc_box.add_child(UI.fold(Texte.t("stadt.braucht"), req, true))
 	_loc_box.add_child(UI.label(Texte.t("stadt.ermittlung") % [[Texte.t("stadt.ermittlung_0"), Texte.t("stadt.ermittlung_1"), Texte.t("stadt.ermittlung_2")][lvl]], 13, Color(0.6, 0.85, 1.0)))
+	if lvl >= 2:
+		_loc_box.add_child(UI.label(Texte.t("plan.beutewert") % GameData.loot_text(t, lvl), 13, Color(0.97, 0.85, 0.55)))
 	if erfolgreich:
 		_loc_box.add_child(UI.label(Texte.t("stadt.erfolgreich"), 15, Color(0.55, 0.92, 0.55)))
 	_refresh_image()
