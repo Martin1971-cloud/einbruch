@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bynxl3ufbeimp"
-path="res://.godot/imported/shop_werkstatt.jpg-be2a4b2555c5705d75cb8ad4012eff1e.ctex"
+path="res://.godot/imported/shop_werkstatt.jpg-2c0b78929c5cac61dd96f10f752ed3fa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/shop_werkstatt.jpg"
-dest_files=["res://.godot/imported/shop_werkstatt.jpg-be2a4b2555c5705d75cb8ad4012eff1e.ctex"]
+source_file="res://assets/archiv/bilder/laeden/shop_werkstatt.jpg"
+dest_files=["res://.godot/imported/shop_werkstatt.jpg-2c0b78929c5cac61dd96f10f752ed3fa.ctex"]
 
 [params]
 

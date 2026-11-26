@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2r82key8lj5m"
-path="res://.godot/imported/location_labor.jpg-a29b2af91e8f7fa59796bc3c211c09e2.ctex"
+path="res://.godot/imported/location_labor.jpg-2f2dfd5c669d2f3959f7f97daa2e138b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/location_labor.jpg"
-dest_files=["res://.godot/imported/location_labor.jpg-a29b2af91e8f7fa59796bc3c211c09e2.ctex"]
+source_file="res://assets/archiv/bilder/orte/location_labor.jpg"
+dest_files=["res://.godot/imported/location_labor.jpg-2f2dfd5c669d2f3959f7f97daa2e138b.ctex"]
 
 [params]
 

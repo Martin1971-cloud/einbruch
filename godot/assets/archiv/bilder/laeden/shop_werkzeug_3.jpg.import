@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2x8htc7ki407"
-path="res://.godot/imported/shop_werkzeug_3.jpg-4ea3dfc865d0157137d8d83522d703fd.ctex"
+path="res://.godot/imported/shop_werkzeug_3.jpg-605dbdf7271f8e71a393f56b9fba0dc0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/shop_werkzeug_3.jpg"
-dest_files=["res://.godot/imported/shop_werkzeug_3.jpg-4ea3dfc865d0157137d8d83522d703fd.ctex"]
+source_file="res://assets/archiv/bilder/laeden/shop_werkzeug_3.jpg"
+dest_files=["res://.godot/imported/shop_werkzeug_3.jpg-605dbdf7271f8e71a393f56b9fba0dc0.ctex"]
 
 [params]
 

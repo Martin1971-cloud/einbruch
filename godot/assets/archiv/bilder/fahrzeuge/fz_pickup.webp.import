@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bu04chfnvrc38"
-path="res://.godot/imported/fz_pickup.webp-2448f8dac140be20e24cdcee554fc091.ctex"
+path="res://.godot/imported/fz_pickup.webp-d2c8f8d114fdfd98f2e7402e2b815420.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/fz_pickup.webp"
-dest_files=["res://.godot/imported/fz_pickup.webp-2448f8dac140be20e24cdcee554fc091.ctex"]
+source_file="res://assets/archiv/bilder/fahrzeuge/fz_pickup.webp"
+dest_files=["res://.godot/imported/fz_pickup.webp-d2c8f8d114fdfd98f2e7402e2b815420.ctex"]
 
 [params]
 

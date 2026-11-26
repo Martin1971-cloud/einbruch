@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bhs2xxxadh5ry"
-path="res://.godot/imported/location_bank.jpg-3a3ff33e8449bc05868ffda112f1942f.ctex"
+path="res://.godot/imported/location_bank.jpg-71429304ecbc27f909f5dbde4782027c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/location_bank.jpg"
-dest_files=["res://.godot/imported/location_bank.jpg-3a3ff33e8449bc05868ffda112f1942f.ctex"]
+source_file="res://assets/archiv/bilder/orte/location_bank.jpg"
+dest_files=["res://.godot/imported/location_bank.jpg-71429304ecbc27f909f5dbde4782027c.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://07myywpk4jcd"
-path="res://.godot/imported/fz_transporter.webp-8c76a71cb4e4b4eca8cd6517cc3f69d6.ctex"
+path="res://.godot/imported/fz_transporter.webp-3cc8bcd7548b5ebc42625afb17243834.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/fz_transporter.webp"
-dest_files=["res://.godot/imported/fz_transporter.webp-8c76a71cb4e4b4eca8cd6517cc3f69d6.ctex"]
+source_file="res://assets/archiv/bilder/fahrzeuge/fz_transporter.webp"
+dest_files=["res://.godot/imported/fz_transporter.webp-3cc8bcd7548b5ebc42625afb17243834.ctex"]
 
 [params]
 

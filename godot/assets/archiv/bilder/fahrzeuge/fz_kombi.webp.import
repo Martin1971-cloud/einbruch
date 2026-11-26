@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ck4q3kxjat7ry"
-path="res://.godot/imported/fz_kombi.webp-8e9031b5c22f8ea4a583d15cc2e3690a.ctex"
+path="res://.godot/imported/fz_kombi.webp-5266ea2e45fb79f32af31a390aeba2a9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/fz_kombi.webp"
-dest_files=["res://.godot/imported/fz_kombi.webp-8e9031b5c22f8ea4a583d15cc2e3690a.ctex"]
+source_file="res://assets/archiv/bilder/fahrzeuge/fz_kombi.webp"
+dest_files=["res://.godot/imported/fz_kombi.webp-5266ea2e45fb79f32af31a390aeba2a9.ctex"]
 
 [params]
 

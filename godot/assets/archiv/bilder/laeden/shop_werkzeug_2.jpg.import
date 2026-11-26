@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bluhrpehanyad"
-path="res://.godot/imported/shop_werkzeug_2.jpg-33c91d3ac4f55bbcc2859e90bcb7c006.ctex"
+path="res://.godot/imported/shop_werkzeug_2.jpg-4f45d5b94503e8ea6542c0507acebe95.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/shop_werkzeug_2.jpg"
-dest_files=["res://.godot/imported/shop_werkzeug_2.jpg-33c91d3ac4f55bbcc2859e90bcb7c006.ctex"]
+source_file="res://assets/archiv/bilder/laeden/shop_werkzeug_2.jpg"
+dest_files=["res://.godot/imported/shop_werkzeug_2.jpg-4f45d5b94503e8ea6542c0507acebe95.ctex"]
 
 [params]
 

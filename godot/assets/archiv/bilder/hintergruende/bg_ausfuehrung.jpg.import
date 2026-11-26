@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4go7vjccffix"
-path="res://.godot/imported/bg_ausfuehrung.jpg-c1d3c1fd5bae2c39937695d300ceba90.ctex"
+path="res://.godot/imported/bg_ausfuehrung.jpg-a86656d6580523349df8e546e00ce504.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/bg_ausfuehrung.jpg"
-dest_files=["res://.godot/imported/bg_ausfuehrung.jpg-c1d3c1fd5bae2c39937695d300ceba90.ctex"]
+source_file="res://assets/archiv/bilder/hintergruende/bg_ausfuehrung.jpg"
+dest_files=["res://.godot/imported/bg_ausfuehrung.jpg-a86656d6580523349df8e546e00ce504.ctex"]
 
 [params]
 

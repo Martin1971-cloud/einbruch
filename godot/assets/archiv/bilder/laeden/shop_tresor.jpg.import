@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b2i0t4h12vq3l"
-path="res://.godot/imported/shop_tresor.jpg-45ca01c064743ea0517f4c76b51e8769.ctex"
+path="res://.godot/imported/shop_tresor.jpg-e40cb3e11da6b32b9b9a60c36de41420.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/shop_tresor.jpg"
-dest_files=["res://.godot/imported/shop_tresor.jpg-45ca01c064743ea0517f4c76b51e8769.ctex"]
+source_file="res://assets/archiv/bilder/laeden/shop_tresor.jpg"
+dest_files=["res://.godot/imported/shop_tresor.jpg-e40cb3e11da6b32b9b9a60c36de41420.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ciun8dv5pt20j"
-path="res://.godot/imported/shop_elektronik.jpg-592d83a7eaaaddc118f2a17968b3197a.ctex"
+path="res://.godot/imported/shop_elektronik.jpg-df953635606f9c2c31a780de849f6981.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/shop_elektronik.jpg"
-dest_files=["res://.godot/imported/shop_elektronik.jpg-592d83a7eaaaddc118f2a17968b3197a.ctex"]
+source_file="res://assets/archiv/bilder/laeden/shop_elektronik.jpg"
+dest_files=["res://.godot/imported/shop_elektronik.jpg-df953635606f9c2c31a780de849f6981.ctex"]
 
 [params]
 

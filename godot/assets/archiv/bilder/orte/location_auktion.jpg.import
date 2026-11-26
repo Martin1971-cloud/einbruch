@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://i6526yg4figx"
-path="res://.godot/imported/location_auktion.jpg-bb8d343cae5eacdcfdf798a3cee71c56.ctex"
+path="res://.godot/imported/location_auktion.jpg-2ed9c724563255efe108f2a5e9e8edee.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/location_auktion.jpg"
-dest_files=["res://.godot/imported/location_auktion.jpg-bb8d343cae5eacdcfdf798a3cee71c56.ctex"]
+source_file="res://assets/archiv/bilder/orte/location_auktion.jpg"
+dest_files=["res://.godot/imported/location_auktion.jpg-2ed9c724563255efe108f2a5e9e8edee.ctex"]
 
 [params]
 

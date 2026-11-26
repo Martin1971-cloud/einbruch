@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://y8dxrplqtpmd"
-path="res://.godot/imported/fz_grosser_wagen.webp-2c16b6fb0b7e45e632625394446dd4f9.ctex"
+path="res://.godot/imported/fz_grosser_wagen.webp-1f99f1a667a02e2e28b41d3a06c14e1b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/fz_grosser_wagen.webp"
-dest_files=["res://.godot/imported/fz_grosser_wagen.webp-2c16b6fb0b7e45e632625394446dd4f9.ctex"]
+source_file="res://assets/archiv/bilder/fahrzeuge/fz_grosser_wagen.webp"
+dest_files=["res://.godot/imported/fz_grosser_wagen.webp-1f99f1a667a02e2e28b41d3a06c14e1b.ctex"]
 
 [params]
 
