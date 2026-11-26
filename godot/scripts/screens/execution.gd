@@ -1494,6 +1494,8 @@ func _finish() -> void:
 	sc.set_anchors_preset(Control.PRESET_FULL_RECT)
 	sc.status = sim.status
 	sc.alarm = sim.alarm_active
+	sc.chase = sim.chase
+	sc.car_id = Game.car_id
 	sc.done.connect(func():
 		sc.queue_free()
 		_result_btn.visible = true)

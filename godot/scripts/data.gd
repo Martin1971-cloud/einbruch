@@ -94,6 +94,15 @@ const CARS := {
 		"info": "Gekauft, steht immer bereit. Kommt deutlich schneller am Ziel an. Ab dem zweiten erfolgreichen Gebäude."},
 }
 
+## Seitenansicht der Fahrzeuge für die Fluchtszene (assets/art/seite_*.webp). Fehlt eine Datei, nimmt die Szene die einfache Zeichnung.
+const SEITE_BILD := {
+	"limo": "res://assets/art/seite_leihwagen.webp",
+	"kombi": "res://assets/art/seite_kombi.webp",
+	"sport": "res://assets/art/seite_sportwagen.webp",
+}
+## Polizeifahrzeuge: die Szene wählt pro Einbruch zufällig eines.
+const POLIZEI_SEITE := ["res://assets/art/seite_polizeiauto.webp", "res://assets/art/seite_polizeivan.webp"]
+
 ## Was man für eine Stufe braucht (Hinweis im Laden).
 static func stufe_hint(stufe: int) -> String:
 	if stufe <= 0:

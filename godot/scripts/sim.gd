@@ -45,6 +45,7 @@ var crew := []
 var car := {"called": false, "arrive_at": -1.0, "present": false, "eta": 20.0}
 var departed := false
 var countdown := -1.0
+var chase := ""  # Ergebnis der Verfolgung: "" = keine Polizei unterwegs, sonst KNAPP, ENTKOMMEN oder GEFASST
 var car_v := 100.0      # Fahrleistung des Wagens (km/h, mit Fahrer)
 var car_laderaum := "mittel"  # größte Beute, die in den Fluchtwagen passt: klein, mittel, gross
 var police_v := 140.0   # Polizeitempo (km/h), abhängig von der Wachrate des Ziels
@@ -1273,6 +1274,7 @@ func _check_escape() -> void:
 	# Sie holt den Wagen ein, wenn ihr Tempo reicht und die Strecke vorher noch nicht zu Ende ist.
 	if countdown >= 0.0:
 		var verdict := chase_result(car_v, police_v, countdown, escape_km)
+		chase = verdict
 		if verdict == "GEFASST":
 			_end("GEFASST", Texte.t("end.holt_ein") % escape_km)
 			return
@@ -1495,6 +1497,7 @@ func result() -> Dictionary:
 		"loot_taken": _loot_names(true),
 		"loot_missed": _loot_names(false),
 		"car_laderaum": car_laderaum,
+		"chase": chase,
 		"segments": _segments(),
 		"states": _obj_states(),
 		"used": _used_map(),
