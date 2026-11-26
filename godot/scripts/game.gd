@@ -298,8 +298,16 @@ func stufe_of(target_id: String) -> int:
 
 ## Quelle der Ermittlung eines Gebäudes (fehlt sie, etwa in alten Ständen: nichts ermittelt).
 func quelle_of(target_id: String) -> Dictionary:
-	var q: Dictionary = ermittlung_quelle.get(target_id, {"look": 0, "inf": false})
-	return q
+	if ermittlung_quelle.has(target_id):
+		return ermittlung_quelle[target_id]
+	# alter Stand ohne Quelle: bisherige Stufe als Umsehen werten
+	return {"look": int(intel.get(target_id, 0)), "inf": false}
+
+
+## Stufe für Loot-Spanne und Anzeige: Umsehen zählt, Informant zählt, höchstens 2.
+func intel_level(target_id: String) -> int:
+	var q := quelle_of(target_id)
+	return mini(int(q.get("look", 0)) + (1 if bool(q.get("inf", false)) else 0), 2)
 
 
 ## Anzahl erfolgreich abgeschlossener Gebäude (Stufe für Werkzeuge und Autos).

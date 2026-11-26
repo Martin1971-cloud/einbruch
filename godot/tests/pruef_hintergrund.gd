@@ -39,6 +39,10 @@ func _process(_d: float) -> bool:
 				G.intel["kiosk"] = 2
 				G.ermittlung_quelle["kiosk"] = {"look": 0, "inf": true}
 				main.go("town")
+			"erm_inf_look1":
+				G.intel["kiosk"] = 2
+				G.ermittlung_quelle["kiosk"] = {"look": 1, "inf": true}
+				main.go("town")
 			"erm_beide":
 				G.intel["kiosk"] = 2
 				G.ermittlung_quelle["kiosk"] = {"look": 1, "inf": true}

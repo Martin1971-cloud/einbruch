@@ -235,9 +235,10 @@ func _refresh() -> void:
 		_loc_box.add_child(UI.label(Texte.d(t.info), 13, Color(0.89, 0.71, 0.35), true))
 	_loc_box.add_child(UI.label(Texte.d(t.desc), 13, Color(0.92, 0.92, 0.95), true))
 	var lvl: int = int(Game.intel.get(_selected, 0))
+	var q: Dictionary = Game.quelle_of(_selected)
 	var shown_facts: Array = []
 	for f in t.facts:
-		if GameData.STAGE_FACTS.get(lvl, []).has(f[0]):
+		if _fakt_sichtbar(str(f[0]), q):
 			shown_facts.append(f)
 	# Polizeizeit ist immer bekannt (Original: PoliceTime wird immer angezeigt)
 	shown_facts.insert(0, [Texte.t("stadt.polizeizeit"), Texte.t("stadt.polizeizeit_wert")])
@@ -270,11 +271,23 @@ func _refresh() -> void:
 
 
 ## Ermittlungstext: je nach Aktionen (Umsehen einmal oder zweimal, Informant).
+## Welche Fakten sichtbar sind: Grundlagen ab Umsehen oder Informant, Besonderheit erst bei zweimal Umsehen.
+func _fakt_sichtbar(name: String, q: Dictionary) -> bool:
+	if name == "Besonderheit":
+		return int(q.get("look", 0)) >= 2
+	return int(q.get("look", 0)) >= 1 or bool(q.get("inf", false))
+
+
 func _ermittlung_text(lvl: int) -> String:
 	var q: Dictionary = Game.quelle_of(_selected)
-	if bool(q.get("inf", false)):
-		return Texte.t("stadt.erm_inf")
 	var n := int(q.get("look", 0))
+	var inf := bool(q.get("inf", false))
+	if inf and n >= 2:
+		return Texte.t("stadt.erm_beide")
+	if inf and n == 1:
+		return Texte.t("stadt.erm_inf_look1")
+	if inf:
+		return Texte.t("stadt.erm_inf")
 	if n >= 2:
 		return Texte.t("stadt.erm_look2")
 	if n == 1:
@@ -318,10 +331,10 @@ func _select(id: String) -> void:
 
 
 func _on_look() -> void:
-	Game.intel[_selected] = mini(int(Game.intel[_selected]) + 1, 2)
 	var q: Dictionary = Game.quelle_of(_selected)
 	q["look"] = mini(int(q.get("look", 0)) + 1, 2)
 	Game.ermittlung_quelle[_selected] = q
+	Game.intel[_selected] = Game.intel_level(_selected)
 	Game.advance_hours(1.0)
 	_log(Texte.t("stadt.log_umsehen"))
 
@@ -335,10 +348,10 @@ func _on_informant() -> void:
 		_msg.text = Texte.t("stadt.zu_wenig_geld")
 		return
 	Game.money -= price
-	Game.intel[_selected] = 2  # Informant liefert alle Insider-Informationen
 	var q: Dictionary = Game.quelle_of(_selected)
 	q["inf"] = true
 	Game.ermittlung_quelle[_selected] = q
+	Game.intel[_selected] = Game.intel_level(_selected)
 	Game.advance_hours(0.5)
 	_log(Texte.t("stadt.log_informant"))
 
