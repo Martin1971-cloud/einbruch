@@ -5,6 +5,8 @@ on:
   push:
     tags:
       - "rc*"
+      - "Rc*"
+      - "RC*"
 
 permissions:
   contents: write
