@@ -716,9 +716,9 @@ const ZIELE_ROH := {
 			{"name": "ziel.juwelier.raum.2.name", "pos": [12, 6]},
 		],
 		"loot": [
-			{"id": "diamantring", "pos": [4, 4], "value": 50000},
-			{"id": "perlen", "pos": [6, 4], "value": 35000},
-			{"id": "tresor", "pos": [12, 8], "value": 95000},
+			{"id": "diamantring", "pos": [4, 4], "value": 30000},
+			{"id": "perlen", "pos": [6, 4], "value": 20000},
+			{"id": "tresor", "pos": [12, 8], "value": 70000},
 		],
 		"guards": [],
 		"facts": [
@@ -772,7 +772,7 @@ const POLIZEI := {
 	"kiosk": {"reaktion": 5.0, "km": 0.84},
 	"testhaus": {"reaktion": 5.0, "km": 0.8},  # Prüfgebäude, nicht auf der Karte
 	"curiosity": {"reaktion": 5.0, "km": 0.85},
-	"juwelier": {"reaktion": 5.0, "km": 0.86},
+	"juwelier": {"reaktion": 2.0, "km": 0.86},
 	"museum": {"reaktion": 5.0, "km": 0.6},
 }
 
