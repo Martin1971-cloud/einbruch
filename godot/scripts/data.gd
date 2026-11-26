@@ -88,7 +88,7 @@ const ORDER := ["kiosk", "curiosity", "juwelier", "museum"]
 const CARS := {
 	"limo": {"id": "limo", "name": "Leihwagen", "bild": "res://assets/art/fz_leihwagen.webp", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 130.0, "ps": 150.0, "laderaum": "mittel", "stufe": 0,
 		"info": "Gemietet für jeden Einbruch. Abholung je nach Fahren des Fahrers (20–30 s)."},
-	"kombi": {"id": "kombi", "name": "Kombi Grau", "bild": "res://assets/art/fz_kombi.webp", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
+	"kombi": {"id": "kombi", "name": "Kombi Grau", "bild": "res://assets/art/fz_kombi_modern.webp", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
 		"info": "Gekauft, steht immer bereit. Schneller als die Limousine, ab dem ersten erfolgreichen Gebäude."},
 	"sport": {"id": "sport", "name": "Sportwagen", "bild": "res://assets/art/fz_sportwagen.webp", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "laderaum": "klein", "stufe": 2,
 		"info": "Gekauft, steht immer bereit. Kommt deutlich schneller am Ziel an. Ab dem zweiten erfolgreichen Gebäude."},
