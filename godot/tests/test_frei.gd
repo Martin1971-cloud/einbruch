@@ -29,7 +29,7 @@ func _init() -> void:
 		{"t": "OPEN", "on": "Eingangstür"},
 		{"t": "MOVE", "fine": [71 * U, 35 * U]},
 	]}
-	var s := Sim.create(k, team_of("teo"), plan, GameData.CAR)
+	var s := Sim.create(k, team_of("teo"), plan, GameData.car_now("limo", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 4000 and not s.crew[0].done:
 		s.step(Sim.DT)
@@ -43,7 +43,7 @@ func _init() -> void:
 	_check(p.distance_to(Vector2(71 * U, 35 * U)) < 0.6, "Teodor steht am Punkt (%.1f, %.1f)" % [p.x, p.y])
 
 	print("Planung: Wand als Ziel:")
-	var s2 := Sim.create(k, team_of("teo"), {"teo": [{"t": "MOVE", "fine": [52 * U, 35 * U]}]}, GameData.CAR)
+	var s2 := Sim.create(k, team_of("teo"), {"teo": [{"t": "MOVE", "fine": [52 * U, 35 * U]}]}, GameData.car_now("limo", 85.0))
 	n = 0
 	while s2.status == "RUNNING" and n < 4000 and not s2.crew[0].done:
 		s2.step(Sim.DT)

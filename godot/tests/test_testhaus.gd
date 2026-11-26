@@ -45,7 +45,7 @@ func _init() -> void:
 	_check(Sim.door_tool({}) == "schloss", "normale Tür: Schloss-Werkzeug")
 
 	# Aufbau: Tür, Panel, Vitrine und Beute sind im Grundriss richtig gesetzt
-	var s0 := Sim.create(GameData.TARGETS.testhaus, _team(), {"teo": []}, GameData.CAR)
+	var s0 := Sim.create(GameData.TARGETS.testhaus, _team(), {"teo": []}, GameData.car_now("limo", 85.0))
 	_check(s0.doors.has(Vector2i(9, 6)) and s0.doors[Vector2i(9, 6)].kind == "stahl", "Stahltür an Position [9, 6]")
 	_check(s0.panel.get("name", "") == "Alarmpanel", "Alarmpanel vorhanden")
 	_check(s0.loot.has("diamant") and s0.loot["diamant"].pos == Vector2i(4, 4), "Diamantkette in der Vitrine [4, 4]")

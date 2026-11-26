@@ -42,7 +42,7 @@ func _init() -> void:
 			{"t": "TAKE", "loot": "kasse"},
 		],
 	}
-	var s := Sim.create(k, team_of(["teo", "ilja"]), plan, GameData.CAR)
+	var s := Sim.create(k, team_of(["teo", "ilja"]), plan, GameData.car_now("limo", 85.0))
 	var n := 0
 	var waited := false
 	var both_work := false

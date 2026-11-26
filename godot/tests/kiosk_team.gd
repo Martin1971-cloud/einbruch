@@ -20,7 +20,7 @@ func _run(team_ids: Array, plans: Dictionary) -> Dictionary:
 	if not team_ids.has("otto"):
 		team.append(_crew("otto"))
 	all["otto"] = [{"t": "MOVE", "to": "Fluchtwagen"}]
-	var s := Sim.create(GameData.TARGETS.kiosk, team, all, GameData.CAR)
+	var s := Sim.create(GameData.TARGETS.kiosk, team, all, GameData.car_now("limo", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 20000:
 		s.step(Sim.DT)
@@ -28,7 +28,7 @@ func _run(team_ids: Array, plans: Dictionary) -> Dictionary:
 	var fees := 0
 	for c in team:
 		fees += int(c.fee)
-	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CAR.fee), "time": s.time, "log": s.log_lines}
+	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CARS.limo.rent), "time": s.time, "log": s.log_lines}
 
 
 func _init() -> void:

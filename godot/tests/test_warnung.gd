@@ -18,7 +18,7 @@ func _init() -> void:
 		{"t": "OPEN", "on": "Kassenlade"},
 		{"t": "TAKE", "loot": "kasse"},
 	]
-	var res := Sim.preview(k, team, {"teo": seq.duplicate(true), "ilja": seq.duplicate(true)}, GameData.CAR)
+	var res := Sim.preview(k, team, {"teo": seq.duplicate(true), "ilja": seq.duplicate(true)}, GameData.car_now("limo", 85.0))
 	var found := false
 	for line in res.log:
 		if str(line).contains("wartet, bis"):

@@ -47,7 +47,7 @@ func _lauf(k: Dictionary, plan: Array) -> Array:
 			var d: Dictionary = c.duplicate(true)
 			d["gear"] = []
 			team.append(d)
-	var s := Sim.create(k, team, {"teo": plan.duplicate(true)}, GameData.CAR)
+	var s := Sim.create(k, team, {"teo": plan.duplicate(true)}, GameData.car_now("limo", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 4000:
 		s.step(Sim.DT)
@@ -62,7 +62,7 @@ func _blick(k: Dictionary, plan: Array) -> Vector2:
 			var d: Dictionary = c.duplicate(true)
 			d["gear"] = []
 			team.append(d)
-	var s := Sim.create(k, team, {"teo": plan.duplicate(true)}, GameData.CAR)
+	var s := Sim.create(k, team, {"teo": plan.duplicate(true)}, GameData.car_now("limo", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 4000:
 		s.step(Sim.DT)

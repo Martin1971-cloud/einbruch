@@ -30,7 +30,7 @@ func _init() -> void:
 		{"t": "TAKE", "loot": "gemaelde"},
 		{"t": "MOVE", "to": "Fluchtwagen"},
 	]}
-	var s := Sim.create(GameData.TARGETS.museum, team_of("teo"), plans, GameData.CAR)
+	var s := Sim.create(GameData.TARGETS.museum, team_of("teo"), plans, GameData.car_now("limo", 85.0))
 	print("Start:")
 	_check(Vector2(s.crew[0].pos) == Sim.center(s.escape_cell), "Teodor startet am Fluchtwagen")
 	for i in range(100):

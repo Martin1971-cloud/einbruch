@@ -18,7 +18,7 @@ func _run_plans(target_id: String, team_ids: Array, plans: Dictionary) -> Dictio
 		team.append(_crew(id))
 	if not team_ids.has("otto"):
 		team.append(_crew("otto"))
-	var s := Sim.create(GameData.TARGETS[target_id], team, plans, GameData.CAR)
+	var s := Sim.create(GameData.TARGETS[target_id], team, plans, GameData.car_now("limo", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 20000:
 		s.step(Sim.DT)
@@ -26,7 +26,7 @@ func _run_plans(target_id: String, team_ids: Array, plans: Dictionary) -> Dictio
 	var fees := 0
 	for c in team:
 		fees += int(c.fee)
-	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CAR.fee), "time": s.time, "alarm": s.alarm_active}
+	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CARS.limo.rent), "time": s.time, "alarm": s.alarm_active}
 
 
 func _run(target_id: String, team_ids: Array, plan: Array) -> Dictionary:
@@ -41,7 +41,7 @@ func _run(target_id: String, team_ids: Array, plan: Array) -> Dictionary:
 	plans["otto"] = [{"t": "MOVE", "to": "Fluchtwagen"}]
 	if not team_ids.has("otto"):
 		team.append(_crew("otto"))
-	var s := Sim.create(GameData.TARGETS[target_id], team, plans, GameData.CAR)
+	var s := Sim.create(GameData.TARGETS[target_id], team, plans, GameData.car_now("limo", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 20000:
 		s.step(Sim.DT)
@@ -49,7 +49,7 @@ func _run(target_id: String, team_ids: Array, plan: Array) -> Dictionary:
 	var fees := 0
 	for c in team:
 		fees += int(c.fee)
-	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CAR.fee), "time": s.time, "alarm": s.alarm_active}
+	return {"status": s.status, "payout": s.payout, "fees": fees, "car": int(GameData.CARS.limo.rent), "time": s.time, "alarm": s.alarm_active}
 
 
 ## Verteilt den Plan auf das Team: der Eingang bleibt bei Teodor, jeder Werkzeug-Block (Gehen + Werkzeug + Öffnen + Beute)

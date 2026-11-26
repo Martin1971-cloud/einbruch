@@ -301,16 +301,6 @@ func _use_text(t: Dictionary) -> String:
 	return "%s ab %d %%" % [t.ability, int(t.min)]
 
 
-func _purpose(type: String) -> String:
-	match type:
-		"TECH":
-			return Texte.t("org.fuer_schloesser")
-		"FORCE":
-			return Texte.t("org.fuer_kampf")
-		_:
-			return Texte.t("org.fuer_elektronik")
-
-
 # ---------------------------------------------------------------- Auswahl
 
 ## Fahrer: ausgewählte Fahrer. Einbrecher: ausgewählte Einbrecher plus Fahrer, die zusätzlich einbrechen.
@@ -431,55 +421,6 @@ func _choice(text: String, pressed: bool, cb: Callable, size := 15) -> Button:
 
 
 # ---------------------------------------------------------------- Einkauf
-
-## Kauf. Ein zweiter Klick auf ein gekauftes Stück verkauft es zum vollen Preis zurück
-## (Abweichung vom Original, dort ist ein Kauf endgültig). Nur hier in der Organisation, vor dem Plan.
-## Prüft ein Werkzeug gegen das Ziel und das Team (Original: plCorrectToolsList, break(), plCheckAbilities).
-## Grün: passt zu einem Objekt des Ziels und ein Teammitglied hat die Vorkenntnisse. Grau: nicht nötig. Rot: niemand kann es.
-func _check_tool(b: Button, t: Dictionary) -> void:
-	var needed := _target_needs(str(t.obj))
-	var who := ""
-	for id in _team_ids():
-		var sk: Dictionary = Game.skills_of(id)
-		if float(sk.get(t.type, 0)) >= float(t.get("min", 0)):
-			who = _crew_by_id(id).name.split(" ")[0]
-			break
-	var col := Color(0.6, 0.62, 0.66)
-	var why := Texte.t("org.nicht_noetig")
-	if not needed:
-		pass
-	elif who != "":
-		col = Color(0.55, 0.95, 0.6)
-		why = "Passt zum Ziel. %s kann es." % who
-	else:
-		col = Color(1.0, 0.5, 0.45)
-		why = Texte.t("org.vorkenntnisse_ab") % [t.get("ability", ""), int(t.get("min", 0))] if str(t.get("ability", "")) != "" else Texte.t("org.vorkenntnisse")
-	b.add_theme_color_override("font_color", col)
-	b.add_theme_color_override("font_disabled_color", col)
-	b.set_meta("why", why)
-
-
-## Welche Arten von Werkzeug das Ziel braucht: Schlösser (Türen, Vitrinen), Alarm, Wachen.
-func _target_needs(kind: String) -> bool:
-	var t: Dictionary = GameData.TARGETS[Game.target_id]
-	match kind:
-		"schloss":
-			return not t.doors.is_empty() or not t.loot.is_empty()
-		"alarm":
-			return t.has("panel")
-		"wache":
-			return not t.guards.is_empty()
-		_:
-			return false
-
-
-## Alle, die im Team sind (Einbrecher und Fahrer, die zusätzlich einbrechen).
-func _team_ids() -> Array:
-	var out: Array = _selected_ids(false)
-	for id in _selected_ids(true):
-		if not out.has(id):
-			out.append(id)
-	return out
 
 
 func _on_confirm() -> void:

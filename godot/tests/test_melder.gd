@@ -14,7 +14,7 @@ func _init() -> void:
 	for c in GameData.CREW:
 		if c.id == "teo":
 			team.append(c.duplicate(true))
-	var s := Sim.create(GameData.TARGETS.juwelier, team, {"teo": []}, GameData.CAR)
+	var s := Sim.create(GameData.TARGETS.juwelier, team, {"teo": []}, GameData.car_now("limo", 85.0))
 	# Nur der Glasbruchmelder (das Mikrofon im Verkauf wird für diesen Test ausgeschaltet)
 	var nur_glas := []
 	for m in s.sensors:

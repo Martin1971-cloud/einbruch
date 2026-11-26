@@ -75,49 +75,6 @@ static func primary(text: String, cb: Callable, min_w := 0) -> Button:
 	return b
 
 
-static func avatar(initials: String, col: Color, size := 40) -> PanelContainer:
-	## Kreis mit Initialen als Ersatz für Porträts.
-	var p := PanelContainer.new()
-	p.custom_minimum_size = Vector2(size, size)
-	p.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	p.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = col.darkened(0.45)
-	sb.border_color = col
-	sb.set_border_width_all(2)
-	sb.set_corner_radius_all(size)
-	p.add_theme_stylebox_override("panel", sb)
-	var l := label(initials, int(size * 0.38), Color(0.97, 0.95, 0.9))
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	l.autowrap_mode = TextServer.AUTOWRAP_OFF
-	p.add_child(l)
-	return p
-
-
-static func panel_style(color := Color(0.085, 0.11, 0.17), border := Color(0.89, 0.71, 0.35, 0.45)) -> StyleBoxFlat:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = color
-	sb.border_color = border
-	sb.set_border_width_all(1)
-	sb.set_corner_radius_all(12)
-	sb.set_content_margin_all(12)
-	return sb
-
-
-static func section(content: Control, title := "") -> PanelContainer:
-	## Dunkle Karte mit goldenem Rahmen und optionalem Titel.
-	var p := PanelContainer.new()
-	p.add_theme_stylebox_override("panel", panel_style())
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 8)
-	p.add_child(v)
-	if title != "":
-		v.add_child(label(title, 16, Color(0.89, 0.71, 0.35)))
-	v.add_child(content)
-	return p
-
-
 static func backdrop(path := "res://assets/art/bg_default.jpg") -> TextureRect:
 	## Nächtlicher Hintergrund aus assets/art (falls vorhanden), sonst radialer Verlauf.
 	if ResourceLoader.exists(path):

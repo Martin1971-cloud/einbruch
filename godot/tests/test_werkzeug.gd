@@ -21,7 +21,7 @@ func person(skills: Dictionary) -> Array:
 
 
 func run(team: Array, plan: Array, target: Dictionary = GameData.TARGETS.kiosk) -> Dictionary:
-	return Sim.preview(target, team, {"teo": plan}, GameData.CAR)
+	return Sim.preview(target, team, {"teo": plan}, GameData.car_now("limo", 85.0))
 
 
 func fail_text(res: Dictionary) -> String:

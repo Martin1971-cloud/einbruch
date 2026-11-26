@@ -39,7 +39,7 @@ const ENTRY := [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "to
 
 
 func _init() -> void:
-	var s0 := Sim.create(GameData.TARGETS.curiosity, _team(), {"teo": []}, GameData.CAR)
+	var s0 := Sim.create(GameData.TARGETS.curiosity, _team(), {"teo": []}, GameData.car_now("limo", 85.0))
 	_check(s0.doors.has(Vector2i(8, 2)) and s0.doors[Vector2i(8, 2)].kind == "glas", "Schaufenster an der Gasse")
 	_check(s0.loot.has("landschaft") and s0.loot["landschaft"].opened, "Gemälde an der Wand ohne Werkzeug")
 	_check(s0.loot.has("gemmen") and not s0.loot["gemmen"].opened, "Gemmen-Vitrine im OG verschlossen")

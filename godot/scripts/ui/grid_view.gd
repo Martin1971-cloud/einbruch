@@ -25,15 +25,10 @@ const COLORS := {
 	"otto": Color(0.78, 0.56, 1.0),
 	"greta": Color(0.45, 0.92, 0.88),
 }
-const ROUTE := Color(0.3, 0.95, 0.55)
 const FLOOR_A := Color(0.88, 0.8, 0.66)
-const FLOOR_B := Color(0.84, 0.75, 0.6)
 const PLANK := Color(0.72, 0.6, 0.45, 0.35)
 const WALL_TOP := Color(0.46, 0.5, 0.62)
-const WALL := Color(0.19, 0.21, 0.3)
 const WALL_SHADOW := Color(0.08, 0.09, 0.14)
-const GRASS_A := Color(0.16, 0.33, 0.25)
-const GRASS_B := Color(0.13, 0.28, 0.21)
 const DOOR := Color(0.55, 0.36, 0.2)
 const GOLD := Color(0.98, 0.8, 0.35)
 const CYAN := Color(0.3, 0.9, 1.0)
@@ -852,7 +847,6 @@ func _draw() -> void:
 		_draw_dynamic()
 
 
-
 ## Alarmanlage im Plan abgeschaltet? (Umgehen des Panels mit dem Elektroset)
 func alarm_aus() -> bool:
 	if not target.has("panel"):
@@ -1035,17 +1029,6 @@ func _dashed(a: Vector2, b: Vector2, col: Color, width := 2.0) -> void:
 		var s := minf(t + dash, length)
 		draw_line(a + dir * t, a + dir * s, col, width)
 		t += dash * 2.0
-
-
-func _arrow_head(a: Vector2, b: Vector2, col: Color) -> void:
-	var d := b - a
-	if d.length() < 1.0:
-		return
-	var dir := d.normalized()
-	var perp := Vector2(-dir.y, dir.x)
-	var tip := b - dir * (_cell * 0.42)
-	var s := _cell * 0.24
-	draw_colored_polygon(PackedVector2Array([tip + dir * s, tip - perp * s * 0.6, tip + perp * s * 0.6]), col)
 
 
 func set_planned_obj(d: Dictionary) -> void:

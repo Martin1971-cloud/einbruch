@@ -16,7 +16,6 @@ const SEE_RATE := 40.0
 const WALL_DAMPING := 15.0
 const DIST_DAMPING := 1.5
 const PATROL_ALARM_BASE := 12.0
-const POLICE_BASE := 60.0
 const INVESTIGATE_SEC := 8.0
 const DIRS := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 
@@ -232,13 +231,6 @@ static func clock(t: float) -> String:
 	return "%02d:%02d" % [m, s]
 
 
-func tile(c: Vector2i) -> String:
-	## Zeichen eines ganzen Feldes (Karte in Feldern).
-	if c.x < 0 or c.y < 0 or c.x >= w or c.y >= h:
-		return "W"
-	return String(map[c.y]).substr(c.x, 1)
-
-
 ## Zeichen eines Unterfeldes. Außerhalb der Karte ist Wand.
 func ftile(f: Vector2i) -> String:
 	if f.x < 0 or f.y < 0 or f.x >= fine_w or f.y >= fine_h:
@@ -406,11 +398,6 @@ func _build_door_tiles() -> void:
 static func anchor_of(f: Vector2i) -> Vector2i:
 	return Vector2i(floori(float(f.x) / SUB), floori(float(f.y) / SUB))
 
-
-## Kollision wie im Original (landscap/scroll.c, lsIsCollision): Wände, geschlossene Türen und
-## Gegenstände mit Kollision (Vitrinen) blockieren. Personen blockieren sich nicht (Sprites sind nicht in der Maske).
-func passable(c: Vector2i) -> bool:
-	return passable_f(center_i(c))
 
 var _case_cells := {}  # Vitrinen mit Kollision (Original: lsTurnObject ... LS_COLLISION)
 
@@ -1547,11 +1534,6 @@ static func preview(target: Dictionary, team: Array, plans: Dictionary, car_cfg:
 		s.step(DT)
 		guard += 1
 	return s.result()
-
-
-## Was den Blick stoppt: Wand, Fenster, geschlossene Tür, Kartenrand.
-func blocks_sight(c: Vector2i) -> bool:
-	return blocks_sight_f(center_i(c))
 
 
 func blocks_sight_f(f: Vector2i) -> bool:

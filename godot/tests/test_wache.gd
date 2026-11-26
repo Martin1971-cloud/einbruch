@@ -22,7 +22,7 @@ func team_of(id: String) -> Array:
 func _init() -> void:
 	print("Ausschalten neben der Wache:")
 	var plans := {"teo": [{"t": "NEUTRALIZE", "guard": "g_gal"}]}
-	var s := Sim.create(GameData.TARGETS.museum, team_of("teo"), plans, GameData.CAR)
+	var s := Sim.create(GameData.TARGETS.museum, team_of("teo"), plans, GameData.car_now("limo", 85.0))
 	s.guards[1].state = "PATROL"
 	s.guards[1].dwell = 999.0
 	s.crew[0].pos = Vector2(s.guards[1].pos) + Vector2(Sim.SUB, 0)
@@ -31,7 +31,7 @@ func _init() -> void:
 		s.step(Sim.DT)
 	_check(s.guards[1].state == "OUT", "Galerie-Wache ist ausgeschaltet")
 	print("Zu weit weg:")
-	var s2 := Sim.create(GameData.TARGETS.museum, team_of("teo"), plans, GameData.CAR)
+	var s2 := Sim.create(GameData.TARGETS.museum, team_of("teo"), plans, GameData.car_now("limo", 85.0))
 	s2.guards[1].state = "PATROL"
 	s2.guards[1].dwell = 999.0
 	for i in range(20):

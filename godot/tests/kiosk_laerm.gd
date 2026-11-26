@@ -16,7 +16,7 @@ func _init() -> void:
 		var p := plan.duplicate(true)
 		if variant != "ohne Kleidung":
 			p[1] = {"t": "TOOL", "tool": "crowbar", "on": "Eingangstür"}
-		var s := Sim.create(GameData.TARGETS.kiosk, team, {"teo": p, "otto": [{"t": "MOVE", "to": "Fluchtwagen"}]}, GameData.CAR)
+		var s := Sim.create(GameData.TARGETS.kiosk, team, {"teo": p, "otto": [{"t": "MOVE", "to": "Fluchtwagen"}]}, GameData.car_now("limo", 85.0))
 		var n := 0
 		while s.status == "RUNNING" and n < 9000:
 			s.step(Sim.DT)

@@ -33,7 +33,7 @@ func _run() -> void:
 		{"t": "MOVE", "cell": [8, 4]}, {"t": "MOVE", "cell": [9, 3]},
 		{"t": "TAKE", "loot": "kasse"},
 	]}
-	var r1 := Sim.preview(k, team_of("teo"), p1, GameData.CAR)
+	var r1 := Sim.preview(k, team_of("teo"), p1, GameData.car_now("limo", 85.0))
 	var segs1: Array = r1.segments.teo
 	var f1 := ""
 	for s in segs1:
@@ -43,7 +43,7 @@ func _run() -> void:
 
 	print("Tür im Weg:")
 	var p2 := {"teo": [{"t": "MOVE", "cell": [8, 4]}]}
-	var r2 := Sim.preview(k, team_of("teo"), p2, GameData.CAR)
+	var r2 := Sim.preview(k, team_of("teo"), p2, GameData.car_now("limo", 85.0))
 	var f2 := ""
 	for s in r2.segments.teo:
 		if str(s.get("fail", "")) != "":

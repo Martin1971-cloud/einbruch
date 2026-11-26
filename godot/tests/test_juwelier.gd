@@ -20,7 +20,7 @@ func _team() -> Array:
 
 
 func _run(plan: Array) -> Dictionary:
-	var s := Sim.create(GameData.TARGETS.juwelier, _team(), {"teo": plan.duplicate(true), "otto": [{"t": "MOVE", "to": "Fluchtwagen"}]}, GameData.CAR)
+	var s := Sim.create(GameData.TARGETS.juwelier, _team(), {"teo": plan.duplicate(true), "otto": [{"t": "MOVE", "to": "Fluchtwagen"}]}, GameData.car_now("limo", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 9000:
 		s.step(Sim.DT)
@@ -39,7 +39,7 @@ const ENTRY := [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "to
 
 
 func _init() -> void:
-	var s0 := Sim.create(GameData.TARGETS.juwelier, _team(), {"teo": []}, GameData.CAR)
+	var s0 := Sim.create(GameData.TARGETS.juwelier, _team(), {"teo": []}, GameData.car_now("limo", 85.0))
 	_check(s0.panel.get("name", "") == "Alarmpanel", "Alarmpanel vorhanden")
 	_check(s0.sensors.size() == 2, "Mikrofon im Verkauf und Glasbruchmelder am Schaufenster")
 	_check(s0.doors.has(Vector2i(9, 6)) and s0.doors[Vector2i(9, 6)].kind == "stahl", "Stahltür zum Tresorraum")

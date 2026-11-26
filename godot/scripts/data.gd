@@ -4,7 +4,6 @@ extends RefCounted
 ## Die Mechanik orientiert sich am Spielablauf der Open-Source-Portierung
 ## (Planung mit Aktions-Timelines, Wachrouten, Lärm, Spuren, Fahndung).
 
-const CELL := 1.0  # 1 Zelle = 1 Meter, Gehtempo 1 Zelle/Sekunde
 
 const TOOLS := {
 	# Fähigkeit laut Quelle (tcGetNecessaryAbility): "Schlösser", "Kampf", "Elektronik", "Safes", "Sprengstoff" oder "" (jeder).
@@ -44,7 +43,6 @@ const CREW := [
 	{"id": "otto", "name": "Otto Brenner", "role": "Fahrer", "skills": {"FAHREN": 60, "TECH": 45, "FORCE": 45}, "fee": 1200, "start": [19, 5], "driver": true},
 ]
 
-const CAR := {"id": "limo", "name": "Leihwagen", "fee": 1500, "eta": 20.0}
 
 ## Lexikon: Begriffe des Spiels, in der Reihenfolge der Anzeige.
 const LEXIKON := [
@@ -126,18 +124,6 @@ static func driver_by_id(id: String) -> Dictionary:
 static func car_eta(skill: float) -> float:
 	return 20.0 + (85.0 - skill) * 0.4
 
-## Hinweise beim Darüberfahren (Scroll-over): was die Aktion bewirkt.
-const ACTION_INFO := {
-	"MOVE": "Geht zum gewählten Ort. Eine Feld pro Sekunde. Türen müssen vorher offen sein.",
-	"TOOL": "Entriegelt eine Tür oder Vitrine (Dietrich). Brecheisen bricht auf, dann ist es offen. Setzt ein Werkzeug auch am Alarmpanel an. Dauer und Lärm richten sich nach Werkzeug, Schwierigkeit und Fähigkeit.",
-	"OPEN": "Öffnet eine entriegelte Tür oder Vitrine von Hand. Dauert einige Sekunden. Erst danach kann man durch die Tür oder an die Beute.",
-	"TAKE": "Nimmt eine Beute mit. Die Tragfähigkeit der Person begrenzt, was sie tragen kann.",
-	"WAIT": "Wartet die gewählte Zeit an der aktuellen Stelle.",
-	"CALL_CAR": "Der Fluchtwagen steht bereits am Ausgang. Diese Aktion ist nur noch ein Hinweis.",
-	"FLAG_SET": "Setzt ein Signal, auf das andere Einbrecherinnen warten können.",
-	"FLAG_WAIT": "Wartet, bis ein anderes Team-Mitglied das gewählte Signal gesetzt hat.",
-	"NEUTRALIZE": "Schaltet eine Wache aus. Die Person muss neben ihr stehen. Gelingt es nur, bevor die Wache Alarm schlägt.",
-}
 
 ## Hinweise zu den Fähigkeiten (Scroll-over).
 ## Fähigkeit je Werkzeugart (Anzeige und Prüfung). Die Crew hat genau diese Fähigkeiten.
@@ -725,13 +711,6 @@ const ZIELE_ROH := {
 	},
 }
 
-## Ermittlungsstufe (0 = ohne, 1 = Wachen und Öffnungszeiten, 2 = volle Ermittlung).
-## Original: Ermittlungsstand am Gebäude (Exactlyness, invest.c / presenta.c): Angaben werden mit dem Stand genauer.
-const STAGE_FACTS := {
-	0: ["Lage"],
-	1: ["Lage", "Öffnungszeiten", "Wachpersonal", "Überwachung"],
-	2: ["Lage", "Öffnungszeiten", "Wachpersonal", "Überwachung", "Besonderheit"],
-}
 ## Beutewert-Spanne: Abweichung je Stufe (0 = genau)
 const STAGE_LOOT_SPREAD := {0: 0.4, 1: 0.15, 2: 0.0}
 
@@ -751,9 +730,8 @@ static func loot_text(target: Dictionary, lvl: int) -> String:
 
 ## Polizeizeit nach Alarm = Reaktionszeit + Fahrzeit vom Revier.
 ## Fahrzeit (Minuten) = Luftlinie (km) x 2,4 + 3 (Umweg durch das Straßennetz, Verkehr, Ausrücken).
-## Tabelle: reaktion = Minuten bis die Streife ausrückt, km = Luftlinie vom Polizeirevier (Karte ~3 km breit).
+## Tabelle POLIZEI: reaktion = Minuten bis die Streife ausrückt, km = Luftlinie vom Polizeirevier (Karte ~3 km breit).
 ## Die Spanne gilt nur für die Fahrt (FAHRT_SPANNE). Mit Informant steht der genaue Wert da.
-const REVIER_REAKTION_STANDARD := 5.0
 const FAHRT_FAKTOR := 2.4
 const FAHRT_PUFFER := 3.0
 const FAHRT_SPANNE := 0.2
@@ -835,7 +813,6 @@ static func target_now(stufe: int, id := "museum") -> Dictionary:
 	t.bedarf = bedarf_now(stufe, id)
 	t.stufe = stufe
 	return t
-
 
 
 ## Einrichtung ohne Beute (Deko): nur zur Ansicht, nicht anklickbar, blockiert keine Wege.

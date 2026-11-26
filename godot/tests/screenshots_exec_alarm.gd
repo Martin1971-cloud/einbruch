@@ -42,7 +42,7 @@ func _process(_delta: float) -> bool:
 			"ilja": [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "MOVE", "to": "Fluchtwagen"}],
 			"rosa": [{"t": "MOVE", "to": "Fluchtwagen"}],
 		}
-		var cfg := {"target": GameData.TARGETS.museum, "team": G.team, "plans": plans, "car": GameData.CAR}
+		var cfg := {"target": GameData.TARGETS.museum, "team": G.team, "plans": plans, "car": GameData.car_now("limo", 85.0)}
 		_main = load("res://scenes/main.tscn").instantiate()
 		root.add_child(_main)
 		_main.go("execution", {"config": cfg})

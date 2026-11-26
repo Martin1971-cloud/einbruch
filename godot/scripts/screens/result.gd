@@ -200,11 +200,6 @@ func _on_town() -> void:
 	main.go("town")
 
 
-func _on_restart() -> void:
-	Game.reset()
-	main.go("town")
-
-
 func _fmt(n: int) -> String:
 	var s := str(absi(n))
 	var out := ""

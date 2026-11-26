@@ -38,7 +38,7 @@ func team_of(id: String, gear: String) -> Array:
 
 
 func make(plans: Dictionary, team: Array) -> Sim:
-	return Sim.create(GameData.TARGETS.museum, team, plans, GameData.CAR)
+	return Sim.create(GameData.TARGETS.museum, team, plans, GameData.car_now("limo", 85.0))
 
 
 func run_until_done(s: Sim, max_steps := 30000) -> void:

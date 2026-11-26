@@ -30,7 +30,7 @@ func _init() -> void:
 		{"t": "MOVE", "cell": [8, 4]},
 		{"t": "MOVE", "to": "Fluchtwagen"},
 	]
-	var s := Sim.create(k, team, {"teo": seq.duplicate(true), "ilja": seq.duplicate(true)}, GameData.CAR)
+	var s := Sim.create(k, team, {"teo": seq.duplicate(true), "ilja": seq.duplicate(true)}, GameData.car_now("limo", 85.0))
 	var bad := 0
 	var worst := ""
 	var n := 0

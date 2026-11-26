@@ -23,7 +23,7 @@ func run(tool: String) -> Sim:
 	var t: Dictionary = GameData.TARGETS.museum.duplicate(true)
 	t.sensors = []  # ohne Mikrofone und ohne Wachen: nur die Lärmgrenze wirkt
 	t.guards = []
-	var s := Sim.create(t, team_of("teo"), {"teo": [{"t": "WAIT", "sec": 2.5}, {"t": "TOOL", "tool": tool, "on": "Eingangstür"}]}, GameData.CAR)
+	var s := Sim.create(t, team_of("teo"), {"teo": [{"t": "WAIT", "sec": 2.5}, {"t": "TOOL", "tool": tool, "on": "Eingangstür"}]}, GameData.car_now("limo", 85.0))
 	s.crew[0].pos = Sim.center(Vector2i(1, 5))
 	s.crew[0]["facing"] = Vector2(1, 0)
 	for i in range(300):

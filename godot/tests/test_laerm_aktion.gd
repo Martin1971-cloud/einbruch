@@ -17,7 +17,7 @@ func _init() -> void:
 			d["gear"] = []
 			team.append(d)
 	var plan := [{"t": "MOVE", "to": "Außen vor dem Eingang"}, {"t": "TOOL", "tool": "crowbar", "on": "Eingangstür"}, {"t": "OPEN", "on": "Eingangstür"}]
-	var s := Sim.create(GameData.TARGETS.kiosk, team, {"teo": plan}, GameData.CAR)
+	var s := Sim.create(GameData.TARGETS.kiosk, team, {"teo": plan}, GameData.car_now("limo", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 9000:
 		s.step(Sim.DT)

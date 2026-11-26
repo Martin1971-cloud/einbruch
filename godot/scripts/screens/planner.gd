@@ -378,16 +378,6 @@ func _set_text_size(v: int) -> void:
 		_refresh_team()
 
 
-func _palette_card() -> Control:
-	var info := VBoxContainer.new()
-	info.add_theme_constant_override("separation", 6)
-	for line in [Texte.t("plan.hilfe_1"), Texte.t("plan.hilfe_2"), Texte.t("plan.hilfe_3"), Texte.t("plan.hilfe_4")]:
-		info.add_child(_w(line, 12, Color(0.82, 0.86, 0.92)))
-	var card := UI.fold(Texte.t("plan.hilfe_titel"), info, false)  # standardmäßig zu, Platz für den Zeitplan
-	card.custom_minimum_size = Vector2(LEFT_W, 0)
-	return card
-
-
 func _timeline_card() -> Control:
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 4)
@@ -539,13 +529,6 @@ func _build_options() -> void:
 	for g in target.guards:
 		guards.append([g.name, g.id])
 	_options = {"points": points, "tools": tools, "doors": doors, "loot": loot, "flags": flags, "guards": guards}
-
-
-func _loot_value() -> int:
-	var total := 0
-	for l in target.loot:
-		total += int(l.value)
-	return total
 
 
 func _refresh_all() -> void:
@@ -839,14 +822,6 @@ func _refresh_checklist() -> void:
 		h.add_child(lbl)
 		h.add_child(_l("✓" if it[1] else "○", 15, Color(0.4, 0.9, 0.5) if it[1] else Color(0.5, 0.55, 0.62)))
 		_checklist.add_child(h)
-
-
-func _initials(full_name: String) -> String:
-	var s := ""
-	for p in full_name.split(" "):
-		if p != "":
-			s += p.substr(0, 1)
-	return s.substr(0, 2)
 
 
 var _problems: Array = []  # Aktionen, die in der Vorschau nicht ausgeführt werden können

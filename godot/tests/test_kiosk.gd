@@ -43,7 +43,7 @@ func _run() -> void:
 		{"t": "CALL_CAR"},
 		{"t": "MOVE", "to": "Fluchtwagen"},
 	]}
-	var res := Sim.preview(k, team_of("teo"), plans, GameData.CAR)
+	var res := Sim.preview(k, team_of("teo"), plans, GameData.car_now("limo", 85.0))
 	_check(str(res.status).begins_with("ENTKOMMEN"), "Kiosk gelingt mit Dietrich (%s)" % res.status)
 	_check(int(res.get("payout", 0)) > 0, "Beute wird ausgezahlt")
 	_check(float(res.get("alarm_time", -1.0)) < 0.0, "kein Alarm")
