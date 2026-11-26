@@ -715,6 +715,20 @@ static func loot_text(target: Dictionary, lvl: int) -> String:
 	return "%s – %s €" % [_grp(lo), _grp(hi)]
 
 
+## Abweichung der Polizeizeit ohne Informant (±25 %). Mit Informant steht der genaue Wert da.
+const POLICE_SPREAD := 0.25
+
+
+## Polizeizeit nach Alarm als Text: genau mit Informant, sonst als Spanne in Minuten.
+static func police_text(target: Dictionary, exakt: bool) -> String:
+	var base: float = float(target.get("police_time", 60.0))
+	if exakt:
+		return "%d Min." % maxi(1, roundi(base / 60.0))
+	var lo := maxi(1, roundi(base * (1.0 - POLICE_SPREAD) / 60.0))
+	var hi := maxi(lo, roundi(base * (1.0 + POLICE_SPREAD) / 60.0))
+	return "%d–%d Min." % [lo, hi]
+
+
 static func _grp(n: int) -> String:
 	var s := str(n)
 	var out := ""

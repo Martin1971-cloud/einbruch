@@ -241,7 +241,7 @@ func _refresh() -> void:
 		if _fakt_sichtbar(str(f[0]), q):
 			shown_facts.append(f)
 	# Polizeizeit ist immer bekannt (Original: PoliceTime wird immer angezeigt)
-	shown_facts.insert(0, [Texte.t("stadt.polizeizeit"), Texte.t("stadt.polizeizeit_wert")])
+	shown_facts.insert(0, [Texte.t("stadt.polizeizeit"), Texte.t("stadt.polizeizeit_wert") % GameData.police_text(t, bool(q.get("inf", false)))])
 	for f in shown_facts:
 		var h := HBoxContainer.new()
 		var k := UI.label(Texte.d(f[0]), 13, Color(0.7, 0.75, 0.82))
