@@ -976,10 +976,7 @@ func _on_preview() -> void:
 			color = "yellow"
 	msgs.append("[color=%s][b]%s[/b][/color] – %s" % [color, _status_text(res.status), res.reason])
 	msgs.append(Texte.t("plan.beute_zeile") % _loot_text(res.loot_taken))
-	var vol_used: float = float(res.get("volume_used", 0.0))
-	var vol_cap: float = float(res.get("car_volume", 0.0))
-	var vcol := "lightgreen" if vol_used <= vol_cap else "salmon"
-	msgs.append("[color=%s]%s[/color]" % [vcol, Texte.t("plan.wagen_volumen") % [int(vol_used / 1000.0), int(vol_cap / 1000.0)]])
+	msgs.append(Texte.t("plan.wagen_laderaum") % Texte.t("size." + str(res.get("car_laderaum", "mittel"))))
 	msgs.append_array(_duration_lines(res))
 	# Lautstärke: lauteste Aktion gegen die Grenze des Gebäudes (Original: Lärm löst den Alarm aus)
 	var peak: float = float(res.get("peak_loud", 0.0))

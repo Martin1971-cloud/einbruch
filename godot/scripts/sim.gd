@@ -46,7 +46,7 @@ var car := {"called": false, "arrive_at": -1.0, "present": false, "eta": 20.0}
 var departed := false
 var countdown := -1.0
 var car_v := 100.0      # Fahrleistung des Wagens (km/h, mit Fahrer)
-var car_cap := 250000.0 # Laderaum des Fluchtwagens (cm³)
+var car_laderaum := "mittel"  # größte Beute, die in den Fluchtwagen passt: klein, mittel, gross
 var police_v := 140.0   # Polizeitempo (km/h), abhängig von der Wachrate des Ziels
 var escape_km := 10.0   # Fluchtstrecke in km
 var alarm_active := false
@@ -120,7 +120,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 	for l in target.loot:
 		if not use_fine:
 			_case_cells[_v2i(l.pos)] = true   # ohne feinen Grundriss blockiert die Vitrine ihr ganzes Feld
-		loot[l.id] = {"id": l.id, "name": l.name, "pos": _v2i(l.pos), "value": int(l.value), "weight": float(l.weight), "volume": GameData.volume_of(str(l.id)), "state": "ROOM", "carrier": "", "opened": bool(l.get("open", false)), "locked": not bool(l.get("open", false))}
+		loot[l.id] = {"id": l.id, "name": l.name, "pos": _v2i(l.pos), "value": int(l.value), "weight": float(l.weight), "size": GameData.loot_size(str(l.id)),"state": "ROOM", "carrier": "", "opened": bool(l.get("open", false)), "locked": not bool(l.get("open", false))}
 		loot_order.append(l.id)
 	for g in target.guards:
 		var st := _v2i(g.start)
@@ -153,7 +153,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 		})
 	car.eta = float(car_cfg.eta)
 	car_v = float(car_cfg.get("v", 100.0))
-	car_cap = float(car_cfg.get("volume", 250000.0))
+	car_laderaum = str(car_cfg.get("laderaum", "mittel"))
 	police_v = 140.0 + float(target.get("guard_rate", 10.0)) * 0.25
 	escape_km = float(target.get("escape_km", 10.0))
 	# Wie im Original: Alle starten am Fluchtwagen, der Wagen steht dort bereit.
@@ -1216,10 +1216,9 @@ func _do_take(c: Dictionary, a: Dictionary, dt: float) -> void:
 		if carried + float(l.weight) > float(c.capacity):
 			_fail(c, Texte.t("fail.tragkraft") % [l.name, int(l.weight), c.name.split(" ")[0], int(float(c.capacity) - carried), int(c.capacity)])
 			return
-		# Fluchtwagen: alle Beute aller Einbrecherinnen muss in den Wagen passen
-		var belegt := volumen_belegt()
-		if belegt + float(l.volume) > car_cap:
-			_fail(c, Texte.t("fail.volumen") % [l.name, int(float(l.volume) / 1000.0), int(maxf(car_cap - belegt, 0.0) / 1000.0), int(car_cap / 1000.0)])
+		# Fluchtwagen: ein Stück passt nur, wenn seine Größe nicht über dem Laderaum liegt
+		if GameData.SIZE_RANK[l.size] > GameData.SIZE_RANK[car_laderaum]:
+			_fail(c, Texte.t("fail.volumen") % [l.name, Texte.t("size." + l.size), Texte.t("size." + car_laderaum)])
 			return
 		c.started = true
 		_lock(c, key)
@@ -1495,8 +1494,7 @@ func result() -> Dictionary:
 		"events": events,
 		"loot_taken": _loot_names(true),
 		"loot_missed": _loot_names(false),
-		"volume_used": volumen_belegt(),
-		"car_volume": car_cap,
+		"car_laderaum": car_laderaum,
 		"segments": _segments(),
 		"states": _obj_states(),
 		"used": _used_map(),
@@ -1526,15 +1524,6 @@ func _crew_info() -> Array:
 	for c in crew:
 		out.append({"id": c.id, "name": c.name})
 	return out
-
-
-## Volumen (cm³) aller Beute, die bereits in der Gruppe getragen wird.
-func volumen_belegt() -> float:
-	var sum := 0.0
-	for c in crew:
-		for lid in c.carried:
-			sum += float(loot[lid].volume)
-	return sum
 
 
 func _loot_names(taken: bool) -> Array:

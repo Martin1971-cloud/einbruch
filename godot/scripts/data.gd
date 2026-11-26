@@ -86,11 +86,11 @@ const ORDER := ["kiosk", "curiosity", "juwelier", "museum"]
 
 ## Fahrzeuge: gemietet (Limousine, Miete je Einbruch) oder gekauft. "stufe" = Anzahl erfolgreicher Gebäude, ab der es zu haben ist.
 const CARS := {
-	"limo": {"id": "limo", "name": "Leihwagen", "bild": "res://assets/art/fz_leihwagen.webp", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 130.0, "ps": 150.0, "volume": 250000.0, "stufe": 0,
+	"limo": {"id": "limo", "name": "Leihwagen", "bild": "res://assets/art/fz_leihwagen.webp", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 130.0, "ps": 150.0, "laderaum": "mittel", "stufe": 0,
 		"info": "Gemietet für jeden Einbruch. Abholung je nach Fahren des Fahrers (20–30 s)."},
-	"kombi": {"id": "kombi", "name": "Kombi Grau", "bild": "res://assets/art/fz_kombi.webp", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "volume": 600000.0, "stufe": 1,
+	"kombi": {"id": "kombi", "name": "Kombi Grau", "bild": "res://assets/art/fz_kombi.webp", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
 		"info": "Gekauft, steht immer bereit. Schneller als die Limousine, ab dem ersten erfolgreichen Gebäude."},
-	"sport": {"id": "sport", "name": "Sportwagen", "bild": "res://assets/art/fz_sportwagen.webp", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "volume": 80000.0, "stufe": 2,
+	"sport": {"id": "sport", "name": "Sportwagen", "bild": "res://assets/art/fz_sportwagen.webp", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "laderaum": "klein", "stufe": 2,
 		"info": "Gekauft, steht immer bereit. Kommt deutlich schneller am Ziel an. Ab dem zweiten erfolgreichen Gebäude."},
 }
 
@@ -189,17 +189,19 @@ const LOOT_TABLE := {
 }
 
 
-## Platzbedarf der Beute im Fluchtwagen in cm³ (Spielwerte). Der Wagen fasst nur so viel Volumen wie „volume“ in CARS.
-const VOLUME_CM3 := {
-	"kasse": 40000, "kassette": 40000, "safe": 120000, "tresor": 120000,
-	"gemaelde": 190000, "landschaft": 190000, "portraet": 190000, "skulptur": 375000,
-	"diamant": 2000, "perlen": 2000, "gemmen": 15000, "goldbarren": 40000,
-	"muenzen": 60000, "muenzen_og": 60000, "pergamente": 50000, "uhren": 90000, "besteck": 70000,
+## Größe der Beute für den Fluchtwagen: klein, mittel, groß. Ein Stück passt in den Wagen, wenn seine Größe
+## nicht über dem Laderaum des Wagens liegt (CARS.laderaum). Spielregel, keine Volumenrechnung.
+const SIZE_RANK := {"klein": 0, "mittel": 1, "gross": 2}
+const LOOT_SIZE := {
+	"diamant": "klein", "perlen": "klein", "gemmen": "klein",
+	"kasse": "mittel", "kassette": "mittel", "safe": "mittel", "tresor": "mittel", "muenzen": "mittel",
+	"muenzen_og": "mittel", "goldbarren": "mittel", "pergamente": "mittel", "uhren": "mittel", "besteck": "mittel",
+	"gemaelde": "gross", "landschaft": "gross", "portraet": "gross", "skulptur": "gross",
 }
 
 
-static func volume_of(id: String) -> float:
-	return float(VOLUME_CM3.get(id, 50000.0))
+static func loot_size(id: String) -> String:
+	return LOOT_SIZE.get(id, "mittel")
 
 
 const TARGETS := {

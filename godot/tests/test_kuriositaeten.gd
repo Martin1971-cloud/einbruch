@@ -20,7 +20,7 @@ func _team() -> Array:
 
 
 func _run(plan: Array) -> Dictionary:
-	var s := Sim.create(GameData.TARGETS.curiosity, _team(), {"teo": plan.duplicate(true), "otto": [{"t": "MOVE", "to": "Fluchtwagen"}]}, GameData.CAR)
+	var s := Sim.create(GameData.TARGETS.curiosity, _team(), {"teo": plan.duplicate(true), "otto": [{"t": "MOVE", "to": "Fluchtwagen"}]}, GameData.car_now("kombi", 85.0))
 	var n := 0
 	while s.status == "RUNNING" and n < 9000:
 		s.step(Sim.DT)
