@@ -85,7 +85,7 @@ static func create(target: Dictionary, team: Array, plans: Dictionary, car_cfg: 
 func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary) -> void:
 	target_name = target.name
 	max_volume = float(target.get("max_volume", 30.0))
-	police_base = float(target.get("police_time", POLICE_BASE))
+	police_base = float(GameData.polizei(str(target.get("id", "")))["zeit"])
 	rng.seed = 4711  # fester Seed: Vorschau und Ausführung laufen gleich
 	map = target.map
 	h = map.size()

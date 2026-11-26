@@ -277,7 +277,6 @@ const TARGETS := {
 	"kiosk": {
 		"id": "kiosk",
 		# Original (TCBUILD.DAT, Nr. 10): Polizeizeit 600 s, Lautstärkegrenze 200, keine Wache
-		"police_time": 600.0,
 		"guard_rate": 10.0,   # Wachrate (Original GRate): bestimmt das Polizeitempo
 		"escape_km": 10.0,    # Fluchtweg in km (Original EscapeRouteLength)
 		"max_volume": 200.0,
@@ -362,7 +361,6 @@ const TARGETS := {
 	# Dient dazu, Animationen und Abläufe zu prüfen. Im Spiel nicht erreichbar.
 	"testhaus": {
 		"id": "testhaus",
-		"police_time": 300.0,
 		"guard_rate": 60.0,
 		"escape_km": 15.0,
 		"max_volume": 150.0,
@@ -482,7 +480,6 @@ const TARGETS := {
 	# Holztüren, Vitrinen, Gemälde an der Wand. Keine Wache (Original: Wachstärke 0). Erster Schritt nach dem Kiosk.
 	"curiosity": {
 		"id": "curiosity",
-		"police_time": 880.0,
 		"guard_rate": 90.0,
 		"escape_km": 20.0,
 		"max_volume": 170.0,
@@ -599,7 +596,6 @@ const TARGETS := {
 	# Stahltür zum Tresorraum. Keine Wache (Original: Wachstärke 0), aber Alarm. Gebäude 3 nach dem Laden.
 	"juwelier": {
 		"id": "juwelier",
-		"police_time": 600.0,  # Alarm wird direkt aufgeschaltet (Original 900, bewusst kürzer)
 		"guard_rate": 100.0,
 		"escape_km": 13.0,
 		"max_volume": 150.0,
@@ -715,17 +711,33 @@ static func loot_text(target: Dictionary, lvl: int) -> String:
 	return "%s – %s €" % [_grp(lo), _grp(hi)]
 
 
-## Abweichung der Polizeizeit ohne Informant (±25 %). Mit Informant steht der genaue Wert da.
-const POLICE_SPREAD := 0.25
+## Polizeizeit nach Alarm: eine Tabelle für alle Gebäude (zum Balancing an dieser Stelle ändern).
+## zeit = Sekunden bis die Polizei nach dem Alarm eintrifft, spanne = Abweichung ohne Informant (0.25 = ±25 %).
+## Mit Informant steht der genaue Wert da, die Simulation rechnet immer mit "zeit".
+const POLIZEI := {
+	"kiosk": {"zeit": 600.0, "spanne": 0.25},
+	"testhaus": {"zeit": 300.0, "spanne": 0.25},
+	"curiosity": {"zeit": 880.0, "spanne": 0.25},
+	"juwelier": {"zeit": 600.0, "spanne": 0.25},  # bewusst kürzer als im Original (900)
+	"museum": {"zeit": 60.0, "spanne": 0.25},  # Stadtmuseum: noch nicht festgelegt, Standardwert
+}
+const POLIZEI_STANDARD := {"zeit": 60.0, "spanne": 0.25}
+
+
+## Polizeizeit eines Gebäudes aus der Tabelle (Standard, falls nicht eingetragen).
+static func polizei(id: String) -> Dictionary:
+	return POLIZEI.get(id, POLIZEI_STANDARD)
 
 
 ## Polizeizeit nach Alarm als Text: genau mit Informant, sonst als Spanne in Minuten.
 static func police_text(target: Dictionary, exakt: bool) -> String:
-	var base: float = float(target.get("police_time", 60.0))
+	var p := polizei(str(target.get("id", "")))
+	var base: float = float(p.zeit)
 	if exakt:
 		return "%d Min." % maxi(1, roundi(base / 60.0))
-	var lo := maxi(1, roundi(base * (1.0 - POLICE_SPREAD) / 60.0))
-	var hi := maxi(lo, roundi(base * (1.0 + POLICE_SPREAD) / 60.0))
+	var sp: float = float(p.spanne)
+	var lo := maxi(1, roundi(base * (1.0 - sp) / 60.0))
+	var hi := maxi(lo, roundi(base * (1.0 + sp) / 60.0))
 	return "%d–%d Min." % [lo, hi]
 
 
