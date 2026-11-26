@@ -124,6 +124,7 @@ func _map_card() -> PanelContainer:
 	# Einkaufsorte: anklickbar wie ein Ziel, öffnen den Laden oder das Autohaus
 	pins.append({"id": "laden", "name": Texte.t("ort.laden"), "pos": Vector2(0.27, 0.70), "active": true, "info": Texte.t("ort.laden_info")})
 	pins.append({"id": "autohaus", "name": Texte.t("ort.autohaus"), "pos": Vector2(0.60, 0.16), "active": true, "info": Texte.t("ort.autohaus_info")})
+	pins.append({"id": "revier", "name": Texte.t("ort.revier"), "pos": Vector2(0.33, 0.21), "active": false, "info": Texte.t("ort.revier_info")})
 	for o in GameData.OTHER_PLACES:
 		pins.append({"id": o.id, "name": Texte.d(o.name), "pos": Vector2(o.pos[0], o.pos[1]), "active": false, "info": o.get("info", "")})
 	for p in pins:
