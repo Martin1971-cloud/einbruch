@@ -19,7 +19,7 @@ func _ready() -> void:
 	base.color = Color(0.06, 0.08, 0.11)
 	base.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(base)
-	var pic_path := "res://assets/art/shop_werkzeug.jpg" if kind == "laden" else "res://assets/art/shop_autohaus.jpg"
+	var pic_path := "res://assets/art/shop_werkzeug.jpg" if kind == "laden" else ("res://assets/art/shop_autoverleih.jpg" if kind == "verleih" else "res://assets/art/shop_autohaus.jpg")
 	if ResourceLoader.exists(pic_path):
 		var bg := UI.backdrop(pic_path)
 		bg.modulate = Color(1, 1, 1, 0.4)
