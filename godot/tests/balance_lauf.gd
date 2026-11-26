@@ -158,7 +158,7 @@ func _plans() -> Dictionary:
 			{"t": "MOVE", "cell": [4, 20]}, {"t": "TREPPE"}, {"t": "CALL_CAR"}, {"t": "MOVE", "to": "Fluchtwagen"},
 		],
 		"juwelier": entry + [
-			{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Diamantring"}, {"t": "OPEN", "on": "Diamantring"}, {"t": "TAKE", "loot": "diamant"},
+			{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Diamantring"}, {"t": "OPEN", "on": "Diamantring"}, {"t": "TAKE", "loot": "diamantring"},
 			{"t": "MOVE", "cell": [6, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Perlenkette"}, {"t": "OPEN", "on": "Perlenkette"}, {"t": "TAKE", "loot": "perlen"},
 			{"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "schneidbrenner", "on": "Stahltür"},
 			{"t": "MOVE", "cell": [12, 7]}, {"t": "TOOL", "tool": "lockpick", "on": "Tresorinhalt (Schmuck und Bargeld)"}, {"t": "OPEN", "on": "Tresorinhalt (Schmuck und Bargeld)"}, {"t": "TAKE", "loot": "tresor"},

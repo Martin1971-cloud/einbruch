@@ -45,8 +45,8 @@ func _init() -> void:
 	_check(s0.doors.has(Vector2i(9, 6)) and s0.doors[Vector2i(9, 6)].kind == "stahl", "Stahltür zum Tresorraum")
 	_check(Sim.door_tool({"kind": "stahl"}) == "tresor", "Stahltür braucht das Tresor-Werkzeug")
 
-	var r1 := _run(ENTRY + [{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Diamantring"}, {"t": "OPEN", "on": "Diamantring"}, {"t": "TAKE", "loot": "diamant"}])
-	_check(r1.sim.loot["diamant"].state != "ROOM", "Diamantring aus der Vitrine genommen")
+	var r1 := _run(ENTRY + [{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "Diamantring"}, {"t": "OPEN", "on": "Diamantring"}, {"t": "TAKE", "loot": "diamantring"}])
+	_check(r1.sim.loot["diamantring"].state != "ROOM", "Diamantring aus der Vitrine genommen")
 
 	var r2 := _run(ENTRY + [{"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "lockpick", "on": "Stahltür"}])
 	_check(_has(r2.log, "nicht geeignet"), "Dietrich passt nicht an die Stahltür")

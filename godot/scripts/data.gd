@@ -86,20 +86,14 @@ const ORDER := ["kiosk", "curiosity", "juwelier", "museum"]
 
 ## Fahrzeuge: gemietet (Limousine, Miete je Einbruch) oder gekauft. "stufe" = Anzahl erfolgreicher Gebäude, ab der es zu haben ist.
 const CARS := {
-	"limo": {"id": "limo", "name": "Leihwagen", "bild": "res://assets/art/fz_leihwagen.webp", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 130.0, "ps": 150.0, "laderaum": "mittel", "stufe": 0,
+	"limo": {"id": "limo", "name": "Leihwagen", "bild": "res://assets/art/fz_leihwagen.webp", "seite": "res://assets/art/seite_leihwagen.webp", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 130.0, "ps": 150.0, "laderaum": "mittel", "stufe": 0,
 		"info": "Gemietet für jeden Einbruch. Abholung je nach Fahren des Fahrers (20–30 s)."},
-	"kombi": {"id": "kombi", "name": "Kombi Grau", "bild": "res://assets/art/fz_kombi_modern.webp", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
+	"kombi": {"id": "kombi", "name": "Kombi Grau", "bild": "res://assets/art/fz_kombi_modern.webp", "seite": "res://assets/art/seite_kombi.webp", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
 		"info": "Gekauft, steht immer bereit. Schneller als die Limousine, ab dem ersten erfolgreichen Gebäude."},
-	"sport": {"id": "sport", "name": "Sportwagen", "bild": "res://assets/art/fz_sportwagen.webp", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "laderaum": "klein", "stufe": 2,
+	"sport": {"id": "sport", "name": "Sportwagen", "bild": "res://assets/art/fz_sportwagen.webp", "seite": "res://assets/art/seite_sportwagen.webp", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "laderaum": "klein", "stufe": 2,
 		"info": "Gekauft, steht immer bereit. Kommt deutlich schneller am Ziel an. Ab dem zweiten erfolgreichen Gebäude."},
 }
 
-## Seitenansicht der Fahrzeuge für die Fluchtszene (assets/art/seite_*.webp). Fehlt eine Datei, nimmt die Szene die einfache Zeichnung.
-const SEITE_BILD := {
-	"limo": "res://assets/art/seite_leihwagen.webp",
-	"kombi": "res://assets/art/seite_kombi.webp",
-	"sport": "res://assets/art/seite_sportwagen.webp",
-}
 ## Polizeifahrzeuge: die Szene wählt pro Einbruch zufällig eines.
 const POLIZEI_SEITE := ["res://assets/art/seite_polizeiauto.webp", "res://assets/art/seite_polizeivan.webp"]
 
@@ -186,34 +180,54 @@ static func portrait_path(id: String) -> String:
 	return "res://assets/portraits/%s.png" % key if key != "" else ""
 
 
-## Beutetabelle: Name, Kategorie und Icon je Beutestück (Icons: assets/icons/loot/).
-## Gewicht und Volumen aus den Originaldaten (TCMAIN.DAT, Loot): Gewicht in kg, Volumen in cm³.
-const LOOT_TABLE := {
-	"kasse": {"name": "Kassenlade", "kategorie": "Bargeld", "icon": "kasse", "gewicht_kg": 0.5, "volumen_cm3": 1000, "original": "Geld (9602)"},
-	"safe": {"name": "Wertschrank", "kategorie": "Behälter", "icon": "tresor", "gewicht_kg": 2.5, "volumen_cm3": 5000, "original": "Geld und Zigarrenkiste (9602, 9610)"},
-	"gemaelde": {"name": "Gemälde „Hafen bei Nacht“", "kategorie": "Kunst", "icon": "", "gewicht_kg": 2.0, "volumen_cm3": 1350, "original": "Ein Bild (9633)"},
-	"skulptur": {"name": "Bronzeskulptur", "kategorie": "Kunst", "icon": "bronzestatue", "gewicht_kg": 7.0, "volumen_cm3": 2000, "original": "Eine Statue (9621)"},
-	"diamant": {"name": "Diamantkette", "kategorie": "Juwelen", "icon": "", "gewicht_kg": 1.0, "volumen_cm3": 70, "original": "Juwelen (9613)"},
-	"muenzen": {"name": "Münzsammlung", "kategorie": "Kuriosität", "icon": "muenzsammlung", "gewicht_kg": 3.0, "volumen_cm3": 4900, "original": "Münzsammlung (9625)"},
-}
-
-
-## Größe der Beute für den Fluchtwagen: klein, mittel, groß. Ein Stück passt in den Wagen, wenn seine Größe
-## nicht über dem Laderaum des Wagens liegt (CARS.laderaum). Spielregel, keine Volumenrechnung.
+## Beutetabelle: ein Eintrag je Beutestück. Name, Gewicht (kg), Größe und Icon stehen nur hier.
+## Größe für den Fluchtwagen: klein, mittel, gross. Ein Stück passt in den Wagen, wenn seine Größe nicht über
+## dem Laderaum liegt (CARS.laderaum). Icons: assets/icons/loot/.
 const SIZE_RANK := {"klein": 0, "mittel": 1, "gross": 2}
-const LOOT_SIZE := {
-	"diamant": "klein", "perlen": "klein", "gemmen": "klein",
-	"kasse": "mittel", "kassette": "mittel", "safe": "mittel", "tresor": "mittel", "muenzen": "mittel",
-	"muenzen_og": "mittel", "goldbarren": "mittel", "pergamente": "mittel", "uhren": "mittel", "besteck": "mittel",
-	"gemaelde": "gross", "landschaft": "gross", "portraet": "gross", "skulptur": "gross",
+const ITEMS := {
+	"kasse": {"name": "Kassenlade", "gewicht": 0.5, "groesse": "mittel", "icon": "kasse"},
+	"safe": {"name": "Wertschrank", "gewicht": 2.5, "groesse": "mittel", "icon": "tresor"},
+	"gemaelde": {"name": "Gemälde „Hafen bei Nacht“", "gewicht": 2, "groesse": "gross"},
+	"landschaft": {"name": "Gemälde „Landschaft“", "gewicht": 2, "groesse": "gross"},
+	"portraet": {"name": "Gemälde „Porträt“", "gewicht": 2, "groesse": "gross"},
+	"skulptur": {"name": "Bronzeskulptur", "gewicht": 7, "groesse": "gross", "icon": "bronzestatue"},
+	"diamant": {"name": "Diamantkette", "gewicht": 1, "groesse": "klein"},
+	"diamantring": {"name": "Diamantring", "gewicht": 1, "groesse": "klein"},
+	"perlen": {"name": "Perlenkette", "gewicht": 1, "groesse": "klein"},
+	"gemmen": {"name": "Gemmensammlung", "gewicht": 1, "groesse": "klein"},
+	"muenzen": {"name": "Münzsammlung", "gewicht": 3, "groesse": "mittel", "icon": "muenzsammlung"},
+	"muenzen_og": {"name": "Münzsammlung (OG)", "gewicht": 3, "groesse": "mittel"},
+	"goldbarren": {"name": "Goldbarren", "gewicht": 6, "groesse": "mittel"},
+	"uhren": {"name": "Uhrensammlung", "gewicht": 3, "groesse": "mittel"},
+	"besteck": {"name": "Silberbesteck", "gewicht": 4, "groesse": "mittel"},
+	"kassette": {"name": "Geldkassette", "gewicht": 5, "groesse": "mittel"},
+	"pergamente": {"name": "Antike Pergamente", "gewicht": 2, "groesse": "mittel"},
+	"tresor": {"name": "Tresorinhalt (Schmuck und Bargeld)", "gewicht": 6, "groesse": "mittel"},
 }
 
 
-static func loot_size(id: String) -> String:
-	return LOOT_SIZE.get(id, "mittel")
+## Setzt Name, Gewicht, Größe und Icon aus ITEMS in die Beute jedes Ziels ein. Die Ziele enthalten nur ID, Position, Wert.
+static func _mit_beute(ziele: Dictionary) -> Dictionary:
+	var out := {}
+	for zid in ziele:
+		var z: Dictionary = ziele[zid].duplicate(true)
+		var liste: Array = []
+		for e in z.loot:
+			var it: Dictionary = ITEMS[e.id]
+			var m: Dictionary = e.duplicate(true)
+			m["name"] = it.name
+			m["weight"] = float(it.gewicht)
+			m["size"] = it.groesse
+			liste.append(m)
+		z["loot"] = liste
+		out[zid] = z
+	return out
 
 
-const TARGETS := {
+static var TARGETS := _mit_beute(ZIELE_ROH)
+
+
+const ZIELE_ROH := {
 	"museum": {
 		"id": "museum",
 		"glasvitrinen": true,  # Ausstellungskästen aus Glas: Glasschneider nötig (auch wenn man aufbrechen könnte)
@@ -271,10 +285,10 @@ const TARGETS := {
 			{"name": "Mikrofon Korridor", "pos": [13, 8], "threshold": 20.0},
 		],
 		"loot": [
-			{"id": "gemaelde", "name": "Gemälde „Hafen bei Nacht“", "pos": [5, 3], "value": 60000, "weight": 2},
-			{"id": "skulptur", "name": "Bronzeskulptur", "pos": [4, 8], "value": 90000, "weight": 7},
-			{"id": "diamant", "name": "Diamantkette", "pos": [15, 3], "value": 150000, "weight": 1},
-			{"id": "muenzen", "name": "Münzsammlung", "pos": [14, 5], "value": 90000, "weight": 3},
+			{"id": "gemaelde", "pos": [5, 3], "value": 60000},
+			{"id": "skulptur", "pos": [4, 8], "value": 90000},
+			{"id": "diamant", "pos": [15, 3], "value": 150000},
+			{"id": "muenzen", "pos": [14, 5], "value": 90000},
 		],
 		"guards": [
 			{"id": "g_ost", "name": "Wache Ost", "kampf": 45, "type": "INDOOR", "start": [9, 8], "route": [[9, 8], [15, 8], [15, 7], [9, 7]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
@@ -358,10 +372,10 @@ const TARGETS := {
 		],
 		"sensors": [],
 		"loot": [
-			{"id": "kasse", "name": "Kassenlade", "pos": [10, 3], "value": 6000, "weight": 0.5},
+			{"id": "kasse", "pos": [10, 3], "value": 6000},
 			# Wertschrank (Original: Geld 500 g und eine Zigarrenkiste 2 kg, im selben Behälter)
 			# Aufteilung: Geld 16.000 € (500 g), Zigarrenkiste 6.000 € (2 kg). Im Spiel ein Beutestück.
-			{"id": "safe", "name": "Wertschrank", "pos": [8, 2], "value": 22000, "weight": 2.5, "parts": [["Geld", 16000], ["Zigarrenkiste", 6000]]},
+			{"id": "safe", "pos": [8, 2], "value": 22000, "parts": [["Geld", 16000], ["Zigarrenkiste", 6000]]},
 		],
 		"guards": [],
 		"facts": [
@@ -474,11 +488,11 @@ const TARGETS := {
 			{"name": "Mikrofon Halle", "pos": [5, 8], "threshold": 20.0},
 		],
 		"loot": [
-			{"id": "diamant", "name": "Diamantkette", "pos": [4, 4], "value": 150000, "weight": 1},
-			{"id": "goldbarren", "name": "Goldbarren", "pos": [12, 5], "value": 240000, "weight": 6},
-			{"id": "muenzen_og", "name": "Münzsammlung (OG)", "pos": [4, 16], "value": 80000, "weight": 3},
+			{"id": "diamant", "pos": [4, 4], "value": 150000},
+			{"id": "goldbarren", "pos": [12, 5], "value": 240000},
+			{"id": "muenzen_og", "pos": [4, 16], "value": 80000},
 			# Gemälde hängt an der Wand: ohne Werkzeug abnehmbar (open), Bild wird als Wandbild gezeigt
-			{"id": "gemaelde", "name": "Gemälde „Hafen“", "pos": [3, 6], "value": 60000, "weight": 2, "open": true, "wall": true},
+			{"id": "gemaelde", "pos": [3, 6], "value": 60000, "open": true, "wall": true},
 		],
 		"guards": [
 			{"id": "g_tres", "name": "Wache Tresor", "kampf": 50, "type": "INDOOR", "start": [11, 8], "route": [[11, 8], [13, 8], [13, 4], [11, 4]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
@@ -590,13 +604,13 @@ const TARGETS := {
 		],
 		"sensors": [],
 		"loot": [
-			{"id": "uhren", "name": "Uhrensammlung", "pos": [4, 4], "value": 15000, "weight": 3},
-			{"id": "besteck", "name": "Silberbesteck", "pos": [6, 4], "value": 10000, "weight": 4},
-			{"id": "landschaft", "name": "Gemälde „Landschaft“", "pos": [3, 6], "value": 12000, "weight": 2, "open": true, "wall": true},
-			{"id": "kassette", "name": "Geldkassette", "pos": [12, 8], "value": 20000, "weight": 5},
-			{"id": "gemmen", "name": "Gemmensammlung", "pos": [4, 16], "value": 25000, "weight": 1},
-			{"id": "pergamente", "name": "Antike Pergamente", "pos": [12, 18], "value": 15000, "weight": 2},
-			{"id": "portraet", "name": "Gemälde „Porträt“", "pos": [3, 18], "value": 18000, "weight": 2, "open": true, "wall": true},
+			{"id": "uhren", "pos": [4, 4], "value": 15000},
+			{"id": "besteck", "pos": [6, 4], "value": 10000},
+			{"id": "landschaft", "pos": [3, 6], "value": 12000, "open": true, "wall": true},
+			{"id": "kassette", "pos": [12, 8], "value": 20000},
+			{"id": "gemmen", "pos": [4, 16], "value": 25000},
+			{"id": "pergamente", "pos": [12, 18], "value": 15000},
+			{"id": "portraet", "pos": [3, 18], "value": 18000, "open": true, "wall": true},
 		],
 		"guards": [],
 		"facts": [
@@ -664,7 +678,7 @@ const TARGETS := {
 			{"pos": [8, 2], "name": "Schaufenster", "res": 20, "cplx": 20, "locked": true, "kind": "glas"},
 		],
 		"panel": {"name": "Alarmpanel", "pos": [3, 3], "res": 50, "cplx": 45},
-		"gesichert": ["Eingangstür", "Stahltür", "Schaufenster", "diamant", "perlen", "tresor"],
+		"gesichert": ["Eingangstür", "Stahltür", "Schaufenster", "diamantring", "perlen", "tresor"],
 		"sensors": [
 			{"name": "Mikrofon Verkauf", "pos": [5, 8], "threshold": 25.0},
 			# Glasbruchmelder: reagiert schon auf ein zerbrochenes Schaufenster (niedrige Schwelle)
@@ -686,9 +700,9 @@ const TARGETS := {
 			{"name": "TRESORRAUM", "pos": [12, 6]},
 		],
 		"loot": [
-			{"id": "diamant", "name": "Diamantring", "pos": [4, 4], "value": 50000, "weight": 1},
-			{"id": "perlen", "name": "Perlenkette", "pos": [6, 4], "value": 35000, "weight": 1},
-			{"id": "tresor", "name": "Tresorinhalt (Schmuck und Bargeld)", "pos": [12, 8], "value": 95000, "weight": 6},
+			{"id": "diamantring", "pos": [4, 4], "value": 50000},
+			{"id": "perlen", "pos": [6, 4], "value": 35000},
+			{"id": "tresor", "pos": [12, 8], "value": 95000},
 		],
 		"guards": [],
 		"facts": [

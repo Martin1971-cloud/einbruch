@@ -1,7 +1,7 @@
 class_name EscapeScene
 extends Control
 ## 2D-Szene nach dem Einbruch: Der Fluchtwagen fährt davon, die Polizei folgt mit Blaulicht.
-## Bei Festnahme holt die Polizei den Wagen ein. Seitenansicht je Fahrzeug (GameData.SEITE_BILD);
+## Bei Festnahme holt die Polizei den Wagen ein. Seitenansicht je Fahrzeug (GameData.CARS[id].seite);
 ## fehlt eine Datei, wird die einfache Zeichnung benutzt. Die Polizei wird zufällig gewählt.
 
 signal done
@@ -28,7 +28,7 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	_car_tex = _lade(str(GameData.SEITE_BILD.get(car_id, "")))
+	_car_tex = _lade(str(GameData.CARS.get(car_id, {}).get("seite", "")))
 	_police_tex = _lade(GameData.POLIZEI_SEITE[randi() % GameData.POLIZEI_SEITE.size()])
 	_bg_tex = _lade(BG_BILD)
 

@@ -520,7 +520,7 @@ func _fpos(f: Vector2i) -> Vector2:
 var _icons := {}
 
 
-## Beuteicon aus der Tabelle (GameData.LOOT_TABLE), oder null.
+## Beuteicon aus der Tabelle (GameData.ITEMS), oder null.
 func font_for_label() -> Font:
 	return ThemeDB.fallback_font
 
@@ -537,7 +537,7 @@ func _grp_money(n: int) -> String:
 
 
 func _loot_icon(lid: String) -> Texture2D:
-	var name: String = String(GameData.LOOT_TABLE.get(lid, {}).get("icon", ""))
+	var name: String = String(GameData.ITEMS.get(lid, {}).get("icon", ""))
 	if name == "":
 		return null
 	if not _icons.has(name):
