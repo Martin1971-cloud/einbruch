@@ -35,7 +35,7 @@ func _ready() -> void:
 	# Breiten: Stadtplan größer, Ortsbild schmaler (Verhältnis 1,7 : 0,8 : 1)
 	var map_card := _map_card()
 	map_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	map_card.size_flags_stretch_ratio = 1.7
+	map_card.size_flags_stretch_ratio = 2.4
 	body.add_child(map_card)
 	var image_card := _image_card()
 	image_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -43,7 +43,7 @@ func _ready() -> void:
 	body.add_child(image_card)
 	var info_card := _info_card()
 	info_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	info_card.size_flags_stretch_ratio = 1.0
+	info_card.size_flags_stretch_ratio = 0.7
 	body.add_child(info_card)
 
 	_msg = UI.label("", 14, Color(0.85, 0.95, 0.75))
@@ -261,12 +261,25 @@ func _refresh() -> void:
 			txt = Texte.t("stadt.skill_ab") % [nm, wert, Texte.d(t.bedarf[skill].grund)]
 		req.add_child(UI.label(txt, 11, Color(0.8, 0.85, 0.9), true))
 	_loc_box.add_child(UI.fold(Texte.t("stadt.braucht"), req, true))
-	_loc_box.add_child(UI.label(Texte.t("stadt.ermittlung") % [[Texte.t("stadt.ermittlung_0"), Texte.t("stadt.ermittlung_1"), Texte.t("stadt.ermittlung_2")][lvl]], 13, Color(0.6, 0.85, 1.0)))
+	_loc_box.add_child(UI.label(Texte.t("stadt.ermittlung") % _ermittlung_text(lvl), 13, Color(0.6, 0.85, 1.0), true))
 	if lvl >= 2:
 		_loc_box.add_child(UI.label(Texte.t("plan.beutewert") % GameData.loot_text(t, lvl), 13, Color(0.97, 0.85, 0.55)))
 	if erfolgreich:
 		_loc_box.add_child(UI.label(Texte.t("stadt.erfolgreich"), 15, Color(0.55, 0.92, 0.55)))
 	_refresh_image()
+
+
+## Ermittlungstext: je nach Aktionen (Umsehen einmal oder zweimal, Informant).
+func _ermittlung_text(lvl: int) -> String:
+	var q: Dictionary = Game.quelle_of(_selected)
+	if bool(q.get("inf", false)):
+		return Texte.t("stadt.erm_inf")
+	var n := int(q.get("look", 0))
+	if n >= 2:
+		return Texte.t("stadt.erm_look2")
+	if n == 1:
+		return Texte.t("stadt.erm_look1")
+	return [Texte.t("stadt.ermittlung_0"), Texte.t("stadt.ermittlung_1"), Texte.t("stadt.ermittlung_2")][lvl]
 
 
 func _refresh_image() -> void:
@@ -306,6 +319,9 @@ func _select(id: String) -> void:
 
 func _on_look() -> void:
 	Game.intel[_selected] = mini(int(Game.intel[_selected]) + 1, 2)
+	var q: Dictionary = Game.quelle_of(_selected)
+	q["look"] = mini(int(q.get("look", 0)) + 1, 2)
+	Game.ermittlung_quelle[_selected] = q
 	Game.advance_hours(1.0)
 	_log(Texte.t("stadt.log_umsehen"))
 
@@ -317,6 +333,9 @@ func _on_informant() -> void:
 		return
 	Game.money -= price
 	Game.intel[_selected] = mini(int(Game.intel[_selected]) + 1, 2)
+	var q: Dictionary = Game.quelle_of(_selected)
+	q["inf"] = true
+	Game.ermittlung_quelle[_selected] = q
 	Game.advance_hours(0.5)
 	_log(Texte.t("stadt.log_informant"))
 

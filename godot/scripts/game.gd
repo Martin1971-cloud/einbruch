@@ -9,6 +9,8 @@ var day := 1
 var hour := START_HOUR
 var heat := 0.0
 var intel := {}          # target_id -> Stufe 0..2
+## Woher die Informationen stammen: target_id -> {"look": 0..2 (Umsehen), "inf": bool (Informant)}
+var ermittlung_quelle := {}
 var tools_owned := {}    # tool_id -> true
 var gear_owned := {}     # gear_id -> true
 var cars_owned := {}     # car_id -> true (gekaufte Fahrzeuge)
@@ -63,7 +65,7 @@ var saved_plans := {}
 func save_game() -> void:
 	var data := {
 		"money": money, "day": day, "hour": hour, "heat": heat,
-		"intel": intel, "tools_owned": tools_owned, "gear_owned": gear_owned,
+		"intel": intel, "ermittlung_quelle": ermittlung_quelle, "tools_owned": tools_owned, "gear_owned": gear_owned,
 		"cars_owned": cars_owned, "car_id": car_id,
 		"team": team, "driver": driver, "roster": roster, "stufe": stufe,
 		"target_id": target_id, "unlocked": unlocked, "game_over": game_over,
@@ -185,6 +187,7 @@ func _apply_save(parsed: Dictionary) -> void:
 	hour = float(parsed.get("hour", START_HOUR))
 	heat = float(parsed.get("heat", 0.0))
 	intel = parsed.get("intel", intel)
+	ermittlung_quelle = parsed.get("ermittlung_quelle", {})
 	tools_owned = parsed.get("tools_owned", {})
 	gear_owned = parsed.get("gear_owned", {"none": true})
 	cars_owned = parsed.get("cars_owned", {})
@@ -210,8 +213,10 @@ func reset() -> void:
 	hour = START_HOUR
 	heat = 0.0
 	intel = {}
+	ermittlung_quelle = {}
 	for t in GameData.TARGETS:
 		intel[t] = 0
+		ermittlung_quelle[t] = {"look": 0, "inf": false}
 	tools_owned = {}
 	gear_owned = {"none": true}
 	cars_owned = {}
@@ -289,6 +294,12 @@ func hints_reset() -> void:
 
 func stufe_of(target_id: String) -> int:
 	return int(stufe.get(target_id, 0))
+
+
+## Quelle der Ermittlung eines Gebäudes (fehlt sie, etwa in alten Ständen: nichts ermittelt).
+func quelle_of(target_id: String) -> Dictionary:
+	var q: Dictionary = ermittlung_quelle.get(target_id, {"look": 0, "inf": false})
+	return q
 
 
 ## Anzahl erfolgreich abgeschlossener Gebäude (Stufe für Werkzeuge und Autos).
