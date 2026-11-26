@@ -69,6 +69,7 @@ func _ready() -> void:
 		bottom.add_child(UI.button(Texte.t("res.weiter"), func(): main.go("gameover"), 240))
 	else:
 		bottom.add_child(UI.button(Texte.t("res.zur_stadt"), _on_town, 240))
+	bottom.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 130))
 
 
 ## Ablauf: je Person eine Spalte, Zeit links. Alarm über die ganze Breite. Filter nach Person.

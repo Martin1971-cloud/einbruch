@@ -28,6 +28,7 @@ func _ready() -> void:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
+	head.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 110))
 	head.add_child(UI.button(Texte.t("ui.schliessen"), close, 150))
 	box.add_child(head)
 	var sums := _summary()
