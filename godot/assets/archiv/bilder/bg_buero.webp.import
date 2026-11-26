@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://baeudepcaumu"
-path="res://.godot/imported/bg_buero.webp-8c186c80e00a46a9c87f650c90994eee.ctex"
+path="res://.godot/imported/bg_buero.webp-ea065deb34a63bfab97c1f6cdd6a2693.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/bg_buero.webp"
-dest_files=["res://.godot/imported/bg_buero.webp-8c186c80e00a46a9c87f650c90994eee.ctex"]
+source_file="res://assets/archiv/bilder/bg_buero.webp"
+dest_files=["res://.godot/imported/bg_buero.webp-ea065deb34a63bfab97c1f6cdd6a2693.ctex"]
 
 [params]
 

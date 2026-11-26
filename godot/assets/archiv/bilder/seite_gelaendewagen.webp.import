@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkjngrn4f5r24"
-path="res://.godot/imported/seite_gelaendewagen.webp-7a4323d14a214686645782a5eaa19f23.ctex"
+path="res://.godot/imported/seite_gelaendewagen.webp-cd187d33cd93c48ac01cf268c8056fa4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/seite_gelaendewagen.webp"
-dest_files=["res://.godot/imported/seite_gelaendewagen.webp-7a4323d14a214686645782a5eaa19f23.ctex"]
+source_file="res://assets/archiv/bilder/seite_gelaendewagen.webp"
+dest_files=["res://.godot/imported/seite_gelaendewagen.webp-cd187d33cd93c48ac01cf268c8056fa4.ctex"]
 
 [params]
 

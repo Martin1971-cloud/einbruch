@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dp0w8felaurol"
-path="res://.godot/imported/seite_van.webp-f28c48dcf013c8c9592fb4a1c77e6165.ctex"
+path="res://.godot/imported/seite_van.webp-1ce7d86389c5d55f5951f8ef0ebde199.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/seite_van.webp"
-dest_files=["res://.godot/imported/seite_van.webp-f28c48dcf013c8c9592fb4a1c77e6165.ctex"]
+source_file="res://assets/archiv/bilder/seite_van.webp"
+dest_files=["res://.godot/imported/seite_van.webp-1ce7d86389c5d55f5951f8ef0ebde199.ctex"]
 
 [params]
 
