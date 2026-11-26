@@ -344,11 +344,4 @@ func _use_text(t: Dictionary) -> String:
 
 
 func _fmt(n: int) -> String:
-	var s := str(absi(n))
-	var out := ""
-	var i := s.length()
-	while i > 3:
-		out = ("," if Texte.sprache == "en" else ".") + s.substr(i - 3, 3) + out
-		i -= 3
-	out = s.substr(0, i) + out
-	return ("-" if n < 0 else "") + out
+	return GameData.geld(n)

@@ -34,4 +34,6 @@ else
 fi
 echo "" | tee -a "$SUMMARY"
 echo "Tests: $total · Fehler: $fail · Ausgabe: $OUT" | tee -a "$SUMMARY"
+# Übersetzungen: gleiche Schlüssel in Deutsch und Englisch, keine deutschen Texte direkt im Code
+if python3 tools/pruef_texte.py > "$OUT/uebersetzungen.txt" 2>&1; then echo "Übersetzungen: ok" | tee -a "$SUMMARY"; else echo "Übersetzungen: Auffälligkeiten, siehe $OUT/uebersetzungen.txt" | tee -a "$SUMMARY"; fail=$((fail+1)); fi
 [ "$fail" -eq 0 ]

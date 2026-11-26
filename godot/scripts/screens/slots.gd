@@ -100,11 +100,4 @@ func _ask_delete(n: int) -> void:
 
 
 func _fmt(v: int) -> String:
-	var s := str(absi(v))
-	var out := ""
-	var i := s.length()
-	while i > 3:
-		out = ("," if Texte.sprache == "en" else ".") + s.substr(i - 3, 3) + out
-		i -= 3
-	out = s.substr(0, i) + out
-	return ("-" if v < 0 else "") + out
+	return GameData.geld(v)

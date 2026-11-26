@@ -110,6 +110,17 @@ static func stufe_hint(stufe: int) -> String:
 	return Texte.t("stufe.hint") % Texte.t(TARGETS[ORDER[idx]].name)
 
 
+## Geldbetrag mit Tausendertrennzeichen in der Sprache des Spiels (de: 1.500 €, en: 1,500 €).
+static func geld(n: int) -> String:
+	var s := str(absi(n))
+	var out := ""
+	var i := s.length()
+	while i > 3:
+		out = ("," if Texte.sprache == "en" else ".") + s.substr(i - 3, 3) + out
+		i -= 3
+	out = s.substr(0, i) + out
+	return ("-" if n < 0 else "") + out
+
 ## Erfolgschance beim Ausschalten einer Wache. Methode „chloroform“ braucht den Mindestwert des Werkzeugs (Kampfsport);
 ## „knock“ scheitert, wenn die Stärke der Wache mehr als 25 über dem Kampfsport liegt. Im Toleranzbereich von 5 Punkten
 ## um die Grenze ist es ein Versuch mit 50 % Chance.

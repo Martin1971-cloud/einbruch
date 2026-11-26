@@ -63,18 +63,8 @@ func _bilanz() -> String:
 		pay += int(e.auszahlung)
 	if n == 0:
 		return Texte.t("gameover.noch_kein")
-	return Texte.t("gameover.bilanz") % [n, ok, caught, _geld(pay)]
+	return Texte.t("gameover.bilanz") % [n, ok, caught, GameData.geld(pay)]
 
-
-## Betrag mit Tausendertrennzeichen in der Sprache des Spiels.
-func _geld(n: int) -> String:
-	var s := str(absi(n))
-	var out := ""
-	var i := s.length()
-	while i > 3:
-		out = ("," if Texte.sprache == "en" else ".") + s.substr(i - 3, 3) + out
-		i -= 3
-	return ("-" if n < 0 else "") + s.substr(0, i) + out
 
 
 func _new_game() -> void:
