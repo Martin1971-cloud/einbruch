@@ -323,12 +323,8 @@ func _draw() -> void:
 		_draw_car(Sim._v2i(target.points["fluchtwagen"]))
 	# Beute mit Leuchten
 	for l in target.loot:
-		# Dekoration: sichtbar wie das Möbelstück selbst, ohne Wert und Goldring
+		# Dekoration: wie eine Vitrine im Grundriss (Kachel), ohne Wert und Goldring
 		if l.get("leer", false):
-			var dp := _c(l.pos)
-			var dr := _cell * 0.32
-			draw_rect(Rect2(dp - Vector2(dr, dr), Vector2(dr * 2.0, dr * 2.0)), Color(0.55, 0.5, 0.42, 0.85))
-			draw_rect(Rect2(dp - Vector2(dr, dr), Vector2(dr * 2.0, dr * 2.0)), Color(0.05, 0.06, 0.09), false, 1.0)
 			continue
 		# Hinweis nur, solange die Beute noch im Objekt liegt (Planung immer)
 		if not _frame.is_empty() and str(_frame.get("loot", {}).get(l.id, "ROOM")) != "ROOM":

@@ -43,37 +43,6 @@ func _build_deko(liste: Array) -> void:
 				_box(Vector3(w, 0.6, dp), Vector3(cx, 0.3, cz), holz, 0.8)
 	return
 
-## Dekoobjekt in der Beute-Liste (Vitrine, Schreibtisch, Regal, Zeitung): ein Möbelstück ohne Beute.
-## Der Platzhalter in _loot_nodes ist unsichtbar; die Beute-Sicht ignoriert Dekoobjekte.
-func _build_loot_deko(id: String, lp: Vector3) -> void:
-	var holz := Color(0.42, 0.28, 0.17)
-	var holz_hell := Color(0.55, 0.4, 0.26)
-	var nodes: Array = []
-	match id:
-		"deko_vitrine":
-			nodes.append(_box(Vector3(0.8, 0.9, 0.5), lp + Vector3(0, 0.45, 0), holz, 0.6))
-			nodes.append(_box(Vector3(0.74, 0.5, 0.42), lp + Vector3(0, 1.05, 0), Color(0.7, 0.85, 0.95), 0.15, 0.1))
-			nodes.append(_box(Vector3(0.84, 0.05, 0.54), lp + Vector3(0, 1.32, 0), holz_hell, 0.6))
-		"deko_schreibtisch":
-			nodes.append(_box(Vector3(1.1, 0.08, 0.6), lp + Vector3(0, 0.76, 0), holz_hell, 0.6))
-			for ex in [-1.0, 1.0]:
-				for ez in [-1.0, 1.0]:
-					nodes.append(_box(Vector3(0.07, 0.74, 0.07), lp + Vector3(ex * 0.48, 0.37, ez * 0.22), holz, 0.7))
-		"deko_regal":
-			nodes.append(_box(Vector3(0.9, 2.0, 0.35), lp + Vector3(0, 1.0, 0), holz, 0.8))
-			for hy in [0.6, 1.3]:
-				nodes.append(_box(Vector3(0.94, 0.05, 0.39), lp + Vector3(0, hy, 0), holz_hell, 0.7))
-		"deko_zeitung":
-			nodes.append(_box(Vector3(0.4, 0.05, 0.3), lp + Vector3(0, 0.95, 0), Color(0.86, 0.84, 0.76), 0.9))
-		_:
-			nodes.append(_box(Vector3(0.5, 0.5, 0.5), lp + Vector3(0, 0.25, 0), holz, 0.8))
-	for n in nodes:
-		n.position = _L(n.position)
-	var platz := _box(Vector3(0.05, 0.05, 0.05), lp, Color(0, 0, 0), 1.0)
-	platz.position = _L(platz.position)
-	platz.visible = false
-	_loot_nodes[id] = platz
-
 ## Wandfuß: drei feste, dunklere Streifen auf dem Boden an der Innenseite der Wand (Stufen statt Verlauf, undurchsichtig).
 ## Ersetzt den berechneten Schatten am Wandfuß, daher kein Schattenwurf und kein Zackenmuster.
 func _kontakt(center: Vector3, achse: int, laenge: float, aussen: int) -> void:
@@ -319,8 +288,11 @@ func _build_world() -> void:
 	for l in cfg.target.loot:
 		var lp := Vector3(l.pos[0] + 0.5, 0, l.pos[1] + 0.5)
 		if l.get("leer", false):
-			# Dekoobjekt: sichtbares Möbelstück ohne Beute, kein goldener Würfel
-			_build_loot_deko(str(l.id), lp)
+			# Dekoobjekt: genau wie eine Vitrine gebaut (Kachel im Grundriss, ohne feinen Grundriss der Sockel), aber ohne Beute-Würfel
+			if not fine_on:
+				_box(Vector3(0.7, 0.9, 0.7), lp + Vector3(0, 0.45, 0), Color(0.93, 0.9, 0.86), 0.25)
+				for off in [Vector3(0.6, 0, 0.6), Vector3(-0.6, 0, 0.6), Vector3(0.6, 0, -0.6), Vector3(-0.6, 0, -0.6)]:
+					_cyl(0.04, 0.9, lp + off + Vector3(0, 0.45, 0), Color(0.85, 0.7, 0.3), 0.2, 1.0)
 			continue
 		if not fine_on:
 			_box(Vector3(0.7, 0.9, 0.7), lp + Vector3(0, 0.45, 0), Color(0.93, 0.9, 0.86), 0.25)
