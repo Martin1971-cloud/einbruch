@@ -195,6 +195,7 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 			loot[case_id].opened = true
 			c["msg"] = Texte.t("sim.msg_aufgebrochen") % _case_word(loot[case_id])
 			_log(Texte.t("sim.vitrine_aufgebrochen") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
+			_pruefe_alarmkontakt(case_id)
 		else:
 			c["msg"] = Texte.t("sim.msg_entriegelt") % _case_word(loot[case_id])
 			if loot[case_id].get("leer", false):
@@ -208,6 +209,7 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 			open_cells[cell] = true
 			c["msg"] = Texte.t("sim.msg_tuer_aufgebrochen")
 			_log(Texte.t("sim.tuer_aufgebrochen") % _disp(a.on))
+			_pruefe_alarmkontakt(str(door.id))
 		else:
 			c["msg"] = Texte.t("sim.msg_tuer_entriegelt")
 			_log(Texte.t("sim.tuer_entriegelt") % _disp(a.on))
