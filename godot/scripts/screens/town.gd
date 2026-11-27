@@ -84,7 +84,7 @@ func _title_bar() -> Control:
 	var kopf := _panel(row)
 	if OS.is_debug_build():
 		# Entwicklerzeile unter der Kopfzeile (nur in Debug-Versionen)
-		var dev := HBoxContainer.new()
+		var dev := HFlowContainer.new()
 		dev.add_theme_constant_override("separation", 10)
 		for e in DebugPanel.zeile(main):
 			dev.add_child(e)
