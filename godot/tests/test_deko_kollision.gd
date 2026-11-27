@@ -41,7 +41,7 @@ func _init() -> void:
 			if not l.get("leer", false):
 				continue
 			var cell := Sim._v2i(l.pos)
-			var erwartet: String = {"deko_vitrine": "C", "deko_regal": "R", "deko_zeitung": "Z", "deko_schreibtisch": "P"}.get(l.id, "?")
+			var erwartet: String = {"deko_vitrine": "C", "deko_regal": "R", "deko_zeitung": "Z", "deko_schreibtisch": "P", "deko_tisch": "P"}.get(l.id, "?")
 			var nur_kachel := true
 			var sub_anders := ""
 			for y in range(Sim.SUB):

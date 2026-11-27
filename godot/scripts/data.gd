@@ -215,6 +215,7 @@ const ITEMS := {
 	"deko_zeitung": {"name": "deko.zeitung.name", "gewicht": 0, "groesse": "klein"},
 	"deko_vitrine": {"name": "deko.vitrine.name", "gewicht": 0, "groesse": "klein"},
 	"deko_schreibtisch": {"name": "deko.schreibtisch.name", "gewicht": 0, "groesse": "klein"},
+	"deko_tisch": {"name": "deko.tisch.name", "gewicht": 0, "groesse": "klein"},
 	"safe": {"name": "beute.safe.name", "gewicht": 2.5, "groesse": "mittel", "icon": "tresor"},
 	"gemaelde": {"name": "beute.gemaelde.name", "gewicht": 2, "groesse": "gross"},
 	"landschaft": {"name": "beute.landschaft.name", "gewicht": 2, "groesse": "gross"},
@@ -735,6 +736,7 @@ const ZIELE_ROH := {
 				[64, 64, 80, 80, "C"],     # Vitrine Diamantring
 				[96, 64, 112, 80, "C"],    # Vitrine Perlenkette
 				[192, 128, 208, 144, "S"], # Tresor im Tresorraum
+				[208, 80, 224, 96, "P"],   # Tisch ohne Beute (Dekoration, Kollision wie Schreibtisch)
 			],
 		},
 		"doors": [
@@ -768,6 +770,7 @@ const ZIELE_ROH := {
 			{"id": "diamantring", "pos": [4, 4], "value": 30000},
 			{"id": "perlen", "pos": [6, 4], "value": 20000},
 			{"id": "tresor", "pos": [12, 8], "value": 70000},
+			{"id": "deko_tisch", "pos": [13, 5], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
 		],
 		"guards": [],
 		"facts": [
@@ -918,9 +921,8 @@ const DEKO := {
 		{"kind": "pflanze", "rect": [246, 140, 256, 150]},
 		{"kind": "bild", "rect": [256, 60, 259, 90]},
 		# Sitzecke im Verkaufsraum: Tisch mit zwei Stühlen und Blumen (rein zur Ansicht, blockieren nichts)
-		{"kind": "tisch", "rect": [208, 80, 240, 96]},
 		{"kind": "stuhl", "rect": [196, 84, 204, 92]},
-		{"kind": "stuhl", "rect": [244, 84, 252, 92]},
+		{"kind": "stuhl", "rect": [228, 84, 236, 92]},
 		{"kind": "pflanze", "rect": [226, 100, 236, 110]},
 	],
 }
