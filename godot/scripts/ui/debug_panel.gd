@@ -11,23 +11,36 @@ static func _g() -> Node:
 	return Engine.get_main_loop().root.get_node("/root/Game")
 
 
-## Bedienelemente für die Entwicklerzeile der Stadt.
+## Zuletzt gewähltes Gebäude. Bleibt erhalten, wenn die Stadt nach einem Knopf neu aufgebaut wird.
+static var ziel_auswahl := "kiosk"
+
+
+## Bedienelemente für die Entwicklerzeile der Stadt, nach Gruppen geordnet.
 static func zeile(main: Node) -> Array:
 	var labels: Array = []
 	for z in ZIELE:
 		labels.append(Texte.t(GameData.TARGETS[z].name))
-	var auswahl := {"id": "kiosk"}
 	return [
-		UI.dropdown(labels, 0, func(i: int): auswahl.id = ZIELE[i]),
+		_gruppe(Texte.t("debug.g_ziel")),
+		UI.dropdown(labels, maxi(0, ZIELE.find(ziel_auswahl)), func(i: int): ziel_auswahl = ZIELE[i]),
+		UI.button(Texte.t("debug.waehlen"), func(): gebaeude_starten(ziel_auswahl, main), 170),
+		_gruppe(Texte.t("debug.g_spiel")),
 		UI.button(Texte.t("debug.freischalten"), func(): alles_freischalten(); main.go("town"), 200),
-		UI.button(Texte.t("debug.waehlen"), func(): gebaeude_starten(auswahl.id, main), 170),
-		UI.button(Texte.t("debug.tag"), func(): _g().advance_hours(24.0); main.go("town"), 130),
-		UI.button(Texte.t("debug.hitze"), func(): _g().heat = 0.0; main.go("town"), 130),
 		UI.button(Texte.t("debug.ermittlung"), func(): ermittlung_voll(); main.go("town"), 170),
 		UI.button(Texte.t("debug.leihwagen"), func(): _g().car_id = "limo"; main.go("town"), 150),
-		UI.button(Texte.t("debug.reset"), func(): _g().reset(); main.go("town"), 130),
+		_gruppe(Texte.t("debug.g_zeit")),
+		UI.button(Texte.t("debug.tag"), func(): _g().advance_hours(24.0); main.go("town"), 130),
+		UI.button(Texte.t("debug.hitze"), func(): _g().heat = 0.0; main.go("town"), 150),
+		_gruppe(Texte.t("debug.g_system")),
+		UI.button(Texte.t("debug.reset"), func(): _g().reset(); main.go("town"), 150),
 		UI.button(Texte.t("debug.screenshot"), screenshot, 150),
 	]
+
+
+static func _gruppe(titel: String) -> Label:
+	var l := UI.label(titel, 12, Color(0.89, 0.71, 0.35))
+	l.autowrap_mode = TextServer.AUTOWRAP_OFF
+	return l
 
 
 ## Ermittlung für alle Gebäude auf voll.
