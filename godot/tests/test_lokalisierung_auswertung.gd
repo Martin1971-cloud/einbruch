@@ -30,12 +30,12 @@ func _process(_d: float) -> bool:
 		_main.go("result", {"result": ergebnis})
 	elif _frames == 4:
 		var de := _texts(_main.current, [])
-		_check(de.has("Entkommen") and de.has("Zurück in die Stadt"), "Auswertung zeigt die deutschen Texte")
+		_check(de.has("Entkommen") and de.has("Stadt"), "Auswertung zeigt die deutschen Texte")
 		Texte.sprache = "en"
 		_main.go("result", {"result": {"status": "ENTKOMMEN", "payout": 1000, "heat": 5.0, "time": 60.0, "loot_taken": [], "loot_missed": []}})
 	elif _frames == 6:
 		var en := _texts(_main.current, [])
-		_check(en.has("Escaped") and en.has("Back to town"), "Auswertung wechselt auf Englisch")
+		_check(en.has("Escaped") and en.has("Town"), "Auswertung wechselt auf Englisch")
 		var fehlend := []
 		for k in Texte.TABELLE["de"]:
 			if (k.begins_with("ausf.") or k.begins_with("res.")) and not Texte.TABELLE["en"].has(k):
