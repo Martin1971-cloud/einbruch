@@ -18,13 +18,20 @@ func _ready() -> void:
 	root.add_theme_constant_override("separation", 14)
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(UI.margin(root, 40))
+	var overlay := bool(args.get("overlay", false))
+	# Als Überlagerung liegt die Navigationsleiste oben frei; sonst gibt es keine Leiste, also einen Zurück-Knopf
+	if overlay:
+		var platz := Control.new()
+		platz.custom_minimum_size = Vector2(0, 90)
+		root.add_child(platz)
 	var head := HBoxContainer.new()
 	var titel := Texte.t("slots.titel_neu") if str(args.get("mode", "alle")) == "neu" else Texte.t("slots.titel")
 	head.add_child(UI.label(titel, 26, Color(0.97, 0.82, 0.42)))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
-	head.add_child(UI.button(Texte.t("slots.zurueck"), _zurueck, 140))
+	if not overlay:
+		head.add_child(UI.button(Texte.t("slots.zurueck"), _zurueck, 140))
 	root.add_child(head)
 	_rows = VBoxContainer.new()
 	_rows.add_theme_constant_override("separation", 12)
@@ -33,12 +40,9 @@ func _ready() -> void:
 	_fill()
 
 
-## Als Überlagerung schließt sich das Fenster; vom Titel aus geht es zurück zum Titel.
+## Nur ohne Überlagerung (vom Titel aus) gibt es diesen Weg zurück zum Titel.
 func _zurueck() -> void:
-	if bool(args.get("overlay", false)):
-		queue_free()
-	else:
-		main.go("title")
+	main.go("title")
 
 
 func _fill() -> void:
