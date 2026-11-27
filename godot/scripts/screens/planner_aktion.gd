@@ -300,6 +300,9 @@ func _on_preview() -> void:
 	var res := Sim.preview(cfg.target, cfg.team, cfg.plans, cfg.car, cfg.karte)
 	_refresh_timeline(res)
 	var msgs: Array = []
+	var zu_gross := _zu_grosse_beute()
+	if not zu_gross.is_empty():
+		msgs.append("[color=salmon]%s[/color]" % (Texte.t("plan.fahrzeug_passt_nicht") % [", ".join(zu_gross), Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum))]))
 	if not _problems.is_empty():
 		msgs.append(Texte.t("plan.n_aktionen_kaputt") % _problems.size())
 		for p in _problems:
@@ -383,7 +386,9 @@ func _refresh_timeline(res: Dictionary) -> void:
 			var span := "[color=#f0c060]%s–%s[/color]" % [Sim.clock(float(seg.start)), Sim.clock(float(seg.end))]
 			var who: String = c.name.split(" ")[0]
 			if str(seg.get("fail", "")) != "":
-				_problems.append("%s: %s" % [who, seg.fail])
+				# Volumen-Fehler entfallen, wenn alles bekannt ist: dann warnt der Hinweis zum Fluchtwagen vorab
+				if not (alles_bekannt() and "Fluchtwagen" in str(seg.fail)):
+					_problems.append("%s %s: %s" % [Sim.clock(float(seg.start)), who, seg.fail])
 				entries.append({"start": float(seg.start), "text": "%s  [color=salmon]✗ %s: %s[/color]" % [span, who, _describe(act)]})
 				continue
 			var res_txt := ""
@@ -443,10 +448,26 @@ func _show_at(t: float) -> void:
 	if frames.is_empty():
 		return
 	_grid.show_end = not _playing
-	_grid.set_frame(_interp_frame(frames, t), _res.get("noise", []))
+	var fr := _interp_frame(frames, t)
+	_grid.set_frame(fr, _res.get("noise", []))
+	_folge_etage(fr)
 	_gantt.set_playhead(t)
 	_time_lbl.text = Sim.clock(t)   # keine Gesamtzeit: die Dauer richtet sich nach den Personen, nur die Polizei setzt eine Grenze
 	_update_team_floors()
+
+## Der Bildausschnitt folgt der gewählten Person: Steigt sie die Treppe, wechselt die Ansicht auf ihre neue Etage.
+func _folge_etage(fr: Dictionary) -> void:
+	if not fr.get("crew", {}).has(_active):
+		return
+	var y := roundi(float(fr.crew[_active][1]))
+	var fl := _floor_list()
+	for i in range(fl.size()):
+		var rows: Array = fl[i].rows
+		if y >= int(rows[0]) and y < int(rows[1]):
+			if _grid.view_floor != i:
+				_grid.view_floor = i
+				_grid.queue_redraw()
+			return
 
 ## Ausführung: bei mehreren gespeicherten Plänen zuerst fragen, mit welchem Plan der Einbruch laufen soll.
 func _on_execute() -> void:

@@ -1,5 +1,5 @@
 extends SceneTree
-## Prüft: Eine Vitrine im Haus bietet nur an, wer daneben steht. Vorher gibt es den Weg dorthin.
+## Prüft: Eine Vitrine im Haus wird aus der Ferne nur mit Schritt dorthin angeboten.
 ## Aufruf: godot --headless --path godot --script res://tests/test_reichweite.gd
 var _fails := 0
 var _frames := 0
@@ -33,16 +33,17 @@ func _process(_d: float) -> bool:
 		p._active = "teo"
 		var kasse := Vector2i(10, 3)
 		var entries: Array = p._object_entries(kasse)
-		var can_act := false
+		# Aus der Ferne: die Aktion wird angeboten, aber nur mit Schritt dorthin (approach)
+		var ohne_anlauf := false
+		var mit_anlauf := false
 		for e in entries:
 			if e[2] and str(e[1].get("t", "")) == "TOOL":
-				can_act = true
-		_check(not can_act, "Vor der Tür: an der Kassenlade keine Aktion anbietbar")
-		var has_walk := false
-		for e in entries:
-			if str(e[1].get("t", "")) == "MOVE":
-				has_walk = true
-		_check(has_walk, "Stattdessen: ‚Neben … gehen‘ wird angeboten")
+				if e[1].has("approach"):
+					mit_anlauf = true
+				else:
+					ohne_anlauf = true
+		_check(not ohne_anlauf, "Vor der Tür: keine Aktion ohne vorherigen Schritt")
+		_check(mit_anlauf, "Aus der Ferne: Aktion mit Schritt dorthin wird angeboten")
 		print("Ergebnis: %d Fehler" % _fails)
 		quit(1 if _fails > 0 else 0)
 	return false

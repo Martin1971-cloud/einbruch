@@ -37,20 +37,27 @@ func _check_loudness(dt: float) -> void:
 ## sieht sie und schlägt Alarm; geschlossene Türen fallen nicht auf.
 func _check_patrols(_dt: float) -> void:
 	if _next_patrol < 0.0:
-		_next_patrol = rng.randf_range(GameData.PATROL_MIN_S, GameData.PATROL_MAX_S)
+		_next_patrol = _naechste_streife_abstand()
 	if time < _next_patrol:
 		return
-	_next_patrol = time + rng.randf_range(GameData.PATROL_MIN_S, GameData.PATROL_MAX_S)
+	_next_patrol = time + _naechste_streife_abstand()
 	patrol_count += 1
-	# Eine Tür, die erst kurz offen ist, fällt nicht auf: in dieser Zeit kann der Einbrecher sie schließen
+	# Eine offene Tür oder ein offenes Fenster fällt auf, wenn sie länger offen ist als ihre Schonfrist.
+	# Der Hauptweg hat die längere Schonfrist, damit der Einbrecher ihn schließen kann.
 	var offen := false
 	for p in open_cells:
-		if doors.has(p) and time - float(open_since.get(p, -INF)) > GameData.PATROL_GRACE_S:
+		if not doors.has(p):
+			continue
+		var schutz := GameData.PATROL_SCHUTZ_HAUPTWEG_S if hauptweg.has(str(doors[p].id)) else GameData.PATROL_GRACE_S
+		if time - float(open_since.get(p, -INF)) > schutz:
 			offen = true
 	if offen:
 		_alarm("Streife", "QUIET", 0.0)
 	else:
 		_log(Texte.t("sim.streife_ok"))
+
+func _naechste_streife_abstand() -> float:
+	return rng.randf_range(patrol_mittel - GameData.PATROL_SCHWANKUNG_S, patrol_mittel + GameData.PATROL_SCHWANKUNG_S)
 
 func _dispatch_patrols() -> void:
 	## Im Original rückt die Streife erst aus, wenn ein Alarm ausgelöst wurde

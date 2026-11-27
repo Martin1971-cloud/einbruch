@@ -39,6 +39,8 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 		stairs[sb] = sa
 	gesichert = target.get("gesichert", [])
 	karte_tuer = str(target.get("karte_tuer", ""))
+	patrol_mittel = GameData.patrol_mittel_s(target)
+	hauptweg = target.get("hauptweg", [])
 	if target.has("panel"):
 		panel = {"id": target.panel.id, "name": Texte.t(target.panel.name), "pos": _v2i(target.panel.pos), "res": float(target.panel.res), "cplx": float(target.panel.cplx), "bypassed": false}
 	for s in target.sensors:

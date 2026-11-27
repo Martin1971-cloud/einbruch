@@ -200,13 +200,15 @@ func _plans() -> Dictionary:
 			{"t": "MOVE", "cell": [4, 20]}, {"t": "TREPPE"}, {"t": "CALL_CAR"}, {"t": "MOVE", "to": "fluchtwagen"},
 		],
 		"juwelier": [
-			{"t": "MOVE", "to": "aussen_schaufenster"}, {"t": "TOOL", "tool": "glasschneider", "on": "schaufenster"},
+			{"t": "MOVE", "to": "aussen_schaufenster"}, {"t": "TOOL", "tool": "glasschneider", "on": "schaufenster"}, {"t": "OPEN", "on": "schaufenster"},
 			{"t": "MOVE", "cell": [4, 3]}, {"t": "TOOL", "tool": "bypass", "on": "alarmpanel"},
+			{"t": "MOVE", "cell": [8, 3]}, {"t": "CLOSE", "on": "schaufenster"},
 		] + [
 			{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "diamantring"}, {"t": "OPEN", "on": "diamantring"}, {"t": "TAKE", "loot": "diamantring"},
 			{"t": "MOVE", "cell": [6, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "perlen"}, {"t": "OPEN", "on": "perlen"}, {"t": "TAKE", "loot": "perlen"},
 			{"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "schneidbrenner", "on": "stahltuer"},
 			{"t": "MOVE", "cell": [12, 7]}, {"t": "TOOL", "tool": "lockpick", "on": "tresor"}, {"t": "OPEN", "on": "tresor"}, {"t": "TAKE", "loot": "tresor"},
+			{"t": "MOVE", "cell": [8, 3]}, {"t": "OPEN", "on": "schaufenster"}, {"t": "MOVE", "to": "aussen_schaufenster"}, {"t": "CLOSE", "on": "schaufenster"},
 			{"t": "CALL_CAR"}, {"t": "MOVE", "to": "fluchtwagen"},
 		],
 	}

@@ -53,13 +53,17 @@ func _init() -> void:
 	# Juwelier: Einstieg über das Schaufenster (nicht alarmgesichert), dann das Alarmpanel von innen überbrücken.
 	var plan_juwelier: Array = [
 		{"t": "MOVE", "to": "aussen_schaufenster"},
-		{"t": "TOOL", "tool": "glasschneider", "on": "schaufenster"},
+		{"t": "TOOL", "tool": "glasschneider", "on": "schaufenster"}, {"t": "OPEN", "on": "schaufenster"},
 		{"t": "MOVE", "cell": [4, 3]},
 		{"t": "TOOL", "tool": "bypass", "on": "alarmpanel"},
+		{"t": "MOVE", "cell": [8, 3]}, {"t": "CLOSE", "on": "schaufenster"},
 		{"t": "MOVE", "cell": [4, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "diamantring"}, {"t": "OPEN", "on": "diamantring"}, {"t": "TAKE", "loot": "diamantring"},
 		{"t": "MOVE", "cell": [6, 5]}, {"t": "TOOL", "tool": "lockpick", "on": "perlen"}, {"t": "OPEN", "on": "perlen"}, {"t": "TAKE", "loot": "perlen"},
 		{"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "schneidbrenner", "on": "stahltuer"},
 		{"t": "MOVE", "cell": [12, 7]}, {"t": "TOOL", "tool": "lockpick", "on": "tresor"}, {"t": "OPEN", "on": "tresor"}, {"t": "TAKE", "loot": "tresor"},
+		# Ausgang über das Fenster: öffnen, hinausgehen, von außen wieder schließen
+		{"t": "MOVE", "cell": [8, 3]}, {"t": "OPEN", "on": "schaufenster"},
+		{"t": "MOVE", "to": "aussen_schaufenster"}, {"t": "CLOSE", "on": "schaufenster"},
 	] + ende
 
 	for fall in [["curiosity", plan_kurio], ["juwelier", plan_juwelier]]:
@@ -79,7 +83,14 @@ func _init() -> void:
 			_check(sim.payout > 0, "%s: es gibt eine Auszahlung (%d €)" % [tid, sim.payout])
 		else:
 			_check(sim.payout > 0, "%s: es gibt eine Auszahlung (%d €)" % [tid, sim.payout])
-			_check(not sim.alarm_active and not sim.log_lines.any(func(l): return "ALARM" in str(l)), "%s: Einstieg über das Schaufenster und Überbrückung bleiben ohne Alarm" % tid)
+			# Nur der Einstieg zählt: bis zur ersten Vitrine darf kein Alarm kommen (die aufgebrochene Stahltür später ist eine eigene Regel)
+			var einstieg_ok := true
+			for l in sim.log_lines:
+				if "Diamantring" in str(l):
+					break
+				if "ALARM" in str(l):
+					einstieg_ok = false
+			_check(einstieg_ok, "%s: Einstieg über das Schaufenster und Überbrückung bleiben ohne Alarm" % tid)
 		var fehler := []
 		for sg in sim.crew[0].get("segments", []):
 			if str(sg.get("fail", "")) != "" and str(sg.t) != "TAKE":
@@ -89,7 +100,7 @@ func _init() -> void:
 	# Gesicherte Tür aufbrechen (ohne Überbrückung) löst den Alarm aus, wie das Öffnen
 	print("== Aufbrechen ==")
 	var plan_bruch: Array = [
-		{"t": "MOVE", "to": "aussen_schaufenster"}, {"t": "TOOL", "tool": "glasschneider", "on": "schaufenster"},
+		{"t": "MOVE", "to": "aussen_schaufenster"}, {"t": "TOOL", "tool": "glasschneider", "on": "schaufenster"}, {"t": "OPEN", "on": "schaufenster"},
 		{"t": "MOVE", "cell": [8, 6]}, {"t": "TOOL", "tool": "schneidbrenner", "on": "stahltuer"},
 		{"t": "CALL_CAR"}, {"t": "MOVE", "to": "fluchtwagen"}]
 	var bruch := _lauf("juwelier", plan_bruch, _team(["teo"]), {"teo": plan_bruch.duplicate(true)})

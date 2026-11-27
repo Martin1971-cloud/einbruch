@@ -361,19 +361,25 @@ func _do_neutralize(c: Dictionary, a: Dictionary, dt: float) -> void:
 
 ## Treppe: die Person steht auf dem Treppenfeld, braucht 8 s und ist danach auf der anderen Etage.
 func _do_stairs(c: Dictionary, a: Dictionary, dt: float) -> void:
-	var here := anchor_of(Vector2i(floori(c.pos.x), floori(c.pos.y)))
-	if not stairs.has(here):
-		_fail(c, Texte.t("fail.keine_treppe") % c.name)
-		return
 	if not c.started:
+		var here := anchor_of(Vector2i(floori(c.pos.x), floori(c.pos.y)))
+		if not stairs.has(here):
+			_fail(c, Texte.t("fail.keine_treppe") % c.name)
+			return
 		c.started = true
 		c.timer = STAIRS_TIME
+		c["treppe_von"] = c.pos
+		c["treppe_ziel"] = stairs[here]
 		_log(Texte.t("sim.treppe_steigt") % c.name)
 		return
 	c.timer -= dt
+	# Beim Steigen geht die Person gleichmäßig vom unteren zum oberen Treppenende
+	var fortschritt := clampf(1.0 - c.timer / STAIRS_TIME, 0.0, 1.0)
+	var ziel: Vector2i = c.treppe_ziel
+	c.pos = (c.treppe_von as Vector2).lerp(center(ziel), fortschritt)
 	if c.timer > 0.0:
 		return
-	c.pos = center(stairs[here])
+	c.pos = center(ziel)
 	c.path = []
 	_log(Texte.t("sim.treppe_fertig") % c.name)
 	_next(c)

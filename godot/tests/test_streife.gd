@@ -53,7 +53,7 @@ func _init() -> void:
 	_check(not _streife_alarm(schnell), "Tür innerhalb der Schonfrist geschlossen: die Streife bemerkt nichts")
 
 	# Auch offene Fenster und Stahltüren fallen der Streife auf
-	var fenster := Sim.create(GameData.TARGETS["juwelier"], _team(), {"teo": [{"t": "MOVE", "to": "aussen_schaufenster"}, {"t": "TOOL", "tool": "glasschneider", "on": "schaufenster"}, {"t": "WAIT", "sec": 900.0}]}, GameData.car_now("limo", 85.0))
+	var fenster := Sim.create(GameData.TARGETS["juwelier"], _team(), {"teo": [{"t": "MOVE", "to": "aussen_schaufenster"}, {"t": "TOOL", "tool": "glasschneider", "on": "schaufenster"}, {"t": "OPEN", "on": "schaufenster"}, {"t": "WAIT", "sec": 900.0}]}, GameData.car_now("limo", 85.0))
 	var n_f := 0
 	while fenster.time < 900.0 and fenster.status == "RUNNING" and n_f < 200000:
 		fenster.step(Sim.DT)
@@ -61,6 +61,15 @@ func _init() -> void:
 	_check(fenster.log_lines.any(func(l): return "Streife" in str(l) and "ALARM" in str(l)), "offenes Schaufenster: die Streife schlägt Alarm")
 
 	# Abstände: in 900 Sekunden kommen 3 bis 5 Streifen
-	_check(zu.patrol_count >= 3 and zu.patrol_count <= 5, "in 15 Minuten kommen 3 bis 5 Streifen (gezählt: %d)" % zu.patrol_count)
+	_check(zu.patrol_count >= 4 and zu.patrol_count <= 6, "Kiosk: in 15 Minuten kommen 4 bis 6 Streifen (gezählt: %d)" % zu.patrol_count)
+
+	# Abstand nach Gesamtbeute: Kiosk 3 Minuten, Kurioitätenladen 2 Minuten, Juwelier 1 Minute
+	_check(is_equal_approx(GameData.patrol_mittel_s(GameData.TARGETS["kiosk"]), 180.0), "Kiosk: Streife im Mittel alle 3 Minuten")
+	_check(is_equal_approx(GameData.patrol_mittel_s(GameData.TARGETS["curiosity"]), 120.0), "Kurioitätenladen: Streife im Mittel alle 2 Minuten")
+	_check(is_equal_approx(GameData.patrol_mittel_s(GameData.TARGETS["juwelier"]), 60.0), "Juwelier: Streife im Mittel jede Minute")
+
+	# Hauptweg: 60 Sekunden offen und dann geschlossen ist unbedenklich, auch wenn die Streife länger als 90 Sekunden zurückliegt
+	var haupt := _lauf(oeffnen + [{"t": "WAIT", "sec": 60.0}, {"t": "CLOSE", "on": "eingangstuer"}] + warten, 900.0)
+	_check(not _streife_alarm(haupt), "Hauptweg 60 Sekunden offen, dann geschlossen: kein Alarm")
 	print("Fehler: %d" % _fails)
 	quit(1 if _fails > 0 else 0)

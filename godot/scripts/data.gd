@@ -14,7 +14,7 @@ const TOOLS := {
 	"crowbar": {"name": "werkzeug.crowbar.name", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 75, "time": 4.0, "noise": 65.0, "destroys": true, "evidence": 20.0, "price": 200, "stufe": 0},
 	"hammer": {"name": "werkzeug.hammer.name", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 70, "time": 5.0, "noise": 60.0, "destroys": true, "evidence": 20.0, "price": 60, "stufe": 0},
 	"axt": {"name": "werkzeug.axt.name", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 80, "time": 5.0, "noise": 70.0, "destroys": true, "evidence": 25.0, "price": 120, "stufe": 1},
-	"glasschneider": {"name": "werkzeug.glasschneider.name", "type": "FORCE", "ability": "", "min": 10, "obj": "glas", "max": 40, "time": 8.0, "noise": 5.0, "destroys": true, "evidence": 3.0, "price": 120, "stufe": 0},
+	"glasschneider": {"name": "werkzeug.glasschneider.name", "type": "FORCE", "ability": "", "min": 10, "obj": "glas", "max": 40, "time": 8.0, "noise": 5.0, "destroys": false, "evidence": 3.0, "price": 120, "stufe": 0},
 	"chloroform": {"name": "werkzeug.chloroform.name", "type": "FORCE", "ability": "Kampf", "min": 30, "obj": "wache", "max": 100, "time": 4.0, "noise": 0.0, "destroys": false, "evidence": 3.0, "price": 250, "stufe": 3},
 	"bypass": {"name": "werkzeug.bypass.name", "type": "ELECTRONICS", "ability": "Elektronik", "min": 30, "obj": "alarm", "max": 85, "time": 12.0, "noise": 2.0, "destroys": false, "evidence": 5.0, "price": 900, "stufe": 2},
 	"stethoskop": {"name": "werkzeug.stethoskop.name", "type": "TECH", "ability": "Safes", "min": 40, "obj": "tresor", "max": 100, "time": 20.0, "noise": 1.0, "destroys": false, "evidence": 3.0, "price": 500, "stufe": 2},
@@ -288,6 +288,7 @@ static var TARGETS := _mit_beute(ZIELE_ROH)
 const ZIELE_ROH := {
 	"museum": {
 		"id": "museum",
+		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"glasvitrinen": true,  # Ausstellungskästen aus Glas: Glasschneider nötig (auch wenn man aufbrechen könnte)
 		"name": "ziel.museum.name",
 		"guard_rate": 170.0,  # Wachrate (Richtwert nach Original, vergleichbares Museum)
@@ -373,6 +374,7 @@ const ZIELE_ROH := {
 	},
 	"kiosk": {
 		"id": "kiosk",
+		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		# Original (TCBUILD.DAT, Nr. 10): Polizeizeit 600 s, Lautstärkegrenze 200, keine Wache
 		"guard_rate": 10.0,   # Wachrate (Original GRate): bestimmt das Polizeitempo
 		"escape_km": 10.0,    # Fluchtweg in km (Original EscapeRouteLength)
@@ -581,6 +583,7 @@ const ZIELE_ROH := {
 	# Holztüren, Vitrinen, Gemälde an der Wand. Keine Wache (Original: Wachstärke 0). Erster Schritt nach dem Kiosk.
 	"curiosity": {
 		"id": "curiosity",
+		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"guard_rate": 90.0,
 		"escape_km": 20.0,
 		"max_volume": 170.0,
@@ -703,6 +706,7 @@ const ZIELE_ROH := {
 	# Stahltür zum Tresorraum. Keine Wache (Original: Wachstärke 0), aber Alarm. Gebäude 3 nach dem Laden.
 	"juwelier": {
 		"id": "juwelier",
+		"hauptweg": ["eingangstuer", "schaufenster"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"guard_rate": 100.0,
 		"escape_km": 13.0,
 		"max_volume": 150.0,
@@ -823,12 +827,25 @@ const FAHRT_FAKTOR := 2.4
 const FAHRT_PUFFER := 3.0
 const FAHRT_SPANNE := 0.2
 ## Lauter Alarm (Mikrofon, Glasbruch, Lärm, Wache): die Streife ist in der Nähe, Eintreffen in dieser Spanne (Sekunden).
-## Streife: fährt zufällig alle PATROL_MIN_S bis PATROL_MAX_S Sekunden durch die Straße (Spielzeit).
-## Sieht sie eine offene Tür oder ein offenes Fenster, schlägt sie Alarm.
+## Streife: fährt im Abstand um einen Mittelwert herum zufällig vorbei (Spielzeit). Der Mittelwert hängt von der
+## Gesamtbeute ab (patrol_mittel_s). Sieht sie eine offene Tür oder ein offenes Fenster, schlägt sie Alarm.
+const PATROL_SCHWANKUNG_S := 30.0
+## Schutz des Hauptwegs (Haupttür, Hauptfenster): bleibt unbemerkt, bis das Team schließt, höchstens so lange.
+const PATROL_SCHUTZ_HAUPTWEG_S := 90.0
 ## Zeit nach dem Öffnen, in der eine Tür unbemerkt bleibt: der Einbrecher kann sie schließen.
+## Schonfrist für alle übrigen Türen und Fenster (Hintertür, Stahltür, Vitrinenzugänge).
 const PATROL_GRACE_S := 30.0
-const PATROL_MIN_S := 180.0
-const PATROL_MAX_S := 300.0
+
+## Mittlerer Streifenabstand nach Gesamtbeute: wenig Beute seltener, viel Beute öfter.
+static func patrol_mittel_s(target: Dictionary) -> float:
+	var summe := 0
+	for l in target.get("loot", []):
+		summe += int(l.get("value", 0))
+	if summe < 50000:
+		return 180.0
+	if summe < 118000:
+		return 120.0
+	return 60.0
 const LAUT_MIN_S := 120.0
 const LAUT_MAX_S := 240.0
 const POLIZEI := {

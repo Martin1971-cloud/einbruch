@@ -90,6 +90,8 @@ var car_v := 100.0      # Fahrleistung des Wagens (km/h, mit Fahrer)
 
 var karte := false              # Eintrittskarte vom Informanten vorhanden
 var karte_tuer := ""             # gesicherte Tür, die die Karte ruhig öffnet (aus dem Ziel)
+var patrol_mittel := 180.0       # mittlerer Abstand der Streife (Sekunden)
+var hauptweg: Array = []         # Türen des Hauptwegs (Haupteingang, Schwachstelle)
 var car_laderaum := "mittel"  # größte Beute, die in den Fluchtwagen passt: klein, mittel, gross
 
 var police_v := 140.0   # Polizeitempo (km/h), abhängig von der Wachrate des Ziels
@@ -708,7 +710,7 @@ func result() -> Dictionary:
 	# Endstand jeder Person: Feld und Blickrichtung (für die Planung, damit sie weiß, wo jemand steht)
 	var ends := {}
 	for c in crew:
-		ends[c.id] = {"cell": [cell_of(c.pos).x, cell_of(c.pos).y], "face": [face4(c.get("facing", Vector2(0, 1))).x, face4(c.get("facing", Vector2(0, 1))).y]}
+		ends[c.id] = {"cell": [cell_of(c.pos).x, cell_of(c.pos).y], "fine": [c.pos.x, c.pos.y], "face": [face4(c.get("facing", Vector2(0, 1))).x, face4(c.get("facing", Vector2(0, 1))).y]}
 	return {
 		"crew_end": ends,
 		"status": status,
