@@ -253,8 +253,14 @@ const FLAT_COL := {
 }
 
 ## Etage der ausgewählten Person (Index) oder -1. Position aus der Vorschau, sonst vom Start.
+var view_floor := -1  # Etage, die der Etagen-Knopf zeigt (-1 = Etage der ausgewählten Person)
+
 func _active_floor_idx() -> int:
-	if not target.has("floors") or selected_id == "":
+	if not target.has("floors"):
+		return -1
+	if view_floor >= 0:
+		return view_floor
+	if selected_id == "":
 		return -1
 	var y := -1.0
 	if _frame.has("crew") and _frame.crew.has(selected_id):

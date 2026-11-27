@@ -4,7 +4,9 @@ extends PlannerDaten
 
 func _on_floor(fl: Dictionary) -> void:
 	var rows: Array = fl.rows
-	_grid.focus_on(Vector2(10, (float(rows[0]) + float(rows[1])) * 0.5), 1.8, true)
+	_grid.view_floor = _floor_list().find(fl)
+	_grid.queue_redraw()
+	_grid.focus_on(Vector2(10, (float(rows[0]) + float(rows[1])) * 0.5), 1.0, true)  # ganze Etage sichtbar, dann selbst vergrößern
 	_preview.text = Texte.t("plan.etage_angezeigt") % Texte.t(str(fl.name))
 
 ## Schriftgröße für Ablaufplan und Vorschau, zwischen TEXT_MIN und TEXT_MAX.

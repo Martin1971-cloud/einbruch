@@ -140,6 +140,13 @@ func _draw_fine(spec: Dictionary) -> void:
 					draw_rect(rect, DOOR.lerp(Color(0, 0, 0, 0), cur))
 					if goal < 0.5:
 						draw_circle(rect.get_center() + Vector2(rect.size.x * 0.3, 0), maxf(1.5, _cell * 0.06), GOLD)
+			"T":
+				# Treppe: Stufen als Striche, deutlich vom Boden abgesetzt
+				draw_rect(rect, Color(0.42, 0.34, 0.24))
+				for k in range(1, 5):
+					var sy := rect.position.y + rect.size.y * float(k) / 5.0
+					draw_line(Vector2(rect.position.x + 2.0, sy), Vector2(rect.end.x - 2.0, sy), Color(0.95, 0.85, 0.6), maxf(1.0, _cell * 0.05))
+				draw_rect(rect, GOLD, false, 1.0)
 			"C":
 				draw_rect(rect, Color(0.93, 0.9, 0.86))
 				draw_rect(rect, GOLD, false, 1.0)
