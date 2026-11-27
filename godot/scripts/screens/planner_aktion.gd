@@ -55,7 +55,9 @@ func _refresh_all() -> void:
 func _refresh_grid() -> void:
 	var lvl: int = int(Game.intel.get(target.id, 0))
 	_grid.set_state(target, lvl, plans, Game.team)
-	_intel_label.text = Texte.t("stadt.ermittlung") % Texte.t(Game.ermittlung_key(target.id))
+	# Ist alles bekannt (Umsehen und Informant), steht hier nichts mehr: die Hinweise braucht man dann nicht
+	var schluessel := Game.ermittlung_key(target.id)
+	_intel_label.text = "" if schluessel == "stadt.erm_beide" else Texte.t("stadt.ermittlung") % Texte.t(schluessel)
 
 func _refresh_team() -> void:
 	for c in _team_box.get_children():

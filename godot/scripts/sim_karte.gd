@@ -125,9 +125,7 @@ const LOUD_STD := 5.0          # PLANING_LOUDNESS_STD: Grundlautstärke einer Pe
 
 const LOUD_CHECK := 5.0        # Original: alle 15 Ticks (5 s) prüfen
 
-const PATROL_P := 1.0 / 7230.0 # Original: 1 zu 30*(270 - GRate/2 + 1), GRate 60 angenommen, pro Sekunde
 
-const PATROL_PCT := 5.0        # tcPATROL_ALARM
 
 var police_base := 60.0        # Polizeizeit nach Alarm (Original: PoliceTime des Gebäudes)
 
@@ -138,12 +136,12 @@ var police_fahrt := 0.0        # Fahrzeit vom Revier (Sekunden), schwankt beim s
 var max_volume := 30.0         # Original: Gebäude-Grenzwert MaxVolume (Wert hier gesetzt, im Quellcode nicht ausgelesen)
 
 var patrol_count := 0
+var _next_patrol := -1.0      # Spielzeit der nächsten Streife (negativ: noch nicht geplant)
 
 var _loud_timer := 0.0
 
 var peak_loud := 0.0            # lauteste Lautstärke während des Einbruchs (dB)
 
-var _patrol_timer := 0.0
 
 var rng := RandomNumberGenerator.new()
 

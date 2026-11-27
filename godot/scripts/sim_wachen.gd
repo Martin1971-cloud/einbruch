@@ -33,27 +33,21 @@ func _check_loudness(dt: float) -> void:
 	if total > max_volume:
 		_alarm(Texte.t("sim.laerm_quelle") % total, "QUIET", 0.0)
 
-## Streifgänge (Original: player.c, Patrouille pro Sekunde, tcAlarmByPatrol): Ein Streifgang
-## löst einen leisen Alarm aus, wenn der Anteil veränderter Objekte zu groß ist.
-func _check_patrols(dt: float) -> void:
-	_patrol_timer += dt
-	if _patrol_timer < 1.0:
+## Streife: in zufälligen Abständen fährt sie vorbei. Eine offene Tür oder ein offenes Fenster
+## sieht sie und schlägt Alarm; geschlossene Türen fallen nicht auf.
+func _check_patrols(_dt: float) -> void:
+	if _next_patrol < 0.0:
+		_next_patrol = rng.randf_range(GameData.PATROL_MIN_S, GameData.PATROL_MAX_S)
+	if time < _next_patrol:
 		return
-	_patrol_timer -= 1.0
-	if rng.randf() >= PATROL_P:
-		return
+	_next_patrol = time + rng.randf_range(GameData.PATROL_MIN_S, GameData.PATROL_MAX_S)
 	patrol_count += 1
-	var total := float(doors.size() + loot_order.size())
-	var changed := 0.0
-	for p in doors:
-		if not doors[p].locked:
-			changed += 1.0
-	for lid in loot_order:
-		var l: Dictionary = loot[lid]
-		if not l.locked or l.state != "ROOM":
-			changed += 1.0
-	if total * PATROL_PCT / (125.0 * float(patrol_count)) < changed:
-		_alarm("Streifgang", "QUIET", 0.0)
+	var offen := false
+	for p in open_cells:
+		if doors.has(p):
+			offen = true
+	if offen:
+		_alarm("Streife", "QUIET", 0.0)
 	else:
 		_log(Texte.t("sim.streife_ok"))
 

@@ -818,6 +818,10 @@ const FAHRT_FAKTOR := 2.4
 const FAHRT_PUFFER := 3.0
 const FAHRT_SPANNE := 0.2
 ## Lauter Alarm (Mikrofon, Glasbruch, Lärm, Wache): die Streife ist in der Nähe, Eintreffen in dieser Spanne (Sekunden).
+## Streife: fährt zufällig alle PATROL_MIN_S bis PATROL_MAX_S Sekunden durch die Straße (Spielzeit).
+## Sieht sie eine offene Tür oder ein offenes Fenster, schlägt sie Alarm.
+const PATROL_MIN_S := 180.0
+const PATROL_MAX_S := 300.0
 const LAUT_MIN_S := 120.0
 const LAUT_MAX_S := 240.0
 const POLIZEI := {
