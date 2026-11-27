@@ -364,6 +364,8 @@ func _refresh_timeline(res: Dictionary) -> void:
 	var mx := maxf(float(res.time), 10.0)   # Zeitleiste endet beim Plan, nicht bei einer festen Mindestlänge
 	_gantt.set_data(res.get("segments", {}), _labels, crew_info, mx, float(res.get("alarm_time", -1.0)))
 	_slider.max_value = mx
+	if not _playing:
+		_playhead = mx  # nach jeder Änderung den Stand am Planende zeigen (Position der Personen)
 	_slider.set_value_no_signal(clampf(_playhead, 0.0, mx))
 	_show_at(_playhead)
 	var entries: Array = []
