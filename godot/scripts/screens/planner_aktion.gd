@@ -10,6 +10,9 @@ func _on_floor(fl: Dictionary) -> void:
 	_preview.text = Texte.t("plan.etage_angezeigt") % Texte.t(str(fl.name))
 
 ## Schriftgröße für Ablaufplan und Vorschau, zwischen TEXT_MIN und TEXT_MAX.
+## Schrift für Fehlermeldungen (Vorschau und Ablaufplan): so klein, dass jede Meldung in eine Zeile passt.
+const FEHLER_GROESSE := 11
+
 func _set_text_size(v: int) -> void:
 	_text_size = clampi(v, TEXT_MIN, TEXT_MAX)
 	if _text_lbl != null:
@@ -295,18 +298,32 @@ func _on_vorschau() -> void:
 	_play_btn.text = Texte.t("plan.pause") if _playing else Texte.t("plan.abspielen")
 	_show_at(0.0)
 
+## Zuletzt angezeigte Fehler: der Hinweis erscheint nur, wenn sich etwas geändert hat.
+var _gezeigt := ""
+
 func _on_preview() -> void:
 	var cfg := _config()
 	var res := Sim.preview(cfg.target, cfg.team, cfg.plans, cfg.car, cfg.karte)
 	_refresh_timeline(res)
 	var msgs: Array = []
 	var zu_gross := _zu_grosse_beute()
+	# Auffällige Fehler im Planungsfenster: ein Hinweis, den man wegklicken muss (nur bei Änderung)
+	var sig := "%s||%s" % [str(zu_gross), "|".join(_problems)]
+	if sig != _gezeigt and (not zu_gross.is_empty() or not _problems.is_empty()):
+		var text := ""
+		if not zu_gross.is_empty():
+			text += Texte.t("plan.fahrzeug_passt_nicht") % [", ".join(zu_gross), Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum))] + "\n\n"
+		if not _problems.is_empty():
+			text += Texte.t("plan.n_aktionen_kaputt") % _problems.size() + "\n" + "\n".join(_problems)
+		UI.hinweis(self, Texte.t("hint.achtung"), text)
+	_gezeigt = sig
 	if not zu_gross.is_empty():
 		msgs.append("[color=salmon]%s[/color]" % (Texte.t("plan.fahrzeug_passt_nicht") % [", ".join(zu_gross), Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum))]))
 	if not _problems.is_empty():
-		msgs.append(Texte.t("plan.n_aktionen_kaputt") % _problems.size())
+		msgs.append("[font_size=%d]%s[/font_size]" % [FEHLER_GROESSE, Texte.t("plan.n_aktionen_kaputt") % _problems.size()])
 		for p in _problems:
-			msgs.append("[color=salmon]✗ %s[/color]" % p)
+			# Jede Meldung in einer Zeile: kleinere Schrift, damit sie vollständig passt
+			msgs.append("[font_size=%d][color=salmon]✗ %s[/color][/font_size]" % [FEHLER_GROESSE, p])
 		msgs.append("[color=gray]%s[/color]" % Texte.t("plan.gesperrt_hinweis"))
 	for c in Game.team:
 		var pl: Array = plans[c.id]
@@ -389,7 +406,7 @@ func _refresh_timeline(res: Dictionary) -> void:
 				# Volumen-Fehler entfallen, wenn alles bekannt ist: dann warnt der Hinweis zum Fluchtwagen vorab
 				if not (alles_bekannt() and "Fluchtwagen" in str(seg.fail)):
 					_problems.append("%s %s: %s" % [Sim.clock(float(seg.start)), who, seg.fail])
-				entries.append({"start": float(seg.start), "text": "%s  [color=salmon]✗ %s: %s[/color]" % [span, who, _describe(act)]})
+				entries.append({"start": float(seg.start), "text": "[font_size=%d]%s  [color=salmon]✗ %s: %s[/color][/font_size]" % [FEHLER_GROESSE, span, who, _describe(act)]})
 				continue
 			var res_txt := ""
 			if str(seg.get("msg", "")) != "":
