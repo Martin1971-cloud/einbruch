@@ -23,7 +23,12 @@ func _ready() -> void:
 	var root := VBoxContainer.new()
 	root.add_theme_constant_override("separation", 8)
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(UI.margin(root, 12))
+	# Scrollen statt abschneiden: die Stadtansicht braucht bei kleinen Fenstern mehr Höhe als vorhanden
+	var rollen := ScrollContainer.new()
+	rollen.set_anchors_preset(Control.PRESET_FULL_RECT)
+	rollen.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	add_child(rollen)
+	rollen.add_child(UI.margin(root, 12))
 
 	root.add_child(_title_bar())
 	root.add_child(_status_bar())
