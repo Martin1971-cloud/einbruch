@@ -55,6 +55,7 @@ var _drawer_nodes := {}   # Kassenschubladen (Zelle -> Knoten), fahren beim Öff
 var _drawer_pos := {}
 
 var _safe_nodes := {}     # Tresortüren (Zelle -> Drehpunkt)
+var _deko_anim := {}      # Dekoobjekte ohne Beute: Zelle -> {node, kind, rest} (Klappe, Zeitungsstapel, Schublade)
 
 var _window_nodes := {}   # Glasscheiben der Schaufenster (Zelle -> Knoten)
 

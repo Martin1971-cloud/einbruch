@@ -188,6 +188,24 @@ func _sync_body() -> void:
 				case_open = true
 		var hl: Node3D = _case_lids[cell]
 		hl.rotation.x = move_toward(hl.rotation.x, -PI * 0.42 if case_open else 0.0, 0.05)
+	# Dekoobjekte ohne Beute: Klappe am Regal schwingt auf, Zeitungsstapel hebt sich, Schublade gleitet heraus
+	for cell in _deko_anim:
+		var da: Dictionary = _deko_anim[cell]
+		var d_open := false
+		for lid in sim.loot:
+			var dl: Dictionary = sim.loot[lid]
+			if dl.get("leer", false) and Sim._v2i(dl.pos) == cell and dl.opened:
+				d_open = true
+		var dn: Node3D = da.node
+		var rest: Vector3 = da.rest
+		match str(da.kind):
+			"R":
+				dn.rotation.y = move_toward(dn.rotation.y, -PI * 0.45 if d_open else 0.0, 0.03)
+			"Z":
+				dn.position.y = move_toward(dn.position.y, rest.y + 0.35 if d_open else rest.y, 0.01)
+				dn.rotation.x = move_toward(dn.rotation.x, -0.3 if d_open else 0.0, 0.02)
+			"P":
+				dn.position.z = move_toward(dn.position.z, rest.z + 0.3 if d_open else rest.z, 0.01)
 	for lid in sim.loot:
 		var l: Dictionary = sim.loot[lid]
 		if l.get("leer", false):

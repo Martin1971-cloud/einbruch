@@ -45,6 +45,16 @@ func _build_deko(liste: Array) -> void:
 
 ## Wandfuß: drei feste, dunklere Streifen auf dem Boden an der Innenseite der Wand (Stufen statt Verlauf, undurchsichtig).
 ## Ersetzt den berechneten Schatten am Wandfuß, daher kein Schattenwurf und kein Zackenmuster.
+## Ein Quader als Kind eines beweglichen Knotens (Position relativ zum Knoten).
+func _mesh_in(parent: Node3D, size: Vector3, pos: Vector3, col: Color, rough := 0.7) -> void:
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = size
+	mi.mesh = bm
+	mi.material_override = _mat(col, rough)
+	mi.position = pos
+	parent.add_child(mi)
+
 func _kontakt(center: Vector3, achse: int, laenge: float, aussen: int) -> void:
 	var basis_farbe := Color(0.7, 0.74, 0.82)
 	var stufen := [0.4, 0.6, 0.82]
@@ -534,22 +544,37 @@ func _build_fine(spec: Dictionary) -> void:
 					else:
 						_box(Vector3(leaf_t + 0.04, jamb_h, 0.06), p + Vector3(0, 0.1 + jamb_h * 0.5, sgn * 0.45), jamb_col, 0.8)
 			"R":
-				# Regal ohne Beute: hohes Holzregal mit zwei Böden (Kollision wie Vitrine)
+				# Regal ohne Beute: hohes Holzregal mit zwei Böden; die Klappe vorn schwingt beim Öffnen auf (Kollision wie Vitrine)
 				var rholz := Color(0.42, 0.28, 0.17)
 				_box(Vector3(sz.x, 2.0, sz.z), p + Vector3(0, 1.0, 0), rholz, 0.8)
 				for hy in [0.6, 1.3]:
 					_box(Vector3(sz.x + 0.02, 0.05, sz.z + 0.02), p + Vector3(0, hy, 0), Color(0.55, 0.4, 0.26), 0.7)
+				var rklappe := Node3D.new()
+				rklappe.position = Vector3(p.x - sz.x * 0.47, 0.0, p.z + sz.z * 0.5 + 0.02)
+				add_child(rklappe)
+				_mesh_in(rklappe, Vector3(sz.x * 0.92, 1.9, 0.04), Vector3(sz.x * 0.47, 1.0, 0.0), Color(0.5, 0.34, 0.2), 0.6)
+				_deko_anim[Vector2i(floori(float(r[0] + r[2]) * 0.5 / Sim.SUB), floori(float(r[1] + r[3]) * 0.5 / Sim.SUB))] = {"node": rklappe, "kind": "R", "rest": rklappe.position}
 			"Z":
-				# Zeitungsständer: grauer Ständer mit Zeitungen obenauf
+				# Zeitungsständer: grauer Ständer, der Zeitungsstapel obenauf hebt sich beim Öffnen leicht und kippt (Kollision wie Vitrine)
 				_box(Vector3(sz.x, 0.9, sz.z), p + Vector3(0, 0.45, 0), Color(0.3, 0.32, 0.36), 0.5)
-				_box(Vector3(sz.x * 0.7, 0.1, sz.z * 0.6), p + Vector3(0, 0.95, 0), Color(0.86, 0.84, 0.76), 0.9)
+				var zstapel := Node3D.new()
+				zstapel.position = Vector3(p.x, 0.9, p.z)
+				add_child(zstapel)
+				_mesh_in(zstapel, Vector3(sz.x * 0.7, 0.1, sz.z * 0.6), Vector3(0, 0.05, 0), Color(0.86, 0.84, 0.76), 0.9)
+				_deko_anim[Vector2i(floori(float(r[0] + r[2]) * 0.5 / Sim.SUB), floori(float(r[1] + r[3]) * 0.5 / Sim.SUB))] = {"node": zstapel, "kind": "Z", "rest": zstapel.position}
 			"P":
-				# Schreibtisch ohne Beute: Platte auf vier Beinen (Kollision wie Vitrine)
+				# Schreibtisch ohne Beute: Platte auf vier Beinen, eine Schublade vorn gleitet beim Öffnen heraus (Kollision wie Vitrine)
 				var pholz := Color(0.42, 0.28, 0.17)
 				_box(Vector3(sz.x, 0.08, sz.z), p + Vector3(0, 0.76, 0), Color(0.55, 0.4, 0.26), 0.6)
 				for ex in [-1.0, 1.0]:
 					for ez in [-1.0, 1.0]:
 						_box(Vector3(0.07, 0.74, 0.07), p + Vector3(ex * (sz.x * 0.5 - 0.1), 0.37, ez * (sz.z * 0.5 - 0.1)), pholz, 0.7)
+				var pschub := Node3D.new()
+				pschub.position = Vector3(p.x, 0.62, p.z + sz.z * 0.5 - 0.1)
+				add_child(pschub)
+				_mesh_in(pschub, Vector3(sz.x * 0.6, 0.16, 0.04), Vector3(0, 0, 0.02), Color(0.5, 0.34, 0.2), 0.6)
+				_mesh_in(pschub, Vector3(sz.x * 0.6, 0.16, 0.36), Vector3(0, 0, 0.2), Color(0.45, 0.3, 0.18), 0.6)
+				_deko_anim[Vector2i(floori(float(r[0] + r[2]) * 0.5 / Sim.SUB), floori(float(r[1] + r[3]) * 0.5 / Sim.SUB))] = {"node": pschub, "kind": "P", "rest": pschub.position}
 			"C":
 				_box(Vector3(sz.x, 1.0, sz.z), p + Vector3(0, 0.5, 0), Color(0.93, 0.9, 0.86), 0.25)
 				# Glasdeckel: an der Rückkante gelenkt, hebt sich beim Öffnen der Vitrine (siehe _sync)
