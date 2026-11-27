@@ -59,6 +59,7 @@ const GLASS := Color(0.55, 0.8, 0.98)
 var target: Dictionary = {}
 
 var intel := 0
+var alles_bekannt := false  # Umsehen und Informant: Dekoration braucht nicht mehr durchsucht zu werden
 
 var plans: Dictionary = {}
 

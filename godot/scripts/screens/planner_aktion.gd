@@ -54,6 +54,7 @@ func _refresh_all() -> void:
 
 func _refresh_grid() -> void:
 	var lvl: int = int(Game.intel.get(target.id, 0))
+	_grid.alles_bekannt = Game.ermittlung_key(target.id) == "stadt.erm_beide"
 	_grid.set_state(target, lvl, plans, Game.team)
 	# Ist alles bekannt (Umsehen und Informant), steht hier nichts mehr: die Hinweise braucht man dann nicht
 	var schluessel := Game.ermittlung_key(target.id)

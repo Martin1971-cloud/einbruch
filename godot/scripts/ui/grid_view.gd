@@ -212,6 +212,9 @@ func _get_tooltip(at_position: Vector2) -> String:
 	# Beute am Feld: Wert immer anzeigen (auch bei einem Planhinweis darüber)
 	for l in target.loot:
 		if l.get("leer", false) and Sim._v2i(l.pos) == cell:
+			# Alles bekannt: hier ist nichts zu holen, das Durchsuchen erübrigt sich
+			if alles_bekannt and not l.get("durchsucht", false):
+				return "%s – %s" % [Texte.t(l.name), Texte.t("grid.dekor_nichts")]
 			return "%s – %s" % [Texte.t(l.name), Texte.t("sim.msg_leer") if l.get("durchsucht", false) else Texte.t("grid.dekor")]
 		if intel >= 1 and Sim._v2i(l.pos) == cell:
 			var parts_txt := ""
