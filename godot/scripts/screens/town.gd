@@ -154,6 +154,17 @@ func _map_card() -> PanelContainer:
 	return c
 
 
+## Zuletzt gezeigtes Geschlecht: die nächste Sprecherin oder der nächste Sprecher ist vom anderen Geschlecht.
+static var _letzte_weiblich := false
+
+func _naechste_sprecherin() -> Dictionary:
+	_letzte_weiblich = not _letzte_weiblich
+	var pool: Array = []
+	for e in GameData.SPRECHER:
+		if bool(e.weiblich) == _letzte_weiblich:
+			pool.append(e)
+	return pool[randi() % pool.size()]
+
 func _image_card() -> PanelContainer:
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 6)
@@ -168,10 +179,10 @@ func _image_card() -> PanelContainer:
 	var dv := VBoxContainer.new()
 	dv.add_theme_constant_override("separation", 4)
 	dlg.add_child(dv)
-	dv.add_child(UI.label(GameData.TARGETS[_selected].speaker.to_upper(), 12, Color(0.97, 0.82, 0.42)))
+	var sprecher := _naechste_sprecherin()
+	dv.add_child(UI.label(str(sprecher.name).to_upper(), 12, Color(0.97, 0.82, 0.42)))
 	# Porträt der Sprecherin (Dialog)
-	var sp_id := "mira" if GameData.TARGETS[_selected].speaker == "Mira Calder" else ""
-	var sp_path := GameData.portrait_path(sp_id)
+	var sp_path := "res://assets/portraits/%s.png" % str(sprecher.bild)
 	if sp_path != "" and ResourceLoader.exists(sp_path):
 		var pt := TextureRect.new()
 		pt.texture = load(sp_path)

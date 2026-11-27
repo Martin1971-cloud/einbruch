@@ -438,9 +438,10 @@ func _stand_after(id: String) -> Dictionary:
 		return {"cell": Vector2i(int(e.cell[0]), int(e.cell[1])), "fine": fein, "face": Vector2i(int(e.face[0]), int(e.face[1]))}
 	return {"cell": Sim._v2i(target.points.fluchtwagen), "fine": Sim.center(Sim._v2i(target.points.fluchtwagen)), "face": Vector2i(0, 1)}
 
-## Beute, die bei vollständiger Ermittlung nicht in den Laderaum des gewählten Fluchtwagens passt (leer = alles passt).
+## Beute, die nicht in den Laderaum des gewählten Fluchtwagens passt. Mit Informationen (Umsehen, Informant) mit Namen,
+## ohne Informationen leer (dann gibt es nur den allgemeinen Hinweis, siehe _koennte_zu_gross).
 func _zu_grosse_beute() -> Array:
-	if Game.car_id == "" or not alles_bekannt():
+	if Game.car_id == "" or int(Game.intel.get(target.id, 0)) < 1:
 		return []
 	var raum := str(GameData.CARS[Game.car_id].laderaum)
 	var out: Array = []
@@ -450,6 +451,16 @@ func _zu_grosse_beute() -> Array:
 		if GameData.SIZE_RANK[str(l.size)] > GameData.SIZE_RANK[raum]:
 			out.append(Texte.t(str(l.name)))
 	return out
+
+## Ohne Informationen: kann eine Beute des Ziels zu groß für den Fluchtwagen sein?
+func _koennte_zu_gross() -> bool:
+	if Game.car_id == "" or int(Game.intel.get(target.id, 0)) >= 1:
+		return false
+	var raum := str(GameData.CARS[Game.car_id].laderaum)
+	for l in target.loot:
+		if not l.get("leer", false) and GameData.SIZE_RANK[str(l.size)] > GameData.SIZE_RANK[raum]:
+			return true
+	return false
 
 ## Umsehen und Informant liegen vor.
 func alles_bekannt() -> bool:

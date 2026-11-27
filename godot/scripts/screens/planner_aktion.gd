@@ -307,14 +307,19 @@ func _on_preview() -> void:
 	_refresh_timeline(res)
 	var msgs: Array = []
 	var zu_gross := _zu_grosse_beute()
-	# Auffällige Fehler im Planungsfenster: ein Hinweis, den man wegklicken muss (nur bei Änderung)
-	var sig := "%s||%s" % [str(zu_gross), "|".join(_problems)]
-	if sig != _gezeigt and (not zu_gross.is_empty() or not _problems.is_empty()):
+	var koennte := _koennte_zu_gross()
+	if koennte and zu_gross.is_empty():
+		msgs.append("[color=orange]%s[/color]" % (Texte.t("plan.fahrzeug_vielleicht") % Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum))))
+	# Auffällige Fehler und Fahrzeugprobleme im Planungsfenster: ein Hinweis, den man wegklicken muss (nur bei Änderung)
+	var sig := "%s||%s||%s" % [str(zu_gross), str(koennte), "|".join(_problems)]
+	if sig != _gezeigt and (not zu_gross.is_empty() or koennte or not _problems.is_empty()):
 		var text := ""
 		if not zu_gross.is_empty():
 			text += Texte.t("plan.fahrzeug_passt_nicht") % [", ".join(zu_gross), Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum))] + "\n\n"
+		elif koennte:
+			text += Texte.t("plan.fahrzeug_vielleicht") % Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum)) + "\n\n"
 		if not _problems.is_empty():
-			text += Texte.t("plan.n_aktionen_kaputt") % _problems.size() + "\n" + "\n".join(_problems)
+			text += Texte.t("plan.n_aktionen_kaputt_plain") % _problems.size() + "\n" + "\n".join(_problems)
 		UI.hinweis(self, Texte.t("hint.achtung"), text)
 	_gezeigt = sig
 	if not zu_gross.is_empty():
@@ -404,7 +409,8 @@ func _refresh_timeline(res: Dictionary) -> void:
 			var who: String = c.name.split(" ")[0]
 			if str(seg.get("fail", "")) != "":
 				# Volumen-Fehler entfallen, wenn alles bekannt ist: dann warnt der Hinweis zum Fluchtwagen vorab
-				if not (alles_bekannt() and "Fluchtwagen" in str(seg.fail)):
+				# Passt die Beute nicht in den Fluchtwagen, steht das oben als Hinweis: der Schritt braucht keine eigene Zeile
+				if not (not _zu_grosse_beute().is_empty() and "Fluchtwagen" in str(seg.fail)):
 					_problems.append("%s %s: %s" % [Sim.clock(float(seg.start)), who, seg.fail])
 				entries.append({"start": float(seg.start), "text": "[font_size=%d]%s  [color=salmon]✗ %s: %s[/color][/font_size]" % [FEHLER_GROESSE, span, who, _describe(act)]})
 				continue
@@ -584,6 +590,8 @@ func _show_hint(id: String) -> void:
 	var dlg := AcceptDialog.new()
 	dlg.title = Texte.t(str(h.title))
 	dlg.dialog_text = Texte.t(str(h.text))
+	dlg.dialog_autowrap = true
+	dlg.get_label().add_theme_font_size_override("font_size", 14)
 	dlg.ok_button_text = Texte.t("hint.verstanden")
 	add_child(dlg)
 	dlg.confirmed.connect(dlg.queue_free)

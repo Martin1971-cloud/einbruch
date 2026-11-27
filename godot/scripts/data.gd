@@ -192,6 +192,18 @@ const ACTION_NAMES := {
 ## Zielgebäude: "Museum Varenhafen". Karte 20 x 12 Zellen.
 ## o = Außen, . = Boden, W = Wand, F = Fenster (blockiert, Sicht durch Glas möglich), D = verschlossene Tür.
 ## Porträts (2D, Krimi-Stil) je Figur, nach Geschlecht und Rolle (weiblich: Mira, Ilja, Rosa, Greta). Dateien in assets/portraits/.
+## Sprecherinnen und Sprecher der Stadtansicht: jede Anzeige wechselt zwischen weiblich und männlich.
+const SPRECHER := [
+	{"name": "Mira Calder", "bild": "beobachterin", "weiblich": true},
+	{"name": "Lena Hartmann", "bild": "rezeptionistin", "weiblich": true},
+	{"name": "Vera Lind", "bild": "hehlerin", "weiblich": true},
+	{"name": "Marta Quell", "bild": "einbrecherin", "weiblich": true},
+	{"name": "Jonas Berg", "bild": "wachmann", "weiblich": false},
+	{"name": "Karl Oster", "bild": "hausmeister", "weiblich": false},
+	{"name": "Paul Renner", "bild": "planer", "weiblich": false},
+	{"name": "Stefan Krall", "bild": "kraeftige", "weiblich": false},
+]
+
 const PORTRAIT := {
 	"mira": "beobachterin", "ilja": "technikerin", "teo": "hacker", "rosa": "einbrecherin",
 	"greta": "besucher", "otto": "fahrer",
@@ -367,7 +379,6 @@ const ZIELE_ROH := {
 			"ELECTRONICS": {"wert": 60, "grund": "ziel.museum.grund.ELECTRONICS"},
 			"FAHREN": {"wert": 50, "grund": "ziel.museum.grund.FAHREN"},
 		},
-		"speaker": "Mira Calder",
 		"dialog": "ziel.museum.dialog",
 		"fence": 0.6,
 		"price_intel": 500,
@@ -455,7 +466,6 @@ const ZIELE_ROH := {
 			"FORCE": {"wert": 25, "grund": "ziel.kiosk.grund.FORCE"},
 			"FAHREN": {"wert": 20, "grund": "ziel.kiosk.grund.FAHREN"},
 		},
-		"speaker": "Mira Calder",
 		"dialog": "ziel.kiosk.dialog",
 		"fence": 0.6,
 		"price_intel": 200,
@@ -574,7 +584,6 @@ const ZIELE_ROH := {
 			"ELECTRONICS": {"wert": 50, "grund": "ziel.testhaus.grund.ELECTRONICS"},
 			"FAHREN": {"wert": 40, "grund": "ziel.testhaus.grund.FAHREN"},
 		},
-		"speaker": "Mira Calder",
 		"dialog": "ziel.testhaus.dialog",
 		"fence": 0.6,
 		"price_intel": 0,
@@ -697,7 +706,6 @@ const ZIELE_ROH := {
 			"FORCE": {"wert": 25, "grund": "ziel.curiosity.grund.FORCE"},
 			"FAHREN": {"wert": 30, "grund": "ziel.curiosity.grund.FAHREN"},
 		},
-		"speaker": "Mira Calder",
 		"dialog": "ziel.curiosity.dialog",
 		"fence": 0.6,
 		"price_intel": 300,
@@ -795,7 +803,6 @@ const ZIELE_ROH := {
 			"FORCE": {"wert": 40, "grund": "ziel.juwelier.grund.FORCE"},
 			"FAHREN": {"wert": 35, "grund": "ziel.juwelier.grund.FAHREN"},
 		},
-		"speaker": "Mira Calder",
 		"dialog": "ziel.juwelier.dialog",
 		"fence": 0.6,
 		"price_intel": 400,
