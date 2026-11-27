@@ -64,7 +64,7 @@ func _process(_delta: float) -> bool:
 			return true
 	elif _stage == 6 and _frames == 3:
 		print("7 Auswertung: %s" % _main.current.get_script().resource_path)
-		_main.current._on_town()
+		_main.go("town")
 		_stage = 7
 		_frames = 0
 	elif _stage == 7 and _frames == 3:

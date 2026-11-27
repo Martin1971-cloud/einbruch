@@ -72,31 +72,26 @@ func _ready() -> void:
 
 # ---------------------------------------------------------------- Aufbau
 func _header() -> PanelContainer:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
-	var title := _l(Texte.t("app.titel"), 24, Color(0.97, 0.82, 0.42))
-	row.add_child(title)
-	row.add_child(_l(Texte.t("plan.titel"), 15, Color(0.62, 0.7, 0.8)))
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 6)
+	col.add_child(Navigation.leiste(main, "planung"))
+	# Planungswerkzeuge in einer zweiten Zeile, die Navigation bleibt oben gleich
+	var werkzeuge := HBoxContainer.new()
+	werkzeuge.add_theme_constant_override("separation", 12)
+	werkzeuge.add_child(_l(Texte.t("plan.titel"), 15, Color(0.62, 0.7, 0.8)))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(sp)
-	# Reihenfolge wie der Ablauf: Vorbereitung (Stadt, Organisation), Planung, Vorschau, Ausführung
-	row.add_child(UI.button(Texte.t("nav.stadt"), func(): main.go("town"), 100))
-	row.add_child(UI.button(Texte.t("nav.organisation"), func(): main.go("organisation"), 130))
-	var tab := UI.primary(Texte.t("plan.titel"), func(): pass, 100)
-	tab.disabled = true
-	row.add_child(tab)
+	werkzeuge.add_child(sp)
 	if GameData.TESTHILFEN:
-		row.add_child(UI.button(Texte.t("plan.beispiel"), _on_example, 170))
+		werkzeuge.add_child(UI.button(Texte.t("plan.beispiel"), _on_example, 170))
 	var vor_btn := UI.button(Texte.t("plan.vorschau"), _on_vorschau, 100)
 	vor_btn.tooltip_text = Texte.t("plan.vorschau_tip")
-	row.add_child(vor_btn)
-	row.add_child(UI.primary(Texte.t("plan.ausfuehrung_btn"), _on_execute, 150))
-	row.add_child(_l(Texte.t("plan.tag_zeit") % [Game.day, Game.clock_text()], 15, Color(0.85, 0.88, 0.94)))
-	row.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 110))
+	werkzeuge.add_child(vor_btn)
+	werkzeuge.add_child(_l(Texte.t("plan.tag_zeit") % [Game.day, Game.clock_text()], 15, Color(0.85, 0.88, 0.94)))
+	col.add_child(werkzeuge)
 	var wrap := PanelContainer.new()
 	wrap.add_theme_stylebox_override("panel", UI.card_style(Color(0.05, 0.07, 0.12, 0.7)))
-	wrap.add_child(row)
+	wrap.add_child(col)
 	return wrap
 
 func _left_column() -> Control:

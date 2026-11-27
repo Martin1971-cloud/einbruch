@@ -49,6 +49,7 @@ func _ready() -> void:
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(UI.margin(root, 14))
 
+	root.add_child(Navigation.leiste(main, "organisation"))
 	root.add_child(_l(Texte.t("org.titel"), 24, Color(0.95, 0.8, 0.4)))
 	root.add_child(_l(Texte.t("org.ziel_zeile") % [Texte.t(GameData.TARGETS[Game.target_id].name), Game.stufe_of(Game.target_id), _fmt(Game.money)], 14, Color(0.8, 0.85, 0.92)))
 	_summary = _l("", 14, Color(0.85, 0.9, 0.95))
@@ -106,8 +107,6 @@ func _ready() -> void:
 	var bottom := HBoxContainer.new()
 	bottom.add_theme_constant_override("separation", 10)
 	root.add_child(bottom)
-	bottom.add_child(UI.button(Texte.t("org.zurueck"), _on_back, 210))
-	bottom.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 130))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(sp)
@@ -480,10 +479,6 @@ func _on_example() -> void:
 	_build_people()
 	_build_shop()
 	_refresh_summary()
-
-
-func _on_back() -> void:
-	main.go("town")
 
 
 ## Spalte, die bei wenig Höhe selbst scrollt. So bleibt die Leiste unten immer sichtbar.

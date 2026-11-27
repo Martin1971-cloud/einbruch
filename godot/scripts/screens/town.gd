@@ -64,31 +64,7 @@ func _ready() -> void:
 # ---------------------------------------------------------------- Oberfläche
 
 func _title_bar() -> Control:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 10)
-	var brand := VBoxContainer.new()
-	var t := UI.label(Texte.t("app.titel"), 24, Color(0.97, 0.82, 0.42))
-	t.autowrap_mode = TextServer.AUTOWRAP_OFF
-	brand.add_child(t)
-	var s := UI.label(Texte.t("app.untertitel"), 10, Color(0.75, 0.75, 0.8))
-	s.autowrap_mode = TextServer.AUTOWRAP_OFF
-	brand.add_child(s)
-	row.add_child(brand)
-	var sp := Control.new()
-	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(sp)
-	var _b1 := UI.button(Texte.t("nav.stadt"), func(): pass, 100)
-	_b1.disabled = true
-	row.add_child(_b1)
-	row.add_child(UI.button(Texte.t("nav.organisation"), func(): main.go("organisation"), 130))
-	row.add_child(UI.button(Texte.t("nav.planung"), func(): main.go("planner"), 100))
-	var _b2 := UI.button(Texte.t("nav.ausfuehrung"), func(): pass, 110)
-	_b2.disabled = true
-	row.add_child(_b2)
-	row.add_child(UI.button(Texte.t("nav.journal"), func(): main.open_journal(), 120))
-	row.add_child(UI.button(Texte.t("nav.optionen"), func(): main.open_optionen(), 130))
-	row.add_child(UI.button(Texte.t("nav.lexikon"), func(): main.open_lexikon(), 120))
-	row.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 110))
+	var row := Navigation.leiste(main, "stadt")
 	var kopf := _panel(row)
 	if OS.is_debug_build():
 		# Entwicklerzeile unter der Kopfzeile (nur in Debug-Versionen)

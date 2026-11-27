@@ -308,6 +308,8 @@ func _on_preview() -> void:
 	var msgs: Array = []
 	var zu_gross := _zu_grosse_beute()
 	var koennte := _koennte_zu_gross()
+	# Ausführung ist nur bereit, wenn die Planung ohne Fehler ist und Team und Fahrzeug stimmen
+	Game.ausfuehrung_cfg = _config() if _problems.is_empty() and not Game.team.is_empty() and Game.car_id != "" else {}
 	if koennte and zu_gross.is_empty():
 		msgs.append("[color=orange]%s[/color]" % (Texte.t("plan.fahrzeug_vielleicht") % Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum))))
 	# Auffällige Fehler und Fahrzeugprobleme im Planungsfenster: ein Hinweis, den man wegklicken muss (nur bei Änderung)

@@ -33,6 +33,7 @@ func _ready() -> void:
 	root.add_theme_constant_override("separation", 8)
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(UI.margin(root, 14))
+	root.add_child(Navigation.leiste(main, "stadt"))
 	var head := HBoxContainer.new()
 	head.add_theme_constant_override("separation", 12)
 	var title := Texte.t("shop.titel_laden") if kind == "laden" else (Texte.t("shop.titel_verleih") if kind == "verleih" else Texte.t("shop.titel_autohaus"))
@@ -42,7 +43,6 @@ func _ready() -> void:
 	head.add_child(sp)
 	_money = UI.label("", 15, Color(0.85, 0.9, 0.95))
 	head.add_child(_money)
-	head.add_child(UI.button(Texte.t("shop.zurueck"), func() -> void: main.go("town"), 160))
 	root.add_child(head)
 	# Bild des Ortes: ganz zu sehen, Seitenverhältnis bleibt
 	_msg = UI.label("", 14, Color(1, 0.8, 0.5))

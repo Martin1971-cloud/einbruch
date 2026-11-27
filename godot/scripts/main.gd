@@ -58,6 +58,21 @@ func open_journal() -> void:
 	add_child(_journal)
 
 
+## Laden/Speichern (Spielstände) als Überlagerung über dem aktuellen Fenster.
+var _slots: Control = null
+
+
+func open_slots() -> void:
+	if _slots != null and is_instance_valid(_slots):
+		_slots.queue_free()
+		_slots = null
+		return
+	_slots = preload("res://scripts/screens/slots.gd").new()
+	_slots.main = self
+	_slots.args = {"overlay": true}
+	add_child(_slots)
+
+
 func open_optionen() -> void:
 	if _optionen != null and is_instance_valid(_optionen):
 		_optionen.close()
@@ -104,6 +119,9 @@ func go(screen: String, args: Dictionary = {}) -> void:
 	# Stand sichern, wenn man in der Stadt ankommt (zwischen den Einbrüchen)
 	if screen == "town":
 		Game.save_game()
+	if _slots != null and is_instance_valid(_slots):
+		_slots.queue_free()
+		_slots = null
 	if current:
 		current.queue_free()
 		current = null

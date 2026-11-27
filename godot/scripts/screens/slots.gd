@@ -24,13 +24,21 @@ func _ready() -> void:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
-	head.add_child(UI.button(Texte.t("slots.zurueck"), func(): main.go("title"), 140))
+	head.add_child(UI.button(Texte.t("slots.zurueck"), _zurueck, 140))
 	root.add_child(head)
 	_rows = VBoxContainer.new()
 	_rows.add_theme_constant_override("separation", 12)
 	root.add_child(_rows)
 	root.add_child(UI.label(Texte.t("slots.hinweis"), 13, Color(0.7, 0.74, 0.8), true))
 	_fill()
+
+
+## Als Überlagerung schließt sich das Fenster; vom Titel aus geht es zurück zum Titel.
+func _zurueck() -> void:
+	if bool(args.get("overlay", false)):
+		queue_free()
+	else:
+		main.go("title")
 
 
 func _fill() -> void:

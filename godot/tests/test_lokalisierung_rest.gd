@@ -2,7 +2,7 @@ extends SceneTree
 ## Prüft die Texte aus Werkzeugladen, Spielständen, Spielende und Journal: jeder Schlüssel in Deutsch und Englisch vorhanden.
 var _fails := 0
 const SCHLUESSEL := [
-	"shop.titel_laden", "shop.titel_autohaus", "shop.zurueck", "shop.werkzeug_kopf", "shop.tool_btn",
+	"shop.titel_laden", "shop.titel_autohaus", "shop.werkzeug_kopf", "shop.tool_btn",
 	"shop.gekauft", "shop.tool_tip", "shop.gear_btn", "shop.fahrzeug_kopf", "shop.gewaehlt_status",
 	"shop.nehmen", "shop.gewaehlt", "shop.zurueckgegeben", "shop.zu_wenig", "shop.car_gekauft",
 	"shop.nicht_dein", "shop.car_gewaehlt",
