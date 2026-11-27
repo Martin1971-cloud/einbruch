@@ -62,7 +62,7 @@ func _process(d: float) -> bool:
 		if pl.plans.has("otto"):
 			pl.plans["otto"] = [{"t": "MOVE", "to": "fluchtwagen"}]
 		pl._on_changed()
-		pl._on_execute()
+		pl.ausfuehren()
 		_step = 2
 		print("GPU-LAUF Start: Ausführung läuft in Echtzeit")
 		return false

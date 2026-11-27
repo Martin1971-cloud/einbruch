@@ -61,7 +61,7 @@ func _process(_d: float) -> bool:
 			_fits("Planung")
 			_main.current._on_example()
 			_check(_main.current._res.get("status", "") != "", "Vorschau berechnet")
-			_main.current._on_execute()
+			_main.current.ausfuehren()
 			_step = 4
 		4:
 			print("Ausführung:")

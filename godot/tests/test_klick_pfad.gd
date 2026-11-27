@@ -43,7 +43,7 @@ func _process(_delta: float) -> bool:
 		print("5 Beispielplan geladen")
 		var p = _main.current
 		print("   Vorschau: %s" % p._preview.text.split("\n")[0])
-		p._on_execute()
+		p.ausfuehren()
 		_stage = 4
 		_frames = 0
 	elif _stage == 4 and _frames == 3:

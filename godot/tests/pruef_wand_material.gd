@@ -47,7 +47,7 @@ func _process(_d: float) -> bool:
 			pl._on_changed()
 			_step = 3
 		3:
-			_main.current._on_execute()
+			_main.current.ausfuehren()
 			_step = 4
 		4:
 			_wait += 1

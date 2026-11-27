@@ -70,7 +70,7 @@ func _process(_delta: float) -> bool:
 		3:
 			if _frames == 15:
 				_shot("03_planung")
-				_main.current._on_execute()
+				_main.current.ausfuehren()
 				_stage = 4
 				_frames = 0
 		4:

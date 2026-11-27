@@ -129,7 +129,7 @@ func _process(_d: float) -> bool:
 			print("Ordner: %s" % ProjectSettings.globalize_path(OUT))
 			f.store_string(_main.current._preview.text)
 			f.close()
-			_main.current._on_execute()
+			_main.current.ausfuehren()
 			_i = 5
 			_next = _f + 60
 		5:
