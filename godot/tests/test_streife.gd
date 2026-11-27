@@ -52,6 +52,14 @@ func _init() -> void:
 	var schnell := _lauf(oeffnen + [{"t": "WAIT", "sec": 10.0}, {"t": "CLOSE", "on": "eingangstuer"}] + warten, 900.0)
 	_check(not _streife_alarm(schnell), "Tür innerhalb der Schonfrist geschlossen: die Streife bemerkt nichts")
 
+	# Auch offene Fenster und Stahltüren fallen der Streife auf
+	var fenster := Sim.create(GameData.TARGETS["juwelier"], _team(), {"teo": [{"t": "MOVE", "to": "aussen_schaufenster"}, {"t": "TOOL", "tool": "glasschneider", "on": "schaufenster"}, {"t": "WAIT", "sec": 900.0}]}, GameData.car_now("limo", 85.0))
+	var n_f := 0
+	while fenster.time < 900.0 and fenster.status == "RUNNING" and n_f < 200000:
+		fenster.step(Sim.DT)
+		n_f += 1
+	_check(fenster.log_lines.any(func(l): return "Streife" in str(l) and "ALARM" in str(l)), "offenes Schaufenster: die Streife schlägt Alarm")
+
 	# Abstände: in 900 Sekunden kommen 3 bis 5 Streifen
 	_check(zu.patrol_count >= 3 and zu.patrol_count <= 5, "in 15 Minuten kommen 3 bis 5 Streifen (gezählt: %d)" % zu.patrol_count)
 	print("Fehler: %d" % _fails)

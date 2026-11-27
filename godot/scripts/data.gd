@@ -216,6 +216,7 @@ const ITEMS := {
 	"deko_vitrine": {"name": "deko.vitrine.name", "gewicht": 0, "groesse": "klein"},
 	"deko_schreibtisch": {"name": "deko.schreibtisch.name", "gewicht": 0, "groesse": "klein"},
 	"deko_tisch": {"name": "deko.tisch.name", "gewicht": 0, "groesse": "klein"},
+	"deko_glasschrank": {"name": "deko.glasschrank.name", "gewicht": 0, "groesse": "klein"},
 	"safe": {"name": "beute.safe.name", "gewicht": 2.5, "groesse": "mittel", "icon": "tresor"},
 	"gemaelde": {"name": "beute.gemaelde.name", "gewicht": 2, "groesse": "gross"},
 	"landschaft": {"name": "beute.landschaft.name", "gewicht": 2, "groesse": "gross"},
@@ -637,6 +638,7 @@ const ZIELE_ROH := {
 				[64, 320, 80, 336, "T"],   # Treppe OG
 				[128, 64, 144, 80, "C"],    # Vitrine ohne Beute (Dekoration, Kollision wie Vitrine)
 				[208, 96, 224, 112, "P"],   # Schreibtisch ohne Beute (Dekoration, Kollision wie Vitrine)
+				[176, 64, 192, 80, "C"],   # Glasschrank ohne Beute (Dekoration, Kollision wie Vitrine)
 				[64, 256, 80, 272, "C"],   # Vitrine Gemmensammlung
 				[192, 288, 208, 304, "C"], # Vitrine Pergamente
 			],
@@ -669,6 +671,7 @@ const ZIELE_ROH := {
 		"sensors": [],
 		"loot": [
 			{"id": "deko_vitrine", "pos": [8, 4], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_glasschrank", "pos": [11, 4], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
 			{"id": "deko_schreibtisch", "pos": [13, 6], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
 			{"id": "uhren", "pos": [4, 4], "value": 15000},
 			{"id": "besteck", "pos": [6, 4], "value": 10000},
@@ -737,6 +740,7 @@ const ZIELE_ROH := {
 				[96, 64, 112, 80, "C"],    # Vitrine Perlenkette
 				[192, 128, 208, 144, "S"], # Tresor im Tresorraum
 				[208, 80, 224, 96, "P"],   # Tisch ohne Beute (Dekoration, Kollision wie Schreibtisch)
+				[224, 112, 240, 128, "C"], # Glasschrank ohne Beute (Dekoration, Kollision wie Vitrine)
 			],
 		},
 		"doors": [
@@ -770,6 +774,7 @@ const ZIELE_ROH := {
 			{"id": "diamantring", "pos": [4, 4], "value": 30000},
 			{"id": "perlen", "pos": [6, 4], "value": 20000},
 			{"id": "tresor", "pos": [12, 8], "value": 70000},
+			{"id": "deko_glasschrank", "pos": [14, 7], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
 			{"id": "deko_tisch", "pos": [13, 5], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
 		],
 		"guards": [],
@@ -918,6 +923,7 @@ const DEKO := {
 		{"kind": "stuhl", "rect": [204, 122, 212, 130]},
 		{"kind": "stuhl", "rect": [220, 122, 228, 130]},
 		{"kind": "pflanze", "rect": [246, 140, 256, 150]},
+		{"kind": "pflanze", "rect": [224, 48, 232, 56]},
 		{"kind": "bild", "rect": [256, 72, 259, 96]},
 	],
 	"juwelier": [
