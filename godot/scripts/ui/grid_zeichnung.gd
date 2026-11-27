@@ -326,7 +326,10 @@ func _draw() -> void:
 		# Hinweis nur, solange die Beute noch im Objekt liegt (Planung immer)
 		if not _frame.is_empty() and str(_frame.get("loot", {}).get(l.id, "ROOM")) != "ROOM":
 			continue
-		# Beute ist immer sichtbar: goldener Ring, Bild und Wert. Die Details (Gewicht, Kategorie) zeigt der Hover.
+		# Ermittlung steuert die Sicht: ohne Information keine Beute-Positionen (nur der Gesamtwert in der Stadt)
+		if intel < 1:
+			continue
+		# Beute ist sichtbar: goldener Ring, Bild und Wert. Die Details (Gewicht, Kategorie) zeigt der Hover.
 		var lp := _c(l.pos)
 		var hot: bool = Sim._v2i(l.pos) == _hover_cell
 		var ico := _loot_icon(l.id)
@@ -341,7 +344,9 @@ func _draw() -> void:
 			draw_circle(lp, _cell * 0.3, GOLD)
 			draw_circle(lp, _cell * 0.3, Color(0.05, 0.06, 0.09), false, 1.5)
 		# Wertangabe als kleines Schild unter dem Objekt
-		var val := "%s €" % _grp_money(int(l.value))
+		# Mit „Umsehen“ nur ungefährer Wert (auf 5.000 € gerundet), mit „Informant“ genau
+		var wert := int(l.value) if intel >= 2 else int(round(float(l.value) / 5000.0)) * 5000
+		var val := ("%s €" if intel >= 2 else "ca. %s €") % _grp_money(wert)
 		var fs := maxi(10, int(_cell * 0.34))
 		var vsz := font_for_label().get_string_size(val, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 		var vb := Rect2(lp + Vector2(-vsz.x * 0.5 - 4, isz * 0.62 + 2), Vector2(vsz.x + 8, fs + 6))

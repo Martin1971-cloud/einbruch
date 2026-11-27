@@ -211,7 +211,7 @@ func _get_tooltip(at_position: Vector2) -> String:
 	var cell := Vector2i(cx, cy)
 	# Beute am Feld: Wert immer anzeigen (auch bei einem Planhinweis darüber)
 	for l in target.loot:
-		if Sim._v2i(l.pos) == cell:
+		if intel >= 1 and Sim._v2i(l.pos) == cell:
 			var parts_txt := ""
 			if l.has("parts"):
 				var ps: Array = []
