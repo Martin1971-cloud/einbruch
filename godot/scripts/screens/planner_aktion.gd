@@ -574,8 +574,12 @@ func _on_map_click(cell: Vector2i) -> void:
 	# Treppenfeld: die Person steigt auf die andere Etage (8 s)
 	for pr in target.get("treppen", []):
 		if cell == Vector2i(int(pr[0]), int(pr[1])) or cell == Vector2i(int(pr[2]), int(pr[3])):
-			# Zuerst zur Treppe gehen (approach), dann steigen
-			_menu_entries.append([Texte.t("plan.treppe_steigen"), {"t": "TREPPE", "approach": [cell.x, cell.y]}, true])
+			# Vom Treppenende aus starten, das der Person am nächsten liegt (sonst läuft sie zum Ende auf der anderen Etage)
+			var stand: Vector2i = _stand_after(_active).cell
+			var ende_a := Vector2i(int(pr[0]), int(pr[1]))
+			var ende_b := Vector2i(int(pr[2]), int(pr[3]))
+			var nahe := ende_a if absi(ende_a.x - stand.x) + absi(ende_a.y - stand.y) <= absi(ende_b.x - stand.x) + absi(ende_b.y - stand.y) else ende_b
+			_menu_entries.append([Texte.t("plan.treppe_steigen"), {"t": "TREPPE", "approach": [nahe.x, nahe.y]}, true])
 	_menu_entries.append_array(_object_entries(cell))
 	if target.has("panel") and Sim._v2i(target.panel.pos) == cell:
 		_menu_entries.append([Texte.t("plan.bypass"), {"t": "TOOL", "tool": "bypass", "on": target.panel.id}, Game.tools_owned.has("bypass")])
