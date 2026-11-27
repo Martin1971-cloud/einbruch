@@ -353,6 +353,9 @@ func _object_entries(cell: Vector2i) -> Array:
 		out.append(["%s: zu weit weg" % Texte.t(GameData.name_von(nm)), {}, false])
 		if nb != Vector2i(-1, -1):
 			out.append([Texte.t("plan.neben_gehen") % Texte.t(GameData.name_von(nm)), {"t": "MOVE", "cell": [nb.x, nb.y]}, true])
+			# Offene Tür: schließen geht auch aus der Ferne, die Person geht vorher neben die Tür
+			if st.kind == "door" and st.open and not st.get("destroyed", false):
+				out.append([Texte.t("plan.tuer_schliessen_weit") % what, {"t": "CLOSE", "on": nm, "approach": [nb.x, nb.y]}, true])
 		return out
 	if st.locked:
 		# Alle Werkzeuge für Schlösser, die man besitzt (Original: Werkzeugliste am Objekt)
