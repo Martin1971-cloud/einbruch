@@ -917,5 +917,10 @@ const DEKO := {
 		{"kind": "bild", "rect": [100, 40, 124, 43]},
 		{"kind": "pflanze", "rect": [246, 140, 256, 150]},
 		{"kind": "bild", "rect": [256, 60, 259, 90]},
+		# Sitzecke im Verkaufsraum: Tisch mit zwei Stühlen und Blumen (rein zur Ansicht, blockieren nichts)
+		{"kind": "tisch", "rect": [208, 80, 240, 96]},
+		{"kind": "stuhl", "rect": [196, 84, 204, 92]},
+		{"kind": "stuhl", "rect": [244, 84, 252, 92]},
+		{"kind": "pflanze", "rect": [226, 100, 236, 110]},
 	],
 }
