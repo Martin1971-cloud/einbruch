@@ -29,7 +29,11 @@ func _run() -> void:
 	_check(k.guards.is_empty(), "keine Wachen")
 	_check(k.sensors.is_empty(), "keine Sensoren")
 	_check(not k.has("panel"), "kein Alarmpanel")
-	_check(k.loot.size() == 2, "zwei Beutestücke: Kasse und Wertschrank (Original)")
+	var echte_beute := 0
+	for l in k.loot:
+		if not l.get("leer", false):
+			echte_beute += 1
+	_check(echte_beute == 2, "zwei Beutestücke: Kasse und Wertschrank (Original), Dekoration nicht mitgezählt")
 
 	print("Einbruch mit Dietrich:")
 	var plans := {"teo": [

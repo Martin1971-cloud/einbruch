@@ -44,7 +44,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 	for l in target.loot:
 		if not use_fine:
 			_case_cells[_v2i(l.pos)] = true   # ohne feinen Grundriss blockiert die Vitrine ihr ganzes Feld
-		loot[l.id] = {"id": l.id, "name": Texte.t(l.name), "pos": _v2i(l.pos), "value": int(l.value), "weight": float(l.weight), "size": l.size,"state": "ROOM", "carrier": "", "opened": bool(l.get("open", false)), "locked": not bool(l.get("open", false))}
+		loot[l.id] = {"id": l.id, "name": Texte.t(l.name), "pos": _v2i(l.pos), "value": int(l.value), "weight": float(l.weight), "size": l.size,"state": "ROOM", "carrier": "", "opened": bool(l.get("open", false)), "locked": not bool(l.get("open", false)), "leer": bool(l.get("leer", false))}
 		loot_order.append(l.id)
 	for g in target.guards:
 		var st := _v2i(g.start)

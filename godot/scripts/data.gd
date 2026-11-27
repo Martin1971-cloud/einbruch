@@ -210,6 +210,11 @@ static func portrait_path(id: String) -> String:
 const SIZE_RANK := {"klein": 0, "mittel": 1, "gross": 2}
 const ITEMS := {
 	"kasse": {"name": "beute.kasse.name", "gewicht": 0.5, "groesse": "mittel", "icon": "kasse"},
+	# Dekoration: nichts drin, nur zum Öffnen und Durchsuchen (kein Wert)
+	"deko_regal": {"name": "deko.regal.name", "gewicht": 0, "groesse": "klein"},
+	"deko_zeitung": {"name": "deko.zeitung.name", "gewicht": 0, "groesse": "klein"},
+	"deko_vitrine": {"name": "deko.vitrine.name", "gewicht": 0, "groesse": "klein"},
+	"deko_schreibtisch": {"name": "deko.schreibtisch.name", "gewicht": 0, "groesse": "klein"},
 	"safe": {"name": "beute.safe.name", "gewicht": 2.5, "groesse": "mittel", "icon": "tresor"},
 	"gemaelde": {"name": "beute.gemaelde.name", "gewicht": 2, "groesse": "gross"},
 	"landschaft": {"name": "beute.landschaft.name", "gewicht": 2, "groesse": "gross"},
@@ -426,6 +431,8 @@ const ZIELE_ROH := {
 			{"id": "kasse", "pos": [10, 3], "value": 6000},
 			# Wertschrank (Original: Geld 500 g und eine Zigarrenkiste 2 kg, im selben Behälter)
 			# Aufteilung: Geld 16.000 € (500 g), Zigarrenkiste 6.000 € (2 kg). Im Spiel ein Beutestück.
+			{"id": "deko_regal", "pos": [10, 5], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_zeitung", "pos": [9, 1], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
 			{"id": "safe", "pos": [8, 2], "value": 22000, "parts": [["ziel.kiosk.teil.safe.0", 16000], ["ziel.kiosk.teil.safe.1", 6000]]},
 		],
 		"guards": [],
@@ -655,6 +662,8 @@ const ZIELE_ROH := {
 		],
 		"sensors": [],
 		"loot": [
+			{"id": "deko_vitrine", "pos": [3, 4], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_schreibtisch", "pos": [13, 5], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
 			{"id": "uhren", "pos": [4, 4], "value": 15000},
 			{"id": "besteck", "pos": [6, 4], "value": 10000},
 			{"id": "landschaft", "pos": [3, 6], "value": 12000, "open": true, "wall": true},

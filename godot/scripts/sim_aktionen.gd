@@ -379,6 +379,9 @@ func _do_take(c: Dictionary, a: Dictionary, dt: float) -> void:
 		if not _reach(c, center(l.pos)):
 			_fail(c, Texte.t("fail.nicht_vor_beute") % c.name)
 			return
+		if l.get("leer", false) and l.get("durchsucht", false):
+			_fail(c, Texte.t("fail.schon_durchsucht") % l.name)
+			return
 		if l.state != "ROOM":
 			_fail(c, Texte.t("fail.schon_weg") % l.name)
 			return
@@ -401,6 +404,13 @@ func _do_take(c: Dictionary, a: Dictionary, dt: float) -> void:
 		return
 	c.timer -= dt
 	if c.timer > 0.0:
+		return
+	if l.get("leer", false):
+		# Dekoration: durchsucht, aber nichts drin
+		l["durchsucht"] = true
+		c["msg"] = Texte.t("sim.msg_leer")
+		_log(Texte.t("sim.leer") % [c.name, l.name])
+		_next(c)
 		return
 	l.state = "CARRIED"
 	l.carrier = c.id
