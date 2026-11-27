@@ -15,6 +15,9 @@ var _plan: Array = []       # Planungsschritte: [Zelle, Auswahlbedingung, Nachge
 var _warte := 0
 var _plan_laeuft := false
 var _versuche := 0
+var _letzter_s := -1       # letzter Schritt, der vorangekommen ist
+var _letzter_f := 0        # Bildnummer, bei der er vorangekommen ist
+const MAX_WARTEN := 3600   # Bilder ohne Fortschritt, dann Abbruch mit Meldung
 
 
 func _snap(name: String) -> void:
@@ -100,9 +103,11 @@ func _start() -> void:
 		["Werkzeugladen", func(): _snap("05_stadt_zweimal"); _pin_klick("laden")],
 		["Laden: Dietrich-Set kaufen", func(): _snap("06_laden"); _klick_key("werkzeug.lockpick.name")],
 		["Laden verlassen", func(): _snap("07_laden_gekauft"); _klick_key("shop.zurueck")],
+		["Kiosk wählen", func(): _pin_klick("kiosk")],
+		["Am Kiosk umsehen", func(): _klick_text("Umsehen", false)],
 		["Organisation", func(): _snap("08_stadt_nach_laden"); _klick_key("nav.organisation")],
-		["Otto wählen", func(): _snap("09_organisation"); _klick_text("Otto Brenner", false)],
-		["Otto als Einbrecher", func(): _snap("10_organisation_otto"); _klick_key("org.auch_einbrechen", false, 1)],
+		["Otto wählen", func(): _snap("09_organisation"); _klick_person("Otto Brenner")],
+		["Otto als Einbrecher", func(): _snap("10_organisation_otto"); _klick_auch_einbrechen()],
 		["Team bestätigen", func(): _snap("11_organisation_team"); _klick_key("org.bestaetigen")],
 		["Planung: Person wählen", func(): _snap("12_planung_leer"); _klick_text("Otto Brenner", false)],
 		["Grundriss: Alles", func(): _klick_key("grid.alles")],
@@ -119,6 +124,33 @@ func _start() -> void:
 		["Optionen", func(): _snap("21_lexikon"); _klick_key("nav.optionen")],
 		["Ende", func(): _snap("22_optionen")],
 	]
+
+
+## Die Auswahl-Schaltfläche einer Person (Text beginnt mit ☐ oder ☑) anklicken.
+func _klick_person(name: String) -> bool:
+	var kandidaten: Array = []
+	_finde(root, "Button", kandidaten)
+	for b in kandidaten:
+		var t := str(b.text)
+		if (t.begins_with("☐") or t.begins_with("☑")) and t.contains(name) and b.is_visible_in_tree():
+			_maus(b.get_global_rect().get_center())
+			print("  Klick: Auswahl %s (%s)" % [name, t.left(12)])
+			return true
+	print("  KEINE AUSWAHL bei %s" % name)
+	return false
+
+
+## „auch einbrechen“ anklicken, aber nur einen aktiven (nicht deaktivierten) Schalter.
+func _klick_auch_einbrechen() -> bool:
+	var kandidaten: Array = []
+	_finde(root, "Button", kandidaten)
+	for b in kandidaten:
+		if str(b.text).contains(Texte.t("org.auch_einbrechen")) and not b.disabled and b.is_visible_in_tree():
+			_maus(b.get_global_rect().get_center())
+			print("  Klick: auch einbrechen")
+			return true
+	print("  KEIN AKTIVER SCHALTER: auch einbrechen")
+	return false
 
 
 func _pin_klick(id: String) -> void:
@@ -158,13 +190,22 @@ func _wagen_feld() -> Vector2i:
 	return Vector2i(int(p[0]), int(p[1]))
 
 
+func _in_planung() -> bool:
+	var sc = _main.current
+	return sc != null and sc.get_script() != null and str(sc.get_script().resource_path).ends_with("planner.gd")
+
+
 func _zelle_pos(zelle: Vector2i) -> Vector2:
+	if not _in_planung():
+		return Vector2.ZERO
 	var g = _main.current._grid
 	return g.get_global_transform() * g._c(zelle)
 
 
 ## Im geöffneten Menü den Eintrag wählen. Liefert "ok", "nachgehen" (Person geht zuerst daneben) oder "nichts".
 func _menue_waehlen(pred: Callable) -> String:
+	if not _in_planung():
+		return "nichts"
 	var pl = _main.current
 	var eintraege: Array = pl._menu_entries
 	for i in range(eintraege.size()):
@@ -180,6 +221,8 @@ func _menue_waehlen(pred: Callable) -> String:
 
 
 func _menue_klick(i: int, text: String) -> void:
+	if not _in_planung():
+		return
 	var m: PopupMenu = _main.current._menu
 	var y := float(m.position.y) + (float(i) + 0.5) * float(m.size.y) / float(max(m.item_count, 1))
 	_maus(Vector2(float(m.position.x) + 30.0, y))
@@ -197,6 +240,16 @@ func _process(_d: float) -> bool:
 		_start()
 		return false
 	if _f < _next:
+		return false
+	# Wächter: kommt der Ablauf nicht voran, wird mit einer Meldung abgebrochen statt zu hängen
+	if _s != _letzter_s:
+		_letzter_s = _s
+		_letzter_f = _f
+	elif _f - _letzter_f > MAX_WARTEN:
+		var wo: String = str(_schritte[_s][0]) if _s < _schritte.size() else "Ende"
+		print("ZEITÜBERSCHREITUNG bei Schritt: %s (kein Fortschritt seit %d Bildern)" % [wo, MAX_WARTEN])
+		_G.delete_slot(3)
+		quit(1)
 		return false
 	# Planungsphase: Feld anklicken, Menü abwarten, Eintrag wählen, ggf. nachgehen und erneut versuchen
 	if _plan_laeuft:
@@ -231,6 +284,10 @@ func _kurz(a: Dictionary) -> String:
 
 ## Ein Planungsschritt: Feld anklicken, Menü abwarten, Eintrag wählen. Die Planung ist fertig, wenn keine Schritte übrig sind.
 func _plan_schritt() -> void:
+	if not _in_planung():
+		var sk = _main.current.get_script() if _main.current != null else null
+		print("  Planung nicht offen (offen: %s), Planungsschritte werden übersprungen" % (str(sk.resource_path) if sk != null else str(_main.current)))
+		_plan.clear()
 	if _plan.is_empty():
 		_plan_laeuft = false
 		_next = _f + 8
