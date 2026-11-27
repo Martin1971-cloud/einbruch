@@ -428,24 +428,29 @@ func _choice(text: String, pressed: bool, cb: Callable, size := 15) -> Button:
 # ---------------------------------------------------------------- Einkauf
 
 
+## Blockierende Warnung: zeigt die Meldung unten und als Hinweis, den man wegklicken muss.
+func _warnen(schluessel: String) -> void:
+	_msg.text = Texte.t(schluessel)
+	UI.hinweis(self, Texte.t("hint.achtung"), Texte.t(schluessel))
+
 func _on_confirm() -> void:
 	var burglars := _selected_ids(false)
 	var drivers := _selected_ids(true)
 	# Original: Teamplanung nur mit Ermittlungsstand über etwa 50 % (organisa.c, tcCheckOrganisation)
 	if int(Game.intel.get(Game.target_id, 0)) < 1:
-		_msg.text = Texte.t("org.msg_ermitteln")
+		_warnen("org.msg_ermitteln")
 		return
 	if drivers.is_empty():
-		_msg.text = Texte.t("org.msg_fahrer")
+		_warnen("org.msg_fahrer")
 		return
 	if burglars.is_empty():
-		_msg.text = Texte.t("org.msg_einbrecher")
+		_warnen("org.msg_einbrecher")
 		return
 	if Game.car_id == "":
-		_msg.text = Texte.t("org.msg_kein_wagen")
+		_warnen("org.msg_kein_wagen")
 		return
 	if Game.money < _cost():
-		_msg.text = Texte.t("org.msg_geld")
+		_warnen("org.msg_geld")
 		return
 	Game.money -= _cost()
 	var best: String = drivers[0]

@@ -182,3 +182,15 @@ static func multi_menu(title: String, items: Array, selected: Array, cb: Callabl
 		cb.call(items[i][1], on)
 		refresh.call())
 	return mb
+
+## Warnung, die man wegklicken muss: wenn etwas die nächste Aktion blockiert.
+static func hinweis(host: Node, titel: String, text: String) -> void:
+	var dlg := AcceptDialog.new()
+	dlg.title = titel
+	dlg.dialog_text = text
+	dlg.ok_button_text = Texte.t("hint.verstanden")
+	dlg.dialog_autowrap = true
+	host.add_child(dlg)
+	dlg.confirmed.connect(dlg.queue_free)
+	dlg.canceled.connect(dlg.queue_free)
+	dlg.popup_centered(Vector2i(520, 0))

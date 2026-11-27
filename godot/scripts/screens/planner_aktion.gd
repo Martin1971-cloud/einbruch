@@ -487,6 +487,7 @@ func _run_execution() -> void:
 			_problems.append(Texte.t("plan.endet_nicht_letzte") % c.name.split(" ")[0])
 	if not _problems.is_empty():
 		_preview.text = Texte.t("plan.gesperrt_kopf") % [_problems.size(), _preview.text]
+		UI.hinweis(self, Texte.t("hint.achtung"), "\n".join(_problems))
 		return
 	main.go("execution", {"config": _config()})
 
