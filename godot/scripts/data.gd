@@ -409,8 +409,8 @@ const ZIELE_ROH := {
 				[128, 24, 152, 41, "S"],
 				[160, 40, 168, 120, "C"],
 				[160, 48, 168, 64, "K"],
-				[112, 96, 128, 112, "C"],  # Zeitungsständer (Dekoration, Kollision wie Vitrine)
-				[112, 48, 128, 64, "C"],  # Regal (Dekoration, Kollision wie Vitrine)
+				[144, 96, 160, 112, "Z"],  # Zeitungsständer (Dekoration, Kollision wie Vitrine)
+				[112, 48, 128, 64, "R"],  # Regal (Dekoration, Kollision wie Vitrine)
 			],
 		},
 		"doors": [
@@ -434,7 +434,7 @@ const ZIELE_ROH := {
 			# Wertschrank (Original: Geld 500 g und eine Zigarrenkiste 2 kg, im selben Behälter)
 			# Aufteilung: Geld 16.000 € (500 g), Zigarrenkiste 6.000 € (2 kg). Im Spiel ein Beutestück.
 			{"id": "deko_regal", "pos": [7, 3], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
-			{"id": "deko_zeitung", "pos": [7, 6], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_zeitung", "pos": [9, 6], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
 			{"id": "safe", "pos": [8, 2], "value": 22000, "parts": [["ziel.kiosk.teil.safe.0", 16000], ["ziel.kiosk.teil.safe.1", 6000]]},
 		],
 		"guards": [],
@@ -634,7 +634,7 @@ const ZIELE_ROH := {
 				[264, 232, 272, 360, "W"],
 				[64, 320, 80, 336, "T"],   # Treppe OG
 				[48, 64, 64, 80, "C"],     # Vitrine ohne Beute (Dekoration, Kollision wie Vitrine)
-				[208, 80, 224, 96, "C"],   # Schreibtisch ohne Beute (Dekoration, Kollision wie Vitrine)
+				[208, 96, 224, 112, "P"],   # Schreibtisch ohne Beute (Dekoration, Kollision wie Vitrine)
 				[64, 256, 80, 272, "C"],   # Vitrine Gemmensammlung
 				[192, 288, 208, 304, "C"], # Vitrine Pergamente
 			],
@@ -667,7 +667,7 @@ const ZIELE_ROH := {
 		"sensors": [],
 		"loot": [
 			{"id": "deko_vitrine", "pos": [3, 4], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
-			{"id": "deko_schreibtisch", "pos": [13, 5], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_schreibtisch", "pos": [13, 6], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
 			{"id": "uhren", "pos": [4, 4], "value": 15000},
 			{"id": "besteck", "pos": [6, 4], "value": 10000},
 			{"id": "landschaft", "pos": [3, 6], "value": 12000, "open": true, "wall": true},
@@ -905,7 +905,6 @@ const DEKO := {
 	],
 	"curiosity": [
 		{"kind": "regal", "rect": [48, 40, 72, 52]},
-		{"kind": "tisch", "rect": [200, 96, 232, 120]},
 		{"kind": "stuhl", "rect": [204, 122, 212, 130]},
 		{"kind": "stuhl", "rect": [220, 122, 228, 130]},
 		{"kind": "pflanze", "rect": [246, 140, 256, 150]},

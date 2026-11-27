@@ -533,6 +533,23 @@ func _build_fine(spec: Dictionary) -> void:
 						_box(Vector3(0.06, jamb_h, leaf_t + 0.04), p + Vector3(sgn * 0.45, 0.1 + jamb_h * 0.5, 0), jamb_col, 0.8)
 					else:
 						_box(Vector3(leaf_t + 0.04, jamb_h, 0.06), p + Vector3(0, 0.1 + jamb_h * 0.5, sgn * 0.45), jamb_col, 0.8)
+			"R":
+				# Regal ohne Beute: hohes Holzregal mit zwei Böden (Kollision wie Vitrine)
+				var rholz := Color(0.42, 0.28, 0.17)
+				_box(Vector3(sz.x, 2.0, sz.z), p + Vector3(0, 1.0, 0), rholz, 0.8)
+				for hy in [0.6, 1.3]:
+					_box(Vector3(sz.x + 0.02, 0.05, sz.z + 0.02), p + Vector3(0, hy, 0), Color(0.55, 0.4, 0.26), 0.7)
+			"Z":
+				# Zeitungsständer: grauer Ständer mit Zeitungen obenauf
+				_box(Vector3(sz.x, 0.9, sz.z), p + Vector3(0, 0.45, 0), Color(0.3, 0.32, 0.36), 0.5)
+				_box(Vector3(sz.x * 0.7, 0.1, sz.z * 0.6), p + Vector3(0, 0.95, 0), Color(0.86, 0.84, 0.76), 0.9)
+			"P":
+				# Schreibtisch ohne Beute: Platte auf vier Beinen (Kollision wie Vitrine)
+				var pholz := Color(0.42, 0.28, 0.17)
+				_box(Vector3(sz.x, 0.08, sz.z), p + Vector3(0, 0.76, 0), Color(0.55, 0.4, 0.26), 0.6)
+				for ex in [-1.0, 1.0]:
+					for ez in [-1.0, 1.0]:
+						_box(Vector3(0.07, 0.74, 0.07), p + Vector3(ex * (sz.x * 0.5 - 0.1), 0.37, ez * (sz.z * 0.5 - 0.1)), pholz, 0.7)
 			"C":
 				_box(Vector3(sz.x, 1.0, sz.z), p + Vector3(0, 0.5, 0), Color(0.93, 0.9, 0.86), 0.25)
 				# Glasdeckel: an der Rückkante gelenkt, hebt sich beim Öffnen der Vitrine (siehe _sync)

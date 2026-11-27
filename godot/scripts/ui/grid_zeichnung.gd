@@ -150,6 +150,23 @@ func _draw_fine(spec: Dictionary) -> void:
 			"C":
 				draw_rect(rect, Color(0.93, 0.9, 0.86))
 				draw_rect(rect, GOLD, false, 1.0)
+			"R":
+				# Regal ohne Beute: dunkles Holz mit zwei Böden
+				draw_rect(rect, Color(0.42, 0.28, 0.17))
+				for k in range(1, 3):
+					var ry := rect.position.y + rect.size.y * float(k) / 3.0
+					draw_line(Vector2(rect.position.x + 2.0, ry), Vector2(rect.end.x - 2.0, ry), Color(0.55, 0.4, 0.26), maxf(1.0, _cell * 0.05))
+				draw_rect(rect, GOLD, false, 1.0)
+			"Z":
+				# Zeitungsständer: grauer Ständer mit Zeitungen
+				draw_rect(rect, Color(0.3, 0.32, 0.36))
+				draw_rect(rect.grow(-rect.size.x * 0.22), Color(0.86, 0.84, 0.76))
+				draw_rect(rect, GOLD, false, 1.0)
+			"P":
+				# Schreibtisch ohne Beute: helle Platte
+				draw_rect(rect, Color(0.55, 0.4, 0.26))
+				draw_rect(rect.grow(-rect.size.x * 0.12), Color(0.62, 0.46, 0.3))
+				draw_rect(rect, GOLD, false, 1.0)
 			"S":
 				draw_rect(rect, Color(0.55, 0.55, 0.6))
 				draw_rect(rect, GOLD, false, 1.0)

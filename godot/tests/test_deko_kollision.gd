@@ -41,15 +41,16 @@ func _init() -> void:
 			if not l.get("leer", false):
 				continue
 			var cell := Sim._v2i(l.pos)
-			var nur_c := true
+			var erwartet: String = {"deko_vitrine": "C", "deko_regal": "R", "deko_zeitung": "Z", "deko_schreibtisch": "P"}.get(l.id, "?")
+			var nur_kachel := true
 			var sub_anders := ""
 			for y in range(Sim.SUB):
 				for x in range(Sim.SUB):
 					var f := Vector2i(cell.x * Sim.SUB + x, cell.y * Sim.SUB + y)
-					if sim.ftile(f) != "C":
-						nur_c = false
+					if sim.ftile(f) != erwartet:
+						nur_kachel = false
 						sub_anders = sim.ftile(f)
-			_check(nur_c, "%s %s: ganze Zelle ist Kachel C wie bei einer Vitrine (sonst %s)" % [tid, l.id, sub_anders])
+			_check(nur_kachel, "%s %s: ganze Zelle ist Kachel %s (sonst %s)" % [tid, l.id, erwartet, sub_anders])
 			_check(not sim.passable_f(cell * Sim.SUB + Vector2i(8, 8)), "%s %s: blockiert wie eine Vitrine" % [tid, l.id])
 			var andere := 0
 			for m in t.loot:

@@ -366,7 +366,7 @@ func passable_f(f: Vector2i) -> bool:
 	## Begehbarkeit eines Unterfeldes (Original: lsIsCollision). Wand, Fenster und Vitrine blockieren,
 	## eine Tür nur, solange sie zu ist.
 	var t := ftile(f)
-	if t == "W" or t == "C" or t == "S" or t == "K":
+	if t == "W" or t == "C" or t == "S" or t == "K" or t == "R" or t == "Z" or t == "P":
 		return false
 	if t == "D" or t == "F":  # Tür oder Schaufenster: begehbar, sobald offen
 		return open_cells.has(door_key(f))
@@ -675,7 +675,7 @@ func _sight_clear(a: Vector2, b: Vector2) -> bool:
 		if (ftile(f) == "S" or ftile(f) == "K") and absi(fa.x - tcell.x) <= 1 and absi(fa.y - tcell.y) <= 1:
 			continue
 		# Tresen: man kann darüber greifen (Kasse liegt auf dem Tresen), aber nicht hindurchgehen
-		if ftile(f) == "C":
+		if ftile(f) == "C" or ftile(f) == "R" or ftile(f) == "Z" or ftile(f) == "P":
 			continue
 		if not passable_f(f):
 			return false
