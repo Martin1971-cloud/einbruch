@@ -136,6 +136,11 @@ func _left_column() -> Control:
 		info.add_child(alarm)
 		var status := _l(Texte.t("grid.alarm_aus") if _alarm_aus_im_plan() else Texte.t("grid.alarm_aktiv"), 12, Color(0.95, 0.5, 0.45) if not _alarm_aus_im_plan() else Color(0.6, 0.62, 0.68))
 		info.add_child(status)
+	if str(target.get("karte_tuer", "")) != "":
+		var karte_da := bool(Game.quelle_of(target.id).get("inf", false))
+		var karte := _l(Texte.t("plan.karte_da") if karte_da else Texte.t("plan.karte_fehlt"), 12, Color(0.6, 0.85, 0.6) if karte_da else Color(0.95, 0.7, 0.4))
+		karte.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		info.add_child(karte)
 	col.add_child(_card(info))
 	_checklist = VBoxContainer.new()
 	_checklist.add_theme_constant_override("separation", 4)
