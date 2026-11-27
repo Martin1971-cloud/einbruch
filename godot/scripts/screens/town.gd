@@ -55,7 +55,7 @@ func _ready() -> void:
 
 # ---------------------------------------------------------------- Oberfläche
 
-func _title_bar() -> PanelContainer:
+func _title_bar() -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 10)
 	var brand := VBoxContainer.new()
@@ -81,7 +81,18 @@ func _title_bar() -> PanelContainer:
 	row.add_child(UI.button(Texte.t("nav.optionen"), func(): main.open_optionen(), 130))
 	row.add_child(UI.button(Texte.t("nav.lexikon"), func(): main.open_lexikon(), 120))
 	row.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 110))
-	return _panel(row)
+	var kopf := _panel(row)
+	if OS.is_debug_build():
+		# Entwicklerzeile unter der Kopfzeile (nur in Debug-Versionen)
+		var dev := HBoxContainer.new()
+		dev.add_theme_constant_override("separation", 10)
+		for e in DebugPanel.zeile(main):
+			dev.add_child(e)
+		var box := VBoxContainer.new()
+		box.add_child(kopf)
+		box.add_child(dev)
+		return box
+	return kopf
 
 
 func _status_bar() -> PanelContainer:
