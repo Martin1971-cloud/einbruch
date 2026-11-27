@@ -6,6 +6,9 @@ var _fails := 0
 const ID_MUSTER := "^[a-z][a-z0-9_]*$"
 const KACHELN := [".", "o", "W", "D", "F", "T", "C", "S", "K", "R", "Z", "P"]
 const DEKO_KACHELN := ["C", "S", "R", "Z", "P"]
+## Geplante Gebäude: noch nicht gebaut, der Grundriss ist ein Platzhalter. Kennungen und Verweise werden trotzdem geprüft.
+## Wenn ein Gebäude fertig ist, aus dieser Liste nehmen; dann gelten alle Regeln voll.
+const PLANUNG := ["museum"]
 
 
 func _check(cond: bool, label: String) -> void:
@@ -25,7 +28,8 @@ func _init() -> void:
 	for tid in GameData.TARGETS:
 		var t: Dictionary = GameData.TARGETS[tid]
 		_check(_id_ok(tid), "%s: Ziel-ID im Format snake_case" % tid)
-		_check(t.get("fine", {}).has("paint") or t.has("map"), "%s: Grundriss vorhanden (fein oder grob)" % tid)
+		if not PLANUNG.has(tid):
+			_check(t.get("fine", {}).has("paint"), "%s: Feingrundriss vorhanden" % tid)
 		var sim := Sim.create(t, [], {}, GameData.car_now("limo", 85.0))
 		var w := sim.fine_w
 		var h := sim.fine_h

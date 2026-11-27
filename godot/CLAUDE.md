@@ -20,6 +20,7 @@
 - IDs sind klein geschrieben, ASCII, mit Unterstrich (`deko_vitrine`). Eine ID ist pro Kategorie eindeutig.
 - Umbenennen einer ID nur mit Suche über alle Dateien (Daten, Pläne, Texte, Tests). Anzeigetexte stehen nie in der ID.
 - Jeder Bezug muss auf etwas Vorhandenes zeigen: Beute, Tür, Punkt, Kachel, Textschlüssel. Ein Bezug auf eine fehlende ID ist ein Fehler.
+- Geplante Gebäude (heute `museum`) stehen in `PLANUNG` in `tests/test_bezuege.gd`. Dort gilt der Feingrundriss-Check erst, wenn das Gebäude gebaut ist. Dann aus der Liste nehmen.
 - `tests/test_bezuege.gd` prüft ID-Format und Eindeutigkeit, Verweise, Koordinaten, Grundrisscodes und Texte für alle Ziele.
 - Koordinaten liegen innerhalb des Grundrisses und auf einem begehbaren Feld, wenn dort ein Objekt oder ein Punkt steht.
 
