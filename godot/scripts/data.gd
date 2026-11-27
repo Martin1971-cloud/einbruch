@@ -336,7 +336,8 @@ const ZIELE_ROH := {
 		],
 		 "panel": {"id": "alarmpanel", "pos": [10, 7], "res": 50, "cplx": 45},
 		# Gesichert: Türen (Name) und Vitrinen (Objekt-ID). Öffnen bei eingeschalteter Anlage löst Alarm aus.
-		"gesichert": ["mitteltuer", "tresortuer", "eingangstuer"],
+		"gesichert": ["mitteltuer", "tresortuer", "eingangstuer"],  # Museum: die Eingangstür öffnet nur die Eintrittskarte des Informanten ohne Alarm
+		"karte_tuer": "eingangstuer",
 		"sensors": [
 			{"name": "ziel.museum.sensor.1.name", "pos": [13, 8], "threshold": 20.0},
 		],
