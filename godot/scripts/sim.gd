@@ -4,9 +4,10 @@ extends SimAktionen
 ## Ohne Darstellung, deterministisch. Die Regeln liegen in den Grundklassen (sim_karte, sim_wachen, sim_aktionen).
 
 
-static func create(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary) -> Sim:
+static func create(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary, karte := false) -> Sim:
 	var s := Sim.new()
 	s._setup(target, team, plans, car_cfg)
+	s.karte = karte
 	return s
 
 func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary) -> void:
@@ -37,6 +38,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 		stairs[sa] = sb
 		stairs[sb] = sa
 	gesichert = target.get("gesichert", [])
+	karte_tuer = str(target.get("karte_tuer", ""))
 	if target.has("panel"):
 		panel = {"id": target.panel.id, "name": Texte.t(target.panel.name), "pos": _v2i(target.panel.pos), "res": float(target.panel.res), "cplx": float(target.panel.cplx), "bypassed": false}
 	for s in target.sensors:
@@ -133,8 +135,8 @@ func step(dt: float) -> void:
 		_end("ABBRUCH", Texte.t("end.nicht_weg"))
 
 ## Schnelle Vorschau: läuft die Simulation ohne Anzeige bis zum Ende.
-static func preview(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary) -> Dictionary:
-	var s := Sim.create(target, team, plans, car_cfg)
+static func preview(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary, karte := false) -> Dictionary:
+	var s := Sim.create(target, team, plans, car_cfg, karte)
 	var guard := 0
 	while s.status == "RUNNING" and guard < 20000:
 		s.step(DT)

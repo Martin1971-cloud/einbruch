@@ -4,7 +4,7 @@ extends ExecAnzeige
 
 func _ready() -> void:
 	cfg = args.config
-	sim = Sim.create(cfg.target, cfg.team, cfg.plans, cfg.car)
+	sim = Sim.create(cfg.target, cfg.team, cfg.plans, cfg.car, cfg.karte)
 	_build_world()
 	_build_ui()
 	_sync()

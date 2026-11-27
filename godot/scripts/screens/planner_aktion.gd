@@ -294,7 +294,7 @@ func _on_vorschau() -> void:
 
 func _on_preview() -> void:
 	var cfg := _config()
-	var res := Sim.preview(cfg.target, cfg.team, cfg.plans, cfg.car)
+	var res := Sim.preview(cfg.target, cfg.team, cfg.plans, cfg.car, cfg.karte)
 	_refresh_timeline(res)
 	var msgs: Array = []
 	if not _problems.is_empty():

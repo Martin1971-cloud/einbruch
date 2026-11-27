@@ -87,6 +87,8 @@ var chase := ""  # Ergebnis der Verfolgung: "" = keine Polizei unterwegs, sonst 
 
 var car_v := 100.0      # Fahrleistung des Wagens (km/h, mit Fahrer)
 
+var karte := false              # Eintrittskarte vom Informanten vorhanden
+var karte_tuer := ""             # gesicherte Tür, die die Karte ruhig öffnet (aus dem Ziel)
 var car_laderaum := "mittel"  # größte Beute, die in den Fluchtwagen passt: klein, mittel, gross
 
 var police_v := 140.0   # Polizeitempo (km/h), abhängig von der Wachrate des Ziels

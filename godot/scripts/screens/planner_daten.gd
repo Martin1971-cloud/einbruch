@@ -297,7 +297,9 @@ func _config() -> Dictionary:
 		team.append(c)
 	var skill := float(Game.driver.get("skills", {}).get("FAHREN", 85))
 	var car: Dictionary = GameData.car_now(Game.car_id, skill)  # gewähltes Fahrzeug (gemietet oder gekauft)
-	return {"target": target, "team": team, "plans": plans, "car": car}
+	# Eintrittskarte: liegt vor, wenn der Informant für dieses Ziel gesprochen wurde
+	var karte := bool(Game.quelle_of(str(target.id)).get("inf", false))
+	return {"target": target, "team": team, "plans": plans, "car": car, "karte": karte}
 
 ## Werkzeugdauer je Person: Dauer und Fähigkeit, die sie dafür mitbringt.
 func _duration_lines(res: Dictionary) -> Array:

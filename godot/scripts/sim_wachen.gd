@@ -72,6 +72,10 @@ func _dispatch_patrols() -> void:
 func _pruefe_alarmkontakt(id: String) -> void:
 	if panel.is_empty() or panel.bypassed or not gesichert.has(id):
 		return
+	# Eintrittskarte vom Informanten: diese eine Tür bleibt ruhig
+	if karte and id == karte_tuer:
+		_log(Texte.t("sim.karte_tuer") % _disp(id))
+		return
 	_alarm(str(panel.name), "STILL", 0.0)
 
 # ---------------------------------------------------------------- Lärm & Wahrnehmung
