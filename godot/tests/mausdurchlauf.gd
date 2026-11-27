@@ -154,7 +154,7 @@ func _plan_einrichten() -> void:
 
 
 func _wagen_feld() -> Vector2i:
-	var p = _main.current.target.points.fluchtwagen
+	var p = GameData.TARGETS[root.get_node("/root/Game").target_id].points.fluchtwagen
 	return Vector2i(int(p[0]), int(p[1]))
 
 
@@ -237,7 +237,6 @@ func _plan_schritt() -> void:
 		return
 	if _warte == 0:
 		var schritt: Array = _plan[0]
-		print("Plan jetzt: %s" % str(_main.current.plans["otto"].map(func(a): return _kurz(a))))
 		_maus(_zelle_pos(schritt[0]))
 		print("Plan: Feld %s" % str(schritt[0]))
 		_warte = 1
