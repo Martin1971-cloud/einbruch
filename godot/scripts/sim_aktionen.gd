@@ -88,6 +88,8 @@ func _step_crew(c: Dictionary, dt: float) -> void:
 				_next(c)
 		"OPEN":
 			_do_open(c, a, dt)
+		"CLOSE":
+			_do_close(c, a, dt)
 		"TREPPE":
 			_do_stairs(c, a, dt)
 		_:
@@ -208,6 +210,40 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 			_log(Texte.t("sim.tuer_entriegelt") % _disp(a.on))
 	_noise(center(cell), c.noise)
 	c.used[tool.type] = int(c.used.get(tool.type, 0)) + 1
+	_next(c)
+
+## Tür wieder schließen. Nur Türen, die entriegelt (nicht aufgebrochen) und offen sind.
+## Eine geschlossene Tür verdeckt wieder die Sicht und senkt so den Verdacht der Wachen.
+func _do_close(c: Dictionary, a: Dictionary, dt: float) -> void:
+	var cell := _cell_of(a, "on")
+	var key := "obj:%d,%d" % [cell.x, cell.y]
+	var door: Variant = doors.get(cell, null)
+	if not c.started:
+		if not _free_for(c, key):
+			return
+		if not _reach(c, center(cell)):
+			_fail(c, Texte.t("fail.nicht_vor") % [c.name, _disp(a.on)])
+			return
+		if door == null:
+			_fail(c, Texte.t("fail.nichts_zu_schliessen") % _disp(a.on))
+			return
+		if door.destroyed:
+			_fail(c, Texte.t("fail.aufgebrochen_zu") % _disp(a.on))
+			return
+		if not open_cells.has(cell):
+			_fail(c, Texte.t("fail.schon_zu") % _disp(a.on))
+			return
+		c.started = true
+		_lock(c, key)
+		c.timer = CLOSE_TIME
+		return
+	c.timer -= dt
+	if c.timer > 0.0:
+		return
+	open_cells.erase(cell)
+	c["msg"] = Texte.t("sim.msg_tuer_zu")
+	_log(Texte.t("sim.tuer_zu") % [c.name, _disp(a.on)])
+	_noise(center(cell), 4.0)
 	_next(c)
 
 func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:

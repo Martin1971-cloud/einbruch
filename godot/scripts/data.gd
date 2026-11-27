@@ -180,6 +180,7 @@ const ACTION_NAMES := {
 	"MOVE": "aktion.MOVE",
 	"TOOL": "aktion.TOOL",
 	"OPEN": "aktion.OPEN",
+	"CLOSE": "aktion.CLOSE",
 	"TAKE": "aktion.TAKE",
 	"WAIT": "aktion.WAIT",
 	"CALL_CAR": "aktion.CALL_CAR",

@@ -17,6 +17,7 @@ const LOOT_TIME := 3.0
 
 ## Öffnen von Hand (Tür oder Vitrine, die schon entriegelt ist). Im Original: Tabelle "opens", Werkzeug Hand.
 const OPEN_TIME := 3.0
+const CLOSE_TIME := 1.5  # Tür wieder schließen (Dietrich oder Schlosstecher, nicht aufgebrochen)
 
 const DECAY := 2.0
 
@@ -459,7 +460,7 @@ func _obj_states() -> Dictionary:
 	var out := {}
 	for p in doors:
 		var d: Dictionary = doors[p]
-		out["%d,%d" % [p.x, p.y]] = {"kind": "door", "id": d.id, "name": d.name, "locked": d.locked, "open": open_cells.has(p), "glas": str(d.get("kind", "")) == "glas", "needs": door_tool(d)}
+		out["%d,%d" % [p.x, p.y]] = {"kind": "door", "id": d.id, "name": d.name, "locked": d.locked, "open": open_cells.has(p), "glas": str(d.get("kind", "")) == "glas", "needs": door_tool(d), "destroyed": bool(d.destroyed)}
 	for lid in loot_order:
 		var l: Dictionary = loot[lid]
 		out["%d,%d" % [l.pos.x, l.pos.y]] = {"kind": "case", "id": lid, "name": l.name, "word": _case_word(l), "locked": l.locked, "open": l.opened}
@@ -518,7 +519,7 @@ func _disp(id: String) -> String:
 ## Bezeichnung des Ziels einer Aktion (für das Ereignisprotokoll).
 func _ev_obj(a: Dictionary) -> String:
 	match str(a.t):
-		"TOOL", "OPEN":
+		"TOOL", "OPEN", "CLOSE":
 			return _disp(str(a.get("on", "")))
 		"TAKE":
 			return _disp(str(a.get("loot", "")))

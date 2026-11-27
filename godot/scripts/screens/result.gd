@@ -162,6 +162,8 @@ func _ev_text(ev: Dictionary) -> String:
 			txt = Texte.t("res.werkzeug_an") % [Texte.t(str(ev.tool)), Texte.t(str(ev.obj))]
 		"OPEN":
 			txt = Texte.t("res.oeffnet") % Texte.t(str(ev.obj))
+		"CLOSE":
+			txt = Texte.t("res.schliesst") % Texte.t(str(ev.obj))
 		"TAKE":
 			txt = Texte.t("res.nimmt") % Texte.t(str(ev.obj))
 		"CALL_CAR":

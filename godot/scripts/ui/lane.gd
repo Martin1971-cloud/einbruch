@@ -57,7 +57,7 @@ func _row(i: int) -> HBoxContainer:
 			row.add_child(_option(_options.tools, a.tool, func(v): a.tool = v))
 			row.add_child(UI.label("an", 14))
 			row.add_child(_option(_options.doors, a.on, func(v): a.on = v))
-		"OPEN":
+		"OPEN", "CLOSE":
 			row.add_child(_option(_options.doors, a.on, func(v): a.on = v))
 		"TAKE":
 			row.add_child(_option(_options.loot, a.loot, func(v): a.loot = v))

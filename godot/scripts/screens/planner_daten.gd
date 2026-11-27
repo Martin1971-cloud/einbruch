@@ -232,6 +232,8 @@ func _describe(a: Dictionary) -> String:
 			return Texte.t("res.werkzeug_an") % [Texte.t(GameData.TOOLS[a.tool].name), Texte.t(GameData.name_von(a.on))]
 		"OPEN":
 			return Texte.t("plan.oeffnen_obj") % Texte.t(GameData.name_von(a.on))
+		"CLOSE":
+			return Texte.t("plan.schliessen_obj") % Texte.t(GameData.name_von(a.on))
 		"TAKE":
 			return Texte.t("plan.beute_nehmen")
 		"WAIT":
@@ -366,6 +368,8 @@ func _object_entries(cell: Vector2i) -> Array:
 			out.append([Texte.t("plan.kein_passendes_werkzeug") % what, {}, false])
 	elif not st.open:
 		out.append([Texte.t("plan.von_hand") % what, {"t": "OPEN", "on": nm}, true])
+	elif st.kind == "door" and not st.get("destroyed", false):
+		out.append([Texte.t("plan.tuer_schliessen") % what, {"t": "CLOSE", "on": nm}, true])
 	if st.kind == "case":
 		var lid := ""
 		for l in target.loot:
@@ -384,7 +388,7 @@ func _menu_icon(a: Dictionary) -> Texture2D:
 	match a.get("t", ""):
 		"MOVE":
 			name = "walk"
-		"OPEN":
+		"OPEN", "CLOSE":
 			name = "open"
 		"TAKE":
 			name = "take"

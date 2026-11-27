@@ -50,7 +50,7 @@ func _animate_action(node: Node3D, act: String) -> void:
 		"TOOL":
 			spr.rotation.z = sin(t * 18.0) * 0.08
 			spr.scale = Vector3.ONE
-		"OPEN":
+		"OPEN", "CLOSE":
 			spr.rotation.z = sin(t * 4.0) * 0.04
 			spr.scale = Vector3.ONE
 		"TAKE":
@@ -264,7 +264,7 @@ func _sync_body() -> void:
 	var t_now := Time.get_ticks_msec() / 1000.0
 	for c in sim.crew:
 		var act := _current_act(c)
-		if act != "TOOL" and act != "OPEN":
+		if act != "TOOL" and act != "OPEN" and act != "CLOSE":
 			continue
 		var on_id := str(c.plan[c.idx].get("on", ""))
 		for lid in sim.loot:

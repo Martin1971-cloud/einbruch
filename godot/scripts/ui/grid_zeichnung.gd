@@ -476,7 +476,7 @@ func _draw_walker(cp: Vector2, col: Color, initial: String, cdata: Array, key :=
 			var pulse := 0.5 + 0.5 * sin(t * 14.0)
 			draw_circle(hand, _cell * (0.12 + 0.08 * pulse), Color(1.0, 0.85, 0.3, 0.55 + 0.4 * pulse))
 			draw_arc(hand, _cell * 0.22, 0, TAU, 12, Color(1.0, 0.85, 0.3, 0.8), 1.5)
-		elif act == "OPEN":
+		elif act == "OPEN" or act == "CLOSE":
 			# Tür oder Vitrine geht auf: ein Bogen zeigt die Bewegung
 			var a0 := n.angle() - 0.6 + 0.6 * sin(t * 4.0)
 			draw_arc(cp + n * _cell * 0.4, _cell * 0.35, a0, a0 + 0.9, 10, Color(1.0, 0.85, 0.3, 0.9), 2.0)
