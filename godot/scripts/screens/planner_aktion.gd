@@ -305,11 +305,12 @@ func _on_preview() -> void:
 	var cfg := _config()
 	var res := Sim.preview(cfg.target, cfg.team, cfg.plans, cfg.car, cfg.karte)
 	_refresh_timeline(res)
+	_problems.append_array(_nicht_am_wagen())
 	var msgs: Array = []
 	var zu_gross := _zu_grosse_beute()
 	var koennte := _koennte_zu_gross()
 	# Ausführung ist nur bereit, wenn die Planung ohne Fehler ist und Team und Fahrzeug stimmen
-	Game.ausfuehrung_cfg = _config() if _problems.is_empty() and not Game.team.is_empty() and Game.car_id != "" else {}
+	Game.ausfuehrung_cfg = cfg if _problems.is_empty() and not Game.team.is_empty() and Game.car_id != "" else {}
 	if koennte and zu_gross.is_empty():
 		msgs.append("[color=orange]%s[/color]" % (Texte.t("plan.fahrzeug_vielleicht") % Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum))))
 	# Auffällige Fehler und Fahrzeugprobleme im Planungsfenster: ein Hinweis, den man wegklicken muss (nur bei Änderung)
@@ -494,12 +495,22 @@ func _folge_etage(fr: Dictionary) -> void:
 				_grid.queue_redraw()
 			return
 
-## Ausführung: bei mehreren gespeicherten Plänen zuerst fragen, mit welchem Plan der Einbruch laufen soll.
-func _on_execute() -> void:
+## Ausführung (Leiste): bei mehreren gespeicherten Plänen zuerst fragen, mit welchem Plan der Einbruch laufen soll.
+func ausfuehren() -> void:
 	if _saved_for_target().size() > 1:
 		_ask_plan_for_execution()
 		return
 	_run_execution()
+
+## Jede Person muss am Ende am Fluchtwagen stehen, sonst kommt das Team nicht vom Gelände.
+func _nicht_am_wagen() -> Array:
+	var out: Array = []
+	for c in Game.team:
+		var pl: Array = plans[c.id]
+		var ends_at_car: bool = not pl.is_empty() and pl[-1].t == "MOVE" and pl[-1].get("to", "") == "fluchtwagen"
+		if not ends_at_car:
+			out.append(Texte.t("plan.endet_nicht_letzte") % c.name.split(" ")[0])
+	return out
 
 func _ask_plan_for_execution() -> void:
 	var pop := PopupPanel.new()
@@ -528,17 +539,10 @@ func _apply_saved(entry: Dictionary) -> void:
 
 func _run_execution() -> void:
 	_on_preview()
-	# Jede Person muss am Ende am Fluchtwagen stehen, sonst kommt das Team nicht vom Gelände
-	for c in Game.team:
-		var pl: Array = plans[c.id]
-		var ends_at_car: bool = not pl.is_empty() and pl[-1].t == "MOVE" and pl[-1].get("to", "") == "fluchtwagen"
-		if not ends_at_car:
-			_problems.append(Texte.t("plan.endet_nicht_letzte") % c.name.split(" ")[0])
-	if not _problems.is_empty():
-		_preview.text = Texte.t("plan.gesperrt_kopf") % [_problems.size(), _preview.text]
-		UI.hinweis(self, Texte.t("hint.achtung"), "\n".join(_problems))
+	# Nicht startbar: die Vorschau zeigt schon, warum
+	if Game.ausfuehrung_cfg.is_empty():
 		return
-	main.go("execution", {"config": _config()})
+	main.go("execution", {"config": Game.ausfuehrung_cfg})
 
 ## Testhilfe: Beispielplan mit Lockpick an der Eingangstür, Gemälde, Fluchtwagen.
 func _on_example() -> void:

@@ -33,7 +33,7 @@ static func _zeile(main: Node, aktiv: String, ausfuehrung_extra: Array) -> HBoxC
 	row.add_child(_knopf(aktiv, "organisation", Texte.t("nav.organisation"), func(): main.go("organisation"), 130))
 	row.add_child(_knopf(aktiv, "planung", Texte.t("nav.planung"), func(): main.go("planner"), 100))
 	var bereit: bool = not Game.ausfuehrung_cfg.is_empty()
-	var ausf := _knopf(aktiv, "ausfuehrung", Texte.t("nav.ausfuehrung"), func(): main.go("execution", {"config": Game.ausfuehrung_cfg}), 110)
+	var ausf := _knopf(aktiv, "ausfuehrung", Texte.t("nav.ausfuehrung"), func(): _ausfuehren(main), 110)
 	ausf.disabled = not bereit
 	row.add_child(ausf)
 	row.add_child(_knopf(aktiv, "journal", Texte.t("nav.journal"), func(): main.open_journal(), 120))
@@ -45,6 +45,14 @@ static func _zeile(main: Node, aktiv: String, ausfuehrung_extra: Array) -> HBoxC
 	row.add_child(sp2)
 	row.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(main, true), 110))
 	return row
+
+## Der Planer entscheidet selbst (Auswahl des Plans); sonst startet die gültige Planung direkt.
+static func _ausfuehren(main: Node) -> void:
+	if main.current.has_method("ausfuehren"):
+		main.current.ausfuehren()
+	else:
+		main.go("execution", {"config": Game.ausfuehrung_cfg})
+
 
 static func _knopf(aktiv: String, id: String, text: String, cb: Callable, min_w: int) -> Button:
 	if aktiv == id:
