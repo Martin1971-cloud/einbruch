@@ -150,6 +150,10 @@ func _draw_fine(spec: Dictionary) -> void:
 			"C":
 				draw_rect(rect, Color(0.93, 0.9, 0.86))
 				draw_rect(rect, GOLD, false, 1.0)
+			"H":
+				# Tresen: dunkles Holz, damit er nicht wie eine Vitrine oder ein Durchgang wirkt
+				draw_rect(rect, Color(0.36, 0.22, 0.13))
+				draw_rect(rect, Color(0.5, 0.33, 0.2), false, 2.0)
 			"R":
 				# Regal ohne Beute: dunkles Holz mit zwei Böden
 				draw_rect(rect, Color(0.42, 0.28, 0.17))

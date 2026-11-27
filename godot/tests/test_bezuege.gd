@@ -4,7 +4,7 @@ extends SceneTree
 ## Aufruf: godot --headless --path . --script res://tests/test_bezuege.gd
 var _fails := 0
 const ID_MUSTER := "^[a-z][a-z0-9_]*$"
-const KACHELN := [".", "o", "W", "D", "F", "T", "C", "S", "K", "R", "Z", "P"]
+const KACHELN := [".", "o", "W", "D", "F", "T", "C", "H", "S", "K", "R", "Z", "P"]
 const DEKO_KACHELN := ["C", "S", "R", "Z", "P"]
 ## Geplante Gebäude: noch nicht gebaut, der Grundriss ist ein Platzhalter. Kennungen und Verweise werden trotzdem geprüft.
 ## Wenn ein Gebäude fertig ist, aus dieser Liste nehmen; dann gelten alle Regeln voll.

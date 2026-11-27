@@ -577,6 +577,9 @@ func _build_fine(spec: Dictionary) -> void:
 				_mesh_in(pschub, Vector3(sz.x * 0.6, 0.16, 0.04), Vector3(0, 0, 0.02), Color(0.5, 0.34, 0.2), 0.6)
 				_mesh_in(pschub, Vector3(sz.x * 0.6, 0.16, 0.36), Vector3(0, 0, 0.2), Color(0.45, 0.3, 0.18), 0.6)
 				_deko_anim[Vector2i(floori(float(r[0] + r[2]) * 0.5 / Sim.SUB), floori(float(r[1] + r[3]) * 0.5 / Sim.SUB))] = {"node": pschub, "kind": "P", "rest": pschub.position}
+			"H":
+				# Tresen: dunkles Holz, kein Glasdeckel
+				_box(Vector3(sz.x, 1.0, sz.z), p + Vector3(0, 0.5, 0), Color(0.36, 0.22, 0.13), 0.7)
 			"C":
 				_box(Vector3(sz.x, 1.0, sz.z), p + Vector3(0, 0.5, 0), Color(0.93, 0.9, 0.86), 0.25)
 				# Glasdeckel: an der Rückkante gelenkt, hebt sich beim Öffnen der Vitrine (siehe _sync)

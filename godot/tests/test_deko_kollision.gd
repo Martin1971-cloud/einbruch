@@ -34,9 +34,9 @@ func _init() -> void:
 		var vitrine_ok := false
 		for y in range(sim.fine_h):
 			for x in range(sim.fine_w):
-				if sim.ftile(Vector2i(x, y)) == "C":
+				if sim.ftile(Vector2i(x, y)) == "C" or sim.ftile(Vector2i(x, y)) == "H":
 					vitrine_ok = true
-		_check(vitrine_ok, "%s: Vitrinen-Kachel C kommt im Grundriss vor (Referenz)" % tid)
+		_check(vitrine_ok, "%s: blockierende Vergleichskachel (C oder H) kommt im Grundriss vor" % tid)
 		for l in t.loot:
 			if not l.get("leer", false):
 				continue

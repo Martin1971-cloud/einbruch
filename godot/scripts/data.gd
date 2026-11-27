@@ -425,7 +425,7 @@ const ZIELE_ROH := {
 				[144, 120, 176, 128, "W"],
 				[128, 120, 144, 128, "D"],
 				[128, 24, 152, 41, "S"],
-				[160, 40, 168, 120, "C"],
+				[160, 40, 168, 120, "H"],  # Tresen (Holz, blockiert und verdeckt die Sicht wie eine Vitrine)
 				[160, 48, 168, 64, "K"],
 				[144, 80, 160, 96, "Z"],  # Zeitungsständer (Dekoration, Kollision wie Vitrine)
 				[112, 48, 128, 64, "R"],  # Regal (Dekoration, Kollision wie Vitrine)
