@@ -21,6 +21,15 @@ func _team(ids: Array) -> Array:
 	return out
 
 
+func _erreichbar(sim: Sim, starts: Array, tuer: Vector2i) -> bool:
+	for start in starts:
+		for dd in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n: Vector2i = tuer + dd
+			if n == start or not sim.path_to(Sim.center(start), n).is_empty():
+				return true
+	return false
+
+
 func _lauf(tid: String, plan: Array, team: Array, plans: Dictionary) -> Dictionary:
 	var sim := Sim.create(GameData.TARGETS[tid], team, plans, GameData.car_now("limo", 85.0))
 	var n := 0
@@ -86,12 +95,11 @@ func _init() -> void:
 	var bruch := _lauf("juwelier", plan_bruch, _team(["teo"]), {"teo": plan_bruch.duplicate(true)})
 	_check(bruch.sim.alarm_active or bruch.sim.log_lines.any(func(l): return "ALARM" in str(l)), "juwelier: Stahltür aufbrechen ohne Überbrückung löst Alarm aus")
 
-	# Grundsatz: Jedes Gebäude mit Alarmanlage hat einen Zugang von außen, der nicht alarmgesichert ist.
+	# Grundsatz: Jedes Gebäude mit Alarmanlage braucht einen Weg ohne Alarm von außen. Entweder eine
+	# Schwachstelle (Tür oder Fenster ohne Alarmkontakt) oder die Eintrittskarte des Informanten für die Haupttür.
 	print("== Einstieg ohne Alarm ==")
 	for tid in GameData.ORDER:
 		var t: Dictionary = GameData.TARGETS[tid]
-		if tid == "museum":
-			continue  # geplant, noch nicht gebaut
 		if not t.has("panel"):
 			continue
 		var sim := Sim.create(t, [], {}, GameData.car_now("limo", 85.0))
@@ -101,16 +109,38 @@ func _init() -> void:
 		for pid in ["aussen_eingang", "aussen_schaufenster"]:
 			if t.points.has(pid):
 				starts.append(Sim._v2i(t.points[pid]))
-		var zugang := false
+		var schwachstelle := false
 		for d in t.get("doors", []):
 			if t.get("gesichert", []).has(str(d.id)):
 				continue
-			var tuer := Sim._v2i(d.pos)
-			for start in starts:
-				for dd in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-					var n: Vector2i = tuer + dd
-					if n == start or not sim.path_to(Sim.center(start), n).is_empty():
-						zugang = true
-		_check(zugang, "%s: mindestens ein nicht alarmgesicherter Zugang von außen" % tid)
+			if _erreichbar(sim, starts, Sim._v2i(d.pos)):
+				schwachstelle = true
+		var karte_weg := false
+		var kt := str(t.get("karte_tuer", ""))
+		if kt != "" and t.get("gesichert", []).has(kt):
+			for d in t.get("doors", []):
+				if str(d.id) == kt and _erreichbar(sim, starts, Sim._v2i(d.pos)):
+					karte_weg = true
+		_check(schwachstelle or karte_weg, "%s: Einstieg ohne Alarm über Schwachstelle oder Eintrittskarte" % tid)
+
+	# Museum (geplant): Die Haupttür öffnet nur mit der Eintrittskarte ohne Alarm
+	print("== Museum: Eintrittskarte ==")
+	var mus: Dictionary = GameData.TARGETS["museum"]
+	var plan_tuer: Array = [
+		{"t": "MOVE", "to": "aussen_eingang"},
+		{"t": "TOOL", "tool": "lockpick", "on": "eingangstuer"},
+		{"t": "OPEN", "on": "eingangstuer"},
+	]
+	var sim_ohne := Sim.create(mus, _team(["teo"]), {"teo": plan_tuer.duplicate(true)}, GameData.car_now("limo", 85.0), false)
+	var sim_mit := Sim.create(mus, _team(["teo"]), {"teo": plan_tuer.duplicate(true)}, GameData.car_now("limo", 85.0), true)
+	for _i in range(4000):
+		if sim_ohne.status == "RUNNING":
+			sim_ohne.step(Sim.DT)
+		if sim_mit.status == "RUNNING":
+			sim_mit.step(Sim.DT)
+	# Geprüft wird der Alarmkontakt der Anlage; Wachen, die die Tür sehen, sind ein eigenes System.
+	_check(sim_ohne.log_lines.any(func(l): return "ALARM durch Alarmpanel" in str(l)), "museum: ohne Karte löst die Haupttür den Alarm der Anlage aus")
+	_check(not sim_mit.log_lines.any(func(l): return "ALARM durch Alarmpanel" in str(l)), "museum: mit Karte kein Alarm der Anlage an der Haupttür")
+	_check(sim_mit.log_lines.any(func(l): return "Eintrittskarte" in str(l)), "museum: die Karte wird im Protokoll genannt")
 	print("Fehler: %d" % _fails)
 	quit(1 if _fails > 0 else 0)

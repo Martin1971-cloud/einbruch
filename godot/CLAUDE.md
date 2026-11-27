@@ -8,6 +8,12 @@
 - `tests/test_deko_abstand.gd` prüft das für alle Ziele mit Dekoobjekten. Vor dem Commit laufen lassen.
 - Dekoobjekte nutzen dieselben Grundrisskacheln wie die Beute (C, S, K) oder die Dekotypen R, Z, P, damit Kollision und Sichtregel gleich sind.
 
+## Alarm und Einstieg
+- Jedes Gebäude mit Alarmanlage braucht einen Einstieg ohne Alarm. Entweder eine Schwachstelle (Tür oder Fenster ohne Alarmkontakt) oder die Eintrittskarte des Informanten für die Haupttür (`karte_tuer` im Ziel).
+- Nicht jedes Gebäude bekommt eine Schwachstelle. Das Museum braucht die Karte.
+- Aufbrechen einer gesicherten Tür oder Vitrine löst den Alarmkontakt aus wie das Öffnen.
+- `tests/test_ziel_durchlauf.gd` prüft diese Regeln.
+
 ## Code
 - Sauber heißt: keine toten Funktionen, Variablen, Schlüssel oder Dateien; keine auskommentierten Blöcke; keine Debug-Reste.
 - Eine Quelle der Wahrheit: Spielwerte in `scripts/data.gd`, Texte in `scripts/texte.gd`. Keine Zahl oder Text doppelt im Code.
