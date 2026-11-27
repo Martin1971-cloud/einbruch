@@ -28,7 +28,10 @@ func _ready() -> void:
 	rollen.set_anchors_preset(Control.PRESET_FULL_RECT)
 	rollen.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	add_child(rollen)
-	rollen.add_child(UI.margin(root, 12))
+	var rand := UI.margin(root, 12)
+	rand.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rand.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	rollen.add_child(rand)
 
 	root.add_child(_title_bar())
 	root.add_child(_status_bar())
