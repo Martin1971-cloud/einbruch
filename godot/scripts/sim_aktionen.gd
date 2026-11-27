@@ -197,7 +197,10 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 			_log(Texte.t("sim.vitrine_aufgebrochen") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
 		else:
 			c["msg"] = Texte.t("sim.msg_entriegelt") % _case_word(loot[case_id])
-			_log(Texte.t("sim.vitrine_entriegelt") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
+			if loot[case_id].get("leer", false):
+				_log(Texte.t("sim.deko_entriegelt") % [c.name, loot[case_id].name])
+			else:
+				_log(Texte.t("sim.vitrine_entriegelt") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
 	elif door != null:
 		door.locked = false
 		if tool.destroys:
@@ -288,7 +291,10 @@ func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:
 	else:
 		loot[case_id].opened = true
 		c["msg"] = Texte.t("sim.msg_offen") % _case_word(loot[case_id])
-		_log(Texte.t("sim.oeffnet_vitrine") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
+		if loot[case_id].get("leer", false):
+			_log(Texte.t("sim.deko_oeffnet") % [c.name, loot[case_id].name])
+		else:
+			_log(Texte.t("sim.oeffnet_vitrine") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
 	_pruefe_alarmkontakt(str(door.id) if door != null else case_id)
 	_next(c)
 

@@ -179,6 +179,8 @@ func _image_card() -> PanelContainer:
 	col.add_child(dlg)
 	var c := _panel(col)
 	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Mindestbreite: sonst bricht der Dialogtext so schmal um, dass die Stadtansicht unten abgeschnitten wird
+	c.custom_minimum_size = Vector2(260, 0)
 	return c
 
 
@@ -311,7 +313,7 @@ func _refresh_image() -> void:
 		pic.texture = load(photo_path)
 		pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		pic.custom_minimum_size = Vector2(0, 240)
+		pic.custom_minimum_size = Vector2(0, 120)  # klein halten: die Stadtansicht muss im 900-Pixel-Fenster passen
 		pic.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		_image_box.add_child(pic)
 		return

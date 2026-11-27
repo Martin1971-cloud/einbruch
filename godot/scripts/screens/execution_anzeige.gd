@@ -190,6 +190,8 @@ func _sync_body() -> void:
 		hl.rotation.x = move_toward(hl.rotation.x, -PI * 0.42 if case_open else 0.0, 0.05)
 	for lid in sim.loot:
 		var l: Dictionary = sim.loot[lid]
+		if l.get("leer", false):
+			continue  # Dekoobjekt: bleibt als Möbelstück stehen
 		var n: MeshInstance3D = _loot_nodes[lid]
 		if l.state == "ROOM":
 			# Wie im Original: Beute steckt im Objekt (Kasse, Wertschrank), es schwebt nichts im Raum
@@ -268,7 +270,7 @@ func _sync_body() -> void:
 			continue
 		var on_id := str(c.plan[c.idx].get("on", ""))
 		for lid in sim.loot:
-			if str(sim.loot[lid].get("id", "")) == on_id and sim.loot[lid].state == "ROOM":
+			if str(sim.loot[lid].get("id", "")) == on_id and sim.loot[lid].state == "ROOM" and not sim.loot[lid].get("leer", false):
 				_loot_nodes[lid].scale = Vector3.ONE * (1.0 + 0.15 * absf(sin(t_now * 10.0)))
 	_car_node.visible = sim.car.present
 	_refresh_ui()
