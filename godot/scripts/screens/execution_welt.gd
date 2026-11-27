@@ -506,7 +506,8 @@ func _build_fine(spec: Dictionary) -> void:
 				# Glasscheibe: zerbricht beim Öffnen (siehe _sync)
 				_window_nodes[anc_w] = _box(Vector3(fsz.x * 0.6, WALL_H - 0.9, fsz.z * 0.6), p + Vector3(0, 0.45 + (WALL_H - 0.9) * 0.5, 0), Color(0.45, 0.8, 1.0), 0.05, 0.0, 0.5)
 			"D":
-				var anc := Vector2i(floori((float(r[0]) + float(r[2])) * 0.5 / Sim.SUB), floori((float(r[1]) + float(r[3])) * 0.5 / Sim.SUB))
+				# Schlüssel wie in der Simulation (door_key): die Mitte des Türrechtecks kann in der Nachbarzelle liegen
+				var anc := sim.door_key(Vector2i(floori((float(r[0]) + float(r[2])) * 0.5), floori((float(r[1]) + float(r[3])) * 0.5)))
 				var dsz := _wall_size(sz)
 				# Türblatt 1,0 m breit, in der Öffnung
 				if dsz.x > dsz.z:
