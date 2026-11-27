@@ -159,8 +159,8 @@ func _draw_fine(spec: Dictionary) -> void:
 				draw_rect(rect, GOLD, false, 1.0)
 			"Z":
 				# Zeitungsständer: grauer Ständer mit Zeitungen
-				draw_rect(rect, Color(0.3, 0.32, 0.36))
-				draw_rect(rect.grow(-rect.size.x * 0.22), Color(0.86, 0.84, 0.76))
+				draw_rect(rect, Color(0.6, 0.14, 0.1))
+				draw_rect(rect.grow(-rect.size.x * 0.18), Color(0.98, 0.97, 0.92))
 				draw_rect(rect, GOLD, false, 1.0)
 			"P":
 				# Schreibtisch ohne Beute: helle Platte

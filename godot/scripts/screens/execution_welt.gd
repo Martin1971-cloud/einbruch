@@ -557,11 +557,12 @@ func _build_fine(spec: Dictionary) -> void:
 				_deko_anim[Vector2i(floori(float(r[0] + r[2]) * 0.5 / Sim.SUB), floori(float(r[1] + r[3]) * 0.5 / Sim.SUB))] = {"node": rklappe, "kind": "R", "rest": rklappe.position}
 			"Z":
 				# Zeitungsständer: grauer Ständer, der Zeitungsstapel obenauf hebt sich beim Öffnen leicht und kippt (Kollision wie Vitrine)
-				_box(Vector3(sz.x, 0.9, sz.z), p + Vector3(0, 0.45, 0), Color(0.3, 0.32, 0.36), 0.5)
+				_box(Vector3(sz.x, 0.9, sz.z), p + Vector3(0, 0.45, 0), Color(0.6, 0.14, 0.1), 0.5)
+				_box(Vector3(sz.x + 0.03, 0.05, sz.z + 0.03), p + Vector3(0, 0.9, 0), Color(0.85, 0.66, 0.3), 0.3, 0.6)
 				var zstapel := Node3D.new()
-				zstapel.position = Vector3(p.x, 0.9, p.z)
+				zstapel.position = Vector3(p.x, 0.92, p.z)
 				add_child(zstapel)
-				_mesh_in(zstapel, Vector3(sz.x * 0.7, 0.1, sz.z * 0.6), Vector3(0, 0.05, 0), Color(0.86, 0.84, 0.76), 0.9)
+				_mesh_in(zstapel, Vector3(sz.x * 0.76, 0.14, sz.z * 0.66), Vector3(0, 0.07, 0), Color(0.98, 0.97, 0.92), 0.9)
 				_deko_anim[Vector2i(floori(float(r[0] + r[2]) * 0.5 / Sim.SUB), floori(float(r[1] + r[3]) * 0.5 / Sim.SUB))] = {"node": zstapel, "kind": "Z", "rest": zstapel.position}
 			"P":
 				# Schreibtisch ohne Beute: Platte auf vier Beinen, eine Schublade vorn gleitet beim Öffnen heraus (Kollision wie Vitrine)
