@@ -28,6 +28,7 @@ func _init() -> void:
 	for tid in GameData.TARGETS:
 		var t: Dictionary = GameData.TARGETS[tid]
 		_check(_id_ok(tid), "%s: Ziel-ID im Format snake_case" % tid)
+		_check(str(t.get("sprecher", "")) != "" and GameData.SPRECHER.any(func(e): return str(e.id) == str(t.sprecher)), "%s: Ansprechperson existiert" % tid)
 		if not PLANUNG.has(tid):
 			_check(t.get("fine", {}).has("paint"), "%s: Feingrundriss vorhanden" % tid)
 		var sim := Sim.create(t, [], {}, GameData.car_now("limo", 85.0))

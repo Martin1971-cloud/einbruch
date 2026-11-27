@@ -154,16 +154,13 @@ func _map_card() -> PanelContainer:
 	return c
 
 
-## Zuletzt gezeigtes Geschlecht: die nächste Sprecherin oder der nächste Sprecher ist vom anderen Geschlecht.
-static var _letzte_weiblich := false
-
-func _naechste_sprecherin() -> Dictionary:
-	_letzte_weiblich = not _letzte_weiblich
-	var pool: Array = []
+## Ansprechperson des Ziels: fest pro Gebäude (GameData.TARGETS[id].sprecher).
+func _sprecherin(ziel: String) -> Dictionary:
+	var id := str(GameData.TARGETS[ziel].sprecher)
 	for e in GameData.SPRECHER:
-		if bool(e.weiblich) == _letzte_weiblich:
-			pool.append(e)
-	return pool[randi() % pool.size()]
+		if str(e.id) == id:
+			return e
+	return GameData.SPRECHER[0]
 
 func _image_card() -> PanelContainer:
 	var col := VBoxContainer.new()
@@ -179,7 +176,7 @@ func _image_card() -> PanelContainer:
 	var dv := VBoxContainer.new()
 	dv.add_theme_constant_override("separation", 4)
 	dlg.add_child(dv)
-	var sprecher := _naechste_sprecherin()
+	var sprecher := _sprecherin(_selected)
 	dv.add_child(UI.label(str(sprecher.name).to_upper(), 12, Color(0.97, 0.82, 0.42)))
 	# Porträt der Sprecherin (Dialog)
 	var sp_path := "res://assets/portraits/%s.png" % str(sprecher.bild)

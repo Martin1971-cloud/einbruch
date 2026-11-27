@@ -194,14 +194,14 @@ const ACTION_NAMES := {
 ## Porträts (2D, Krimi-Stil) je Figur, nach Geschlecht und Rolle (weiblich: Mira, Ilja, Rosa, Greta). Dateien in assets/portraits/.
 ## Sprecherinnen und Sprecher der Stadtansicht: jede Anzeige wechselt zwischen weiblich und männlich.
 const SPRECHER := [
-	{"name": "Mira Calder", "bild": "beobachterin", "weiblich": true},
-	{"name": "Lena Hartmann", "bild": "rezeptionistin", "weiblich": true},
-	{"name": "Vera Lind", "bild": "hehlerin", "weiblich": true},
-	{"name": "Marta Quell", "bild": "einbrecherin", "weiblich": true},
-	{"name": "Jonas Berg", "bild": "wachmann", "weiblich": false},
-	{"name": "Karl Oster", "bild": "hausmeister", "weiblich": false},
-	{"name": "Paul Renner", "bild": "planer", "weiblich": false},
-	{"name": "Stefan Krall", "bild": "kraeftige", "weiblich": false},
+	{"id": "mira_calder", "name": "Mira Calder", "bild": "beobachterin", "weiblich": true},
+	{"id": "lena_hartmann", "name": "Lena Hartmann", "bild": "rezeptionistin", "weiblich": true},
+	{"id": "vera_lind", "name": "Vera Lind", "bild": "hehlerin", "weiblich": true},
+	{"id": "marta_quell", "name": "Marta Quell", "bild": "einbrecherin", "weiblich": true},
+	{"id": "jonas_berg", "name": "Jonas Berg", "bild": "wachmann", "weiblich": false},
+	{"id": "karl_oster", "name": "Karl Oster", "bild": "hausmeister", "weiblich": false},
+	{"id": "paul_renner", "name": "Paul Renner", "bild": "planer", "weiblich": false},
+	{"id": "stefan_krall", "name": "Stefan Krall", "bild": "kraeftige", "weiblich": false},
 ]
 
 const PORTRAIT := {
@@ -300,6 +300,7 @@ static var TARGETS := _mit_beute(ZIELE_ROH)
 const ZIELE_ROH := {
 	"museum": {
 		"id": "museum",
+		"sprecher": "lena_hartmann",
 		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"glasvitrinen": true,  # Ausstellungskästen aus Glas: Glasschneider nötig (auch wenn man aufbrechen könnte)
 		"name": "ziel.museum.name",
@@ -385,6 +386,7 @@ const ZIELE_ROH := {
 	},
 	"kiosk": {
 		"id": "kiosk",
+		"sprecher": "karl_oster",
 		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		# Original (TCBUILD.DAT, Nr. 10): Polizeizeit 600 s, Lautstärkegrenze 200, keine Wache
 		"guard_rate": 10.0,   # Wachrate (Original GRate): bestimmt das Polizeitempo
@@ -474,6 +476,7 @@ const ZIELE_ROH := {
 	# Dient dazu, Animationen und Abläufe zu prüfen. Im Spiel nicht erreichbar.
 	"testhaus": {
 		"id": "testhaus",
+		"sprecher": "stefan_krall",
 		"guard_rate": 60.0,
 		"escape_km": 15.0,
 		"max_volume": 150.0,
@@ -592,6 +595,7 @@ const ZIELE_ROH := {
 	# Holztüren, Vitrinen, Gemälde an der Wand. Keine Wache (Original: Wachstärke 0). Erster Schritt nach dem Kiosk.
 	"curiosity": {
 		"id": "curiosity",
+		"sprecher": "mira_calder",
 		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"guard_rate": 90.0,
 		"escape_km": 20.0,
@@ -714,6 +718,7 @@ const ZIELE_ROH := {
 	# Stahltür zum Tresorraum. Keine Wache (Original: Wachstärke 0), aber Alarm. Gebäude 3 nach dem Laden.
 	"juwelier": {
 		"id": "juwelier",
+		"sprecher": "jonas_berg",
 		"hauptweg": ["eingangstuer", "schaufenster"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"guard_rate": 100.0,
 		"escape_km": 13.0,
