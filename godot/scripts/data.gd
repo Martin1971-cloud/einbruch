@@ -742,7 +742,7 @@ const ZIELE_ROH := {
 			{"pos": [8, 2], "id": "schaufenster", "res": 20, "cplx": 20, "locked": true, "kind": "glas"},
 		],
 		 "panel": {"id": "alarmpanel", "pos": [3, 3], "res": 50, "cplx": 45},
-		"gesichert": ["eingangstuer", "stahltuer", "schaufenster", "diamantring", "perlen", "tresor"],
+		"gesichert": ["eingangstuer", "stahltuer", "diamantring", "perlen", "tresor"],  # Schaufenster bewusst ohne Kontakt: Schwachstelle
 		"sensors": [
 			{"name": "ziel.juwelier.sensor.1.name", "pos": [5, 8], "threshold": 25.0},
 			# Glasbruchmelder: reagiert schon auf ein zerbrochenes Schaufenster (niedrige Schwelle)
