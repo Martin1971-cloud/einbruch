@@ -58,6 +58,7 @@ var points := {}
 var doors := {}        # Vector2i -> Dictionary
 
 var open_cells := {}   # Vector2i -> true
+var open_since := {}    # Vector2i -> Spielzeit, zu der die Tür geöffnet wurde (für die Schonfrist der Streife)
 
 var panel := {}
 

@@ -207,6 +207,7 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 		if tool.destroys:
 			door.destroyed = true
 			open_cells[cell] = true
+			open_since[cell] = time
 			c["msg"] = Texte.t("sim.msg_tuer_aufgebrochen")
 			_log(Texte.t("sim.tuer_aufgebrochen") % _disp(a.on))
 			_pruefe_alarmkontakt(str(door.id))
@@ -246,6 +247,7 @@ func _do_close(c: Dictionary, a: Dictionary, dt: float) -> void:
 	if c.timer > 0.0:
 		return
 	open_cells.erase(cell)
+	open_since.erase(cell)
 	c["msg"] = Texte.t("sim.msg_tuer_zu")
 	_log(Texte.t("sim.tuer_zu") % [c.name, _disp(a.on)])
 	_noise(center(cell), 4.0)
@@ -288,6 +290,7 @@ func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:
 		return
 	if door != null:
 		open_cells[cell] = true
+		open_since[cell] = time
 		c["msg"] = Texte.t("sim.msg_tuer_offen")
 		_log(Texte.t("sim.oeffnet") % [c.name, _disp(a.on)])
 	else:

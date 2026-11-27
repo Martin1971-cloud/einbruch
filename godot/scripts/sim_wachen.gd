@@ -42,9 +42,10 @@ func _check_patrols(_dt: float) -> void:
 		return
 	_next_patrol = time + rng.randf_range(GameData.PATROL_MIN_S, GameData.PATROL_MAX_S)
 	patrol_count += 1
+	# Eine Tür, die erst kurz offen ist, fällt nicht auf: in dieser Zeit kann der Einbrecher sie schließen
 	var offen := false
 	for p in open_cells:
-		if doors.has(p):
+		if doors.has(p) and time - float(open_since.get(p, -INF)) > GameData.PATROL_GRACE_S:
 			offen = true
 	if offen:
 		_alarm("Streife", "QUIET", 0.0)

@@ -48,6 +48,10 @@ func _init() -> void:
 	var zu := _lauf(oeffnen + [{"t": "CLOSE", "on": "eingangstuer"}] + warten, 900.0)
 	_check(not _streife_alarm(zu), "geschlossene Tür: die Streife sieht nichts")
 
+	# Schonfrist: wer die Tür innerhalb der Schonfrist wieder schließt, bleibt unbemerkt, auch wenn die Streife kommt
+	var schnell := _lauf(oeffnen + [{"t": "WAIT", "sec": 10.0}, {"t": "CLOSE", "on": "eingangstuer"}] + warten, 900.0)
+	_check(not _streife_alarm(schnell), "Tür innerhalb der Schonfrist geschlossen: die Streife bemerkt nichts")
+
 	# Abstände: in 900 Sekunden kommen 3 bis 5 Streifen
 	_check(zu.patrol_count >= 3 and zu.patrol_count <= 5, "in 15 Minuten kommen 3 bis 5 Streifen (gezählt: %d)" % zu.patrol_count)
 	print("Fehler: %d" % _fails)
