@@ -71,6 +71,9 @@ func open_slots() -> void:
 	_slots.main = self
 	_slots.args = {"overlay": true}
 	add_child(_slots)
+	# Unter der Navigationsleiste: die Leiste bleibt sichtbar und klickbar
+	_slots.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_slots.offset_top = 80
 
 
 func open_optionen() -> void:
