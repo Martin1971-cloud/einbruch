@@ -4,7 +4,20 @@ extends RefCounted
 ## Das aktive Fenster ist hervorgehoben. Ausführung ist nur mit einer gültigen Planung anklickbar.
 ## Während der Ausführung sind nur Pause und Beenden erlaubt.
 
-static func leiste(main: Node, aktiv: String, ausfuehrung_extra: Array = []) -> HBoxContainer:
+## Die Leiste mit einer feinen Trennlinie darunter: trennt sie von jedem Fensterinhalt, überall gleich.
+static func leiste(main: Node, aktiv: String, ausfuehrung_extra: Array = []) -> PanelContainer:
+	var panel := PanelContainer.new()
+	var st := StyleBoxFlat.new()
+	st.bg_color = Color(0, 0, 0, 0)
+	st.border_width_bottom = 2
+	st.border_color = Color(0.97, 0.82, 0.42, 0.55)
+	st.content_margin_bottom = 8
+	panel.add_theme_stylebox_override("panel", st)
+	panel.add_child(_zeile(main, aktiv, ausfuehrung_extra))
+	return panel
+
+
+static func _zeile(main: Node, aktiv: String, ausfuehrung_extra: Array) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
 	row.add_child(UI.label(Texte.t("app.titel"), 22, Color(0.97, 0.82, 0.42)))
