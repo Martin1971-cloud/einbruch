@@ -112,7 +112,7 @@ func _refresh_team() -> void:
 		_team_box.add_child(row)
 		_team_btns[c.id] = b
 	if not Game.driver.is_empty():
-		_team_box.add_child(_l(Texte.t("plan.fahrer_zeile") % [Game.driver.name, int(Game.driver.skills.FAHREN)], 12, Color(0.85, 0.85, 0.9)))
+		_team_box.add_child(_l(Texte.t("plan.fahrer_zeile") % [Game.driver.name, int(Game.driver.skills.get("FAHREN", 0))], 12, Color(0.85, 0.85, 0.9)))
 	# Teamgröße mit Kosten (sofort) und voraussichtlicher Zeit (nach der ersten Vorschau): die Abwägung bewusst treffen
 	var kosten_team: int = Game.team_fee_total() + (0 if Game.driver.is_empty() or Game.team.any(func(c): return c.id == Game.driver.get("id", "")) else int(Game.driver.get("fee", 0))) + int(GameData.car_now(Game.car_id, 85.0).get("rent", 0))
 	var zeit_txt: String = Sim.clock(float(_res.get("time", 0.0))) if _res.has("time") else Texte.t("plan.zeit_offen")

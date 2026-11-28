@@ -235,7 +235,7 @@ func _team_best(skill: String) -> int:
 		if not _selected[c.id]:
 			continue
 		if c.skills.has(skill):
-			best = maxi(best, int(c.skills[skill]))
+			best = maxi(best, int(c.skills.get(skill, 0)))
 	return best
 
 
@@ -461,7 +461,7 @@ func _on_confirm() -> void:
 	Game.money -= _cost()
 	var best: String = drivers[0]
 	for id in drivers:
-		if int(_crew_by_id(id).skills.FAHREN) > int(_crew_by_id(best).skills.FAHREN):
+		if int(_crew_by_id(id).skills.get("FAHREN", 0)) > int(_crew_by_id(best).skills.get("FAHREN", 0)):
 			best = id
 	Game.driver = _crew_by_id(best).duplicate(true)
 	Game.driver["gear"] = _gear_pick[best]

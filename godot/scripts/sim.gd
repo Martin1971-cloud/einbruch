@@ -74,7 +74,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 			"id": c.id, "name": c.name, "skills": c.skills,
 			"gear": gear, "gear_ids": gear_ids,
 			# Tragkraft in kg (Original: (Ausdauer + Stärke) × 200 g, dazu ein Volumen; hier nur Gewicht, Kraft = Kampfsport)
-			"capacity": 15.0 + float(c.skills.FORCE) * 0.35,
+			"capacity": 15.0 + float(c.skills.get("FORCE", 0)) * 0.35,
 			"pos": center(st2), "facing": Vector2(0, 1), "plan": plans.get(c.id, []), "idx": 0,
 			"path": [], "timer": 0.0, "started": false, "done": false,
 			"carried": [], "ev": 0.0, "noise": 0.0, "seen_sec": 0.0, "tool_ok": true,
