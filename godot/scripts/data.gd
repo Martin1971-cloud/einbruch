@@ -212,6 +212,26 @@ const PORTRAIT := {
 }
 
 
+## Oberflächen: eine Quelle der Wahrheit. Jede Kachel hat eine ID, eine Art (boden, wand, fenster, aussen)
+## und die Datei in assets/tiles/. Gebäude verweisen nur auf diese IDs (siehe oberflaeche()).
+const OBERFLAECHEN := {
+	"parkett": {"art": "boden", "datei": "parkett", "status": "Standard im Grundriss"},
+	"teppich": {"art": "boden", "datei": "teppich", "status": "im Spiel (Museum)"},
+	"laeufer": {"art": "boden", "datei": "laeufer", "status": "vorhanden, noch nicht genutzt"},
+	"boden_dielen": {"art": "boden", "datei": "boden_dielen", "status": "im Spiel (Kiosk)"},
+	"boden_eiche": {"art": "boden", "datei": "boden_eiche", "status": "im Spiel (Kuriositätenladen)"},
+	"boden_schachbrett": {"art": "boden", "datei": "boden_schachbrett", "status": "im Spiel (Juwelier)"},
+	"boden_marmor": {"art": "boden", "datei": "boden_marmor", "status": "vorhanden, noch nicht genutzt"},
+	"wand_putz": {"art": "wand", "datei": "wand_putz", "status": "im Spiel (Innenwände)"},
+	"vertaefelung": {"art": "wand", "datei": "vertaefelung", "status": "im Spiel (Kuriositätenladen)"},
+	"wand_streifen": {"art": "wand", "datei": "wand_streifen", "status": "Tapete, nicht genutzt"},
+	"wand_damast_gruen": {"art": "wand", "datei": "wand_damast_gruen", "status": "Tapete, nicht genutzt"},
+	"wand_damast_rot": {"art": "wand", "datei": "wand_damast_rot", "status": "Tapete, nicht genutzt"},
+	"mauer": {"art": "wand", "datei": "mauer", "status": "Standard im Grundriss"},
+	"fenster": {"art": "fenster", "datei": "fenster", "status": "Standard im Grundriss"},
+	"rasen": {"art": "aussen", "datei": "rasen", "status": "Standard im Grundriss (außen)"},
+}
+
 ## Kachel für Boden oder Wand eines Gebäudes; ohne Angabe bleibt es beim Standard (parkett, mauer).
 static func oberflaeche(target: Dictionary, art: String, standard: String) -> String:
 	return str(target.get("oberflaeche", {}).get(art, standard))
@@ -305,7 +325,7 @@ static var TARGETS := _mit_beute(ZIELE_ROH)
 const ZIELE_ROH := {
 	"museum": {
 		"id": "museum",
-		"oberflaeche": {"boden": "teppich", "wand": "wand_damast_gruen"},
+		"oberflaeche": {"boden": "teppich", "wand": "wand_putz"},
 		"sprecher": "lena_hartmann",
 		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"glasvitrinen": true,  # Ausstellungskästen aus Glas: Glasschneider nötig (auch wenn man aufbrechen könnte)
@@ -392,7 +412,7 @@ const ZIELE_ROH := {
 	},
 	"kiosk": {
 		"id": "kiosk",
-		"oberflaeche": {"boden": "boden_dielen", "wand": "wand_streifen"},
+		"oberflaeche": {"boden": "boden_dielen", "wand": "wand_putz"},
 		"sprecher": "karl_oster",
 		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		# Original (TCBUILD.DAT, Nr. 10): Polizeizeit 600 s, Lautstärkegrenze 200, keine Wache
@@ -726,7 +746,7 @@ const ZIELE_ROH := {
 	# Stahltür zum Tresorraum. Keine Wache (Original: Wachstärke 0), aber Alarm. Gebäude 3 nach dem Laden.
 	"juwelier": {
 		"id": "juwelier",
-		"oberflaeche": {"boden": "boden_schachbrett", "wand": "wand_damast_rot"},
+		"oberflaeche": {"boden": "boden_schachbrett", "wand": "wand_putz"},
 		"sprecher": "jonas_berg",
 		"hauptweg": ["eingangstuer", "schaufenster"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"guard_rate": 100.0,
