@@ -159,9 +159,16 @@ func _person_card(c: Dictionary, is_driver: bool) -> PanelContainer:
 	left.add_theme_constant_override("separation", 4)
 	left.custom_minimum_size = Vector2(230, 0)
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var gesperrt := Game.in_haft(c.id)
+	if gesperrt:
+		_selected[c.id] = false
+		_burgle[c.id] = false
 	var nb := _choice("%s   %s" % [c.name, Texte.t(c.role)], _selected[c.id], _on_toggle.bind(c.id), 16)
 	nb.tooltip_text = Texte.t("org.auswahl_tip")
+	nb.disabled = gesperrt
 	left.add_child(nb)
+	if gesperrt:
+		left.add_child(_l(Texte.t("haft.bis") % int(Game.haft[c.id]), 13, Color(1, 0.55, 0.45)))
 	left.add_child(_l(Texte.t("org.honorar") % _fmt(int(c.fee)), 12, Color(0.65, 0.7, 0.78)))
 	if is_driver:
 		var bb := _choice(Texte.t("org.auch_einbrechen"), _burgle[c.id], _on_burgle_toggle.bind(c.id), 13)

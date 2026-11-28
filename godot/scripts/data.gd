@@ -857,6 +857,7 @@ const HEHLER := {
 	"kunst": {"satz": 0.4, "kat": {"kunst": 0.8}},
 	"gold": {"satz": 0.4, "kat": {"schmuck": 0.8, "metall": 0.75}},
 }
+const HAFT_TAGE := 2  # Tage Haft nach einer Festnahme (Spieltage)
 const KATEGORIEN := ["kunst", "schmuck", "metall", "bargeld", "deko"]
 
 ## Auszahlung für eine Liste aus [Wert, Kategorie]-Paaren beim gewählten Hehler (ganze Euro).

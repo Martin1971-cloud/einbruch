@@ -52,6 +52,8 @@ func _ready() -> void:
 	var card_box := VBoxContainer.new()
 	card_box.add_theme_constant_override("separation", 6)
 	card_box.add_child(UI.label(Texte.t("res.erbeutet") % _list(res.get("loot_taken", [])), 17))
+	if not res.get("gefangen", []).is_empty():
+		card_box.add_child(UI.label(Texte.t("res.gefangen") % _namen(res.get("gefangen", [])), 17, Color(1, 0.55, 0.45)))
 	card_box.add_child(UI.label(Texte.t("res.zurueck") % _list(res.get("loot_missed", [])), 17))
 	card_box.add_child(UI.label(Texte.t("res.auszahlung") % _fmt(int(res.get("payout", 0))), 20, Color(0.95, 0.85, 0.5)))
 	card_box.add_child(UI.label(Texte.t("res.fahndung") % [int(Game.heat), int(res.get("heat", 0.0))], 17))
@@ -200,3 +202,13 @@ func _list(a: Array) -> String:
 
 func _fmt(n: int) -> String:
 	return GameData.geld(n)
+
+
+## Namen zu Personen-IDs (für die Anzeige der Festnahmen)
+func _namen(ids: Array) -> String:
+	var namen: Array = []
+	for id in ids:
+		for c in GameData.CREW:
+			if c.id == id:
+				namen.append(str(c.name).split(" ")[0])
+	return ", ".join(namen)

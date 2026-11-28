@@ -12,6 +12,7 @@ const HEAT_ABBAU_PRO_TAG := 10.0
 var intel := {}          # target_id -> Stufe 0..2
 ## Woher die Informationen stammen: target_id -> {"look": 0..2 (Umsehen), "inf": bool (Informant)}
 var ermittlung_quelle := {}
+var haft := {}  # Person-ID -> Tag, ab dem sie wieder frei ist (Sitzung, nicht gespeichert)
 var hehler_id := "allround"  # gewählter Hehler (wird nicht gespeichert: Auswahl je Sitzung)
 var ausfuehrung_cfg := {}  # gültige Planung für die Ausführung (leer: nichts bereit, nur zur Laufzeit)
 var tools_owned := {}    # tool_id -> true
@@ -209,7 +210,13 @@ func _apply_save(parsed: Dictionary) -> void:
 	game_over_reason = str(parsed.get("game_over_reason", ""))
 
 
+## Ist die Person gerade in Haft?
+func in_haft(id: String) -> bool:
+	return int(haft.get(id, 0)) > day
+
+
 func reset() -> void:
+	haft = {}
 	hehler_id = "allround"
 	saved_plans = {}
 	money = START_MONEY
@@ -411,6 +418,11 @@ func journal_add(res: Dictionary) -> void:
 func apply_result(res: Dictionary) -> void:
 	journal_add(res)
 	last_result = res
+	for id in res.get("gefangen", []):
+		haft[id] = day + GameData.HAFT_TAGE
+	team = team.filter(func(c): return not in_haft(c.id))
+	if not driver.is_empty() and in_haft(driver.id):
+		driver = {}
 	if str(res.get("status", "")).begins_with("ENTKOMMEN"):
 		stufe[target_id] = stufe_of(target_id) + 1
 		if target_id == "kiosk":

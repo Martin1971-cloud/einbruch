@@ -707,6 +707,17 @@ func fence_heat() -> float:
 		heat += 40.0
 	return heat
 
+## Festgenommen: Bei einer Festnahme trifft es alle, die die Verfolgung eingeholt hat. Sonst jede Person,
+## die nicht am Fluchtwagen steht.
+func _gefangene_ids() -> Array:
+	var out: Array = []
+	if status != "GEFASST":
+		return out
+	for c in crew:
+		if chase == "GEFASST" or cheb(cell_of(c.pos), escape_cell) > 1:
+			out.append(c.id)
+	return out
+
 func result() -> Dictionary:
 	# Endstand jeder Person: Feld und Blickrichtung (für die Planung, damit sie weiß, wo jemand steht)
 	var ends := {}
@@ -714,6 +725,7 @@ func result() -> Dictionary:
 		ends[c.id] = {"cell": [cell_of(c.pos).x, cell_of(c.pos).y], "fine": [c.pos.x, c.pos.y], "face": [face4(c.get("facing", Vector2(0, 1))).x, face4(c.get("facing", Vector2(0, 1))).y]}
 	return {
 		"crew_end": ends,
+	"gefangen": _gefangene_ids(),
 		"status": status,
 		"reason": ended_reason,
 		"payout": payout,
