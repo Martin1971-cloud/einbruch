@@ -89,7 +89,7 @@ func _finish() -> void:
 	sc.status = sim.status
 	sc.alarm = sim.alarm_active
 	sc.chase = sim.chase
-	sc.car_id = Game.car_id
+	sc.car_id = str(cfg.car.get("id", "limo"))
 	sc.done.connect(func():
 		sc.queue_free()
 		_result_btn.visible = true)

@@ -87,15 +87,15 @@ const ORDER := ["kiosk", "curiosity", "juwelier", "museum"]
 
 ## Fahrzeuge: gemietet (Limousine, Miete je Einbruch) oder gekauft. "stufe" = Anzahl erfolgreicher Gebäude, ab der es zu haben ist.
 const CARS := {
-	"limo": {"id": "limo", "name": "fahrzeug.limo.name", "bild": "res://assets/art/fz_leihwagen.webp", "seite": "res://assets/art/seite_leihwagen.webp", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 145.0, "ps": 150.0, "laderaum": "mittel", "stufe": 0,
+	"limo": {"id": "limo", "name": "fahrzeug.limo.name", "bild": "res://assets/fahrzeuge/limo_seite.png", "seite": "res://assets/fahrzeuge/limo_seite.png", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 145.0, "ps": 150.0, "laderaum": "mittel", "stufe": 0,
 		"info": "fahrzeug.limo.info"},
-	"kleinwagen": {"id": "kleinwagen", "name": "fahrzeug.kleinwagen.name", "bild": "res://assets/art/fz_kleinwagen.webp", "seite": "res://assets/art/seite_kleiner_pkw.webp", "rent": 0, "price": 8000, "eta_base": 18.0, "speed": 130.0, "ps": 120.0, "laderaum": "klein", "stufe": 0,
+	"kleinwagen": {"id": "kleinwagen", "name": "fahrzeug.kleinwagen.name", "bild": "res://assets/fahrzeuge/kleinwagen_seite.png", "seite": "res://assets/fahrzeuge/kleinwagen_seite.png", "rent": 0, "price": 8000, "eta_base": 18.0, "speed": 130.0, "ps": 120.0, "laderaum": "klein", "stufe": 0,
 		"info": "fahrzeug.kleinwagen.info"},
-	"kleinlaster": {"id": "kleinlaster", "name": "fahrzeug.kleinlaster.name", "bild": "res://assets/art/fz_kleinlaster.webp", "seite": "res://assets/art/seite_kleinlaster.webp", "rent": 0, "price": 12000, "eta_base": 18.0, "speed": 140.0, "ps": 130.0, "laderaum": "gross", "stufe": 1,
+	"kleinlaster": {"id": "kleinlaster", "name": "fahrzeug.kleinlaster.name", "bild": "res://assets/fahrzeuge/kleinlaster_seite.png", "seite": "res://assets/fahrzeuge/kleinlaster_seite.png", "rent": 0, "price": 12000, "eta_base": 18.0, "speed": 140.0, "ps": 130.0, "laderaum": "gross", "stufe": 1,
 		"info": "fahrzeug.kleinlaster.info"},
-	"kombi": {"id": "kombi", "name": "fahrzeug.kombi.name", "bild": "res://assets/art/fz_kombi_modern.webp", "seite": "res://assets/art/seite_kombi.webp", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
+	"kombi": {"id": "kombi", "name": "fahrzeug.kombi.name", "bild": "res://assets/fahrzeuge/kombi_seite.png", "seite": "res://assets/fahrzeuge/kombi_seite.png", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
 		"info": "fahrzeug.kombi.info"},
-	"sport": {"id": "sport", "name": "fahrzeug.sport.name", "bild": "res://assets/art/fz_sportwagen.webp", "seite": "res://assets/art/seite_sportwagen.webp", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "laderaum": "klein", "stufe": 2,
+	"sport": {"id": "sport", "name": "fahrzeug.sport.name", "bild": "res://assets/fahrzeuge/sport_seite.png", "seite": "res://assets/fahrzeuge/sport_seite.png", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "laderaum": "klein", "stufe": 2,
 		"info": "fahrzeug.sport.info"},
 }
 

@@ -381,22 +381,15 @@ func _build_world() -> void:
 	# Fluchtwagen mit Scheinwerfern am Ausgang
 	var ex := Sim._v2i(cfg.target.points.fluchtwagen)
 	var car := Node3D.new()
-	# Mittelklasse-Limousine, 4,2 m lang, 1,6 m breit (1 Feld = 1 m), Front in +x
-	_box_child(car, Vector3(4.2, 0.7, 1.6), Vector3(0, 0.6, 0), Color(0.28, 0.42, 0.56), 0.4, 0.0)
-	_box_child(car, Vector3(2.2, 0.6, 1.45), Vector3(-0.3, 1.25, 0), Color(0.2, 0.3, 0.4), 0.35, 0.0)
-	for wp in [Vector3(1.35, 0.35, 0.8), Vector3(1.35, 0.35, -0.8), Vector3(-1.35, 0.35, 0.8), Vector3(-1.35, 0.35, -0.8)]:
-		var wheel := MeshInstance3D.new()
-		var wc := CylinderMesh.new()
-		wc.top_radius = 0.35
-		wc.bottom_radius = 0.35
-		wc.height = 0.18
-		wheel.mesh = wc
-		wheel.material_override = _mat(Color(0.08, 0.08, 0.09), 0.9)
-		wheel.position = wp
-		wheel.rotation_degrees.x = 90
-		car.add_child(wheel)
-	_box_child(car, Vector3(0.12, 0.18, 0.4), Vector3(2.1, 0.7, 0.5), Color(1, 1, 0.9), 0.1, 0.0, 3.0)
-	_box_child(car, Vector3(0.12, 0.18, 0.4), Vector3(2.1, 0.7, -0.5), Color(1, 1, 0.9), 0.1, 0.0, 3.0)
+	# Fahrzeug als Seitenbild (Front in +x), 4,2 m breit wie das Bild lang ist; Fuß auf dem Boden
+	var bild: Texture2D = load(str(cfg.car.seite))
+	var sp := Sprite3D.new()
+	sp.texture = bild
+	sp.pixel_size = 4.2 / float(bild.get_width())
+	sp.position = Vector3(0, float(bild.get_height()) * sp.pixel_size * 0.5, 0)
+	sp.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+	sp.alpha_cut = SpriteBase3D.ALPHA_CUT_OPAQUE_PREPASS
+	car.add_child(sp)
 	# Der Wagen steht nach außen versetzt, damit die Figuren davor stehen und nicht im Blech verschwinden
 	var center := Vector2(float(cfg.target.map[0].length()) * 0.5, float(cfg.target.map.size()) * 0.5)
 	var out := Vector2(signf(float(ex.x) - center.x), signf(float(ex.y) - center.y))
