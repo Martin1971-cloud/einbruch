@@ -489,7 +489,7 @@ func _build_fine(spec: Dictionary) -> void:
 		var sz := Vector3(x1 - x0, 0.1, y1 - y0)
 		match String(r[4]):
 			".":
-				_box(Vector3(sz.x, 0.1, sz.z), p + Vector3(0, 0.05, 0), Color(0.8, 0.84, 0.9) * 0.97, 0.22)
+				_box_m(Vector3(sz.x, 0.1, sz.z), p + Vector3(0, 0.05, 0), _boden_mat(0.97))
 			"W":
 				pass  # Wände werden unten als durchgehende Stücke gebaut (_build_walls)
 			"F":
