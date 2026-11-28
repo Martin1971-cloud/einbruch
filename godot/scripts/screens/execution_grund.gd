@@ -157,12 +157,21 @@ func _box_m(size: Vector3, pos: Vector3, mat: Material) -> MeshInstance3D:
 
 var _wand_cache := {}
 
+## Kachelbild für Wand oder Boden: "stein" und "ziegel" bleiben die Standardbilder, andere Namen sind Dateien in assets/tiles.
+func _kachel_bild(art: String) -> Texture2D:
+	if art == "ziegel":
+		return _ziegel_bild()
+	if art == "stein":
+		return _stein_bild()
+	var path := "res://assets/tiles/%s.png" % art
+	return load(path) if ResourceLoader.exists(path) else _stein_bild()
+
 ## Wandmaterial mit prozeduraler Textur. Triplanar: die Muster laufen ohne Kanten über alle Flächen.
 func _wand_mat(art: String) -> StandardMaterial3D:
 	if _wand_cache.has(art):
 		return _wand_cache[art]
 	var m := StandardMaterial3D.new()
-	m.albedo_texture = _ziegel_bild() if art == "ziegel" else _stein_bild()
+	m.albedo_texture = _kachel_bild(art)
 	m.albedo_color = Color(1, 1, 1)
 	m.uv1_triplanar = true
 	m.uv1_world_triplanar = true

@@ -212,6 +212,10 @@ const PORTRAIT := {
 }
 
 
+## Kachel für Boden oder Wand eines Gebäudes; ohne Angabe bleibt es beim Standard (parkett, mauer).
+static func oberflaeche(target: Dictionary, art: String, standard: String) -> String:
+	return str(target.get("oberflaeche", {}).get(art, standard))
+
 static func portrait_path(id: String) -> String:
 	var key: String = PORTRAIT.get(id, "")
 	return "res://assets/portraits/%s.png" % key if key != "" else ""
@@ -301,6 +305,7 @@ static var TARGETS := _mit_beute(ZIELE_ROH)
 const ZIELE_ROH := {
 	"museum": {
 		"id": "museum",
+		"oberflaeche": {"boden": "teppich", "wand": "wand_damast_gruen"},
 		"sprecher": "lena_hartmann",
 		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"glasvitrinen": true,  # Ausstellungskästen aus Glas: Glasschneider nötig (auch wenn man aufbrechen könnte)
@@ -387,6 +392,7 @@ const ZIELE_ROH := {
 	},
 	"kiosk": {
 		"id": "kiosk",
+		"oberflaeche": {"boden": "boden_dielen", "wand": "wand_streifen"},
 		"sprecher": "karl_oster",
 		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		# Original (TCBUILD.DAT, Nr. 10): Polizeizeit 600 s, Lautstärkegrenze 200, keine Wache
@@ -596,6 +602,7 @@ const ZIELE_ROH := {
 	# Holztüren, Vitrinen, Gemälde an der Wand. Keine Wache (Original: Wachstärke 0). Erster Schritt nach dem Kiosk.
 	"curiosity": {
 		"id": "curiosity",
+		"oberflaeche": {"boden": "boden_eiche", "wand": "vertaefelung"},
 		"sprecher": "mira_calder",
 		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"guard_rate": 90.0,
@@ -719,6 +726,7 @@ const ZIELE_ROH := {
 	# Stahltür zum Tresorraum. Keine Wache (Original: Wachstärke 0), aber Alarm. Gebäude 3 nach dem Laden.
 	"juwelier": {
 		"id": "juwelier",
+		"oberflaeche": {"boden": "boden_schachbrett", "wand": "wand_damast_rot"},
 		"sprecher": "jonas_berg",
 		"hauptweg": ["eingangstuer", "schaufenster"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"guard_rate": 100.0,

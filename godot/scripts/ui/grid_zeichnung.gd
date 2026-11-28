@@ -94,7 +94,7 @@ func _draw_fine(spec: Dictionary) -> void:
 		var rect := _frect(float(r[0]), float(r[1]), float(r[2]), float(r[3]))
 		match String(r[4]):
 			".":
-				_tile(rect, "parkett", 0, 0)
+				_tile(rect, GameData.oberflaeche(target, "boden", "parkett"), 0, 0)
 			"W":
 				var line: Rect2 = lines[wi]
 				wi += 1
@@ -256,12 +256,12 @@ func _draw() -> void:
 				continue
 			match t:
 				"F":
-					_tile(r, "mauer", x, y)
+					_tile(r, GameData.oberflaeche(target, "wand", "mauer"), x, y)
 					_tile(r.grow(-_cell * 0.14), "fenster", x, y)
 					draw_line(r.position + Vector2(_cell * 0.5, _cell * 0.14), r.position + Vector2(_cell * 0.5, _cell * 0.86), Color(0.2, 0.25, 0.35, 0.8), 1.0)
 					draw_rect(r.grow(-_cell * 0.14), Color(0.8, 0.92, 1.0, 0.8), false, 1.0)
 				"W":
-					_tile(r, "mauer", x, y)
+					_tile(r, GameData.oberflaeche(target, "wand", "mauer"), x, y)
 					draw_rect(Rect2(r.position, Vector2(r.size.x, maxf(2.0, _cell * 0.12))), WALL_TOP)
 					draw_rect(Rect2(r.position + Vector2(0, r.size.y - _cell * 0.1), Vector2(r.size.x, _cell * 0.1)), WALL_SHADOW)
 				"o":
@@ -274,7 +274,7 @@ func _draw() -> void:
 				"D":
 					draw_rect(r, FLOOR_A)
 				_:
-					_tile(r, "parkett", x, y)
+					_tile(r, GameData.oberflaeche(target, "boden", "parkett"), x, y)
 					# Dielen: horizontale Fugen in unregelmäßigem Abstand
 					var k := _hash(x, y)
 					draw_line(r.position + Vector2(0, _ch * (0.33 + k * 0.1)), r.position + Vector2(_cw, _ch * (0.33 + k * 0.1)), PLANK, 1.0)

@@ -160,8 +160,9 @@ func _aussen_v(g: PackedByteArray, spec: Dictionary, iv: Array, cx: float) -> in
 
 ## Wandstück: innen Stein, außen Ziegel. Außenwände werden in zwei Hälften geteilt (keine gemeinsamen Flächen = kein Flimmern).
 func _wand_stueck(size: Vector3, pos: Vector3, achse: int, aussen: int) -> void:
+	var innen := GameData.oberflaeche(cfg.target, "wand", "stein")
 	if aussen == 0:
-		_box_m(size, pos, _wand_mat("stein"))
+		_box_m(size, pos, _wand_mat(innen))
 		return
 	var t: float = size[achse]
 	var halb := size
@@ -169,7 +170,7 @@ func _wand_stueck(size: Vector3, pos: Vector3, achse: int, aussen: int) -> void:
 	var off := Vector3.ZERO
 	off[achse] = float(aussen) * t * 0.25
 	_box_m(halb, pos + off, _wand_mat("ziegel"))
-	_box_m(halb, pos - off, _wand_mat("stein"))
+	_box_m(halb, pos - off, _wand_mat(innen))
 
 ## Liegt die Zelle höchstens eine Zelle neben einem Gebäudeteil?
 func _near_building(rows: Array, x: int, y: int) -> bool:
@@ -270,8 +271,7 @@ func _build_world() -> void:
 						var gcol := Color(0.16, 0.2, 0.27) if on_street else Color(0.13, 0.19, 0.25)
 						_box(Vector3(1, 0.1, 1), p + Vector3(0, 0.05, 0), gcol * tone, 0.95)
 				_:
-					var checker := Color(0.8, 0.84, 0.9) if (x + y) % 2 == 0 else Color(0.72, 0.77, 0.84)
-					_box(Vector3(1, 0.1, 1), p + Vector3(0, 0.05, 0), checker * tone, 0.22, 0.0)
+					_box_m(Vector3(1, 0.1, 1), p + Vector3(0, 0.05, 0), _boden_mat(tone))
 
 	# Straßenlaternen an den Ecken des Gebäudekomplexes
 	var lamp_box := _building_box(cfg.target)
@@ -737,3 +737,20 @@ func _lift_for_floor(i: int) -> Vector3:
 ## Position mit Etagenversatz (für Figuren, Beute, Wachen und Sichtlinien). Die Zuordnung kommt aus der Karte.
 func _L(v: Vector3) -> Vector3:
 	return v + _lift_for_floor(_floor_idx_z(v.z))
+
+## Bodenkachel des Gebäudes als Material; die Helligkeit (tone) bleibt pro Feld erhalten.
+func _boden_mat(tone: float) -> StandardMaterial3D:
+	var key := "boden_%s_%.2f" % [GameData.oberflaeche(cfg.target, "boden", "parkett"), tone]
+	if _wand_cache.has(key):
+		return _wand_cache[key]
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = _kachel_bild(GameData.oberflaeche(cfg.target, "boden", "parkett"))
+	m.albedo_color = Color(tone, tone, tone)
+	m.uv1_triplanar = true
+	m.uv1_world_triplanar = true
+	m.uv1_scale = Vector3(0.6, 0.6, 0.6)
+	m.roughness = 0.9
+	m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
+	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+	_wand_cache[key] = m
+	return m
