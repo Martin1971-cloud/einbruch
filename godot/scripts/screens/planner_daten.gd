@@ -238,6 +238,8 @@ func _describe(a: Dictionary) -> String:
 			return Texte.t("plan.beute_nehmen")
 		"WAIT":
 			return Texte.t("plan.warten_s") % int(a.sec)
+		"POSTEN":
+			return Texte.t("plan.posten_s") % int(a.sec)
 		"TREPPE":
 			return Texte.t("plan.treppe")
 		"CALL_CAR":
@@ -262,6 +264,8 @@ func _default_action(kind: String) -> Dictionary:
 			return {"t": "OPEN", "on": _tuer_vorschlag()}
 		"WAIT":
 			return {"t": "WAIT", "sec": 5.0}
+		"POSTEN":
+			return {"t": "POSTEN", "sec": GameData.POSTEN_DAUER_S}
 		"NEUTRALIZE":
 			return {"t": "NEUTRALIZE", "guard": target.guards[0].id if not target.guards.is_empty() else ""}
 		"CALL_CAR":

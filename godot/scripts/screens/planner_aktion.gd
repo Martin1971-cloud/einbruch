@@ -634,6 +634,7 @@ func _on_map_click(cell: Vector2i) -> void:
 			var nahe := ende_a if absi(ende_a.x - stand.x) + absi(ende_a.y - stand.y) <= absi(ende_b.x - stand.x) + absi(ende_b.y - stand.y) else ende_b
 			_menu_entries.append([Texte.t("plan.treppe_steigen"), {"t": "TREPPE", "approach": [nahe.x, nahe.y]}, true])
 	_menu_entries.append_array(_object_entries(cell))
+	_menu_entries.append([Texte.t("plan.posten"), {"t": "POSTEN", "sec": GameData.POSTEN_DAUER_S}, true])
 	if target.has("panel") and Sim._v2i(target.panel.pos) == cell:
 		_menu_entries.append([Texte.t("plan.bypass"), {"t": "TOOL", "tool": "bypass", "on": target.panel.id}, Game.tools_owned.has("bypass")])
 	for g in target.guards:

@@ -60,10 +60,12 @@ func _step_crew(c: Dictionary, dt: float) -> void:
 	match a.t:
 		"MOVE":
 			_do_move(c, a, dt)
-		"WAIT":
+		"WAIT", "POSTEN":
 			if not c.started:
 				c.timer = float(a.sec)
 				c.started = true
+				if a.t == "POSTEN":
+					posten_zeiten.append([time, time + float(a.sec)])
 			c.timer -= dt
 			if c.timer <= 0.0:
 				_next(c)

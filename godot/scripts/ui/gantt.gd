@@ -23,6 +23,7 @@ const COL := {
 	"TOOL": Color(0.4, 0.68, 1.0),
 	"TAKE": Color(1.0, 0.62, 0.32),
 	"WAIT": Color(0.6, 0.66, 0.78),
+	"POSTEN": Color(0.5, 0.85, 0.8),
 	"CALL_CAR": Color(0.74, 0.56, 1.0),
 	"FLAG_SET": Color(0.36, 0.9, 0.56),
 	"FLAG_WAIT": Color(0.36, 0.9, 0.56),

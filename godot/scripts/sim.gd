@@ -108,6 +108,7 @@ func step(dt: float) -> void:
 		_step_crew(c, dt)
 	_check_loudness(dt)
 	_pruefe_verzoegerte_melder()
+	_pruefe_vorwarnung()
 	_check_patrols(dt)
 	_update_car()
 	if time - _last_snap >= SNAP - 0.001:

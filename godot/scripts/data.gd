@@ -183,6 +183,7 @@ const ACTION_NAMES := {
 	"CLOSE": "aktion.CLOSE",
 	"TAKE": "aktion.TAKE",
 	"WAIT": "aktion.WAIT",
+	"POSTEN": "aktion.POSTEN",
 	"CALL_CAR": "aktion.CALL_CAR",
 	"FLAG_SET": "aktion.FLAG_SET",
 	"FLAG_WAIT": "aktion.FLAG_WAIT",
@@ -857,6 +858,8 @@ const HEHLER := {
 	"kunst": {"satz": 0.4, "kat": {"kunst": 0.8}},
 	"gold": {"satz": 0.4, "kat": {"schmuck": 0.8, "metall": 0.75}},
 }
+const POSTEN_VORWARNUNG_S := 20.0  # Vorwarnzeit, die eine postierte Schmiere der Streife verschafft (Sekunden)
+const POSTEN_DAUER_S := 20.0  # Dauer einer Postenwache (Sekunden)
 const HAFT_TAGE := 2  # Tage Haft nach einer Festnahme (Spieltage)
 const KATEGORIEN := ["kunst", "schmuck", "metall", "bargeld", "deko"]
 

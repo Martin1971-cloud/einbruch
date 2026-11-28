@@ -42,19 +42,41 @@ func _check_patrols(_dt: float) -> void:
 		return
 	_next_patrol = time + _naechste_streife_abstand()
 	patrol_count += 1
-	# Eine offene Tür oder ein offenes Fenster fällt auf, wenn sie länger offen ist als ihre Schonfrist.
-	# Der Hauptweg hat die längere Schonfrist, damit der Einbrecher ihn schließen kann.
-	var offen := false
+	if _offen_zu_lange():
+		# Eine Schmiere auf Posten warnt rechtzeitig: das Team hat die Vorwarnzeit, um zu schließen
+		if _schmiere_wacht():
+			_log(Texte.t("sim.schmiere_warnt"))
+			vorwarnung_bis = time + GameData.POSTEN_VORWARNUNG_S
+		else:
+			_alarm("Streife", "QUIET", 0.0)
+	else:
+		_log(Texte.t("sim.streife_ok"))
+
+## Eine offene Tür oder ein offenes Fenster fällt auf, wenn sie länger offen ist als ihre Schonfrist.
+## Der Hauptweg hat die längere Schonfrist, damit der Einbrecher ihn schließen kann.
+func _offen_zu_lange() -> bool:
 	for p in open_cells:
 		if not doors.has(p):
 			continue
 		var schutz := GameData.PATROL_SCHUTZ_HAUPTWEG_S if hauptweg.has(str(doors[p].id)) else GameData.PATROL_GRACE_S
 		if time - float(open_since.get(p, -INF)) > schutz:
-			offen = true
-	if offen:
+			return true
+	return false
+
+## Steht gerade eine Schmiere auf Posten?
+func _schmiere_wacht() -> bool:
+	for z in posten_zeiten:
+		if time >= float(z[0]) and time < float(z[1]):
+			return true
+	return false
+
+## Nach der Vorwarnzeit: Ist die Tür noch offen, folgt der Alarm.
+func _pruefe_vorwarnung() -> void:
+	if vorwarnung_bis < 0.0 or time < vorwarnung_bis:
+		return
+	vorwarnung_bis = -1.0
+	if _offen_zu_lange():
 		_alarm("Streife", "QUIET", 0.0)
-	else:
-		_log(Texte.t("sim.streife_ok"))
 
 func _naechste_streife_abstand() -> float:
 	return rng.randf_range(patrol_mittel - GameData.PATROL_SCHWANKUNG_S, patrol_mittel + GameData.PATROL_SCHWANKUNG_S)

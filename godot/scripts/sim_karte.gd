@@ -147,6 +147,8 @@ var peak_loud := 0.0            # lauteste Lautstärke während des Einbruchs (d
 
 
 var rng := RandomNumberGenerator.new()
+var posten_zeiten: Array = []  # Zeiträume [Beginn, Ende], in denen eine Schmiere Posten hält
+var vorwarnung_bis := -1.0  # Zeitpunkt, ab dem nach einer Vorwarnung nochmals geprüft wird (-1: keine Vorwarnung)
 var pending_alarms: Array = []  # verzögerte Melder: {"at": Zeit, "sensor": Index} (Verzögerung nach dem Auslösen)
 var hehler := "allround"  # gewählter Hehler für den Verkauf der Beute (siehe GameData.HEHLER)
 
