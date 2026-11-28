@@ -4,7 +4,7 @@ extends ExecAnzeige
 
 func _ready() -> void:
 	cfg = args.config
-	sim = Sim.create(cfg.target, cfg.team, cfg.plans, cfg.car)
+	sim = Sim.create(cfg.target, cfg.team, cfg.plans, cfg.car, cfg.karte, cfg.hehler)
 	_build_world()
 	_build_ui()
 	_sync()
@@ -20,6 +20,9 @@ func _build_ui() -> void:
 	root.add_theme_constant_override("separation", 6)
 	layer.add_child(root)
 
+	# Während der Ausführung nur Pause und Beenden aus der Leiste; Etagen, Tempo und Funk darunter
+	_pause_btn = UI.button(Texte.t("ausf.pause"), _on_pause, 110)
+	root.add_child(Navigation.leiste(main, "ausfuehrung", [_pause_btn]))
 	var top := HBoxContainer.new()
 	top.add_theme_constant_override("separation", 14)
 	root.add_child(top)
@@ -42,10 +45,7 @@ func _build_ui() -> void:
 	var abort_btn := UI.button(Texte.t("ausf.funk"), _on_abort, 250)
 	abort_btn.tooltip_text = Texte.t("ausf.funk_tip")
 	top.add_child(abort_btn)
-	_pause_btn = UI.button(Texte.t("ausf.pause"), _on_pause, 110)
-	top.add_child(_pause_btn)
 	top.add_child(UI.dropdown(["1x", "4x", "16x"], 0, func(i: int): speed = [1.0, 4.0, 16.0][i]))
-	top.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 110))
 
 	var spacer := Control.new()
 	spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -89,7 +89,7 @@ func _finish() -> void:
 	sc.status = sim.status
 	sc.alarm = sim.alarm_active
 	sc.chase = sim.chase
-	sc.car_id = Game.car_id
+	sc.car_id = str(cfg.car.get("id", "limo"))
 	sc.done.connect(func():
 		sc.queue_free()
 		_result_btn.visible = true)

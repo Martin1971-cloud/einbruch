@@ -188,8 +188,28 @@ func _sync_body() -> void:
 				case_open = true
 		var hl: Node3D = _case_lids[cell]
 		hl.rotation.x = move_toward(hl.rotation.x, -PI * 0.42 if case_open else 0.0, 0.05)
+	# Dekoobjekte ohne Beute: Klappe am Regal schwingt auf, Zeitungsstapel hebt sich, Schublade gleitet heraus
+	for cell in _deko_anim:
+		var da: Dictionary = _deko_anim[cell]
+		var d_open := false
+		for lid in sim.loot:
+			var dl: Dictionary = sim.loot[lid]
+			if dl.get("leer", false) and Sim._v2i(dl.pos) == cell and dl.opened:
+				d_open = true
+		var dn: Node3D = da.node
+		var rest: Vector3 = da.rest
+		match str(da.kind):
+			"R":
+				dn.rotation.y = move_toward(dn.rotation.y, -PI * 0.45 if d_open else 0.0, 0.03)
+			"Z":
+				dn.position.y = move_toward(dn.position.y, rest.y + 0.35 if d_open else rest.y, 0.01)
+				dn.rotation.x = move_toward(dn.rotation.x, -0.3 if d_open else 0.0, 0.02)
+			"P":
+				dn.position.z = move_toward(dn.position.z, rest.z + 0.3 if d_open else rest.z, 0.01)
 	for lid in sim.loot:
 		var l: Dictionary = sim.loot[lid]
+		if l.get("leer", false):
+			continue  # Dekoobjekt: bleibt als Möbelstück stehen
 		var n: MeshInstance3D = _loot_nodes[lid]
 		if l.state == "ROOM":
 			# Wie im Original: Beute steckt im Objekt (Kasse, Wertschrank), es schwebt nichts im Raum
@@ -268,7 +288,7 @@ func _sync_body() -> void:
 			continue
 		var on_id := str(c.plan[c.idx].get("on", ""))
 		for lid in sim.loot:
-			if str(sim.loot[lid].get("id", "")) == on_id and sim.loot[lid].state == "ROOM":
+			if str(sim.loot[lid].get("id", "")) == on_id and sim.loot[lid].state == "ROOM" and not sim.loot[lid].get("leer", false):
 				_loot_nodes[lid].scale = Vector3.ONE * (1.0 + 0.15 * absf(sin(t_now * 10.0)))
 	_car_node.visible = sim.car.present
 	_refresh_ui()

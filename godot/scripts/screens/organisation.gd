@@ -49,6 +49,7 @@ func _ready() -> void:
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(UI.margin(root, 14))
 
+	root.add_child(Navigation.leiste(main, "organisation"))
 	root.add_child(_l(Texte.t("org.titel"), 24, Color(0.95, 0.8, 0.4)))
 	root.add_child(_l(Texte.t("org.ziel_zeile") % [Texte.t(GameData.TARGETS[Game.target_id].name), Game.stufe_of(Game.target_id), _fmt(Game.money)], 14, Color(0.8, 0.85, 0.92)))
 	_summary = _l("", 14, Color(0.85, 0.9, 0.95))
@@ -106,8 +107,6 @@ func _ready() -> void:
 	var bottom := HBoxContainer.new()
 	bottom.add_theme_constant_override("separation", 10)
 	root.add_child(bottom)
-	bottom.add_child(UI.button(Texte.t("org.zurueck"), _on_back, 210))
-	bottom.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 130))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bottom.add_child(sp)
@@ -160,9 +159,16 @@ func _person_card(c: Dictionary, is_driver: bool) -> PanelContainer:
 	left.add_theme_constant_override("separation", 4)
 	left.custom_minimum_size = Vector2(230, 0)
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var gesperrt := Game.in_haft(c.id)
+	if gesperrt:
+		_selected[c.id] = false
+		_burgle[c.id] = false
 	var nb := _choice("%s   %s" % [c.name, Texte.t(c.role)], _selected[c.id], _on_toggle.bind(c.id), 16)
 	nb.tooltip_text = Texte.t("org.auswahl_tip")
+	nb.disabled = gesperrt
 	left.add_child(nb)
+	if gesperrt:
+		left.add_child(_l(Texte.t("haft.bis") % int(Game.haft[c.id]), 13, Color(1, 0.55, 0.45)))
 	left.add_child(_l(Texte.t("org.honorar") % _fmt(int(c.fee)), 12, Color(0.65, 0.7, 0.78)))
 	if is_driver:
 		var bb := _choice(Texte.t("org.auch_einbrechen"), _burgle[c.id], _on_burgle_toggle.bind(c.id), 13)
@@ -229,7 +235,7 @@ func _team_best(skill: String) -> int:
 		if not _selected[c.id]:
 			continue
 		if c.skills.has(skill):
-			best = maxi(best, int(c.skills[skill]))
+			best = maxi(best, int(c.skills.get(skill, 0)))
 	return best
 
 
@@ -290,9 +296,12 @@ func _build_shop() -> void:
 		if gid != "none" and Game.gear_owned.has(gid):
 			gnames.append(Texte.t(GameData.GEAR[gid].name))
 	owned.add_child(_w(Texte.t("org.kleidung_liste") % (", ".join(gnames) if not gnames.is_empty() else Texte.t("journal.beute_keine")), 12))
-	var car := GameData.car_now(Game.car_id, 85.0)
-	var how := Texte.t("org.gemietet") % _fmt(int(car.rent)) if Game.car_id == "limo" else Texte.t("org.gekauft")
-	owned.add_child(_w(Texte.t("org.fluchtwagen_info") % [Texte.t(car.name), how], 12))
+	if Game.car_id == "":
+		owned.add_child(_w(Texte.t("org.fluchtwagen_keiner"), 12))
+	else:
+		var car := GameData.car_now(Game.car_id, 85.0)
+		var how := Texte.t("org.gemietet") % _fmt(int(car.rent)) if Game.car_id == "limo" else Texte.t("org.gekauft")
+		owned.add_child(_w(Texte.t("org.fluchtwagen_info") % [Texte.t(car.name), how], 12))
 	_shop_box.add_child(_shop_fold(Texte.t("org.besitz"), owned))
 
 
@@ -425,29 +434,34 @@ func _choice(text: String, pressed: bool, cb: Callable, size := 15) -> Button:
 # ---------------------------------------------------------------- Einkauf
 
 
+## Blockierende Warnung: zeigt die Meldung unten und als Hinweis, den man wegklicken muss.
+func _warnen(schluessel: String) -> void:
+	_msg.text = Texte.t(schluessel)
+	UI.hinweis(self, Texte.t("hint.achtung"), Texte.t(schluessel))
+
 func _on_confirm() -> void:
 	var burglars := _selected_ids(false)
 	var drivers := _selected_ids(true)
 	# Original: Teamplanung nur mit Ermittlungsstand über etwa 50 % (organisa.c, tcCheckOrganisation)
 	if int(Game.intel.get(Game.target_id, 0)) < 1:
-		_msg.text = Texte.t("org.msg_ermitteln")
+		_warnen("org.msg_ermitteln")
 		return
 	if drivers.is_empty():
-		_msg.text = Texte.t("org.msg_fahrer")
+		_warnen("org.msg_fahrer")
 		return
 	if burglars.is_empty():
-		_msg.text = Texte.t("org.msg_einbrecher")
+		_warnen("org.msg_einbrecher")
 		return
 	if Game.car_id == "":
-		_msg.text = Texte.t("org.msg_kein_wagen")
+		_warnen("org.msg_kein_wagen")
 		return
 	if Game.money < _cost():
-		_msg.text = Texte.t("org.msg_geld")
+		_warnen("org.msg_geld")
 		return
 	Game.money -= _cost()
 	var best: String = drivers[0]
 	for id in drivers:
-		if int(_crew_by_id(id).skills.FAHREN) > int(_crew_by_id(best).skills.FAHREN):
+		if int(_crew_by_id(id).skills.get("FAHREN", 0)) > int(_crew_by_id(best).skills.get("FAHREN", 0)):
 			best = id
 	Game.driver = _crew_by_id(best).duplicate(true)
 	Game.driver["gear"] = _gear_pick[best]
@@ -472,10 +486,6 @@ func _on_example() -> void:
 	_build_people()
 	_build_shop()
 	_refresh_summary()
-
-
-func _on_back() -> void:
-	main.go("town")
 
 
 ## Spalte, die bei wenig Höhe selbst scrollt. So bleibt die Leiste unten immer sichtbar.

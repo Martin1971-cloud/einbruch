@@ -14,7 +14,7 @@ const TOOLS := {
 	"crowbar": {"name": "werkzeug.crowbar.name", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 75, "time": 4.0, "noise": 65.0, "destroys": true, "evidence": 20.0, "price": 200, "stufe": 0},
 	"hammer": {"name": "werkzeug.hammer.name", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 70, "time": 5.0, "noise": 60.0, "destroys": true, "evidence": 20.0, "price": 60, "stufe": 0},
 	"axt": {"name": "werkzeug.axt.name", "type": "FORCE", "ability": "", "min": 0, "obj": "schloss", "max": 80, "time": 5.0, "noise": 70.0, "destroys": true, "evidence": 25.0, "price": 120, "stufe": 1},
-	"glasschneider": {"name": "werkzeug.glasschneider.name", "type": "FORCE", "ability": "", "min": 10, "obj": "glas", "max": 40, "time": 8.0, "noise": 5.0, "destroys": true, "evidence": 3.0, "price": 120, "stufe": 0},
+	"glasschneider": {"name": "werkzeug.glasschneider.name", "type": "FORCE", "ability": "", "min": 10, "obj": "glas", "max": 40, "time": 8.0, "noise": 5.0, "destroys": false, "evidence": 3.0, "price": 120, "stufe": 0},
 	"chloroform": {"name": "werkzeug.chloroform.name", "type": "FORCE", "ability": "Kampf", "min": 30, "obj": "wache", "max": 100, "time": 4.0, "noise": 0.0, "destroys": false, "evidence": 3.0, "price": 250, "stufe": 3},
 	"bypass": {"name": "werkzeug.bypass.name", "type": "ELECTRONICS", "ability": "Elektronik", "min": 30, "obj": "alarm", "max": 85, "time": 12.0, "noise": 2.0, "destroys": false, "evidence": 5.0, "price": 900, "stufe": 2},
 	"stethoskop": {"name": "werkzeug.stethoskop.name", "type": "TECH", "ability": "Safes", "min": 40, "obj": "tresor", "max": 100, "time": 20.0, "noise": 1.0, "destroys": false, "evidence": 3.0, "price": 500, "stufe": 2},
@@ -87,15 +87,15 @@ const ORDER := ["kiosk", "curiosity", "juwelier", "museum"]
 
 ## Fahrzeuge: gemietet (Limousine, Miete je Einbruch) oder gekauft. "stufe" = Anzahl erfolgreicher Gebäude, ab der es zu haben ist.
 const CARS := {
-	"limo": {"id": "limo", "name": "fahrzeug.limo.name", "bild": "res://assets/art/fz_leihwagen.webp", "seite": "res://assets/art/seite_leihwagen.webp", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 145.0, "ps": 150.0, "laderaum": "mittel", "stufe": 0,
+	"limo": {"id": "limo", "name": "fahrzeug.limo.name", "bild": "res://assets/fahrzeuge/limo_seite.png", "seite": "res://assets/fahrzeuge/limo_seite.png", "rent": 1500, "price": 0, "eta_base": 20.0, "speed": 145.0, "ps": 150.0, "laderaum": "mittel", "stufe": 0,
 		"info": "fahrzeug.limo.info"},
-	"kleinwagen": {"id": "kleinwagen", "name": "fahrzeug.kleinwagen.name", "bild": "res://assets/art/fz_kleinwagen.webp", "seite": "res://assets/art/seite_kleiner_pkw.webp", "rent": 0, "price": 8000, "eta_base": 18.0, "speed": 130.0, "ps": 120.0, "laderaum": "klein", "stufe": 0,
+	"kleinwagen": {"id": "kleinwagen", "name": "fahrzeug.kleinwagen.name", "bild": "res://assets/fahrzeuge/kleinwagen_seite.png", "seite": "res://assets/fahrzeuge/kleinwagen_seite.png", "rent": 0, "price": 8000, "eta_base": 18.0, "speed": 130.0, "ps": 120.0, "laderaum": "klein", "stufe": 0,
 		"info": "fahrzeug.kleinwagen.info"},
-	"kleinlaster": {"id": "kleinlaster", "name": "fahrzeug.kleinlaster.name", "bild": "res://assets/art/fz_kleinlaster.webp", "seite": "res://assets/art/seite_kleinlaster.webp", "rent": 0, "price": 12000, "eta_base": 18.0, "speed": 140.0, "ps": 130.0, "laderaum": "gross", "stufe": 1,
+	"kleinlaster": {"id": "kleinlaster", "name": "fahrzeug.kleinlaster.name", "bild": "res://assets/fahrzeuge/kleinlaster_seite.png", "seite": "res://assets/fahrzeuge/kleinlaster_seite.png", "rent": 0, "price": 12000, "eta_base": 18.0, "speed": 140.0, "ps": 130.0, "laderaum": "gross", "stufe": 1,
 		"info": "fahrzeug.kleinlaster.info"},
-	"kombi": {"id": "kombi", "name": "fahrzeug.kombi.name", "bild": "res://assets/art/fz_kombi_modern.webp", "seite": "res://assets/art/seite_kombi.webp", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
+	"kombi": {"id": "kombi", "name": "fahrzeug.kombi.name", "bild": "res://assets/fahrzeuge/kombi_seite.png", "seite": "res://assets/fahrzeuge/kombi_seite.png", "rent": 0, "price": 15000, "eta_base": 16.0, "speed": 160.0, "ps": 200.0, "laderaum": "gross", "stufe": 1,
 		"info": "fahrzeug.kombi.info"},
-	"sport": {"id": "sport", "name": "fahrzeug.sport.name", "bild": "res://assets/art/fz_sportwagen.webp", "seite": "res://assets/art/seite_sportwagen.webp", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "laderaum": "klein", "stufe": 2,
+	"sport": {"id": "sport", "name": "fahrzeug.sport.name", "bild": "res://assets/fahrzeuge/sport_seite.png", "seite": "res://assets/fahrzeuge/sport_seite.png", "rent": 0, "price": 42000, "eta_base": 12.0, "speed": 220.0, "ps": 400.0, "laderaum": "klein", "stufe": 2,
 		"info": "fahrzeug.sport.info"},
 }
 
@@ -183,6 +183,7 @@ const ACTION_NAMES := {
 	"CLOSE": "aktion.CLOSE",
 	"TAKE": "aktion.TAKE",
 	"WAIT": "aktion.WAIT",
+	"POSTEN": "aktion.POSTEN",
 	"CALL_CAR": "aktion.CALL_CAR",
 	"FLAG_SET": "aktion.FLAG_SET",
 	"FLAG_WAIT": "aktion.FLAG_WAIT",
@@ -192,12 +193,52 @@ const ACTION_NAMES := {
 ## Zielgebäude: "Museum Varenhafen". Karte 20 x 12 Zellen.
 ## o = Außen, . = Boden, W = Wand, F = Fenster (blockiert, Sicht durch Glas möglich), D = verschlossene Tür.
 ## Porträts (2D, Krimi-Stil) je Figur, nach Geschlecht und Rolle (weiblich: Mira, Ilja, Rosa, Greta). Dateien in assets/portraits/.
+## Sprecherinnen und Sprecher der Stadtansicht: jede Anzeige wechselt zwischen weiblich und männlich.
+const SPRECHER := [
+	{"id": "mira_calder", "name": "Mira Calder", "bild": "beobachterin", "weiblich": true},
+	{"id": "lena_hartmann", "name": "Lena Hartmann", "bild": "rezeptionistin", "weiblich": true},
+	{"id": "vera_lind", "name": "Vera Lind", "bild": "hehlerin", "weiblich": true},
+	{"id": "marta_quell", "name": "Marta Quell", "bild": "einbrecherin", "weiblich": true},
+	{"id": "jonas_berg", "name": "Jonas Berg", "bild": "wachmann", "weiblich": false},
+	{"id": "karl_oster", "name": "Karl Oster", "bild": "hausmeister", "weiblich": false},
+	{"id": "paul_renner", "name": "Paul Renner", "bild": "planer", "weiblich": false},
+	{"id": "stefan_krall", "name": "Stefan Krall", "bild": "kraeftige", "weiblich": false},
+]
+
 const PORTRAIT := {
-	"mira": "beobachterin", "ilja": "technikerin", "teo": "hacker", "rosa": "einbrecherin",
-	"greta": "besucher", "otto": "fahrer",
+	"mira": "mira", "ilja": "ilja", "teo": "teo", "rosa": "rosa",
+	"greta": "greta", "otto": "otto",
 	"informant": "informant", "hehlerin": "hehlerin", "auftraggeber": "auftraggeber", "polizist": "polizist",
 }
 
+
+## Oberflächen: eine Quelle der Wahrheit. Jede Kachel hat eine ID, eine Art (boden, wand, fenster, aussen)
+## und die Datei in assets/tiles/. Gebäude verweisen nur auf diese IDs (siehe oberflaeche()).
+const OBERFLAECHEN := {
+	"parkett": {"art": "boden", "datei": "parkett"},
+	"teppich": {"art": "boden", "datei": "teppich"},
+	"laeufer": {"art": "boden", "datei": "laeufer"},
+	"boden_dielen": {"art": "boden", "datei": "boden_dielen"},
+	"boden_eiche": {"art": "boden", "datei": "boden_eiche"},
+	"boden_schachbrett": {"art": "boden", "datei": "boden_schachbrett"},
+	"boden_marmor": {"art": "boden", "datei": "boden_marmor"},
+	"wand_putz": {"art": "wand", "datei": "wand_putz"},
+	"vertaefelung": {"art": "wand", "datei": "vertaefelung"},
+	"wand_streifen": {"art": "wand", "datei": "wand_streifen"},
+	"wand_damast_gruen": {"art": "wand", "datei": "wand_damast_gruen"},
+	"wand_damast_rot": {"art": "wand", "datei": "wand_damast_rot"},
+	"mauer": {"art": "wand", "datei": "mauer"},
+	"fenster": {"art": "fenster", "datei": "fenster"},
+	"rasen": {"art": "aussen", "datei": "rasen"},
+	"aussen_backstein": {"art": "aussen", "datei": "aussen_backstein"},
+	"aussen_quader": {"art": "aussen", "datei": "aussen_quader"},
+	"aussen_putz": {"art": "aussen", "datei": "aussen_putz"},
+	"aussen_naturstein": {"art": "aussen", "datei": "aussen_naturstein"},
+}
+
+## Kachel für Boden oder Wand eines Gebäudes; ohne Angabe bleibt es beim Standard (parkett, mauer).
+static func oberflaeche(target: Dictionary, art: String, standard: String) -> String:
+	return str(target.get("oberflaeche", {}).get(art, standard))
 
 static func portrait_path(id: String) -> String:
 	var key: String = PORTRAIT.get(id, "")
@@ -210,6 +251,13 @@ static func portrait_path(id: String) -> String:
 const SIZE_RANK := {"klein": 0, "mittel": 1, "gross": 2}
 const ITEMS := {
 	"kasse": {"name": "beute.kasse.name", "gewicht": 0.5, "groesse": "mittel", "icon": "kasse"},
+	# Dekoration: nichts drin, nur zum Öffnen und Durchsuchen (kein Wert)
+	"deko_regal": {"name": "deko.regal.name", "gewicht": 0, "groesse": "klein"},
+	"deko_zeitung": {"name": "deko.zeitung.name", "gewicht": 0, "groesse": "klein"},
+	"deko_vitrine": {"name": "deko.vitrine.name", "gewicht": 0, "groesse": "klein"},
+	"deko_schreibtisch": {"name": "deko.schreibtisch.name", "gewicht": 0, "groesse": "klein"},
+	"deko_tisch": {"name": "deko.tisch.name", "gewicht": 0, "groesse": "klein"},
+	"deko_glasschrank": {"name": "deko.glasschrank.name", "gewicht": 0, "groesse": "klein"},
 	"safe": {"name": "beute.safe.name", "gewicht": 2.5, "groesse": "mittel", "icon": "tresor"},
 	"gemaelde": {"name": "beute.gemaelde.name", "gewicht": 2, "groesse": "gross"},
 	"landschaft": {"name": "beute.landschaft.name", "gewicht": 2, "groesse": "gross"},
@@ -281,6 +329,9 @@ static var TARGETS := _mit_beute(ZIELE_ROH)
 const ZIELE_ROH := {
 	"museum": {
 		"id": "museum",
+		"oberflaeche": {"boden": "teppich", "wand": "wand_putz", "aussen": "aussen_naturstein"},
+		"sprecher": "lena_hartmann",
+		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"glasvitrinen": true,  # Ausstellungskästen aus Glas: Glasschneider nötig (auch wenn man aufbrechen könnte)
 		"name": "ziel.museum.name",
 		"guard_rate": 170.0,  # Wachrate (Richtwert nach Original, vergleichbares Museum)
@@ -331,20 +382,21 @@ const ZIELE_ROH := {
 		],
 		 "panel": {"id": "alarmpanel", "pos": [10, 7], "res": 50, "cplx": 45},
 		# Gesichert: Türen (Name) und Vitrinen (Objekt-ID). Öffnen bei eingeschalteter Anlage löst Alarm aus.
-		"gesichert": ["mitteltuer", "tresortuer", "eingangstuer"],
+		"gesichert": ["mitteltuer", "tresortuer", "eingangstuer"],  # Museum: die Eingangstür öffnet nur die Eintrittskarte des Informanten ohne Alarm
+		"karte_tuer": "eingangstuer",
 		"sensors": [
-			{"name": "ziel.museum.sensor.1.name", "pos": [13, 8], "threshold": 20.0},
+			{"name": "ziel.museum.sensor.1.name", "pos": [13, 8], "verzoegerung": 0.0, "threshold": 20.0},
 		],
 		"loot": [
-			{"id": "gemaelde", "pos": [5, 3], "value": 60000},
-			{"id": "skulptur", "pos": [4, 8], "value": 90000},
-			{"id": "diamant", "pos": [15, 3], "value": 150000},
-			{"id": "muenzen", "pos": [14, 5], "value": 90000},
+			{"id": "gemaelde", "pos": [5, 3], "kat": "kunst", "value": 60000},
+			{"id": "skulptur", "pos": [4, 8], "kat": "kunst", "value": 90000},
+			{"id": "diamant", "pos": [15, 3], "kat": "schmuck", "value": 150000},
+			{"id": "muenzen", "pos": [14, 5], "kat": "metall", "value": 90000},
 		],
 		"guards": [
-			{"id": "g_ost", "name": "ziel.museum.wache.g_ost.name", "kampf": 45, "type": "INDOOR", "start": [9, 8], "route": [[9, 8], [15, 8], [15, 7], [9, 7]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
-			{"id": "g_gal", "name": "ziel.museum.wache.g_gal.name", "kampf": 60, "type": "INDOOR", "start": [4, 3], "route": [[4, 3], [7, 3], [7, 6], [4, 6]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
-			{"id": "streife", "name": "ziel.museum.wache.streife.name", "kampf": 0, "type": "STREET", "start": [19, 0], "route": [[19, 0], [19, 11], [11, 11], [11, 0]], "vision": 8.0, "hearing": 40.0, "reaction": 1.5, "dwell": 1.0},
+			{"id": "g_ost", "name": "ziel.museum.wache.g_ost.name", "kampf": 45, "type": "INDOOR", "start": [9, 8], "route": [[9, 8], [15, 8], [15, 7], [9, 7]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "effizienz": 1.0, "dwell": 2.0},
+			{"id": "g_gal", "name": "ziel.museum.wache.g_gal.name", "kampf": 60, "type": "INDOOR", "start": [4, 3], "route": [[4, 3], [7, 3], [7, 6], [4, 6]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "effizienz": 1.0, "dwell": 2.0},
+			{"id": "streife", "name": "ziel.museum.wache.streife.name", "kampf": 0, "type": "STREET", "start": [19, 0], "route": [[19, 0], [19, 11], [11, 11], [11, 0]], "vision": 8.0, "hearing": 40.0, "reaction": 1.5, "effizienz": 1.0, "dwell": 1.0},
 		],
 		"facts": [
 			["oeffnung", "ziel.museum.fakt.oeffnung"],
@@ -358,13 +410,15 @@ const ZIELE_ROH := {
 			"ELECTRONICS": {"wert": 60, "grund": "ziel.museum.grund.ELECTRONICS"},
 			"FAHREN": {"wert": 50, "grund": "ziel.museum.grund.FAHREN"},
 		},
-		"speaker": "Mira Calder",
 		"dialog": "ziel.museum.dialog",
 		"fence": 0.6,
 		"price_intel": 500,
 	},
 	"kiosk": {
 		"id": "kiosk",
+		"oberflaeche": {"boden": "boden_dielen", "wand": "wand_putz", "aussen": "aussen_backstein"},
+		"sprecher": "karl_oster",
+		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		# Original (TCBUILD.DAT, Nr. 10): Polizeizeit 600 s, Lautstärkegrenze 200, keine Wache
 		"guard_rate": 10.0,   # Wachrate (Original GRate): bestimmt das Polizeitempo
 		"escape_km": 10.0,    # Fluchtweg in km (Original EscapeRouteLength)
@@ -402,8 +456,10 @@ const ZIELE_ROH := {
 				[144, 120, 176, 128, "W"],
 				[128, 120, 144, 128, "D"],
 				[128, 24, 152, 41, "S"],
-				[160, 40, 168, 120, "C"],
+				[160, 40, 168, 120, "H"],  # Tresen (Holz, blockiert und verdeckt die Sicht wie eine Vitrine)
 				[160, 48, 168, 64, "K"],
+				[144, 80, 160, 96, "Z"],  # Zeitungsständer (Dekoration, Kollision wie Vitrine)
+				[112, 48, 128, 64, "R"],  # Regal (Dekoration, Kollision wie Vitrine)
 			],
 		},
 		"doors": [
@@ -423,10 +479,12 @@ const ZIELE_ROH := {
 		],
 		"sensors": [],
 		"loot": [
-			{"id": "kasse", "pos": [10, 3], "value": 6000},
+			{"id": "kasse", "pos": [10, 3], "kat": "bargeld", "value": 6000},
 			# Wertschrank (Original: Geld 500 g und eine Zigarrenkiste 2 kg, im selben Behälter)
 			# Aufteilung: Geld 16.000 € (500 g), Zigarrenkiste 6.000 € (2 kg). Im Spiel ein Beutestück.
-			{"id": "safe", "pos": [8, 2], "value": 22000, "parts": [["ziel.kiosk.teil.safe.0", 16000], ["ziel.kiosk.teil.safe.1", 6000]]},
+			{"id": "deko_regal", "pos": [7, 3], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_zeitung", "pos": [9, 5], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "safe", "pos": [8, 2], "kat": "bargeld", "value": 22000, "parts": [["ziel.kiosk.teil.safe.0", 16000], ["ziel.kiosk.teil.safe.1", 6000]]},
 		],
 		"guards": [],
 		"facts": [
@@ -441,7 +499,6 @@ const ZIELE_ROH := {
 			"FORCE": {"wert": 25, "grund": "ziel.kiosk.grund.FORCE"},
 			"FAHREN": {"wert": 20, "grund": "ziel.kiosk.grund.FAHREN"},
 		},
-		"speaker": "Mira Calder",
 		"dialog": "ziel.kiosk.dialog",
 		"fence": 0.6,
 		"price_intel": 200,
@@ -450,6 +507,7 @@ const ZIELE_ROH := {
 	# Dient dazu, Animationen und Abläufe zu prüfen. Im Spiel nicht erreichbar.
 	"testhaus": {
 		"id": "testhaus",
+		"sprecher": "stefan_krall",
 		"guard_rate": 60.0,
 		"escape_km": 15.0,
 		"max_volume": 150.0,
@@ -536,17 +594,17 @@ const ZIELE_ROH := {
 		# Etagen: Kartenzeilen von bis (ohne Ende). Ohne "floors" gibt es nur einen Grundriss.
 		"floors": [{"id": "eg", "name": "EG", "rows": [0, 13]}, {"id": "og", "name": "OG", "rows": [13, 24]}],
 		"sensors": [
-			{"name": "ziel.testhaus.sensor.1.name", "pos": [5, 8], "threshold": 20.0},
+			{"name": "ziel.testhaus.sensor.1.name", "pos": [5, 8], "verzoegerung": 0.0, "threshold": 20.0},
 		],
 		"loot": [
-			{"id": "diamant", "pos": [4, 4], "value": 150000},
-			{"id": "goldbarren", "pos": [12, 5], "value": 240000},
-			{"id": "muenzen_og", "pos": [4, 16], "value": 80000},
+			{"id": "diamant", "pos": [4, 4], "kat": "schmuck", "value": 150000},
+			{"id": "goldbarren", "pos": [12, 5], "kat": "metall", "value": 240000},
+			{"id": "muenzen_og", "pos": [4, 16], "kat": "metall", "value": 80000},
 			# Gemälde hängt an der Wand: ohne Werkzeug abnehmbar (open), Bild wird als Wandbild gezeigt
-			{"id": "gemaelde", "pos": [3, 6], "value": 60000, "open": true, "wall": true},
+			{"id": "gemaelde", "pos": [3, 6], "kat": "kunst", "value": 60000, "open": true, "wall": true},
 		],
 		"guards": [
-			{"id": "g_tres", "name": "ziel.testhaus.wache.g_tres.name", "kampf": 50, "type": "INDOOR", "start": [11, 8], "route": [[11, 8], [13, 8], [13, 4], [11, 4]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
+			{"id": "g_tres", "name": "ziel.testhaus.wache.g_tres.name", "kampf": 50, "type": "INDOOR", "start": [11, 8], "route": [[11, 8], [13, 8], [13, 4], [11, 4]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "effizienz": 1.0, "dwell": 2.0},
 		],
 		"facts": [
 			["Lage", "ziel.testhaus.fakt.Lage"],
@@ -560,7 +618,6 @@ const ZIELE_ROH := {
 			"ELECTRONICS": {"wert": 50, "grund": "ziel.testhaus.grund.ELECTRONICS"},
 			"FAHREN": {"wert": 40, "grund": "ziel.testhaus.grund.FAHREN"},
 		},
-		"speaker": "Mira Calder",
 		"dialog": "ziel.testhaus.dialog",
 		"fence": 0.6,
 		"price_intel": 0,
@@ -569,6 +626,9 @@ const ZIELE_ROH := {
 	# Holztüren, Vitrinen, Gemälde an der Wand. Keine Wache (Original: Wachstärke 0). Erster Schritt nach dem Kiosk.
 	"curiosity": {
 		"id": "curiosity",
+		"oberflaeche": {"boden": "boden_eiche", "wand": "vertaefelung", "aussen": "aussen_putz"},
+		"sprecher": "mira_calder",
+		"hauptweg": ["eingangstuer"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"guard_rate": 90.0,
 		"escape_km": 20.0,
 		"max_volume": 170.0,
@@ -624,6 +684,9 @@ const ZIELE_ROH := {
 				[32, 232, 40, 360, "W"],
 				[264, 232, 272, 360, "W"],
 				[64, 320, 80, 336, "T"],   # Treppe OG
+				[128, 64, 144, 80, "C"],    # Vitrine ohne Beute (Dekoration, Kollision wie Vitrine)
+				[208, 96, 224, 112, "P"],   # Schreibtisch ohne Beute (Dekoration, Kollision wie Vitrine)
+				[176, 64, 192, 80, "C"],   # Glasschrank ohne Beute (Dekoration, Kollision wie Vitrine)
 				[64, 256, 80, 272, "C"],   # Vitrine Gemmensammlung
 				[192, 288, 208, 304, "C"], # Vitrine Pergamente
 			],
@@ -655,13 +718,16 @@ const ZIELE_ROH := {
 		],
 		"sensors": [],
 		"loot": [
-			{"id": "uhren", "pos": [4, 4], "value": 15000},
-			{"id": "besteck", "pos": [6, 4], "value": 10000},
-			{"id": "landschaft", "pos": [3, 6], "value": 12000, "open": true, "wall": true},
-			{"id": "kassette", "pos": [12, 8], "value": 20000},
-			{"id": "gemmen", "pos": [4, 16], "value": 25000},
-			{"id": "pergamente", "pos": [12, 18], "value": 15000},
-			{"id": "portraet", "pos": [3, 18], "value": 18000, "open": true, "wall": true},
+			{"id": "deko_vitrine", "pos": [8, 4], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_glasschrank", "pos": [11, 4], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_schreibtisch", "pos": [13, 6], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "uhren", "pos": [4, 4], "kat": "schmuck", "value": 15000},
+			{"id": "besteck", "pos": [6, 4], "kat": "metall", "value": 10000},
+			{"id": "landschaft", "pos": [3, 6], "kat": "kunst", "value": 12000, "open": true, "wall": true},
+			{"id": "kassette", "pos": [12, 8], "kat": "bargeld", "value": 20000},
+			{"id": "gemmen", "pos": [4, 16], "kat": "schmuck", "value": 25000},
+			{"id": "pergamente", "pos": [12, 18], "kat": "kunst", "value": 15000},
+			{"id": "portraet", "pos": [3, 18], "kat": "kunst", "value": 18000, "open": true, "wall": true},
 		],
 		"guards": [],
 		"facts": [
@@ -676,7 +742,6 @@ const ZIELE_ROH := {
 			"FORCE": {"wert": 25, "grund": "ziel.curiosity.grund.FORCE"},
 			"FAHREN": {"wert": 30, "grund": "ziel.curiosity.grund.FAHREN"},
 		},
-		"speaker": "Mira Calder",
 		"dialog": "ziel.curiosity.dialog",
 		"fence": 0.6,
 		"price_intel": 300,
@@ -685,6 +750,9 @@ const ZIELE_ROH := {
 	# Stahltür zum Tresorraum. Keine Wache (Original: Wachstärke 0), aber Alarm. Gebäude 3 nach dem Laden.
 	"juwelier": {
 		"id": "juwelier",
+		"oberflaeche": {"boden": "boden_schachbrett", "wand": "wand_putz", "aussen": "aussen_quader"},
+		"sprecher": "jonas_berg",
+		"hauptweg": ["eingangstuer", "schaufenster"],  # Haupteingang und Schwachstelle: Schutz der Streife bis zum Schließen
 		"guard_rate": 100.0,
 		"escape_km": 13.0,
 		"max_volume": 150.0,
@@ -721,6 +789,8 @@ const ZIELE_ROH := {
 				[64, 64, 80, 80, "C"],     # Vitrine Diamantring
 				[96, 64, 112, 80, "C"],    # Vitrine Perlenkette
 				[192, 128, 208, 144, "S"], # Tresor im Tresorraum
+				[208, 80, 224, 96, "P"],   # Tisch ohne Beute (Dekoration, Kollision wie Schreibtisch)
+				[224, 112, 240, 128, "C"], # Glasschrank ohne Beute (Dekoration, Kollision wie Vitrine)
 			],
 		},
 		"doors": [
@@ -729,11 +799,11 @@ const ZIELE_ROH := {
 			{"pos": [8, 2], "id": "schaufenster", "res": 20, "cplx": 20, "locked": true, "kind": "glas"},
 		],
 		 "panel": {"id": "alarmpanel", "pos": [3, 3], "res": 50, "cplx": 45},
-		"gesichert": ["eingangstuer", "stahltuer", "schaufenster", "diamantring", "perlen", "tresor"],
+		"gesichert": ["eingangstuer", "stahltuer", "diamantring", "perlen", "tresor"],  # Schaufenster bewusst ohne Kontakt: Schwachstelle
 		"sensors": [
-			{"name": "ziel.juwelier.sensor.1.name", "pos": [5, 8], "threshold": 25.0},
+			{"name": "ziel.juwelier.sensor.1.name", "pos": [5, 8], "verzoegerung": 0.0, "threshold": 25.0},
 			# Glasbruchmelder: reagiert schon auf ein zerbrochenes Schaufenster (niedrige Schwelle)
-			{"name": "ziel.juwelier.sensor.2.name", "pos": [8, 3], "threshold": 15.0},
+			{"name": "ziel.juwelier.sensor.2.name", "pos": [8, 3], "verzoegerung": 0.0, "threshold": 15.0},
 		],
 		"points": {
 			"aussen_eingang": [6, 11],
@@ -751,9 +821,11 @@ const ZIELE_ROH := {
 			{"name": "ziel.juwelier.raum.2.name", "pos": [12, 6]},
 		],
 		"loot": [
-			{"id": "diamantring", "pos": [4, 4], "value": 30000},
-			{"id": "perlen", "pos": [6, 4], "value": 20000},
-			{"id": "tresor", "pos": [12, 8], "value": 70000},
+			{"id": "diamantring", "pos": [4, 4], "kat": "schmuck", "value": 30000},
+			{"id": "perlen", "pos": [6, 4], "kat": "schmuck", "value": 20000},
+			{"id": "tresor", "pos": [12, 8], "kat": "bargeld", "value": 70000},
+			{"id": "deko_glasschrank", "pos": [14, 7], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_tisch", "pos": [13, 5], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
 		],
 		"guards": [],
 		"facts": [
@@ -769,7 +841,6 @@ const ZIELE_ROH := {
 			"FORCE": {"wert": 40, "grund": "ziel.juwelier.grund.FORCE"},
 			"FAHREN": {"wert": 35, "grund": "ziel.juwelier.grund.FAHREN"},
 		},
-		"speaker": "Mira Calder",
 		"dialog": "ziel.juwelier.dialog",
 		"fence": 0.6,
 		"price_intel": 400,
@@ -801,6 +872,56 @@ const FAHRT_FAKTOR := 2.4
 const FAHRT_PUFFER := 3.0
 const FAHRT_SPANNE := 0.2
 ## Lauter Alarm (Mikrofon, Glasbruch, Lärm, Wache): die Streife ist in der Nähe, Eintreffen in dieser Spanne (Sekunden).
+## Streife: fährt im Abstand um einen Mittelwert herum zufällig vorbei (Spielzeit). Der Mittelwert hängt von der
+## Gesamtbeute ab (patrol_mittel_s). Sieht sie eine offene Tür oder ein offenes Fenster, schlägt sie Alarm.
+const PATROL_SCHWANKUNG_S := 30.0
+## Schutz des Hauptwegs (Haupttür, Hauptfenster): bleibt unbemerkt, bis das Team schließt, höchstens so lange.
+const PATROL_SCHUTZ_HAUPTWEG_S := 90.0
+## Zeit nach dem Öffnen, in der eine Tür unbemerkt bleibt: der Einbrecher kann sie schließen.
+## Schonfrist für alle übrigen Türen und Fenster (Hintertür, Stahltür, Vitrinenzugänge).
+const PATROL_GRACE_S := 30.0
+
+## Mittlerer Streifenabstand nach Gesamtbeute: wenig Beute seltener, viel Beute öfter.
+## Hehler: Anteil des Beutewerts, der beim Verkauf als Geld zurückkommt. "satz" gilt für alle Kategorien,
+## "kat" überschreibt ihn für einzelne Beutearten. Der Allround-Hehler entspricht dem bisherigen Verkauf (60 %).
+const HEHLER_ORDER := ["allround", "kunst", "gold"]
+const HEHLER := {
+	"allround": {"satz": 0.6, "kat": {}},
+	"kunst": {"satz": 0.4, "kat": {"kunst": 0.8}},
+	"gold": {"satz": 0.4, "kat": {"schmuck": 0.8, "metall": 0.75}},
+}
+const POSTEN_VORWARNUNG_S := 20.0  # Vorwarnzeit, die eine postierte Schmiere der Streife verschafft (Sekunden)
+const POSTEN_DAUER_S := 20.0  # Dauer einer Postenwache (Sekunden)
+const HAFT_TAGE := 2  # Tage Haft nach einer Festnahme (Spieltage)
+const KATEGORIEN := ["kunst", "schmuck", "metall", "bargeld", "deko"]
+
+## Auszahlung für eine Liste aus [Wert, Kategorie]-Paaren beim gewählten Hehler (ganze Euro).
+static func auszahlung(beute: Array, hehler_id: String) -> int:
+	var h: Dictionary = HEHLER.get(hehler_id, HEHLER["allround"])
+	var summe := 0.0
+	for b in beute:
+		summe += float(b[0]) * float(h.kat.get(str(b[1]), h.satz))
+	return int(round(summe))
+
+## Rang nach der Gesamtauszahlung aller Einbrüche: [Schwelle in €, Textschlüssel], aufsteigend.
+const RANG := [[0, "rang.anfaenger"], [50000, "rang.einzelgaenger"], [200000, "rang.profi"], [500000, "rang.mr_big"]]
+
+static func rang_key(auszahlung_gesamt: int) -> String:
+	var key := str(RANG[0][1])
+	for r in RANG:
+		if auszahlung_gesamt >= int(r[0]):
+			key = str(r[1])
+	return key
+
+static func patrol_mittel_s(target: Dictionary) -> float:
+	var summe := 0
+	for l in target.get("loot", []):
+		summe += int(l.get("value", 0))
+	if summe < 50000:
+		return 180.0
+	if summe < 118000:
+		return 120.0
+	return 60.0
 const LAUT_MIN_S := 120.0
 const LAUT_MAX_S := 240.0
 const POLIZEI := {
@@ -892,10 +1013,10 @@ const DEKO := {
 	],
 	"curiosity": [
 		{"kind": "regal", "rect": [48, 40, 72, 52]},
-		{"kind": "tisch", "rect": [200, 96, 232, 120]},
 		{"kind": "stuhl", "rect": [204, 122, 212, 130]},
 		{"kind": "stuhl", "rect": [220, 122, 228, 130]},
 		{"kind": "pflanze", "rect": [246, 140, 256, 150]},
+		{"kind": "pflanze", "rect": [224, 48, 232, 56]},
 		{"kind": "bild", "rect": [256, 72, 259, 96]},
 	],
 	"juwelier": [
@@ -904,5 +1025,9 @@ const DEKO := {
 		{"kind": "bild", "rect": [100, 40, 124, 43]},
 		{"kind": "pflanze", "rect": [246, 140, 256, 150]},
 		{"kind": "bild", "rect": [256, 60, 259, 90]},
+		# Sitzecke im Verkaufsraum: Tisch mit zwei Stühlen und Blumen (rein zur Ansicht, blockieren nichts)
+		{"kind": "stuhl", "rect": [196, 84, 204, 92]},
+		{"kind": "stuhl", "rect": [228, 84, 236, 92]},
+		{"kind": "pflanze", "rect": [226, 100, 236, 110]},
 	],
 }

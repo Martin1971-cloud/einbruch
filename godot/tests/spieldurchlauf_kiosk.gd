@@ -44,7 +44,7 @@ func _process(_d: float) -> bool:
 		2:
 			_main.current._on_example()
 			print("Vorschau: %s" % _main.current._res.get("status", "?"))
-			_main.current._on_execute()
+			_main.current.ausfuehren()
 			_step = 3
 		3:
 			_wait += 1

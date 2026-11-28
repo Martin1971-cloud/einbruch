@@ -10,6 +10,9 @@ func _on_floor(fl: Dictionary) -> void:
 	_preview.text = Texte.t("plan.etage_angezeigt") % Texte.t(str(fl.name))
 
 ## Schriftgröße für Ablaufplan und Vorschau, zwischen TEXT_MIN und TEXT_MAX.
+## Schrift für Fehlermeldungen (Vorschau und Ablaufplan): so klein, dass jede Meldung in eine Zeile passt.
+const FEHLER_GROESSE := 11
+
 func _set_text_size(v: int) -> void:
 	_text_size = clampi(v, TEXT_MIN, TEXT_MAX)
 	if _text_lbl != null:
@@ -54,8 +57,11 @@ func _refresh_all() -> void:
 
 func _refresh_grid() -> void:
 	var lvl: int = int(Game.intel.get(target.id, 0))
+	_grid.alles_bekannt = Game.ermittlung_key(target.id) == "stadt.erm_beide"
 	_grid.set_state(target, lvl, plans, Game.team)
-	_intel_label.text = Texte.t("stadt.ermittlung") % Texte.t(Game.ermittlung_key(target.id))
+	# Ist alles bekannt (Umsehen und Informant), steht hier nichts mehr: die Hinweise braucht man dann nicht
+	var schluessel := Game.ermittlung_key(target.id)
+	_intel_label.text = "" if schluessel == "stadt.erm_beide" else Texte.t("stadt.ermittlung") % Texte.t(schluessel)
 
 func _refresh_team() -> void:
 	for c in _team_box.get_children():
@@ -106,7 +112,7 @@ func _refresh_team() -> void:
 		_team_box.add_child(row)
 		_team_btns[c.id] = b
 	if not Game.driver.is_empty():
-		_team_box.add_child(_l(Texte.t("plan.fahrer_zeile") % [Game.driver.name, int(Game.driver.skills.FAHREN)], 12, Color(0.85, 0.85, 0.9)))
+		_team_box.add_child(_l(Texte.t("plan.fahrer_zeile") % [Game.driver.name, int(Game.driver.skills.get("FAHREN", 0))], 12, Color(0.85, 0.85, 0.9)))
 	# Teamgröße mit Kosten (sofort) und voraussichtlicher Zeit (nach der ersten Vorschau): die Abwägung bewusst treffen
 	var kosten_team: int = Game.team_fee_total() + (0 if Game.driver.is_empty() or Game.team.any(func(c): return c.id == Game.driver.get("id", "")) else int(Game.driver.get("fee", 0))) + int(GameData.car_now(Game.car_id, 85.0).get("rent", 0))
 	var zeit_txt: String = Sim.clock(float(_res.get("time", 0.0))) if _res.has("time") else Texte.t("plan.zeit_offen")
@@ -292,15 +298,40 @@ func _on_vorschau() -> void:
 	_play_btn.text = Texte.t("plan.pause") if _playing else Texte.t("plan.abspielen")
 	_show_at(0.0)
 
+## Zuletzt angezeigte Fehler: der Hinweis erscheint nur, wenn sich etwas geändert hat.
+var _gezeigt := ""
+
 func _on_preview() -> void:
 	var cfg := _config()
-	var res := Sim.preview(cfg.target, cfg.team, cfg.plans, cfg.car)
+	var res := Sim.preview(cfg.target, cfg.team, cfg.plans, cfg.car, cfg.karte, cfg.hehler)
 	_refresh_timeline(res)
+	_problems.append_array(_nicht_am_wagen())
 	var msgs: Array = []
+	var zu_gross := _zu_grosse_beute()
+	var koennte := _koennte_zu_gross()
+	# Ausführung ist nur bereit, wenn die Planung ohne Fehler ist und Team und Fahrzeug stimmen
+	Game.ausfuehrung_cfg = cfg if _problems.is_empty() and not Game.team.is_empty() and Game.car_id != "" else {}
+	if koennte and zu_gross.is_empty():
+		msgs.append("[color=orange]%s[/color]" % (Texte.t("plan.fahrzeug_vielleicht") % Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum))))
+	# Auffällige Fehler und Fahrzeugprobleme im Planungsfenster: ein Hinweis, den man wegklicken muss (nur bei Änderung)
+	var sig := "%s||%s||%s" % [str(zu_gross), str(koennte), "|".join(_problems)]
+	if sig != _gezeigt and (not zu_gross.is_empty() or koennte or not _problems.is_empty()):
+		var text := ""
+		if not zu_gross.is_empty():
+			text += Texte.t("plan.fahrzeug_passt_nicht") % [", ".join(zu_gross), Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum))] + "\n\n"
+		elif koennte:
+			text += Texte.t("plan.fahrzeug_vielleicht") % Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum)) + "\n\n"
+		if not _problems.is_empty():
+			text += Texte.t("plan.n_aktionen_kaputt_plain") % _problems.size() + "\n" + "\n".join(_problems)
+		UI.hinweis(self, Texte.t("hint.achtung"), text)
+	_gezeigt = sig
+	if not zu_gross.is_empty():
+		msgs.append("[color=salmon]%s[/color]" % (Texte.t("plan.fahrzeug_passt_nicht") % [", ".join(zu_gross), Texte.t("size." + str(GameData.CARS[Game.car_id].laderaum))]))
 	if not _problems.is_empty():
-		msgs.append(Texte.t("plan.n_aktionen_kaputt") % _problems.size())
+		msgs.append("[font_size=%d]%s[/font_size]" % [FEHLER_GROESSE, Texte.t("plan.n_aktionen_kaputt") % _problems.size()])
 		for p in _problems:
-			msgs.append("[color=salmon]✗ %s[/color]" % p)
+			# Jede Meldung in einer Zeile: kleinere Schrift, damit sie vollständig passt
+			msgs.append("[font_size=%d][color=salmon]✗ %s[/color][/font_size]" % [FEHLER_GROESSE, p])
 		msgs.append("[color=gray]%s[/color]" % Texte.t("plan.gesperrt_hinweis"))
 	for c in Game.team:
 		var pl: Array = plans[c.id]
@@ -380,8 +411,11 @@ func _refresh_timeline(res: Dictionary) -> void:
 			var span := "[color=#f0c060]%s–%s[/color]" % [Sim.clock(float(seg.start)), Sim.clock(float(seg.end))]
 			var who: String = c.name.split(" ")[0]
 			if str(seg.get("fail", "")) != "":
-				_problems.append("%s: %s" % [who, seg.fail])
-				entries.append({"start": float(seg.start), "text": "%s  [color=salmon]✗ %s: %s[/color]" % [span, who, _describe(act)]})
+				# Volumen-Fehler entfallen, wenn alles bekannt ist: dann warnt der Hinweis zum Fluchtwagen vorab
+				# Passt die Beute nicht in den Fluchtwagen, steht das oben als Hinweis: der Schritt braucht keine eigene Zeile
+				if not (not _zu_grosse_beute().is_empty() and "Fluchtwagen" in str(seg.fail)):
+					_problems.append("%s %s: %s" % [Sim.clock(float(seg.start)), who, seg.fail])
+				entries.append({"start": float(seg.start), "text": "[font_size=%d]%s  [color=salmon]✗ %s: %s[/color][/font_size]" % [FEHLER_GROESSE, span, who, _describe(act)]})
 				continue
 			var res_txt := ""
 			if str(seg.get("msg", "")) != "":
@@ -440,17 +474,43 @@ func _show_at(t: float) -> void:
 	if frames.is_empty():
 		return
 	_grid.show_end = not _playing
-	_grid.set_frame(_interp_frame(frames, t), _res.get("noise", []))
+	var fr := _interp_frame(frames, t)
+	_grid.set_frame(fr, _res.get("noise", []))
+	_folge_etage(fr)
 	_gantt.set_playhead(t)
 	_time_lbl.text = Sim.clock(t)   # keine Gesamtzeit: die Dauer richtet sich nach den Personen, nur die Polizei setzt eine Grenze
 	_update_team_floors()
 
-## Ausführung: bei mehreren gespeicherten Plänen zuerst fragen, mit welchem Plan der Einbruch laufen soll.
-func _on_execute() -> void:
+## Der Bildausschnitt folgt der gewählten Person: Steigt sie die Treppe, wechselt die Ansicht auf ihre neue Etage.
+func _folge_etage(fr: Dictionary) -> void:
+	if not fr.get("crew", {}).has(_active):
+		return
+	var y := roundi(float(fr.crew[_active][1]))
+	var fl := _floor_list()
+	for i in range(fl.size()):
+		var rows: Array = fl[i].rows
+		if y >= int(rows[0]) and y < int(rows[1]):
+			if _grid.view_floor != i:
+				_grid.view_floor = i
+				_grid.queue_redraw()
+			return
+
+## Ausführung (Leiste): bei mehreren gespeicherten Plänen zuerst fragen, mit welchem Plan der Einbruch laufen soll.
+func ausfuehren() -> void:
 	if _saved_for_target().size() > 1:
 		_ask_plan_for_execution()
 		return
 	_run_execution()
+
+## Jede Person muss am Ende am Fluchtwagen stehen, sonst kommt das Team nicht vom Gelände.
+func _nicht_am_wagen() -> Array:
+	var out: Array = []
+	for c in Game.team:
+		var pl: Array = plans[c.id]
+		var ends_at_car: bool = not pl.is_empty() and pl[-1].t == "MOVE" and pl[-1].get("to", "") == "fluchtwagen"
+		if not ends_at_car:
+			out.append(Texte.t("plan.endet_nicht_letzte") % c.name.split(" ")[0])
+	return out
 
 func _ask_plan_for_execution() -> void:
 	var pop := PopupPanel.new()
@@ -479,16 +539,10 @@ func _apply_saved(entry: Dictionary) -> void:
 
 func _run_execution() -> void:
 	_on_preview()
-	# Jede Person muss am Ende am Fluchtwagen stehen, sonst kommt das Team nicht vom Gelände
-	for c in Game.team:
-		var pl: Array = plans[c.id]
-		var ends_at_car: bool = not pl.is_empty() and pl[-1].t == "MOVE" and pl[-1].get("to", "") == "fluchtwagen"
-		if not ends_at_car:
-			_problems.append(Texte.t("plan.endet_nicht_letzte") % c.name.split(" ")[0])
-	if not _problems.is_empty():
-		_preview.text = Texte.t("plan.gesperrt_kopf") % [_problems.size(), _preview.text]
+	# Nicht startbar: die Vorschau zeigt schon, warum
+	if Game.ausfuehrung_cfg.is_empty():
 		return
-	main.go("execution", {"config": _config()})
+	main.go("execution", {"config": Game.ausfuehrung_cfg})
 
 ## Testhilfe: Beispielplan mit Lockpick an der Eingangstür, Gemälde, Fluchtwagen.
 func _on_example() -> void:
@@ -542,6 +596,8 @@ func _show_hint(id: String) -> void:
 	var dlg := AcceptDialog.new()
 	dlg.title = Texte.t(str(h.title))
 	dlg.dialog_text = Texte.t(str(h.text))
+	dlg.dialog_autowrap = true
+	dlg.get_label().add_theme_font_size_override("font_size", 14)
 	dlg.ok_button_text = Texte.t("hint.verstanden")
 	add_child(dlg)
 	dlg.confirmed.connect(dlg.queue_free)
@@ -571,9 +627,14 @@ func _on_map_click(cell: Vector2i) -> void:
 	# Treppenfeld: die Person steigt auf die andere Etage (8 s)
 	for pr in target.get("treppen", []):
 		if cell == Vector2i(int(pr[0]), int(pr[1])) or cell == Vector2i(int(pr[2]), int(pr[3])):
-			# Zuerst zur Treppe gehen (approach), dann steigen
-			_menu_entries.append([Texte.t("plan.treppe_steigen"), {"t": "TREPPE", "approach": [cell.x, cell.y]}, true])
+			# Vom Treppenende aus starten, das der Person am nächsten liegt (sonst läuft sie zum Ende auf der anderen Etage)
+			var stand: Vector2i = _stand_after(_active).cell
+			var ende_a := Vector2i(int(pr[0]), int(pr[1]))
+			var ende_b := Vector2i(int(pr[2]), int(pr[3]))
+			var nahe := ende_a if absi(ende_a.x - stand.x) + absi(ende_a.y - stand.y) <= absi(ende_b.x - stand.x) + absi(ende_b.y - stand.y) else ende_b
+			_menu_entries.append([Texte.t("plan.treppe_steigen"), {"t": "TREPPE", "approach": [nahe.x, nahe.y]}, true])
 	_menu_entries.append_array(_object_entries(cell))
+	_menu_entries.append([Texte.t("plan.posten"), {"t": "POSTEN", "sec": GameData.POSTEN_DAUER_S}, true])
 	if target.has("panel") and Sim._v2i(target.panel.pos) == cell:
 		_menu_entries.append([Texte.t("plan.bypass"), {"t": "TOOL", "tool": "bypass", "on": target.panel.id}, Game.tools_owned.has("bypass")])
 	for g in target.guards:

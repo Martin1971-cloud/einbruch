@@ -45,6 +45,16 @@ func _build_deko(liste: Array) -> void:
 
 ## Wandfuß: drei feste, dunklere Streifen auf dem Boden an der Innenseite der Wand (Stufen statt Verlauf, undurchsichtig).
 ## Ersetzt den berechneten Schatten am Wandfuß, daher kein Schattenwurf und kein Zackenmuster.
+## Ein Quader als Kind eines beweglichen Knotens (Position relativ zum Knoten).
+func _mesh_in(parent: Node3D, size: Vector3, pos: Vector3, col: Color, rough := 0.7) -> void:
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = size
+	mi.mesh = bm
+	mi.material_override = _mat(col, rough)
+	mi.position = pos
+	parent.add_child(mi)
+
 func _kontakt(center: Vector3, achse: int, laenge: float, aussen: int) -> void:
 	var basis_farbe := Color(0.7, 0.74, 0.82)
 	var stufen := [0.4, 0.6, 0.82]
@@ -150,16 +160,17 @@ func _aussen_v(g: PackedByteArray, spec: Dictionary, iv: Array, cx: float) -> in
 
 ## Wandstück: innen Stein, außen Ziegel. Außenwände werden in zwei Hälften geteilt (keine gemeinsamen Flächen = kein Flimmern).
 func _wand_stueck(size: Vector3, pos: Vector3, achse: int, aussen: int) -> void:
+	var innen := GameData.oberflaeche(cfg.target, "wand", "stein")
 	if aussen == 0:
-		_box_m(size, pos, _wand_mat("stein"))
+		_box_m(size, pos, _wand_mat(innen))
 		return
 	var t: float = size[achse]
 	var halb := size
 	halb[achse] = t * 0.5
 	var off := Vector3.ZERO
 	off[achse] = float(aussen) * t * 0.25
-	_box_m(halb, pos + off, _wand_mat("ziegel"))
-	_box_m(halb, pos - off, _wand_mat("stein"))
+	_box_m(halb, pos + off, _wand_mat(GameData.oberflaeche(cfg.target, "aussen", "ziegel")))
+	_box_m(halb, pos - off, _wand_mat(innen))
 
 ## Liegt die Zelle höchstens eine Zelle neben einem Gebäudeteil?
 func _near_building(rows: Array, x: int, y: int) -> bool:
@@ -260,8 +271,7 @@ func _build_world() -> void:
 						var gcol := Color(0.16, 0.2, 0.27) if on_street else Color(0.13, 0.19, 0.25)
 						_box(Vector3(1, 0.1, 1), p + Vector3(0, 0.05, 0), gcol * tone, 0.95)
 				_:
-					var checker := Color(0.8, 0.84, 0.9) if (x + y) % 2 == 0 else Color(0.72, 0.77, 0.84)
-					_box(Vector3(1, 0.1, 1), p + Vector3(0, 0.05, 0), checker * tone, 0.22, 0.0)
+					_box_m(Vector3(1, 0.1, 1), p + Vector3(0, 0.05, 0), _boden_mat(tone))
 
 	# Straßenlaternen an den Ecken des Gebäudekomplexes
 	var lamp_box := _building_box(cfg.target)
@@ -287,6 +297,13 @@ func _build_world() -> void:
 	# Beute: mit feinem Grundriss ist die Vitrine selbst ein Rechteck, sonst ein Sockel mit Absperrung
 	for l in cfg.target.loot:
 		var lp := Vector3(l.pos[0] + 0.5, 0, l.pos[1] + 0.5)
+		if l.get("leer", false):
+			# Dekoobjekt: genau wie eine Vitrine gebaut (Kachel im Grundriss, ohne feinen Grundriss der Sockel), aber ohne Beute-Würfel
+			if not fine_on:
+				_box(Vector3(0.7, 0.9, 0.7), lp + Vector3(0, 0.45, 0), Color(0.93, 0.9, 0.86), 0.25)
+				for off in [Vector3(0.6, 0, 0.6), Vector3(-0.6, 0, 0.6), Vector3(0.6, 0, -0.6), Vector3(-0.6, 0, -0.6)]:
+					_cyl(0.04, 0.9, lp + off + Vector3(0, 0.45, 0), Color(0.85, 0.7, 0.3), 0.2, 1.0)
+			continue
 		if not fine_on:
 			_box(Vector3(0.7, 0.9, 0.7), lp + Vector3(0, 0.45, 0), Color(0.93, 0.9, 0.86), 0.25)
 		var n := _box(Vector3(0.3, 0.3, 0.3), lp + Vector3(0, 1.05, 0), Color(1.0, 0.82, 0.25), 0.2, 1.0, 1.4)
@@ -364,22 +381,15 @@ func _build_world() -> void:
 	# Fluchtwagen mit Scheinwerfern am Ausgang
 	var ex := Sim._v2i(cfg.target.points.fluchtwagen)
 	var car := Node3D.new()
-	# Mittelklasse-Limousine, 4,2 m lang, 1,6 m breit (1 Feld = 1 m), Front in +x
-	_box_child(car, Vector3(4.2, 0.7, 1.6), Vector3(0, 0.6, 0), Color(0.28, 0.42, 0.56), 0.4, 0.0)
-	_box_child(car, Vector3(2.2, 0.6, 1.45), Vector3(-0.3, 1.25, 0), Color(0.2, 0.3, 0.4), 0.35, 0.0)
-	for wp in [Vector3(1.35, 0.35, 0.8), Vector3(1.35, 0.35, -0.8), Vector3(-1.35, 0.35, 0.8), Vector3(-1.35, 0.35, -0.8)]:
-		var wheel := MeshInstance3D.new()
-		var wc := CylinderMesh.new()
-		wc.top_radius = 0.35
-		wc.bottom_radius = 0.35
-		wc.height = 0.18
-		wheel.mesh = wc
-		wheel.material_override = _mat(Color(0.08, 0.08, 0.09), 0.9)
-		wheel.position = wp
-		wheel.rotation_degrees.x = 90
-		car.add_child(wheel)
-	_box_child(car, Vector3(0.12, 0.18, 0.4), Vector3(2.1, 0.7, 0.5), Color(1, 1, 0.9), 0.1, 0.0, 3.0)
-	_box_child(car, Vector3(0.12, 0.18, 0.4), Vector3(2.1, 0.7, -0.5), Color(1, 1, 0.9), 0.1, 0.0, 3.0)
+	# Fahrzeug als Seitenbild (Front in +x), 4,2 m breit wie das Bild lang ist; Fuß auf dem Boden
+	var bild: Texture2D = load(str(cfg.car.seite))
+	var sp := Sprite3D.new()
+	sp.texture = bild
+	sp.pixel_size = 4.2 / float(bild.get_width())
+	sp.position = Vector3(0, float(bild.get_height()) * sp.pixel_size * 0.5, 0)
+	sp.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+	sp.alpha_cut = SpriteBase3D.ALPHA_CUT_OPAQUE_PREPASS
+	car.add_child(sp)
 	# Der Wagen steht nach außen versetzt, damit die Figuren davor stehen und nicht im Blech verschwinden
 	var center := Vector2(float(cfg.target.map[0].length()) * 0.5, float(cfg.target.map.size()) * 0.5)
 	var out := Vector2(signf(float(ex.x) - center.x), signf(float(ex.y) - center.y))
@@ -479,7 +489,7 @@ func _build_fine(spec: Dictionary) -> void:
 		var sz := Vector3(x1 - x0, 0.1, y1 - y0)
 		match String(r[4]):
 			".":
-				_box(Vector3(sz.x, 0.1, sz.z), p + Vector3(0, 0.05, 0), Color(0.8, 0.84, 0.9) * 0.97, 0.22)
+				_box_m(Vector3(sz.x, 0.1, sz.z), p + Vector3(0, 0.05, 0), _boden_mat(0.97))
 			"W":
 				pass  # Wände werden unten als durchgehende Stücke gebaut (_build_walls)
 			"F":
@@ -489,7 +499,8 @@ func _build_fine(spec: Dictionary) -> void:
 				# Glasscheibe: zerbricht beim Öffnen (siehe _sync)
 				_window_nodes[anc_w] = _box(Vector3(fsz.x * 0.6, WALL_H - 0.9, fsz.z * 0.6), p + Vector3(0, 0.45 + (WALL_H - 0.9) * 0.5, 0), Color(0.45, 0.8, 1.0), 0.05, 0.0, 0.5)
 			"D":
-				var anc := Vector2i(floori((float(r[0]) + float(r[2])) * 0.5 / Sim.SUB), floori((float(r[1]) + float(r[3])) * 0.5 / Sim.SUB))
+				# Schlüssel wie in der Simulation (door_key): die Mitte des Türrechtecks kann in der Nachbarzelle liegen
+				var anc := sim.door_key(Vector2i(floori((float(r[0]) + float(r[2])) * 0.5), floori((float(r[1]) + float(r[3])) * 0.5)))
 				var dsz := _wall_size(sz)
 				# Türblatt 1,0 m breit, in der Öffnung
 				if dsz.x > dsz.z:
@@ -526,6 +537,42 @@ func _build_fine(spec: Dictionary) -> void:
 						_box(Vector3(0.06, jamb_h, leaf_t + 0.04), p + Vector3(sgn * 0.45, 0.1 + jamb_h * 0.5, 0), jamb_col, 0.8)
 					else:
 						_box(Vector3(leaf_t + 0.04, jamb_h, 0.06), p + Vector3(0, 0.1 + jamb_h * 0.5, sgn * 0.45), jamb_col, 0.8)
+			"R":
+				# Regal ohne Beute: hohes Holzregal mit zwei Böden; die Klappe vorn schwingt beim Öffnen auf (Kollision wie Vitrine)
+				var rholz := Color(0.42, 0.28, 0.17)
+				_box(Vector3(sz.x, 2.0, sz.z), p + Vector3(0, 1.0, 0), rholz, 0.8)
+				for hy in [0.6, 1.3]:
+					_box(Vector3(sz.x + 0.02, 0.05, sz.z + 0.02), p + Vector3(0, hy, 0), Color(0.55, 0.4, 0.26), 0.7)
+				var rklappe := Node3D.new()
+				rklappe.position = Vector3(p.x - sz.x * 0.47, 0.0, p.z + sz.z * 0.5 + 0.02)
+				add_child(rklappe)
+				_mesh_in(rklappe, Vector3(sz.x * 0.92, 1.9, 0.04), Vector3(sz.x * 0.47, 1.0, 0.0), Color(0.5, 0.34, 0.2), 0.6)
+				_deko_anim[Vector2i(floori(float(r[0] + r[2]) * 0.5 / Sim.SUB), floori(float(r[1] + r[3]) * 0.5 / Sim.SUB))] = {"node": rklappe, "kind": "R", "rest": rklappe.position}
+			"Z":
+				# Zeitungsständer: grauer Ständer, der Zeitungsstapel obenauf hebt sich beim Öffnen leicht und kippt (Kollision wie Vitrine)
+				_box(Vector3(sz.x, 0.9, sz.z), p + Vector3(0, 0.45, 0), Color(0.6, 0.14, 0.1), 0.5)
+				_box(Vector3(sz.x + 0.03, 0.05, sz.z + 0.03), p + Vector3(0, 0.9, 0), Color(0.85, 0.66, 0.3), 0.3, 0.6)
+				var zstapel := Node3D.new()
+				zstapel.position = Vector3(p.x, 0.92, p.z)
+				add_child(zstapel)
+				_mesh_in(zstapel, Vector3(sz.x * 0.76, 0.14, sz.z * 0.66), Vector3(0, 0.07, 0), Color(0.98, 0.97, 0.92), 0.9)
+				_deko_anim[Vector2i(floori(float(r[0] + r[2]) * 0.5 / Sim.SUB), floori(float(r[1] + r[3]) * 0.5 / Sim.SUB))] = {"node": zstapel, "kind": "Z", "rest": zstapel.position}
+			"P":
+				# Schreibtisch ohne Beute: Platte auf vier Beinen, eine Schublade vorn gleitet beim Öffnen heraus (Kollision wie Vitrine)
+				var pholz := Color(0.42, 0.28, 0.17)
+				_box(Vector3(sz.x, 0.08, sz.z), p + Vector3(0, 0.76, 0), Color(0.55, 0.4, 0.26), 0.6)
+				for ex in [-1.0, 1.0]:
+					for ez in [-1.0, 1.0]:
+						_box(Vector3(0.07, 0.74, 0.07), p + Vector3(ex * (sz.x * 0.5 - 0.1), 0.37, ez * (sz.z * 0.5 - 0.1)), pholz, 0.7)
+				var pschub := Node3D.new()
+				pschub.position = Vector3(p.x, 0.62, p.z + sz.z * 0.5 - 0.1)
+				add_child(pschub)
+				_mesh_in(pschub, Vector3(sz.x * 0.6, 0.16, 0.04), Vector3(0, 0, 0.02), Color(0.5, 0.34, 0.2), 0.6)
+				_mesh_in(pschub, Vector3(sz.x * 0.6, 0.16, 0.36), Vector3(0, 0, 0.2), Color(0.45, 0.3, 0.18), 0.6)
+				_deko_anim[Vector2i(floori(float(r[0] + r[2]) * 0.5 / Sim.SUB), floori(float(r[1] + r[3]) * 0.5 / Sim.SUB))] = {"node": pschub, "kind": "P", "rest": pschub.position}
+			"H":
+				# Tresen: dunkles Holz, kein Glasdeckel
+				_box(Vector3(sz.x, 1.0, sz.z), p + Vector3(0, 0.5, 0), Color(0.36, 0.22, 0.13), 0.7)
 			"C":
 				_box(Vector3(sz.x, 1.0, sz.z), p + Vector3(0, 0.5, 0), Color(0.93, 0.9, 0.86), 0.25)
 				# Glasdeckel: an der Rückkante gelenkt, hebt sich beim Öffnen der Vitrine (siehe _sync)
@@ -683,3 +730,20 @@ func _lift_for_floor(i: int) -> Vector3:
 ## Position mit Etagenversatz (für Figuren, Beute, Wachen und Sichtlinien). Die Zuordnung kommt aus der Karte.
 func _L(v: Vector3) -> Vector3:
 	return v + _lift_for_floor(_floor_idx_z(v.z))
+
+## Bodenkachel des Gebäudes als Material; die Helligkeit (tone) bleibt pro Feld erhalten.
+func _boden_mat(tone: float) -> StandardMaterial3D:
+	var key := "boden_%s_%.2f" % [GameData.oberflaeche(cfg.target, "boden", "parkett"), tone]
+	if _wand_cache.has(key):
+		return _wand_cache[key]
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = _kachel_bild(GameData.oberflaeche(cfg.target, "boden", "parkett"))
+	m.albedo_color = Color(tone, tone, tone)
+	m.uv1_triplanar = true
+	m.uv1_world_triplanar = true
+	m.uv1_scale = Vector3(0.6, 0.6, 0.6)
+	m.roughness = 0.9
+	m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
+	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+	_wand_cache[key] = m
+	return m

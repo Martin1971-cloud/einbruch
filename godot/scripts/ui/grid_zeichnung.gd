@@ -94,7 +94,7 @@ func _draw_fine(spec: Dictionary) -> void:
 		var rect := _frect(float(r[0]), float(r[1]), float(r[2]), float(r[3]))
 		match String(r[4]):
 			".":
-				_tile(rect, "parkett", 0, 0)
+				_tile(rect, GameData.oberflaeche(target, "boden", "parkett"), 0, 0)
 			"W":
 				var line: Rect2 = lines[wi]
 				wi += 1
@@ -149,6 +149,27 @@ func _draw_fine(spec: Dictionary) -> void:
 				draw_rect(rect, GOLD, false, 1.0)
 			"C":
 				draw_rect(rect, Color(0.93, 0.9, 0.86))
+				draw_rect(rect, GOLD, false, 1.0)
+			"H":
+				# Tresen: dunkles Holz, damit er nicht wie eine Vitrine oder ein Durchgang wirkt
+				draw_rect(rect, Color(0.36, 0.22, 0.13))
+				draw_rect(rect, Color(0.5, 0.33, 0.2), false, 2.0)
+			"R":
+				# Regal ohne Beute: dunkles Holz mit zwei Böden
+				draw_rect(rect, Color(0.42, 0.28, 0.17))
+				for k in range(1, 3):
+					var ry := rect.position.y + rect.size.y * float(k) / 3.0
+					draw_line(Vector2(rect.position.x + 2.0, ry), Vector2(rect.end.x - 2.0, ry), Color(0.55, 0.4, 0.26), maxf(1.0, _cell * 0.05))
+				draw_rect(rect, GOLD, false, 1.0)
+			"Z":
+				# Zeitungsständer: grauer Ständer mit Zeitungen
+				draw_rect(rect, Color(0.6, 0.14, 0.1))
+				draw_rect(rect.grow(-rect.size.x * 0.18), Color(0.98, 0.97, 0.92))
+				draw_rect(rect, GOLD, false, 1.0)
+			"P":
+				# Schreibtisch ohne Beute: helle Platte
+				draw_rect(rect, Color(0.55, 0.4, 0.26))
+				draw_rect(rect.grow(-rect.size.x * 0.12), Color(0.62, 0.46, 0.3))
 				draw_rect(rect, GOLD, false, 1.0)
 			"S":
 				draw_rect(rect, Color(0.55, 0.55, 0.6))
@@ -235,12 +256,12 @@ func _draw() -> void:
 				continue
 			match t:
 				"F":
-					_tile(r, "mauer", x, y)
+					_tile(r, GameData.oberflaeche(target, "wand", "mauer"), x, y)
 					_tile(r.grow(-_cell * 0.14), "fenster", x, y)
 					draw_line(r.position + Vector2(_cell * 0.5, _cell * 0.14), r.position + Vector2(_cell * 0.5, _cell * 0.86), Color(0.2, 0.25, 0.35, 0.8), 1.0)
 					draw_rect(r.grow(-_cell * 0.14), Color(0.8, 0.92, 1.0, 0.8), false, 1.0)
 				"W":
-					_tile(r, "mauer", x, y)
+					_tile(r, GameData.oberflaeche(target, "wand", "mauer"), x, y)
 					draw_rect(Rect2(r.position, Vector2(r.size.x, maxf(2.0, _cell * 0.12))), WALL_TOP)
 					draw_rect(Rect2(r.position + Vector2(0, r.size.y - _cell * 0.1), Vector2(r.size.x, _cell * 0.1)), WALL_SHADOW)
 				"o":
@@ -253,7 +274,7 @@ func _draw() -> void:
 				"D":
 					draw_rect(r, FLOOR_A)
 				_:
-					_tile(r, "parkett", x, y)
+					_tile(r, GameData.oberflaeche(target, "boden", "parkett"), x, y)
 					# Dielen: horizontale Fugen in unregelmäßigem Abstand
 					var k := _hash(x, y)
 					draw_line(r.position + Vector2(0, _ch * (0.33 + k * 0.1)), r.position + Vector2(_cw, _ch * (0.33 + k * 0.1)), PLANK, 1.0)
@@ -323,6 +344,9 @@ func _draw() -> void:
 		_draw_car(Sim._v2i(target.points["fluchtwagen"]))
 	# Beute mit Leuchten
 	for l in target.loot:
+		# Dekoration: wie eine Vitrine im Grundriss (Kachel), ohne Wert und Goldring
+		if l.get("leer", false):
+			continue
 		# Hinweis nur, solange die Beute noch im Objekt liegt (Planung immer)
 		if not _frame.is_empty() and str(_frame.get("loot", {}).get(l.id, "ROOM")) != "ROOM":
 			continue
@@ -415,7 +439,7 @@ func _draw() -> void:
 		var pc := _c(c.start)
 		if c.id == selected_id:
 			draw_arc(pc, _cell * 0.6, 0, TAU, 24, Color(0.98, 0.85, 0.35), 3.0)
-		_draw_sprite(pc, "crew_%s" % c.id, false, Vector2(0, 1))
+		_draw_sprite(pc, "crew2d_%s" % c.id, false, Vector2(0, 1))
 		_number_badge(pc, i + 1, COLORS.get(c.id, Color.WHITE))
 	if not _frame.is_empty():
 		_draw_dynamic()
@@ -619,7 +643,7 @@ func _draw_dynamic() -> void:
 			draw_arc(cp, _cell * 0.6, 0, TAU, 24, Color(0.98, 0.85, 0.35), 3.0)
 		if seen:
 			draw_arc(cp, _cell * 0.66, 0, TAU, 24, Color(1.0, 0.3, 0.3), 2.5)
-		_draw_walker(cp, col2, String(c.name).substr(0, 1), cdata, "crew_%s" % c.id)
+		_draw_walker(cp, col2, String(c.name).substr(0, 1), cdata, "crew2d_%s" % c.id)
 		_number_badge(cp, i + 1, col2)
 		var carried: int = cdata[3]
 		if carried > 0:

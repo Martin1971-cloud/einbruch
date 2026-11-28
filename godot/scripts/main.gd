@@ -41,6 +41,8 @@ func show_error(meldung: String, was_tun: String, details := "") -> void:
 	dlg.title = "Hinweis"
 	dlg.dialog_text = "%s\n\nWas du tun kannst: %s" % [meldung, was_tun]
 	dlg.ok_button_text = Texte.t("hint.verstanden")
+	dlg.dialog_autowrap = true
+	dlg.get_label().add_theme_font_size_override("font_size", 14)
 	add_child(dlg)
 	dlg.confirmed.connect(dlg.queue_free)
 	dlg.canceled.connect(dlg.queue_free)
@@ -54,6 +56,24 @@ func open_journal() -> void:
 		return
 	_journal = Journal.new()
 	add_child(_journal)
+
+
+## Laden/Speichern (Spielstände) als Überlagerung über dem aktuellen Fenster.
+var _slots: Control = null
+
+
+func open_slots() -> void:
+	if _slots != null and is_instance_valid(_slots):
+		_slots.queue_free()
+		_slots = null
+		return
+	_slots = preload("res://scripts/screens/slots.gd").new()
+	_slots.main = self
+	_slots.args = {"overlay": true}
+	add_child(_slots)
+	# Unter der Navigationsleiste: die Leiste bleibt sichtbar und klickbar
+	_slots.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_slots.offset_top = 80
 
 
 func open_optionen() -> void:
@@ -102,6 +122,9 @@ func go(screen: String, args: Dictionary = {}) -> void:
 	# Stand sichern, wenn man in der Stadt ankommt (zwischen den Einbrüchen)
 	if screen == "town":
 		Game.save_game()
+	if _slots != null and is_instance_valid(_slots):
+		_slots.queue_free()
+		_slots = null
 	if current:
 		current.queue_free()
 		current = null

@@ -60,10 +60,12 @@ func _step_crew(c: Dictionary, dt: float) -> void:
 	match a.t:
 		"MOVE":
 			_do_move(c, a, dt)
-		"WAIT":
+		"WAIT", "POSTEN":
 			if not c.started:
 				c.timer = float(a.sec)
 				c.started = true
+				if a.t == "POSTEN":
+					posten_zeiten.append([time, time + float(a.sec)])
 			c.timer -= dt
 			if c.timer <= 0.0:
 				_next(c)
@@ -195,16 +197,22 @@ func _do_tool(c: Dictionary, a: Dictionary, dt: float) -> void:
 			loot[case_id].opened = true
 			c["msg"] = Texte.t("sim.msg_aufgebrochen") % _case_word(loot[case_id])
 			_log(Texte.t("sim.vitrine_aufgebrochen") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
+			_pruefe_alarmkontakt(case_id)
 		else:
 			c["msg"] = Texte.t("sim.msg_entriegelt") % _case_word(loot[case_id])
-			_log(Texte.t("sim.vitrine_entriegelt") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
+			if loot[case_id].get("leer", false):
+				_log(Texte.t("sim.deko_entriegelt") % [c.name, loot[case_id].name])
+			else:
+				_log(Texte.t("sim.vitrine_entriegelt") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
 	elif door != null:
 		door.locked = false
 		if tool.destroys:
 			door.destroyed = true
 			open_cells[cell] = true
+			open_since[cell] = time
 			c["msg"] = Texte.t("sim.msg_tuer_aufgebrochen")
 			_log(Texte.t("sim.tuer_aufgebrochen") % _disp(a.on))
+			_pruefe_alarmkontakt(str(door.id))
 		else:
 			c["msg"] = Texte.t("sim.msg_tuer_entriegelt")
 			_log(Texte.t("sim.tuer_entriegelt") % _disp(a.on))
@@ -241,6 +249,7 @@ func _do_close(c: Dictionary, a: Dictionary, dt: float) -> void:
 	if c.timer > 0.0:
 		return
 	open_cells.erase(cell)
+	open_since.erase(cell)
 	c["msg"] = Texte.t("sim.msg_tuer_zu")
 	_log(Texte.t("sim.tuer_zu") % [c.name, _disp(a.on)])
 	_noise(center(cell), 4.0)
@@ -283,12 +292,16 @@ func _do_open(c: Dictionary, a: Dictionary, dt: float) -> void:
 		return
 	if door != null:
 		open_cells[cell] = true
+		open_since[cell] = time
 		c["msg"] = Texte.t("sim.msg_tuer_offen")
 		_log(Texte.t("sim.oeffnet") % [c.name, _disp(a.on)])
 	else:
 		loot[case_id].opened = true
 		c["msg"] = Texte.t("sim.msg_offen") % _case_word(loot[case_id])
-		_log(Texte.t("sim.oeffnet_vitrine") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
+		if loot[case_id].get("leer", false):
+			_log(Texte.t("sim.deko_oeffnet") % [c.name, loot[case_id].name])
+		else:
+			_log(Texte.t("sim.oeffnet_vitrine") % [c.name, _case_word(loot[case_id]), loot[case_id].name])
 	_pruefe_alarmkontakt(str(door.id) if door != null else case_id)
 	_next(c)
 
@@ -350,19 +363,25 @@ func _do_neutralize(c: Dictionary, a: Dictionary, dt: float) -> void:
 
 ## Treppe: die Person steht auf dem Treppenfeld, braucht 8 s und ist danach auf der anderen Etage.
 func _do_stairs(c: Dictionary, a: Dictionary, dt: float) -> void:
-	var here := anchor_of(Vector2i(floori(c.pos.x), floori(c.pos.y)))
-	if not stairs.has(here):
-		_fail(c, Texte.t("fail.keine_treppe") % c.name)
-		return
 	if not c.started:
+		var here := anchor_of(Vector2i(floori(c.pos.x), floori(c.pos.y)))
+		if not stairs.has(here):
+			_fail(c, Texte.t("fail.keine_treppe") % c.name)
+			return
 		c.started = true
 		c.timer = STAIRS_TIME
+		c["treppe_von"] = c.pos
+		c["treppe_ziel"] = stairs[here]
 		_log(Texte.t("sim.treppe_steigt") % c.name)
 		return
 	c.timer -= dt
+	# Beim Steigen geht die Person gleichmäßig vom unteren zum oberen Treppenende
+	var fortschritt := clampf(1.0 - c.timer / STAIRS_TIME, 0.0, 1.0)
+	var ziel: Vector2i = c.treppe_ziel
+	c.pos = (c.treppe_von as Vector2).lerp(center(ziel), fortschritt)
 	if c.timer > 0.0:
 		return
-	c.pos = center(stairs[here])
+	c.pos = center(ziel)
 	c.path = []
 	_log(Texte.t("sim.treppe_fertig") % c.name)
 	_next(c)
@@ -378,6 +397,9 @@ func _do_take(c: Dictionary, a: Dictionary, dt: float) -> void:
 			return
 		if not _reach(c, center(l.pos)):
 			_fail(c, Texte.t("fail.nicht_vor_beute") % c.name)
+			return
+		if l.get("leer", false) and l.get("durchsucht", false):
+			_fail(c, Texte.t("fail.schon_durchsucht") % l.name)
 			return
 		if l.state != "ROOM":
 			_fail(c, Texte.t("fail.schon_weg") % l.name)
@@ -401,6 +423,13 @@ func _do_take(c: Dictionary, a: Dictionary, dt: float) -> void:
 		return
 	c.timer -= dt
 	if c.timer > 0.0:
+		return
+	if l.get("leer", false):
+		# Dekoration: durchsucht, aber nichts drin
+		l["durchsucht"] = true
+		c["msg"] = Texte.t("sim.msg_leer")
+		_log(Texte.t("sim.leer") % [c.name, l.name])
+		_next(c)
 		return
 	l.state = "CARRIED"
 	l.carrier = c.id
@@ -439,11 +468,13 @@ func _check_escape() -> void:
 		if verdict == "KNAPP":
 			_log(Texte.t("sim.knapp"))
 	var total := 0
+	var verkauf: Array = []
 	for c in crew:
 		for lid in c.carried:
 			loot[lid].state = "DELIVERED"
 			total += int(loot[lid].value)
-	payout = int(round(total * 0.6))
+			verkauf.append([int(loot[lid].value), str(loot[lid].kat)])
+	payout = GameData.auszahlung(verkauf, hehler)
 	if total == 0:
 		_end("ABBRUCH", Texte.t("end.ohne_beute"))
 		return

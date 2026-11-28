@@ -238,6 +238,8 @@ func _describe(a: Dictionary) -> String:
 			return Texte.t("plan.beute_nehmen")
 		"WAIT":
 			return Texte.t("plan.warten_s") % int(a.sec)
+		"POSTEN":
+			return Texte.t("plan.posten_s") % int(a.sec)
 		"TREPPE":
 			return Texte.t("plan.treppe")
 		"CALL_CAR":
@@ -262,6 +264,8 @@ func _default_action(kind: String) -> Dictionary:
 			return {"t": "OPEN", "on": _tuer_vorschlag()}
 		"WAIT":
 			return {"t": "WAIT", "sec": 5.0}
+		"POSTEN":
+			return {"t": "POSTEN", "sec": GameData.POSTEN_DAUER_S}
 		"NEUTRALIZE":
 			return {"t": "NEUTRALIZE", "guard": target.guards[0].id if not target.guards.is_empty() else ""}
 		"CALL_CAR":
@@ -297,7 +301,9 @@ func _config() -> Dictionary:
 		team.append(c)
 	var skill := float(Game.driver.get("skills", {}).get("FAHREN", 85))
 	var car: Dictionary = GameData.car_now(Game.car_id, skill)  # gewähltes Fahrzeug (gemietet oder gekauft)
-	return {"target": target, "team": team, "plans": plans, "car": car}
+	# Eintrittskarte: liegt vor, wenn der Informant für dieses Ziel gesprochen wurde
+	var karte := bool(Game.quelle_of(str(target.id)).get("inf", false))
+	return {"target": target, "team": team, "plans": plans, "car": car, "karte": karte, "hehler": Game.hehler_id}
 
 ## Werkzeugdauer je Person: Dauer und Fähigkeit, die sie dafür mitbringt.
 func _duration_lines(res: Dictionary) -> Array:
@@ -346,12 +352,27 @@ func _object_entries(cell: Vector2i) -> Array:
 	var what := Texte.t("plan.leg_tuer") if st.kind == "door" else str(st.get("word", Texte.t("obj.vitrine")))
 	# Crosscheck wie im Original: Objekt nur in Blickrichtung der Person erreichbar (plGetObjectsList)
 	var stand := _stand_after(_active)
-	if absi(stand.cell.x - cell.x) + absi(stand.cell.y - cell.y) != 1:
+	# Nahe heißt: benachbartes Feld UND innerhalb der Reichweite der Simulation (sonst liegt die Person am Feldrand zu weit weg)
+	var nahe := absi(stand.cell.x - cell.x) + absi(stand.cell.y - cell.y) == 1 and _in_reichweite(stand, cell)
+	if not nahe:
+		# Nicht daneben: die Aktionen werden trotzdem angeboten, die Person geht vorher neben das Objekt
 		var nb := _neighbor_of(cell, stand.cell)
-		out.append(["%s: zu weit weg" % Texte.t(GameData.name_von(nm)), {}, false])
-		if nb != Vector2i(-1, -1):
-			out.append([Texte.t("plan.neben_gehen") % Texte.t(GameData.name_von(nm)), {"t": "MOVE", "cell": [nb.x, nb.y]}, true])
+		if nb == Vector2i(-1, -1):
+			out.append(["%s: zu weit weg" % Texte.t(GameData.name_von(nm)), {}, false])
+			return out
+		var aktionen := _aktionen_nahe(cell, st, nm, what)
+		for e in aktionen:
+			if bool(e[2]) and not (e[1] as Dictionary).is_empty():
+				(e[1] as Dictionary)["approach"] = [nb.x, nb.y]
+				e[0] = Texte.t("plan.vorher_neben") % e[0]
+		out.append_array(aktionen)
 		return out
+	out.append_array(_aktionen_nahe(cell, st, nm, what))
+	return out
+
+## Aktionen für ein Objekt, wenn die Person daneben steht (Schloss, Öffnen, Beute, Schließen).
+func _aktionen_nahe(cell: Vector2i, st: Dictionary, nm: String, what: String) -> Array:
+	var out: Array = []
 	if st.locked:
 		# Alle Werkzeuge für Schlösser, die man besitzt (Original: Werkzeugliste am Objekt)
 		var any := false
@@ -417,8 +438,42 @@ func _stand_after(id: String) -> Dictionary:
 	var ends: Dictionary = _res.get("crew_end", {}) if _res != null else {}
 	if ends.has(id):
 		var e: Dictionary = ends[id]
-		return {"cell": Vector2i(int(e.cell[0]), int(e.cell[1])), "face": Vector2i(int(e.face[0]), int(e.face[1]))}
-	return {"cell": Sim._v2i(target.points.fluchtwagen), "face": Vector2i(0, 1)}
+		var fein := Vector2(float(e.fine[0]), float(e.fine[1])) if e.has("fine") else Sim.center(Vector2i(int(e.cell[0]), int(e.cell[1])))
+		return {"cell": Vector2i(int(e.cell[0]), int(e.cell[1])), "fine": fein, "face": Vector2i(int(e.face[0]), int(e.face[1]))}
+	return {"cell": Sim._v2i(target.points.fluchtwagen), "fine": Sim.center(Sim._v2i(target.points.fluchtwagen)), "face": Vector2i(0, 1)}
+
+## Beute, die nicht in den Laderaum des gewählten Fluchtwagens passt. Mit Informationen (Umsehen, Informant) mit Namen,
+## ohne Informationen leer (dann gibt es nur den allgemeinen Hinweis, siehe _koennte_zu_gross).
+func _zu_grosse_beute() -> Array:
+	if Game.car_id == "" or int(Game.intel.get(target.id, 0)) < 1:
+		return []
+	var raum := str(GameData.CARS[Game.car_id].laderaum)
+	var out: Array = []
+	for l in target.loot:
+		if l.get("leer", false):
+			continue
+		if GameData.SIZE_RANK[str(l.size)] > GameData.SIZE_RANK[raum]:
+			out.append(Texte.t(str(l.name)))
+	return out
+
+## Ohne Informationen: kann eine Beute des Ziels zu groß für den Fluchtwagen sein?
+func _koennte_zu_gross() -> bool:
+	if Game.car_id == "" or int(Game.intel.get(target.id, 0)) >= 1:
+		return false
+	var raum := str(GameData.CARS[Game.car_id].laderaum)
+	for l in target.loot:
+		if not l.get("leer", false) and GameData.SIZE_RANK[str(l.size)] > GameData.SIZE_RANK[raum]:
+			return true
+	return false
+
+## Umsehen und Informant liegen vor.
+func alles_bekannt() -> bool:
+	return Game.ermittlung_key(target.id) == "stadt.erm_beide"
+
+## Wie die Simulation: die Person erreicht ein Objekt nur innerhalb etwa eines Feldes von seiner Mitte.
+func _in_reichweite(stand: Dictionary, cell: Vector2i) -> bool:
+	var d: Vector2 = (Sim.center(cell) - stand.fine) / float(Sim.SUB)
+	return absf(d.x) + absf(d.y) <= 1.05
 
 func _walkable(c: Vector2i) -> bool:
 	if c.x < 0 or c.y < 0 or c.y >= target.map.size() or c.x >= String(target.map[0]).length():

@@ -62,7 +62,7 @@ func _summary() -> String:
 			caught += 1
 		pay += int(e.auszahlung)
 		gain += int(e.gewinn)
-	return Texte.t("journal.summary") % [n, ok, caught, _fmt(pay), ("+" if gain >= 0 else "") + _fmt(gain)]
+	return Texte.t("journal.summary") % [n, ok, caught, _fmt(pay), ("+" if gain >= 0 else "") + _fmt(gain), Texte.t(GameData.rang_key(pay))]
 
 
 func _entry(e: Dictionary) -> Control:

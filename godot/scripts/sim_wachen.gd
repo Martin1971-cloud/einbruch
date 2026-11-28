@@ -33,29 +33,53 @@ func _check_loudness(dt: float) -> void:
 	if total > max_volume:
 		_alarm(Texte.t("sim.laerm_quelle") % total, "QUIET", 0.0)
 
-## Streifgänge (Original: player.c, Patrouille pro Sekunde, tcAlarmByPatrol): Ein Streifgang
-## löst einen leisen Alarm aus, wenn der Anteil veränderter Objekte zu groß ist.
-func _check_patrols(dt: float) -> void:
-	_patrol_timer += dt
-	if _patrol_timer < 1.0:
+## Streife: in zufälligen Abständen fährt sie vorbei. Eine offene Tür oder ein offenes Fenster
+## sieht sie und schlägt Alarm; geschlossene Türen fallen nicht auf.
+func _check_patrols(_dt: float) -> void:
+	if _next_patrol < 0.0:
+		_next_patrol = _naechste_streife_abstand()
+	if time < _next_patrol:
 		return
-	_patrol_timer -= 1.0
-	if rng.randf() >= PATROL_P:
-		return
+	_next_patrol = time + _naechste_streife_abstand()
 	patrol_count += 1
-	var total := float(doors.size() + loot_order.size())
-	var changed := 0.0
-	for p in doors:
-		if not doors[p].locked:
-			changed += 1.0
-	for lid in loot_order:
-		var l: Dictionary = loot[lid]
-		if not l.locked or l.state != "ROOM":
-			changed += 1.0
-	if total * PATROL_PCT / (125.0 * float(patrol_count)) < changed:
-		_alarm("Streifgang", "QUIET", 0.0)
+	if _offen_zu_lange():
+		# Eine Schmiere auf Posten warnt rechtzeitig: das Team hat die Vorwarnzeit, um zu schließen
+		if _schmiere_wacht():
+			_log(Texte.t("sim.schmiere_warnt"))
+			vorwarnung_bis = time + GameData.POSTEN_VORWARNUNG_S
+		else:
+			_alarm("Streife", "QUIET", 0.0)
 	else:
 		_log(Texte.t("sim.streife_ok"))
+
+## Eine offene Tür oder ein offenes Fenster fällt auf, wenn sie länger offen ist als ihre Schonfrist.
+## Der Hauptweg hat die längere Schonfrist, damit der Einbrecher ihn schließen kann.
+func _offen_zu_lange() -> bool:
+	for p in open_cells:
+		if not doors.has(p):
+			continue
+		var schutz := GameData.PATROL_SCHUTZ_HAUPTWEG_S if hauptweg.has(str(doors[p].id)) else GameData.PATROL_GRACE_S
+		if time - float(open_since.get(p, -INF)) > schutz:
+			return true
+	return false
+
+## Steht gerade eine Schmiere auf Posten?
+func _schmiere_wacht() -> bool:
+	for z in posten_zeiten:
+		if time >= float(z[0]) and time < float(z[1]):
+			return true
+	return false
+
+## Nach der Vorwarnzeit: Ist die Tür noch offen, folgt der Alarm.
+func _pruefe_vorwarnung() -> void:
+	if vorwarnung_bis < 0.0 or time < vorwarnung_bis:
+		return
+	vorwarnung_bis = -1.0
+	if _offen_zu_lange():
+		_alarm("Streife", "QUIET", 0.0)
+
+func _naechste_streife_abstand() -> float:
+	return rng.randf_range(patrol_mittel - GameData.PATROL_SCHWANKUNG_S, patrol_mittel + GameData.PATROL_SCHWANKUNG_S)
 
 func _dispatch_patrols() -> void:
 	## Im Original rückt die Streife erst aus, wenn ein Alarm ausgelöst wurde
@@ -67,10 +91,31 @@ func _dispatch_patrols() -> void:
 			g.target = points.get("aussen_eingang", Vector2i(1, 5))
 			_log(Texte.t("sim.streife_alarm"))
 
+## Effizienz der Wache (1.0 = aufmerksam): Ein Geräusch nimmt sie nur mit dieser Wahrscheinlichkeit wahr.
+## Ohne Abzug wird kein Zufall gezogen, damit der Ablauf der übrigen Wachen unverändert bleibt.
+func _bemerkt(g: Dictionary) -> bool:
+	if float(g.effizienz) >= 1.0:
+		return true
+	return rng.randf() < float(g.effizienz)
+
 ## Öffnen von Hand: Das Schloss muss offen (entriegelt) sein. Dauert OPEN_TIME.
+## Verzögerte Melder: Der Alarm kommt erst, wenn die Verzögerung abgelaufen ist, sofern der Melder dann noch aktiv ist.
+func _pruefe_verzoegerte_melder() -> void:
+	for p in pending_alarms.duplicate():
+		if time < float(p.at):
+			continue
+		pending_alarms.erase(p)
+		var s: Dictionary = sensors[int(p.sensor)]
+		if s.active:
+			_alarm(s.name, "GUARD", 0.0)
+
 ## Alarmkontakt: ein gesichertes Objekt, das bei eingeschalteter Anlage geöffnet wird, löst Alarm aus (wie im Original).
 func _pruefe_alarmkontakt(id: String) -> void:
 	if panel.is_empty() or panel.bypassed or not gesichert.has(id):
+		return
+	# Eintrittskarte vom Informanten: diese eine Tür bleibt ruhig
+	if karte and id == karte_tuer:
+		_log(Texte.t("sim.karte_tuer") % _disp(id))
 		return
 	_alarm(str(panel.name), "STILL", 0.0)
 
@@ -83,12 +128,15 @@ func _noise(origin: Vector2, db: float) -> void:
 		var sp := center(s.pos)
 		var arr := db - origin.distance_to(sp) / SUB * DIST_DAMPING - blockers_between(origin, sp) * WALL_DAMPING
 		if arr > s.threshold:
-			_alarm(s.name, "GUARD", 0.0)
+			if float(s.verzoegerung) > 0.0:
+				pending_alarms.append({"at": time + float(s.verzoegerung), "sensor": sensors.find(s)})
+			else:
+				_alarm(s.name, "GUARD", 0.0)
 	for g in guards:
 		if g.state in ["ALARMED", "IDLE", "OUT"]:
 			continue
 		var arr2 := db - origin.distance_to(g.pos) / SUB * DIST_DAMPING - blockers_between(origin, g.pos) * WALL_DAMPING
-		if arr2 > g.hearing:
+		if arr2 > g.hearing and _bemerkt(g):
 			_log(Texte.t("sim.hoert") % g.name)
 			_update_suspicion(g, (arr2 - g.hearing) * 2.5, cell_of(origin))
 
@@ -127,7 +175,7 @@ func _vision(dt: float) -> void:
 				continue
 			if blockers_between(g.pos, c.pos) > 0:
 				continue
-			var rate: float = SEE_RATE * (1.0 - d / g.vision) * float(c.gear.vis)
+			var rate: float = SEE_RATE * (1.0 - d / g.vision) * float(c.gear.vis) * float(g.effizienz)
 			g.seen = true
 			c.seen_now = true
 			c.seen_sec += dt

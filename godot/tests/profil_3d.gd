@@ -84,7 +84,7 @@ func _process(_d: float) -> bool:
 			var cur = _main.current
 			print("Vorschau: %s" % cur._res.get("status", "?"))
 			print("Problems vor Ausführung: %s" % str(cur._problems))
-			cur._on_execute()
+			cur.ausfuehren()
 			print("Problems danach: %s" % str(cur._problems))
 			_step = 4
 		4:

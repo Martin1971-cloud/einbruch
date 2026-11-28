@@ -23,7 +23,15 @@ func _ready() -> void:
 	var root := VBoxContainer.new()
 	root.add_theme_constant_override("separation", 8)
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(UI.margin(root, 12))
+	# Scrollen statt abschneiden: die Stadtansicht braucht bei kleinen Fenstern mehr Höhe als vorhanden
+	var rollen := ScrollContainer.new()
+	rollen.set_anchors_preset(Control.PRESET_FULL_RECT)
+	rollen.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	add_child(rollen)
+	var rand := UI.margin(root, 12)
+	rand.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rand.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	rollen.add_child(rand)
 
 	root.add_child(_title_bar())
 	root.add_child(_status_bar())
@@ -56,31 +64,7 @@ func _ready() -> void:
 # ---------------------------------------------------------------- Oberfläche
 
 func _title_bar() -> Control:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 10)
-	var brand := VBoxContainer.new()
-	var t := UI.label(Texte.t("app.titel"), 24, Color(0.97, 0.82, 0.42))
-	t.autowrap_mode = TextServer.AUTOWRAP_OFF
-	brand.add_child(t)
-	var s := UI.label(Texte.t("app.untertitel"), 10, Color(0.75, 0.75, 0.8))
-	s.autowrap_mode = TextServer.AUTOWRAP_OFF
-	brand.add_child(s)
-	row.add_child(brand)
-	var sp := Control.new()
-	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(sp)
-	var _b1 := UI.button(Texte.t("nav.stadt"), func(): pass, 100)
-	_b1.disabled = true
-	row.add_child(_b1)
-	row.add_child(UI.button(Texte.t("nav.organisation"), func(): main.go("organisation"), 130))
-	row.add_child(UI.button(Texte.t("nav.planung"), func(): main.go("planner"), 100))
-	var _b2 := UI.button(Texte.t("nav.ausfuehrung"), func(): pass, 110)
-	_b2.disabled = true
-	row.add_child(_b2)
-	row.add_child(UI.button(Texte.t("nav.journal"), func(): main.open_journal(), 120))
-	row.add_child(UI.button(Texte.t("nav.optionen"), func(): main.open_optionen(), 130))
-	row.add_child(UI.button(Texte.t("nav.lexikon"), func(): main.open_lexikon(), 120))
-	row.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 110))
+	var row := Navigation.leiste(main, "stadt")
 	var kopf := _panel(row)
 	if OS.is_debug_build():
 		# Entwicklerzeile unter der Kopfzeile (nur in Debug-Versionen)
@@ -149,6 +133,14 @@ func _map_card() -> PanelContainer:
 	return c
 
 
+## Ansprechperson des Ziels: fest pro Gebäude (GameData.TARGETS[id].sprecher).
+func _sprecherin(ziel: String) -> Dictionary:
+	var id := str(GameData.TARGETS[ziel].sprecher)
+	for e in GameData.SPRECHER:
+		if str(e.id) == id:
+			return e
+	return GameData.SPRECHER[0]
+
 func _image_card() -> PanelContainer:
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 6)
@@ -163,10 +155,10 @@ func _image_card() -> PanelContainer:
 	var dv := VBoxContainer.new()
 	dv.add_theme_constant_override("separation", 4)
 	dlg.add_child(dv)
-	dv.add_child(UI.label(GameData.TARGETS[_selected].speaker.to_upper(), 12, Color(0.97, 0.82, 0.42)))
+	var sprecher := _sprecherin(_selected)
+	dv.add_child(UI.label(str(sprecher.name).to_upper(), 12, Color(0.97, 0.82, 0.42)))
 	# Porträt der Sprecherin (Dialog)
-	var sp_id := "mira" if GameData.TARGETS[_selected].speaker == "Mira Calder" else ""
-	var sp_path := GameData.portrait_path(sp_id)
+	var sp_path := "res://assets/portraits/%s.png" % str(sprecher.bild)
 	if sp_path != "" and ResourceLoader.exists(sp_path):
 		var pt := TextureRect.new()
 		pt.texture = load(sp_path)
@@ -179,6 +171,8 @@ func _image_card() -> PanelContainer:
 	col.add_child(dlg)
 	var c := _panel(col)
 	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Mindestbreite: sonst bricht der Dialogtext so schmal um, dass die Stadtansicht unten abgeschnitten wird
+	c.custom_minimum_size = Vector2(260, 0)
 	return c
 
 
@@ -311,7 +305,7 @@ func _refresh_image() -> void:
 		pic.texture = load(photo_path)
 		pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		pic.custom_minimum_size = Vector2(0, 240)
+		pic.custom_minimum_size = Vector2(0, 120)  # klein halten: die Stadtansicht muss im 900-Pixel-Fenster passen
 		pic.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		_image_box.add_child(pic)
 		return

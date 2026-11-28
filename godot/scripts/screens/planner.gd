@@ -72,31 +72,30 @@ func _ready() -> void:
 
 # ---------------------------------------------------------------- Aufbau
 func _header() -> PanelContainer:
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
-	var title := _l(Texte.t("app.titel"), 24, Color(0.97, 0.82, 0.42))
-	row.add_child(title)
-	row.add_child(_l(Texte.t("plan.titel"), 15, Color(0.62, 0.7, 0.8)))
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 6)
+	col.add_child(Navigation.leiste(main, "planung"))
+	# Planungswerkzeuge in einer zweiten Zeile, die Navigation bleibt oben gleich
+	var werkzeuge := HBoxContainer.new()
+	werkzeuge.add_theme_constant_override("separation", 12)
+	werkzeuge.add_child(_l(Texte.t("plan.titel"), 15, Color(0.62, 0.7, 0.8)))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(sp)
-	# Reihenfolge wie der Ablauf: Vorbereitung (Stadt, Organisation), Planung, Vorschau, Ausführung
-	row.add_child(UI.button(Texte.t("nav.stadt"), func(): main.go("town"), 100))
-	row.add_child(UI.button(Texte.t("nav.organisation"), func(): main.go("organisation"), 130))
-	var tab := UI.primary(Texte.t("plan.titel"), func(): pass, 100)
-	tab.disabled = true
-	row.add_child(tab)
+	werkzeuge.add_child(sp)
+	werkzeuge.add_child(_l(Texte.t("plan.hehler"), 15, Color(0.62, 0.7, 0.8)))
+	var hehler_wahl := UI.dropdown(GameData.HEHLER_ORDER.map(func(id): return Texte.t("hehler." + id)), GameData.HEHLER_ORDER.find(Game.hehler_id), _on_hehler)
+	hehler_wahl.tooltip_text = Texte.t("hehler.satz") % _hehler_satz(Game.hehler_id)
+	werkzeuge.add_child(hehler_wahl)
 	if GameData.TESTHILFEN:
-		row.add_child(UI.button(Texte.t("plan.beispiel"), _on_example, 170))
+		werkzeuge.add_child(UI.button(Texte.t("plan.beispiel"), _on_example, 170))
 	var vor_btn := UI.button(Texte.t("plan.vorschau"), _on_vorschau, 100)
 	vor_btn.tooltip_text = Texte.t("plan.vorschau_tip")
-	row.add_child(vor_btn)
-	row.add_child(UI.primary(Texte.t("plan.ausfuehrung_btn"), _on_execute, 150))
-	row.add_child(_l(Texte.t("plan.tag_zeit") % [Game.day, Game.clock_text()], 15, Color(0.85, 0.88, 0.94)))
-	row.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 110))
+	werkzeuge.add_child(vor_btn)
+	werkzeuge.add_child(_l(Texte.t("plan.tag_zeit") % [Game.day, Game.clock_text()], 15, Color(0.85, 0.88, 0.94)))
+	col.add_child(werkzeuge)
 	var wrap := PanelContainer.new()
 	wrap.add_theme_stylebox_override("panel", UI.card_style(Color(0.05, 0.07, 0.12, 0.7)))
-	wrap.add_child(row)
+	wrap.add_child(col)
 	return wrap
 
 func _left_column() -> Control:
@@ -136,6 +135,11 @@ func _left_column() -> Control:
 		info.add_child(alarm)
 		var status := _l(Texte.t("grid.alarm_aus") if _alarm_aus_im_plan() else Texte.t("grid.alarm_aktiv"), 12, Color(0.95, 0.5, 0.45) if not _alarm_aus_im_plan() else Color(0.6, 0.62, 0.68))
 		info.add_child(status)
+	if str(target.get("karte_tuer", "")) != "":
+		var karte_da := bool(Game.quelle_of(target.id).get("inf", false))
+		var karte := _l(Texte.t("plan.karte_da") if karte_da else Texte.t("plan.karte_fehlt"), 12, Color(0.6, 0.85, 0.6) if karte_da else Color(0.95, 0.7, 0.4))
+		karte.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		info.add_child(karte)
 	col.add_child(_card(info))
 	_checklist = VBoxContainer.new()
 	_checklist.add_theme_constant_override("separation", 4)
@@ -325,3 +329,18 @@ func _vsep() -> Control:
 	v.custom_minimum_size = Vector2(1, 26)
 	v.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	return v
+
+
+## Hehler gewählt: die Auszahlung in der Vorschau neu berechnen
+func _on_hehler(i: int) -> void:
+	Game.hehler_id = GameData.HEHLER_ORDER[i]
+	_on_changed()
+
+
+## Anteile in Prozent für den Hinweis am Hehler-Auswahlfeld
+func _hehler_satz(id: String) -> Array:
+	var h: Dictionary = GameData.HEHLER[id]
+	var out: Array = []
+	for kat in ["kunst", "schmuck", "metall", "bargeld"]:
+		out.append("%d %%" % int(round(float(h.kat.get(kat, h.satz)) * 100.0)))
+	return out

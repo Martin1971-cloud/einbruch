@@ -4,9 +4,11 @@ extends SimAktionen
 ## Ohne Darstellung, deterministisch. Die Regeln liegen in den Grundklassen (sim_karte, sim_wachen, sim_aktionen).
 
 
-static func create(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary) -> Sim:
+static func create(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary, karte := false, hehler := "allround") -> Sim:
 	var s := Sim.new()
 	s._setup(target, team, plans, car_cfg)
+	s.karte = karte
+	s.hehler = hehler
 	return s
 
 func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary) -> void:
@@ -37,14 +39,17 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 		stairs[sa] = sb
 		stairs[sb] = sa
 	gesichert = target.get("gesichert", [])
+	karte_tuer = str(target.get("karte_tuer", ""))
+	patrol_mittel = GameData.patrol_mittel_s(target)
+	hauptweg = target.get("hauptweg", [])
 	if target.has("panel"):
 		panel = {"id": target.panel.id, "name": Texte.t(target.panel.name), "pos": _v2i(target.panel.pos), "res": float(target.panel.res), "cplx": float(target.panel.cplx), "bypassed": false}
 	for s in target.sensors:
-		sensors.append({"name": Texte.t(s.name), "pos": _v2i(s.pos), "threshold": float(s.threshold), "active": true})
+		sensors.append({"name": Texte.t(s.name), "pos": _v2i(s.pos), "threshold": float(s.threshold), "verzoegerung": float(s.verzoegerung), "active": true})
 	for l in target.loot:
 		if not use_fine:
 			_case_cells[_v2i(l.pos)] = true   # ohne feinen Grundriss blockiert die Vitrine ihr ganzes Feld
-		loot[l.id] = {"id": l.id, "name": Texte.t(l.name), "pos": _v2i(l.pos), "value": int(l.value), "weight": float(l.weight), "size": l.size,"state": "ROOM", "carrier": "", "opened": bool(l.get("open", false)), "locked": not bool(l.get("open", false))}
+		loot[l.id] = {"id": l.id, "name": Texte.t(l.name), "pos": _v2i(l.pos), "value": int(l.value), "kat": str(l.kat), "weight": float(l.weight), "size": l.size,"state": "ROOM", "carrier": "", "opened": bool(l.get("open", false)), "locked": not bool(l.get("open", false)), "leer": bool(l.get("leer", false))}
 		loot_order.append(l.id)
 	for g in target.guards:
 		var st := _v2i(g.start)
@@ -55,7 +60,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 			"id": g.id, "name": Texte.t(g.name), "type": g.type, "kampf": float(g.get("kampf", 0)),
 			"pos": center(st), "route": route, "wp": 0, "path": [], "dwell": 0.0,
 			"dwell_sec": float(g.dwell), "state": "PATROL", "suspicion": 0.0,
-			"vision": float(g.vision), "hearing": float(g.hearing), "reaction": float(g.reaction),
+			"vision": float(g.vision), "hearing": float(g.hearing), "reaction": float(g.reaction), "effizienz": float(g.effizienz),
 			"facing": Vector2(1, 0), "target": Vector2i(-1, -1), "inv_arrived": false, "inv_timer": 0.0, "seen": false,
 		})
 	for g2 in guards:
@@ -69,7 +74,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 			"id": c.id, "name": c.name, "skills": c.skills,
 			"gear": gear, "gear_ids": gear_ids,
 			# Tragkraft in kg (Original: (Ausdauer + Stärke) × 200 g, dazu ein Volumen; hier nur Gewicht, Kraft = Kampfsport)
-			"capacity": 15.0 + float(c.skills.FORCE) * 0.35,
+			"capacity": 15.0 + float(c.skills.get("FORCE", 0)) * 0.35,
 			"pos": center(st2), "facing": Vector2(0, 1), "plan": plans.get(c.id, []), "idx": 0,
 			"path": [], "timer": 0.0, "started": false, "done": false,
 			"carried": [], "ev": 0.0, "noise": 0.0, "seen_sec": 0.0, "tool_ok": true,
@@ -102,6 +107,8 @@ func step(dt: float) -> void:
 	for c in crew:
 		_step_crew(c, dt)
 	_check_loudness(dt)
+	_pruefe_verzoegerte_melder()
+	_pruefe_vorwarnung()
 	_check_patrols(dt)
 	_update_car()
 	if time - _last_snap >= SNAP - 0.001:
@@ -133,8 +140,8 @@ func step(dt: float) -> void:
 		_end("ABBRUCH", Texte.t("end.nicht_weg"))
 
 ## Schnelle Vorschau: läuft die Simulation ohne Anzeige bis zum Ende.
-static func preview(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary) -> Dictionary:
-	var s := Sim.create(target, team, plans, car_cfg)
+static func preview(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary, karte := false, hehler := "allround") -> Dictionary:
+	var s := Sim.create(target, team, plans, car_cfg, karte, hehler)
 	var guard := 0
 	while s.status == "RUNNING" and guard < 20000:
 		s.step(DT)

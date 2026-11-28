@@ -45,8 +45,10 @@ static func _gruppe(titel: String) -> Label:
 
 ## Ermittlung für alle Gebäude auf voll.
 static func ermittlung_voll() -> void:
+	# Umsehen (2x) und Informant: genau das ergibt die volle Ermittlung in Stadt und Planung
 	for z in ZIELE:
 		_g().intel[z] = 2
+		_g().ermittlung_quelle[z] = {"look": 2, "inf": true}
 
 
 ## Bild des gesamten Fensters speichern (Ordner user://screenshots).

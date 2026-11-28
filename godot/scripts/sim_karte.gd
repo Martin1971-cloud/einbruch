@@ -58,6 +58,7 @@ var points := {}
 var doors := {}        # Vector2i -> Dictionary
 
 var open_cells := {}   # Vector2i -> true
+var open_since := {}    # Vector2i -> Spielzeit, zu der die Tür geöffnet wurde (für die Schonfrist der Streife)
 
 var panel := {}
 
@@ -87,6 +88,10 @@ var chase := ""  # Ergebnis der Verfolgung: "" = keine Polizei unterwegs, sonst 
 
 var car_v := 100.0      # Fahrleistung des Wagens (km/h, mit Fahrer)
 
+var karte := false              # Eintrittskarte vom Informanten vorhanden
+var karte_tuer := ""             # gesicherte Tür, die die Karte ruhig öffnet (aus dem Ziel)
+var patrol_mittel := 180.0       # mittlerer Abstand der Streife (Sekunden)
+var hauptweg: Array = []         # Türen des Hauptwegs (Haupteingang, Schwachstelle)
 var car_laderaum := "mittel"  # größte Beute, die in den Fluchtwagen passt: klein, mittel, gross
 
 var police_v := 140.0   # Polizeitempo (km/h), abhängig von der Wachrate des Ziels
@@ -123,9 +128,7 @@ const LOUD_STD := 5.0          # PLANING_LOUDNESS_STD: Grundlautstärke einer Pe
 
 const LOUD_CHECK := 5.0        # Original: alle 15 Ticks (5 s) prüfen
 
-const PATROL_P := 1.0 / 7230.0 # Original: 1 zu 30*(270 - GRate/2 + 1), GRate 60 angenommen, pro Sekunde
 
-const PATROL_PCT := 5.0        # tcPATROL_ALARM
 
 var police_base := 60.0        # Polizeizeit nach Alarm (Original: PoliceTime des Gebäudes)
 
@@ -136,14 +139,18 @@ var police_fahrt := 0.0        # Fahrzeit vom Revier (Sekunden), schwankt beim s
 var max_volume := 30.0         # Original: Gebäude-Grenzwert MaxVolume (Wert hier gesetzt, im Quellcode nicht ausgelesen)
 
 var patrol_count := 0
+var _next_patrol := -1.0      # Spielzeit der nächsten Streife (negativ: noch nicht geplant)
 
 var _loud_timer := 0.0
 
 var peak_loud := 0.0            # lauteste Lautstärke während des Einbruchs (dB)
 
-var _patrol_timer := 0.0
 
 var rng := RandomNumberGenerator.new()
+var posten_zeiten: Array = []  # Zeiträume [Beginn, Ende], in denen eine Schmiere Posten hält
+var vorwarnung_bis := -1.0  # Zeitpunkt, ab dem nach einer Vorwarnung nochmals geprüft wird (-1: keine Vorwarnung)
+var pending_alarms: Array = []  # verzögerte Melder: {"at": Zeit, "sensor": Index} (Verzögerung nach dem Auslösen)
+var hehler := "allround"  # gewählter Hehler für den Verkauf der Beute (siehe GameData.HEHLER)
 
 var _last_snap := -1.0
 
@@ -366,7 +373,7 @@ func passable_f(f: Vector2i) -> bool:
 	## Begehbarkeit eines Unterfeldes (Original: lsIsCollision). Wand, Fenster und Vitrine blockieren,
 	## eine Tür nur, solange sie zu ist.
 	var t := ftile(f)
-	if t == "W" or t == "C" or t == "S" or t == "K":
+	if t == "W" or t == "C" or t == "H" or t == "S" or t == "K" or t == "R" or t == "Z" or t == "P":
 		return false
 	if t == "D" or t == "F":  # Tür oder Schaufenster: begehbar, sobald offen
 		return open_cells.has(door_key(f))
@@ -675,7 +682,7 @@ func _sight_clear(a: Vector2, b: Vector2) -> bool:
 		if (ftile(f) == "S" or ftile(f) == "K") and absi(fa.x - tcell.x) <= 1 and absi(fa.y - tcell.y) <= 1:
 			continue
 		# Tresen: man kann darüber greifen (Kasse liegt auf dem Tresen), aber nicht hindurchgehen
-		if ftile(f) == "C":
+		if ftile(f) == "C" or ftile(f) == "H" or ftile(f) == "R" or ftile(f) == "Z" or ftile(f) == "P":
 			continue
 		if not passable_f(f):
 			return false
@@ -703,13 +710,25 @@ func fence_heat() -> float:
 		heat += 40.0
 	return heat
 
+## Festgenommen: Bei einer Festnahme trifft es alle, die die Verfolgung eingeholt hat. Sonst jede Person,
+## die nicht am Fluchtwagen steht.
+func _gefangene_ids() -> Array:
+	var out: Array = []
+	if status != "GEFASST":
+		return out
+	for c in crew:
+		if chase == "GEFASST" or cheb(cell_of(c.pos), escape_cell) > 1:
+			out.append(c.id)
+	return out
+
 func result() -> Dictionary:
 	# Endstand jeder Person: Feld und Blickrichtung (für die Planung, damit sie weiß, wo jemand steht)
 	var ends := {}
 	for c in crew:
-		ends[c.id] = {"cell": [cell_of(c.pos).x, cell_of(c.pos).y], "face": [face4(c.get("facing", Vector2(0, 1))).x, face4(c.get("facing", Vector2(0, 1))).y]}
+		ends[c.id] = {"cell": [cell_of(c.pos).x, cell_of(c.pos).y], "fine": [c.pos.x, c.pos.y], "face": [face4(c.get("facing", Vector2(0, 1))).x, face4(c.get("facing", Vector2(0, 1))).y]}
 	return {
 		"crew_end": ends,
+	"gefangen": _gefangene_ids(),
 		"status": status,
 		"reason": ended_reason,
 		"payout": payout,

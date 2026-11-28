@@ -31,6 +31,7 @@ func _ready() -> void:
 	var root := VBoxContainer.new()
 	root.add_theme_constant_override("separation", 14)
 	add_child(UI.margin(root, 26))
+	root.add_child(Navigation.leiste(main, "ergebnis"))
 
 	var status: String = res.get("status", "ABBRUCH")
 	var title_col := Color(0.5, 1.0, 0.6)
@@ -51,6 +52,8 @@ func _ready() -> void:
 	var card_box := VBoxContainer.new()
 	card_box.add_theme_constant_override("separation", 6)
 	card_box.add_child(UI.label(Texte.t("res.erbeutet") % _list(res.get("loot_taken", [])), 17))
+	if not res.get("gefangen", []).is_empty():
+		card_box.add_child(UI.label(Texte.t("res.gefangen") % _namen(res.get("gefangen", [])), 17, Color(1, 0.55, 0.45)))
 	card_box.add_child(UI.label(Texte.t("res.zurueck") % _list(res.get("loot_missed", [])), 17))
 	card_box.add_child(UI.label(Texte.t("res.auszahlung") % _fmt(int(res.get("payout", 0))), 20, Color(0.95, 0.85, 0.5)))
 	card_box.add_child(UI.label(Texte.t("res.fahndung") % [int(Game.heat), int(res.get("heat", 0.0))], 17))
@@ -59,17 +62,15 @@ func _ready() -> void:
 
 	root.add_child(_ablauf_box(res))
 
-	var bottom := HBoxContainer.new()
-	root.add_child(bottom)
-	var sp := Control.new()
-	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	bottom.add_child(sp)
+	# Zurück in die Stadt läuft über die Leiste; hier bleibt nur der Weg zum Spielende
 	if Game.game_over:
 		root.add_child(UI.label(Texte.t("res.vorbei"), 20, Color(1, 0.5, 0.4)))
+		var bottom := HBoxContainer.new()
+		root.add_child(bottom)
+		var sp := Control.new()
+		sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		bottom.add_child(sp)
 		bottom.add_child(UI.button(Texte.t("res.weiter"), func(): main.go("gameover"), 240))
-	else:
-		bottom.add_child(UI.button(Texte.t("res.zur_stadt"), _on_town, 240))
-	bottom.add_child(UI.button(Texte.t("menue.beenden"), func(): Optionen.beenden_frage(self, true), 130))
 
 
 ## Ablauf: je Person eine Spalte, Zeit links. Alarm über die ganze Breite. Filter nach Person.
@@ -199,9 +200,15 @@ func _list(a: Array) -> String:
 	return ", ".join(names)
 
 
-func _on_town() -> void:
-	main.go("town")
-
-
 func _fmt(n: int) -> String:
 	return GameData.geld(n)
+
+
+## Namen zu Personen-IDs (für die Anzeige der Festnahmen)
+func _namen(ids: Array) -> String:
+	var namen: Array = []
+	for id in ids:
+		for c in GameData.CREW:
+			if c.id == id:
+				namen.append(str(c.name).split(" ")[0])
+	return ", ".join(namen)

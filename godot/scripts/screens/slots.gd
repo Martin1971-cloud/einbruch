@@ -18,19 +18,27 @@ func _ready() -> void:
 	root.add_theme_constant_override("separation", 14)
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(UI.margin(root, 40))
+	var overlay := bool(args.get("overlay", false))
+	# Als Überlagerung liegt das Fenster unter der Leiste; sonst gibt es keine Leiste, also einen Zurück-Knopf
 	var head := HBoxContainer.new()
 	var titel := Texte.t("slots.titel_neu") if str(args.get("mode", "alle")) == "neu" else Texte.t("slots.titel")
 	head.add_child(UI.label(titel, 26, Color(0.97, 0.82, 0.42)))
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	head.add_child(sp)
-	head.add_child(UI.button(Texte.t("slots.zurueck"), func(): main.go("title"), 140))
+	if not overlay:
+		head.add_child(UI.button(Texte.t("slots.zurueck"), _zurueck, 140))
 	root.add_child(head)
 	_rows = VBoxContainer.new()
 	_rows.add_theme_constant_override("separation", 12)
 	root.add_child(_rows)
 	root.add_child(UI.label(Texte.t("slots.hinweis"), 13, Color(0.7, 0.74, 0.8), true))
 	_fill()
+
+
+## Nur ohne Überlagerung (vom Titel aus) gibt es diesen Weg zurück zum Titel.
+func _zurueck() -> void:
+	main.go("title")
 
 
 func _fill() -> void:
