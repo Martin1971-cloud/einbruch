@@ -849,6 +849,16 @@ const PATROL_SCHUTZ_HAUPTWEG_S := 90.0
 const PATROL_GRACE_S := 30.0
 
 ## Mittlerer Streifenabstand nach Gesamtbeute: wenig Beute seltener, viel Beute öfter.
+## Rang nach der Gesamtauszahlung aller Einbrüche: [Schwelle in €, Textschlüssel], aufsteigend.
+const RANG := [[0, "rang.anfaenger"], [50000, "rang.einzelgaenger"], [200000, "rang.profi"], [500000, "rang.mr_big"]]
+
+static func rang_key(auszahlung_gesamt: int) -> String:
+	var key := str(RANG[0][1])
+	for r in RANG:
+		if auszahlung_gesamt >= int(r[0]):
+			key = str(r[1])
+	return key
+
 static func patrol_mittel_s(target: Dictionary) -> float:
 	var summe := 0
 	for l in target.get("loot", []):
