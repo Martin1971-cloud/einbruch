@@ -21,4 +21,9 @@ Gebäude verweisen nur auf diese IDs (`oberflaeche` je Ziel). Der Test `tests/te
 | fenster | fenster | fenster.png | Standard im Grundriss |
 | rasen | aussen | rasen.png | Standard im Grundriss (außen) |
 
-**Offen:** Außenwand-Kacheln (Backstein, Quaderstein, Naturstein). Erst nach Bildlieferung eintragen.
+| aussen_backstein | aussen | aussen_backstein.png | im Spiel (Kiosk) |
+| aussen_quader | aussen | aussen_quader.png | im Spiel (Juwelier) |
+| aussen_putz | aussen | aussen_putz.png | im Spiel (Kuriositätenladen) |
+| aussen_naturstein | aussen | aussen_naturstein.png | im Spiel (Museum) |
+
+Hinweis: Der Kuriositätenladen hat keine Kopfstein-Kachel; dort steht bis dahin Außenputz.

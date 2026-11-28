@@ -169,7 +169,7 @@ func _wand_stueck(size: Vector3, pos: Vector3, achse: int, aussen: int) -> void:
 	halb[achse] = t * 0.5
 	var off := Vector3.ZERO
 	off[achse] = float(aussen) * t * 0.25
-	_box_m(halb, pos + off, _wand_mat("ziegel"))
+	_box_m(halb, pos + off, _wand_mat(GameData.oberflaeche(cfg.target, "aussen", "ziegel")))
 	_box_m(halb, pos - off, _wand_mat(innen))
 
 ## Liegt die Zelle höchstens eine Zelle neben einem Gebäudeteil?

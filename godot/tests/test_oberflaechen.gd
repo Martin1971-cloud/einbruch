@@ -17,6 +17,8 @@ func _initialize() -> void:
 		# Ohne Angabe gilt der Standard; ist eine Angabe da, muss sie in der Tabelle stehen und die richtige Art haben
 		if ob.has("boden"):
 			_check(GameData.OBERFLAECHEN.has(ob.boden) and GameData.OBERFLAECHEN[ob.boden].art == "boden", "%s: Boden gültig" % tid)
+		if ob.has("aussen"):
+			_check(GameData.OBERFLAECHEN.has(ob.aussen) and GameData.OBERFLAECHEN[ob.aussen].art == "aussen", "%s: Außenwand gültig" % tid)
 		if ob.has("wand"):
 			_check(GameData.OBERFLAECHEN.has(ob.wand) and GameData.OBERFLAECHEN[ob.wand].art == "wand", "%s: Wand gültig" % tid)
 	print("Ergebnis: %d Fehler" % _fails)
