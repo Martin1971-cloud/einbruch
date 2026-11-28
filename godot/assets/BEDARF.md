@@ -9,8 +9,8 @@ Die Oberflächen stehen zusätzlich in `OBERFLAECHEN.md`.
 |---|---|---|---|
 | Spielfiguren (Crew) | 6 | 20 | je Person 3 Grafiken |
 | Sprecher / Informanten (Porträt) | 17 (Krimi-Stil) | 12 (glatt) | Stil angleichen |
-| Wachen (3D, 8 Bilder) | 4 Typen (Pixel) | 6 (glatt) | 3 innen, 2 Streife, 1 Chef |
-| Polizei (3D, 8 Bilder) | 1 Typ (Pixel) | 2 (glatt) | Streife, Polizist |
+| Wachen (3D, 8 Bilder) | 4 Typen (Pixel) + 1 glatt (`assets/crew/figur3d_wache/wache_*`) | 6 (glatt) | 3 innen, 2 Streife, 1 Chef |
+| Polizei (3D, 8 Bilder) | 1 glatt (`assets/crew/figur3d_wache/polizei_*`) | 2 (glatt) | Streife, Polizist |
 
 ## Gebäude und Oberflächen
 
