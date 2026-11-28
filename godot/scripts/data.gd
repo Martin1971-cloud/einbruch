@@ -364,9 +364,9 @@ const ZIELE_ROH := {
 			{"id": "muenzen", "pos": [14, 5], "value": 90000},
 		],
 		"guards": [
-			{"id": "g_ost", "name": "ziel.museum.wache.g_ost.name", "kampf": 45, "type": "INDOOR", "start": [9, 8], "route": [[9, 8], [15, 8], [15, 7], [9, 7]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
-			{"id": "g_gal", "name": "ziel.museum.wache.g_gal.name", "kampf": 60, "type": "INDOOR", "start": [4, 3], "route": [[4, 3], [7, 3], [7, 6], [4, 6]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
-			{"id": "streife", "name": "ziel.museum.wache.streife.name", "kampf": 0, "type": "STREET", "start": [19, 0], "route": [[19, 0], [19, 11], [11, 11], [11, 0]], "vision": 8.0, "hearing": 40.0, "reaction": 1.5, "dwell": 1.0},
+			{"id": "g_ost", "name": "ziel.museum.wache.g_ost.name", "kampf": 45, "type": "INDOOR", "start": [9, 8], "route": [[9, 8], [15, 8], [15, 7], [9, 7]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "effizienz": 1.0, "dwell": 2.0},
+			{"id": "g_gal", "name": "ziel.museum.wache.g_gal.name", "kampf": 60, "type": "INDOOR", "start": [4, 3], "route": [[4, 3], [7, 3], [7, 6], [4, 6]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "effizienz": 1.0, "dwell": 2.0},
+			{"id": "streife", "name": "ziel.museum.wache.streife.name", "kampf": 0, "type": "STREET", "start": [19, 0], "route": [[19, 0], [19, 11], [11, 11], [11, 0]], "vision": 8.0, "hearing": 40.0, "reaction": 1.5, "effizienz": 1.0, "dwell": 1.0},
 		],
 		"facts": [
 			["oeffnung", "ziel.museum.fakt.oeffnung"],
@@ -573,7 +573,7 @@ const ZIELE_ROH := {
 			{"id": "gemaelde", "pos": [3, 6], "value": 60000, "open": true, "wall": true},
 		],
 		"guards": [
-			{"id": "g_tres", "name": "ziel.testhaus.wache.g_tres.name", "kampf": 50, "type": "INDOOR", "start": [11, 8], "route": [[11, 8], [13, 8], [13, 4], [11, 4]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "dwell": 2.0},
+			{"id": "g_tres", "name": "ziel.testhaus.wache.g_tres.name", "kampf": 50, "type": "INDOOR", "start": [11, 8], "route": [[11, 8], [13, 8], [13, 4], [11, 4]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "effizienz": 1.0, "dwell": 2.0},
 		],
 		"facts": [
 			["Lage", "ziel.testhaus.fakt.Lage"],

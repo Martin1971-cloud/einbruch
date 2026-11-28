@@ -59,7 +59,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 			"id": g.id, "name": Texte.t(g.name), "type": g.type, "kampf": float(g.get("kampf", 0)),
 			"pos": center(st), "route": route, "wp": 0, "path": [], "dwell": 0.0,
 			"dwell_sec": float(g.dwell), "state": "PATROL", "suspicion": 0.0,
-			"vision": float(g.vision), "hearing": float(g.hearing), "reaction": float(g.reaction),
+			"vision": float(g.vision), "hearing": float(g.hearing), "reaction": float(g.reaction), "effizienz": float(g.effizienz),
 			"facing": Vector2(1, 0), "target": Vector2i(-1, -1), "inv_arrived": false, "inv_timer": 0.0, "seen": false,
 		})
 	for g2 in guards:

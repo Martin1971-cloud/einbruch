@@ -69,6 +69,13 @@ func _dispatch_patrols() -> void:
 			g.target = points.get("aussen_eingang", Vector2i(1, 5))
 			_log(Texte.t("sim.streife_alarm"))
 
+## Effizienz der Wache (1.0 = aufmerksam): Ein Geräusch nimmt sie nur mit dieser Wahrscheinlichkeit wahr.
+## Ohne Abzug wird kein Zufall gezogen, damit der Ablauf der übrigen Wachen unverändert bleibt.
+func _bemerkt(g: Dictionary) -> bool:
+	if float(g.effizienz) >= 1.0:
+		return true
+	return rng.randf() < float(g.effizienz)
+
 ## Öffnen von Hand: Das Schloss muss offen (entriegelt) sein. Dauert OPEN_TIME.
 ## Alarmkontakt: ein gesichertes Objekt, das bei eingeschalteter Anlage geöffnet wird, löst Alarm aus (wie im Original).
 func _pruefe_alarmkontakt(id: String) -> void:
@@ -94,7 +101,7 @@ func _noise(origin: Vector2, db: float) -> void:
 		if g.state in ["ALARMED", "IDLE", "OUT"]:
 			continue
 		var arr2 := db - origin.distance_to(g.pos) / SUB * DIST_DAMPING - blockers_between(origin, g.pos) * WALL_DAMPING
-		if arr2 > g.hearing:
+		if arr2 > g.hearing and _bemerkt(g):
 			_log(Texte.t("sim.hoert") % g.name)
 			_update_suspicion(g, (arr2 - g.hearing) * 2.5, cell_of(origin))
 
@@ -133,7 +140,7 @@ func _vision(dt: float) -> void:
 				continue
 			if blockers_between(g.pos, c.pos) > 0:
 				continue
-			var rate: float = SEE_RATE * (1.0 - d / g.vision) * float(c.gear.vis)
+			var rate: float = SEE_RATE * (1.0 - d / g.vision) * float(c.gear.vis) * float(g.effizienz)
 			g.seen = true
 			c.seen_now = true
 			c.seen_sec += dt
