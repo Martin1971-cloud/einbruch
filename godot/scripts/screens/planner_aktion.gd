@@ -303,7 +303,7 @@ var _gezeigt := ""
 
 func _on_preview() -> void:
 	var cfg := _config()
-	var res := Sim.preview(cfg.target, cfg.team, cfg.plans, cfg.car, cfg.karte)
+	var res := Sim.preview(cfg.target, cfg.team, cfg.plans, cfg.car, cfg.karte, cfg.hehler)
 	_refresh_timeline(res)
 	_problems.append_array(_nicht_am_wagen())
 	var msgs: Array = []

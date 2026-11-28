@@ -299,7 +299,7 @@ func _config() -> Dictionary:
 	var car: Dictionary = GameData.car_now(Game.car_id, skill)  # gewähltes Fahrzeug (gemietet oder gekauft)
 	# Eintrittskarte: liegt vor, wenn der Informant für dieses Ziel gesprochen wurde
 	var karte := bool(Game.quelle_of(str(target.id)).get("inf", false))
-	return {"target": target, "team": team, "plans": plans, "car": car, "karte": karte}
+	return {"target": target, "team": team, "plans": plans, "car": car, "karte": karte, "hehler": Game.hehler_id}
 
 ## Werkzeugdauer je Person: Dauer und Fähigkeit, die sie dafür mitbringt.
 func _duration_lines(res: Dictionary) -> Array:

@@ -12,6 +12,7 @@ const HEAT_ABBAU_PRO_TAG := 10.0
 var intel := {}          # target_id -> Stufe 0..2
 ## Woher die Informationen stammen: target_id -> {"look": 0..2 (Umsehen), "inf": bool (Informant)}
 var ermittlung_quelle := {}
+var hehler_id := "allround"  # gewählter Hehler (wird nicht gespeichert: Auswahl je Sitzung)
 var ausfuehrung_cfg := {}  # gültige Planung für die Ausführung (leer: nichts bereit, nur zur Laufzeit)
 var tools_owned := {}    # tool_id -> true
 var gear_owned := {}     # gear_id -> true
@@ -209,6 +210,7 @@ func _apply_save(parsed: Dictionary) -> void:
 
 
 func reset() -> void:
+	hehler_id = "allround"
 	saved_plans = {}
 	money = START_MONEY
 	day = 1

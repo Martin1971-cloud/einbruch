@@ -82,6 +82,10 @@ func _header() -> PanelContainer:
 	var sp := Control.new()
 	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	werkzeuge.add_child(sp)
+	werkzeuge.add_child(_l(Texte.t("plan.hehler"), 15, Color(0.62, 0.7, 0.8)))
+	var hehler_wahl := UI.dropdown(GameData.HEHLER_ORDER.map(func(id): return Texte.t("hehler." + id)), GameData.HEHLER_ORDER.find(Game.hehler_id), _on_hehler)
+	hehler_wahl.tooltip_text = Texte.t("hehler.satz") % _hehler_satz(Game.hehler_id)
+	werkzeuge.add_child(hehler_wahl)
 	if GameData.TESTHILFEN:
 		werkzeuge.add_child(UI.button(Texte.t("plan.beispiel"), _on_example, 170))
 	var vor_btn := UI.button(Texte.t("plan.vorschau"), _on_vorschau, 100)
@@ -325,3 +329,18 @@ func _vsep() -> Control:
 	v.custom_minimum_size = Vector2(1, 26)
 	v.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	return v
+
+
+## Hehler gewählt: die Auszahlung in der Vorschau neu berechnen
+func _on_hehler(i: int) -> void:
+	Game.hehler_id = GameData.HEHLER_ORDER[i]
+	_on_changed()
+
+
+## Anteile in Prozent für den Hinweis am Hehler-Auswahlfeld
+func _hehler_satz(id: String) -> Array:
+	var h: Dictionary = GameData.HEHLER[id]
+	var out: Array = []
+	for kat in ["kunst", "schmuck", "metall", "bargeld"]:
+		out.append("%d %%" % int(round(float(h.kat.get(kat, h.satz)) * 100.0)))
+	return out

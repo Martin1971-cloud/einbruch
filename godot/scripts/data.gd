@@ -358,10 +358,10 @@ const ZIELE_ROH := {
 			{"name": "ziel.museum.sensor.1.name", "pos": [13, 8], "threshold": 20.0},
 		],
 		"loot": [
-			{"id": "gemaelde", "pos": [5, 3], "value": 60000},
-			{"id": "skulptur", "pos": [4, 8], "value": 90000},
-			{"id": "diamant", "pos": [15, 3], "value": 150000},
-			{"id": "muenzen", "pos": [14, 5], "value": 90000},
+			{"id": "gemaelde", "pos": [5, 3], "kat": "kunst", "value": 60000},
+			{"id": "skulptur", "pos": [4, 8], "kat": "kunst", "value": 90000},
+			{"id": "diamant", "pos": [15, 3], "kat": "schmuck", "value": 150000},
+			{"id": "muenzen", "pos": [14, 5], "kat": "metall", "value": 90000},
 		],
 		"guards": [
 			{"id": "g_ost", "name": "ziel.museum.wache.g_ost.name", "kampf": 45, "type": "INDOOR", "start": [9, 8], "route": [[9, 8], [15, 8], [15, 7], [9, 7]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "effizienz": 1.0, "dwell": 2.0},
@@ -448,12 +448,12 @@ const ZIELE_ROH := {
 		],
 		"sensors": [],
 		"loot": [
-			{"id": "kasse", "pos": [10, 3], "value": 6000},
+			{"id": "kasse", "pos": [10, 3], "kat": "bargeld", "value": 6000},
 			# Wertschrank (Original: Geld 500 g und eine Zigarrenkiste 2 kg, im selben Behälter)
 			# Aufteilung: Geld 16.000 € (500 g), Zigarrenkiste 6.000 € (2 kg). Im Spiel ein Beutestück.
-			{"id": "deko_regal", "pos": [7, 3], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
-			{"id": "deko_zeitung", "pos": [9, 5], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
-			{"id": "safe", "pos": [8, 2], "value": 22000, "parts": [["ziel.kiosk.teil.safe.0", 16000], ["ziel.kiosk.teil.safe.1", 6000]]},
+			{"id": "deko_regal", "pos": [7, 3], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_zeitung", "pos": [9, 5], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "safe", "pos": [8, 2], "kat": "bargeld", "value": 22000, "parts": [["ziel.kiosk.teil.safe.0", 16000], ["ziel.kiosk.teil.safe.1", 6000]]},
 		],
 		"guards": [],
 		"facts": [
@@ -566,11 +566,11 @@ const ZIELE_ROH := {
 			{"name": "ziel.testhaus.sensor.1.name", "pos": [5, 8], "threshold": 20.0},
 		],
 		"loot": [
-			{"id": "diamant", "pos": [4, 4], "value": 150000},
-			{"id": "goldbarren", "pos": [12, 5], "value": 240000},
-			{"id": "muenzen_og", "pos": [4, 16], "value": 80000},
+			{"id": "diamant", "pos": [4, 4], "kat": "schmuck", "value": 150000},
+			{"id": "goldbarren", "pos": [12, 5], "kat": "metall", "value": 240000},
+			{"id": "muenzen_og", "pos": [4, 16], "kat": "metall", "value": 80000},
 			# Gemälde hängt an der Wand: ohne Werkzeug abnehmbar (open), Bild wird als Wandbild gezeigt
-			{"id": "gemaelde", "pos": [3, 6], "value": 60000, "open": true, "wall": true},
+			{"id": "gemaelde", "pos": [3, 6], "kat": "kunst", "value": 60000, "open": true, "wall": true},
 		],
 		"guards": [
 			{"id": "g_tres", "name": "ziel.testhaus.wache.g_tres.name", "kampf": 50, "type": "INDOOR", "start": [11, 8], "route": [[11, 8], [13, 8], [13, 4], [11, 4]], "vision": 6.0, "hearing": 15.0, "reaction": 4.0, "effizienz": 1.0, "dwell": 2.0},
@@ -686,16 +686,16 @@ const ZIELE_ROH := {
 		],
 		"sensors": [],
 		"loot": [
-			{"id": "deko_vitrine", "pos": [8, 4], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
-			{"id": "deko_glasschrank", "pos": [11, 4], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
-			{"id": "deko_schreibtisch", "pos": [13, 6], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
-			{"id": "uhren", "pos": [4, 4], "value": 15000},
-			{"id": "besteck", "pos": [6, 4], "value": 10000},
-			{"id": "landschaft", "pos": [3, 6], "value": 12000, "open": true, "wall": true},
-			{"id": "kassette", "pos": [12, 8], "value": 20000},
-			{"id": "gemmen", "pos": [4, 16], "value": 25000},
-			{"id": "pergamente", "pos": [12, 18], "value": 15000},
-			{"id": "portraet", "pos": [3, 18], "value": 18000, "open": true, "wall": true},
+			{"id": "deko_vitrine", "pos": [8, 4], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_glasschrank", "pos": [11, 4], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_schreibtisch", "pos": [13, 6], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "uhren", "pos": [4, 4], "kat": "schmuck", "value": 15000},
+			{"id": "besteck", "pos": [6, 4], "kat": "metall", "value": 10000},
+			{"id": "landschaft", "pos": [3, 6], "kat": "kunst", "value": 12000, "open": true, "wall": true},
+			{"id": "kassette", "pos": [12, 8], "kat": "bargeld", "value": 20000},
+			{"id": "gemmen", "pos": [4, 16], "kat": "schmuck", "value": 25000},
+			{"id": "pergamente", "pos": [12, 18], "kat": "kunst", "value": 15000},
+			{"id": "portraet", "pos": [3, 18], "kat": "kunst", "value": 18000, "open": true, "wall": true},
 		],
 		"guards": [],
 		"facts": [
@@ -788,11 +788,11 @@ const ZIELE_ROH := {
 			{"name": "ziel.juwelier.raum.2.name", "pos": [12, 6]},
 		],
 		"loot": [
-			{"id": "diamantring", "pos": [4, 4], "value": 30000},
-			{"id": "perlen", "pos": [6, 4], "value": 20000},
-			{"id": "tresor", "pos": [12, 8], "value": 70000},
-			{"id": "deko_glasschrank", "pos": [14, 7], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
-			{"id": "deko_tisch", "pos": [13, 5], "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "diamantring", "pos": [4, 4], "kat": "schmuck", "value": 30000},
+			{"id": "perlen", "pos": [6, 4], "kat": "schmuck", "value": 20000},
+			{"id": "tresor", "pos": [12, 8], "kat": "bargeld", "value": 70000},
+			{"id": "deko_glasschrank", "pos": [14, 7], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
+			{"id": "deko_tisch", "pos": [13, 5], "kat": "deko", "value": 0, "weight": 0.0, "size": "klein", "open": false, "leer": true},
 		],
 		"guards": [],
 		"facts": [
@@ -849,6 +849,24 @@ const PATROL_SCHUTZ_HAUPTWEG_S := 90.0
 const PATROL_GRACE_S := 30.0
 
 ## Mittlerer Streifenabstand nach Gesamtbeute: wenig Beute seltener, viel Beute öfter.
+## Hehler: Anteil des Beutewerts, der beim Verkauf als Geld zurückkommt. "satz" gilt für alle Kategorien,
+## "kat" überschreibt ihn für einzelne Beutearten. Der Allround-Hehler entspricht dem bisherigen Verkauf (60 %).
+const HEHLER_ORDER := ["allround", "kunst", "gold"]
+const HEHLER := {
+	"allround": {"satz": 0.6, "kat": {}},
+	"kunst": {"satz": 0.4, "kat": {"kunst": 0.8}},
+	"gold": {"satz": 0.4, "kat": {"schmuck": 0.8, "metall": 0.75}},
+}
+const KATEGORIEN := ["kunst", "schmuck", "metall", "bargeld", "deko"]
+
+## Auszahlung für eine Liste aus [Wert, Kategorie]-Paaren beim gewählten Hehler (ganze Euro).
+static func auszahlung(beute: Array, hehler_id: String) -> int:
+	var h: Dictionary = HEHLER.get(hehler_id, HEHLER["allround"])
+	var summe := 0.0
+	for b in beute:
+		summe += float(b[0]) * float(h.kat.get(str(b[1]), h.satz))
+	return int(round(summe))
+
 ## Rang nach der Gesamtauszahlung aller Einbrüche: [Schwelle in €, Textschlüssel], aufsteigend.
 const RANG := [[0, "rang.anfaenger"], [50000, "rang.einzelgaenger"], [200000, "rang.profi"], [500000, "rang.mr_big"]]
 

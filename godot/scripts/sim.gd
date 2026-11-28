@@ -4,10 +4,11 @@ extends SimAktionen
 ## Ohne Darstellung, deterministisch. Die Regeln liegen in den Grundklassen (sim_karte, sim_wachen, sim_aktionen).
 
 
-static func create(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary, karte := false) -> Sim:
+static func create(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary, karte := false, hehler := "allround") -> Sim:
 	var s := Sim.new()
 	s._setup(target, team, plans, car_cfg)
 	s.karte = karte
+	s.hehler = hehler
 	return s
 
 func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary) -> void:
@@ -48,7 +49,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 	for l in target.loot:
 		if not use_fine:
 			_case_cells[_v2i(l.pos)] = true   # ohne feinen Grundriss blockiert die Vitrine ihr ganzes Feld
-		loot[l.id] = {"id": l.id, "name": Texte.t(l.name), "pos": _v2i(l.pos), "value": int(l.value), "weight": float(l.weight), "size": l.size,"state": "ROOM", "carrier": "", "opened": bool(l.get("open", false)), "locked": not bool(l.get("open", false)), "leer": bool(l.get("leer", false))}
+		loot[l.id] = {"id": l.id, "name": Texte.t(l.name), "pos": _v2i(l.pos), "value": int(l.value), "kat": str(l.kat), "weight": float(l.weight), "size": l.size,"state": "ROOM", "carrier": "", "opened": bool(l.get("open", false)), "locked": not bool(l.get("open", false)), "leer": bool(l.get("leer", false))}
 		loot_order.append(l.id)
 	for g in target.guards:
 		var st := _v2i(g.start)
@@ -137,8 +138,8 @@ func step(dt: float) -> void:
 		_end("ABBRUCH", Texte.t("end.nicht_weg"))
 
 ## Schnelle Vorschau: läuft die Simulation ohne Anzeige bis zum Ende.
-static func preview(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary, karte := false) -> Dictionary:
-	var s := Sim.create(target, team, plans, car_cfg, karte)
+static func preview(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Dictionary, karte := false, hehler := "allround") -> Dictionary:
+	var s := Sim.create(target, team, plans, car_cfg, karte, hehler)
 	var guard := 0
 	while s.status == "RUNNING" and guard < 20000:
 		s.step(DT)

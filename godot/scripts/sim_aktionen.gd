@@ -466,11 +466,13 @@ func _check_escape() -> void:
 		if verdict == "KNAPP":
 			_log(Texte.t("sim.knapp"))
 	var total := 0
+	var verkauf: Array = []
 	for c in crew:
 		for lid in c.carried:
 			loot[lid].state = "DELIVERED"
 			total += int(loot[lid].value)
-	payout = int(round(total * 0.6))
+			verkauf.append([int(loot[lid].value), str(loot[lid].kat)])
+	payout = GameData.auszahlung(verkauf, hehler)
 	if total == 0:
 		_end("ABBRUCH", Texte.t("end.ohne_beute"))
 		return
