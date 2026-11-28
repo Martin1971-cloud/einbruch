@@ -45,7 +45,7 @@ func _setup(target: Dictionary, team: Array, plans: Dictionary, car_cfg: Diction
 	if target.has("panel"):
 		panel = {"id": target.panel.id, "name": Texte.t(target.panel.name), "pos": _v2i(target.panel.pos), "res": float(target.panel.res), "cplx": float(target.panel.cplx), "bypassed": false}
 	for s in target.sensors:
-		sensors.append({"name": Texte.t(s.name), "pos": _v2i(s.pos), "threshold": float(s.threshold), "active": true})
+		sensors.append({"name": Texte.t(s.name), "pos": _v2i(s.pos), "threshold": float(s.threshold), "verzoegerung": float(s.verzoegerung), "active": true})
 	for l in target.loot:
 		if not use_fine:
 			_case_cells[_v2i(l.pos)] = true   # ohne feinen Grundriss blockiert die Vitrine ihr ganzes Feld
@@ -107,6 +107,7 @@ func step(dt: float) -> void:
 	for c in crew:
 		_step_crew(c, dt)
 	_check_loudness(dt)
+	_pruefe_verzoegerte_melder()
 	_check_patrols(dt)
 	_update_car()
 	if time - _last_snap >= SNAP - 0.001:

@@ -355,7 +355,7 @@ const ZIELE_ROH := {
 		"gesichert": ["mitteltuer", "tresortuer", "eingangstuer"],  # Museum: die Eingangstür öffnet nur die Eintrittskarte des Informanten ohne Alarm
 		"karte_tuer": "eingangstuer",
 		"sensors": [
-			{"name": "ziel.museum.sensor.1.name", "pos": [13, 8], "threshold": 20.0},
+			{"name": "ziel.museum.sensor.1.name", "pos": [13, 8], "verzoegerung": 0.0, "threshold": 20.0},
 		],
 		"loot": [
 			{"id": "gemaelde", "pos": [5, 3], "kat": "kunst", "value": 60000},
@@ -563,7 +563,7 @@ const ZIELE_ROH := {
 		# Etagen: Kartenzeilen von bis (ohne Ende). Ohne "floors" gibt es nur einen Grundriss.
 		"floors": [{"id": "eg", "name": "EG", "rows": [0, 13]}, {"id": "og", "name": "OG", "rows": [13, 24]}],
 		"sensors": [
-			{"name": "ziel.testhaus.sensor.1.name", "pos": [5, 8], "threshold": 20.0},
+			{"name": "ziel.testhaus.sensor.1.name", "pos": [5, 8], "verzoegerung": 0.0, "threshold": 20.0},
 		],
 		"loot": [
 			{"id": "diamant", "pos": [4, 4], "kat": "schmuck", "value": 150000},
@@ -768,9 +768,9 @@ const ZIELE_ROH := {
 		 "panel": {"id": "alarmpanel", "pos": [3, 3], "res": 50, "cplx": 45},
 		"gesichert": ["eingangstuer", "stahltuer", "diamantring", "perlen", "tresor"],  # Schaufenster bewusst ohne Kontakt: Schwachstelle
 		"sensors": [
-			{"name": "ziel.juwelier.sensor.1.name", "pos": [5, 8], "threshold": 25.0},
+			{"name": "ziel.juwelier.sensor.1.name", "pos": [5, 8], "verzoegerung": 0.0, "threshold": 25.0},
 			# Glasbruchmelder: reagiert schon auf ein zerbrochenes Schaufenster (niedrige Schwelle)
-			{"name": "ziel.juwelier.sensor.2.name", "pos": [8, 3], "threshold": 15.0},
+			{"name": "ziel.juwelier.sensor.2.name", "pos": [8, 3], "verzoegerung": 0.0, "threshold": 15.0},
 		],
 		"points": {
 			"aussen_eingang": [6, 11],

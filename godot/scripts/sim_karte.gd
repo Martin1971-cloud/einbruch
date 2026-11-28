@@ -147,6 +147,7 @@ var peak_loud := 0.0            # lauteste Lautstärke während des Einbruchs (d
 
 
 var rng := RandomNumberGenerator.new()
+var pending_alarms: Array = []  # verzögerte Melder: {"at": Zeit, "sensor": Index} (Verzögerung nach dem Auslösen)
 var hehler := "allround"  # gewählter Hehler für den Verkauf der Beute (siehe GameData.HEHLER)
 
 var _last_snap := -1.0

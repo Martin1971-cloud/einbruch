@@ -77,6 +77,16 @@ func _bemerkt(g: Dictionary) -> bool:
 	return rng.randf() < float(g.effizienz)
 
 ## Öffnen von Hand: Das Schloss muss offen (entriegelt) sein. Dauert OPEN_TIME.
+## Verzögerte Melder: Der Alarm kommt erst, wenn die Verzögerung abgelaufen ist, sofern der Melder dann noch aktiv ist.
+func _pruefe_verzoegerte_melder() -> void:
+	for p in pending_alarms.duplicate():
+		if time < float(p.at):
+			continue
+		pending_alarms.erase(p)
+		var s: Dictionary = sensors[int(p.sensor)]
+		if s.active:
+			_alarm(s.name, "GUARD", 0.0)
+
 ## Alarmkontakt: ein gesichertes Objekt, das bei eingeschalteter Anlage geöffnet wird, löst Alarm aus (wie im Original).
 func _pruefe_alarmkontakt(id: String) -> void:
 	if panel.is_empty() or panel.bypassed or not gesichert.has(id):
@@ -96,7 +106,10 @@ func _noise(origin: Vector2, db: float) -> void:
 		var sp := center(s.pos)
 		var arr := db - origin.distance_to(sp) / SUB * DIST_DAMPING - blockers_between(origin, sp) * WALL_DAMPING
 		if arr > s.threshold:
-			_alarm(s.name, "GUARD", 0.0)
+			if float(s.verzoegerung) > 0.0:
+				pending_alarms.append({"at": time + float(s.verzoegerung), "sensor": sensors.find(s)})
+			else:
+				_alarm(s.name, "GUARD", 0.0)
 	for g in guards:
 		if g.state in ["ALARMED", "IDLE", "OUT"]:
 			continue
