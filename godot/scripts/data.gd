@@ -206,8 +206,8 @@ const SPRECHER := [
 ]
 
 const PORTRAIT := {
-	"mira": "beobachterin", "ilja": "technikerin", "teo": "hacker", "rosa": "einbrecherin",
-	"greta": "besucher", "otto": "fahrer",
+	"mira": "mira", "ilja": "ilja", "teo": "teo", "rosa": "rosa",
+	"greta": "greta", "otto": "otto",
 	"informant": "informant", "hehlerin": "hehlerin", "auftraggeber": "auftraggeber", "polizist": "polizist",
 }
 

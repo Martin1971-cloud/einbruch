@@ -439,7 +439,7 @@ func _draw() -> void:
 		var pc := _c(c.start)
 		if c.id == selected_id:
 			draw_arc(pc, _cell * 0.6, 0, TAU, 24, Color(0.98, 0.85, 0.35), 3.0)
-		_draw_sprite(pc, "crew_%s" % c.id, false, Vector2(0, 1))
+		_draw_sprite(pc, "crew2d_%s" % c.id, false, Vector2(0, 1))
 		_number_badge(pc, i + 1, COLORS.get(c.id, Color.WHITE))
 	if not _frame.is_empty():
 		_draw_dynamic()
@@ -643,7 +643,7 @@ func _draw_dynamic() -> void:
 			draw_arc(cp, _cell * 0.6, 0, TAU, 24, Color(0.98, 0.85, 0.35), 3.0)
 		if seen:
 			draw_arc(cp, _cell * 0.66, 0, TAU, 24, Color(1.0, 0.3, 0.3), 2.5)
-		_draw_walker(cp, col2, String(c.name).substr(0, 1), cdata, "crew_%s" % c.id)
+		_draw_walker(cp, col2, String(c.name).substr(0, 1), cdata, "crew2d_%s" % c.id)
 		_number_badge(cp, i + 1, col2)
 		var carried: int = cdata[3]
 		if carried > 0:
